@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Import Materialize Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!--Import Personalize css-->
+    <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/tabla.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> 
+    <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
+   <!-- <script src="js/encabezado.js" type="text/javascript"></script> -->
+    <script src="js/encabezadoImpCodBar.js" type="text/javascript"></script>
+
+    <style>
+      .barcodeGen {
+        padding-top: 11%;
+      }
+    
+      .bodegaslocation {
+        width: 16.6666666667% !important;
+      }
+    
+      .container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    
+      label {
+        margin: 10px 0 5px 0;
+        font-weight: bold;
+      }
+    
+      input,
+      select {
+        margin-bottom: 15px;
+        padding: 10px;
+        width: 100%;
+        max-width: 300px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+    
+      #barcode {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+    
+      #printBarcode {
+        width: 50%;
+      }
+    </style>
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+    <title>Barcode Generator</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <my-header></my-header>
+    <!--HEADER-->
+   
+    <main class="barcodeGen">
+          <div id="contenedorLoader"></div>
+       <div id="resultadoBusqueda"></div>
+        <div class="container">
+
+            <!-- <h1>Generador de Códigos de Barras</h1> -->
+              <div>
+          <i id="retornar" class="material-icons green-text" style="cursor: pointer;"
+            onclick="confirmaRegresar()">keyboard_backspace</i>
+        </div>
+            <!-- Symbology Selection -->
+            <label for="symbology">Elija la simbología de código de barras:</label>
+            <select id="symbology">
+                <option value="CODE128">Codigo de 128</option>
+                <option value="QR">Código QR</option>
+            </select>
+            <!-- Data Input -->
+            <label for="data">Enter Data to Encode:</label>
+            <input type="text" id="data" placeholder="Enter data here">
+            <!-- Size Selection -->
+            <label for="size">Seleccione el tamaño Size:</label>
+            <select id="size">
+                <option value="0.75">75%</option>
+                <option value="1">100%</option>
+                <option value="2">200%</option>
+            </select>
+            <!-- Barcode Display -->
+            <div id="barcode"></div>
+            <!-- Print Button -->
+            <button id="printBarcode" class="btn waves-effect waves-light" onclick="imprimeCodigo()"><i class="material-icons left">print</i>Imprimir Código</button>
+        </div>
+    </main>
+    <!-- Script Includes -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
+    <script type="text/javascript" src="js/main.js?v1.1" defer></script>
+    <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
+    <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script>
+    <script type="text/javascript" src="js/loader.js"></script>
+    <script type="text/javascript" src="js/paginacion.js"></script> -->
+    <!-- <script>
+      $.fn.pageMe = function (opts) {
+        var $this = this,
+          defaults = {
+            perPage: 7,
+            showPrevNext: false,
+            hidePageNumbers: false
+          },
+          settings = $.extend(defaults, opts);
+
+        var listElement = $this;
+        var perPage = settings.perPage;
+        var children = listElement.children();
+        var pager = $('.pager');
+
+        if (typeof settings.childSelector != "undefined") {
+          children = listElement.find(settings.childSelector);
+        }
+
+        if (typeof settings.pagerSelector != "undefined") {
+          pager = $(settings.pagerSelector);
+        }
+
+        var numItems = children.length;
+        var numPages = Math.ceil(numItems / perPage);
+
+        pager.data("curr", 0);
+
+        if (settings.showPrevNext) {
+          $('<li><a href="#" class="prev_link">«</a></li>').appendTo(pager);
+        }
+
+        var curr = 0;
+        while (numPages > curr && (settings.hidePageNumbers == false)) {
+          $('<li><a href="#" class="page_link">' + (curr + 1) + '</a></li>').appendTo(pager);
+          curr++;
+        }
+
+        if (settings.showPrevNext) {
+          $('<li><a href="#" class="next_link">»</a></li>').appendTo(pager);
+        }
+
+        pager.find('.page_link:first').addClass('active');
+        if (numPages <= 1) {
+          pager.find('.prev_link').hide();
+          pager.find('.next_link').hide();
+        }
+        if (settings.hidePageNumbers) {
+          pager.find('.page_link').hide();
+        }
+
+        children.hide();
+        children.slice(0, perPage).show();
+
+        pager.find('li .page_link').click(function () {
+          var clickedPage = $(this).html().valueOf() - 1;
+          goTo(clickedPage, perPage);
+          return false;
+        });
+        pager.find('li .prev_link').click(function () {
+          previous();
+          return false;
+        });
+        pager.find('li .next_link').click(function () {
+          next();
+          return false;
+        });
+
+        function previous() {
+          var goToPage = parseInt(pager.data("curr")) - 1;
+          if (goToPage >= 0)
+            goTo(goToPage);
+        }
+
+        function next() {
+          goToPage = parseInt(pager.data("curr")) + 1;
+          if (goToPage < numPages)
+            goTo(goToPage);
+        }
+
+        function goTo(page) {
+          var startAt = page * perPage,
+            endOn = startAt + perPage;
+
+          children.css('display', 'none').slice(startAt, endOn).show();
+
+          pager.data("curr", page);
+          pager.find('li .page_link').removeClass("active");
+          pager.find('li .page_link').eq(page).addClass("active");
+        }
+      };
+    </script> -->
+
+</body>
+</html>

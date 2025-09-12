@@ -1,2 +1,2 @@
-# WMS-3.0
-cambio en el diseño
+# WMS_2.0
+migracion del wms de ASP:NET a PHP usando API
