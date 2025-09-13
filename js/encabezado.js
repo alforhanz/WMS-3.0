@@ -3,7 +3,7 @@
 class MyHeader extends HTMLElement {
   connectedCallback() { 
     this.innerHTML = `
-<header id="header" class="page-topbar">
+<header id="header">
     <!-- encabezado logo-->
     <nav class="nav-extended green">
       <div class="row">

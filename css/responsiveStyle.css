@@ -134,7 +134,9 @@
 
       width: 100%;
     }
-
+  .dash{
+      padding: 0em 3em 3em 3em;
+    }
 
 
     #tblDetallestrasladosVerif tr {
@@ -337,6 +339,9 @@
 #totalregistros {   
     margin-left: 90px!important;
 }
+.dash {
+    padding: 3em 3em 3em 39em;
+}
 
   }
   
@@ -453,6 +458,10 @@
     grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
   }
 
+    .dash {
+    padding: 4em 8em 3em 68em;
+}
+
   }
   
   /* Large only (min-width: 64em and max-width: 74.9375em = 1024px - 1199px) */
@@ -466,6 +475,10 @@
     .grid-container {
       grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
     }
+
+     .dash {
+    padding: 3em 5em 2em 56em;
+}
 
   }
   
