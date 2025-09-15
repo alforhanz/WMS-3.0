@@ -2213,6 +2213,14 @@ th {
   width: 23px;
   color: rgb(255 255 255);
 }
+.sidenav .collapsible-body, .sidenav.fixed .collapsible-body {
+    border: 0;
+    background-color: #2a3f54;
+}
+.sidenav li.active {
+    background-color: rgb(42 63 84);
+}
+
 .sidenav .collapsible-body li a,
 .sidenav.fixed .collapsible-body li a {
   padding: 0;
@@ -2484,7 +2492,7 @@ table {
 
 .sidenav .collapsible-header,
 .sidenav.fixed .collapsible-header {
-   background: linear-gradient(45deg, rgba(0,0,0,0.42), #6c757d);
+   /* background: linear-gradient(45deg, rgba(0,0,0,0.42), #6c757d); */
   line-height: inherit;
   height: inherit;
   padding: 0 0;
@@ -2496,22 +2504,22 @@ table {
   text-align: center;
   margin-right: 1rem;
 }
-.sidenav li.active {
+/* .sidenav li.active {
   background-color: #fff;
-}
-
+} */
+/* 
 .menu-background {
   background-color: #4c4e4e;
-  color: #ffffff; /* Asegura que el texto sea legible */
+  color: #ffffff; 
 }
 
 .menu-background a {
-  color: #ffffff; /* Color del texto de los enlaces */
-}
-
+  color: #ffffff; 
+} */
+/* 
 .menu-background .material-symbols-outlined {
-  color: #ffffff; /* Color de los íconos */
-}
+  color: #ffffff; 
+} */
 
 #retornar{
   font-size: 4em;
@@ -2807,7 +2815,8 @@ th.themeColor{
 }
 
 #submenu{
-      background-color: #4c4e4e;
+      background-color: #2a3f54;
+;
 }
 
 #tblcontenedores {
