@@ -5,11 +5,6 @@
   --bg-light: #f5f5f5;
   --text-dark: #333;
 }
-/* body {
-  font-family: 'Jura', 'Orbitron', 'Oswald', sans-serif;
-  color: var(--text-dark);
-  background: var(--bg-light);
-} */
 
 /*===================  LOGIN ========================================*/
 html {
@@ -24,11 +19,13 @@ html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  /* font-family: "Arial", "sans-serif", "HelveticaNeue", Helvetica; */
-  font-family: "Jura", sans-serif;
-  /* font-family: "Roboto", sans-serif; */
+  font-family: Arial, Helvetica, sans-serif;
+ /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+  /* font-family: "Jura", sans-serif; */
+
   font-size: 14px;
   font-weight: bolder;
+  /* background: linear-gradient(135deg, #2ecc71, #27ae60); */
   background: linear-gradient(#f7f7f7, #184321);
 }
 
@@ -630,7 +627,7 @@ th {
 .loading:after {
   content: "";
   display: block;
-  color: #f90f00;
+  color: #28a745;
   font-size: 80px;
   text-indent: -9999em;
   overflow: hidden;
@@ -885,7 +882,7 @@ th {
 .buttonAnimateClass {
   min-width: 100%;
   min-height: 45%;
-  font-family: "Jura", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1.3px;
@@ -1198,7 +1195,11 @@ navbar {
   border-radius: 50%;
 }
 nav.nav-extended {
-   background-color: #28a745!important;
+   /* background-color: #28a745!important; */
+   /* background: linear-gradient(135deg, #867e7e, #184321); */
+/* background: linear-gradient(135deg, #26a69a, #28a745); */
+background: linear-gradient(135deg, #2a3f54, #2a3f54);
+
 }
 
 /* ====== BUSCADOR ====== */
@@ -1246,38 +1247,58 @@ nav.nav-extended {
 }
 
 .buscador .search-action {
+  background: linear-gradient(135deg, #4c4e4e, #7e8180);
+  /* background: linear-gradient(135deg,#91a6bb ,#28a745); */
+  /* background: linear-gradient(135deg, #352c2c, #0e2c15);  */
+  background-color: #4f4b6b;  
+  -webkit-border-radius: 0 5px 5px 0;
+  -moz-border-radius: 0 5px 5px 0;
+  border-radius: 0 5px 5px 0;
+  border: 1px solid #535162;
+  height: 47px;             
+  width: 90% !important;    
+  padding: 0 !important;       
+  margin-top: 4px!important;   
+  color: #fff;
+}
+
+
+/* .buscador .search-action {
   background-color: #535162 !important;
   background: #535162;
-  border-radius: 0px 5px 5px 0px;
-  -moz-border-radius: 0px 5px 5px 0px;
   -webkit-border-radius: 0px 5px 5px 0px;
+  -moz-border-radius: 0px 5px 5px 0px;
+  border-radius: 0px 5px 5px 0px;
   border: 1px solid #535162;
   padding: 5px 0 5px 25%;
   height: 35px;
   width: 100% !important;
   border-color: #535162 !important;
   color: white;
-}
+} */
+
 .buscador #articulo {
   background: #fff !important;     
   padding-left: 8px !important;
-  height: 45px !important;
+  height: 45px !important;  
+  -webkit-border-radius: 5px 0px 0px 5px !important;
+  -moz-border-radius: 5px 0px 0px 5px !important;
   border-radius: 5px 0px 0px 5px !important;
-  -webkit-border-radius: 5px 0px 0px 5px !important; 
 }
+
 .buscador .ui-input-text {
   border: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
 }
-.buscador .search-action {
+/* .buscador .search-action {
   padding: 0 !important;
   height: 47px;
   margin-top: 4px;
-}
-.buscador .s10.col {
+} */
+/* .buscador .s10.col {
   padding-top: 0 !important;
-}
+} */
 .logo {
   border-bottom: 0 !important;
   padding-bottom: 5px !important;
@@ -1318,7 +1339,7 @@ nav.nav-extended {
 }
 .buscador .s10.col {
   padding-right: 0;
-  padding-top: 2px;
+  padding-top: 5px;
 }
 .buscador .s2.col {
   padding-left: 0px;
@@ -1332,20 +1353,23 @@ nav.nav-extended {
   border-width: 0px 0 !important;
 }
 .contenedor-buscador {
+  background: linear-gradient(135deg, #2a3f54, #2a3f54);
+  /* background: linear-gradient(135deg, #26a69a, #28a745); */
+  /* background: linear-gradient(135deg, #867e7e, #184321); */
+  border: 1px solid transparent;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  border-radius: 6px;
+  color: #fff;
+  padding: 10px;
+}
+
+
+
+/* .contenedor-buscador {
   background-color: #28a745 !important;
   border: 1px solid #28a745 !important ;
   box-shadow: 0 0 0 #fff !important;
-}
-.logo {
-  padding-bottom: 0 !important;
-}
-@media screen and (min-width: 350px) and (max-width: 63.9375em) {
-  .buscador .s8.col {
-    padding-right: 0;
-    padding-top: 2px;
-  }
-}
-
+} */
 .buscador .reset-button-tienda {
   padding-left: 0;
   border: 0;
@@ -1374,21 +1398,22 @@ nav.nav-extended {
 .buscador .ui-corner-all {
   border-radius: 0 !important;
   height: 35px !important;
-  margin-top: 5px !important;
-  border-radius: 5px 0px 0px 5px !important;
   -moz-border-radius: 5px 0px 0px 5px !important;
   -webkit-border-radius: 5px 0px 0px 5px !important;
+  margin-top: 5px !important;
+  border-radius: 5px 0px 0px 5px !important;
+ 
 }
-#s12-m10 {
+/* #s12-m10 {
   width: 101% !important;
   position: relative;
   top: 34px;
-}
+} */
 
 #input-field-col {
   width: 100% !important;
 }
-#buscador_input1 {
+/* #buscador_input1 {
   border: 1px solid #000 !important;
   margin: 42px !important;
   padding-left: 8px !important;
@@ -1400,9 +1425,9 @@ nav.nav-extended {
   top: -1px;
   position: relative;
   left: -27px;
-}
+} */
 
-#btn-red-darken-4l {
+/* #btn-red-darken-4l {
   border: none;
   position: relative;
   display: inline-block;
@@ -1416,7 +1441,7 @@ nav.nav-extended {
   left: 2px;
   width: -3px;
   -webkit-tap-highlight-color: transparent;
-}
+} */
 
 #p {
   top: 10px !important;
@@ -1431,40 +1456,40 @@ nav.nav-extended {
 .datepicker-calendar-container .btn-flat.datepicker-cancel.waves-effect {
   width: 60% !important;
 }
-.buscador .search-action {
+/* .buscador .search-action {
   margin-top: 0 !important;
   height: 46px !important;
   width: 90% !important;
-}
+} */
 .sub-header {
   font-weight: bold;
   text-align: center;
   padding-top: 10px;
   margin: 15px 0;
-  font-family: "Jura", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;;
   font-weight: 700;
   font-size: 2em;
   text-transform: uppercase;
 } 
-.la_date {
+/* .la_date {
   font-size: 1.313rem !important;
-} 
+}  */
 /* main {
   padding-top: 200px;
 }  */
- .margen-25 {
+ /* .margen-25 {
   margin-bottom: 25px;
 }
 .shopping-person {
   display: inline-flex;
   float: right;
-}
+} */
 .brand-logo img {
   width: 90% !important;
   margin-left: 10% !important;
   max-width: 350px;
 }
-#tblfactura,
+/* #tblfactura,
 #tblcotizacion,
 #tblarticulocliente {
   width: 100%;
@@ -1502,7 +1527,7 @@ nav.nav-extended {
   border-radius: 5px;
   height: 45px;
   line-height: 45px;
-}
+} */
 .input_expand {
   width: 100% !important;
   height: 40px !important;
@@ -1607,10 +1632,10 @@ th {
   border: solid 1px #a7a3a3 !important;
   border-radius: 5px !important;
 }
-.menuTitulo {
+/* .menuTitulo {
   margin: 0 !important;
   padding: 10px 5px !important;
-}
+} */
 #usuario {
   font-weight: bold;
 }
@@ -1636,11 +1661,11 @@ th {
 #mobile-demo .sub-header {
   padding: 15px 0 0 0;
 }
-#mobile-demo .collapsible-header,
+/* #mobile-demo .collapsible-header,
 #mobile-demo .collapsible li,
 #mobile-demo .collection a {
   font-weight: bold;
-}
+} */
 nav a.sidenav-trigger {
   display: block;
 }
@@ -1704,11 +1729,10 @@ nav a.sidenav-trigger {
 }
 /*css del modal de las bodegas que se despliega en el header*/
 #bodega_sucursales {
-  height: 100%;
-  top: 0 !important;
-  left: 0 !important;
-  max-height: 100% !important;
-  margin-left: 0px !important;
+    width: 25%;
+    height: 94%;
+    top: 29px !important;   
+    max-height: 100% !important;   
 }
 #bodega_sucursales .modal-content {
   padding: 24px !important;
@@ -1752,6 +1776,9 @@ nav a.sidenav-trigger {
 }
 #bodega_sucursales .modal-header a .material-symbols-outlined {
   margin-top: 5px;
+}
+.ubica-bodega {
+    margin-left: 35px; 
 }
 .header-cliente {
   padding: 10px;
@@ -2004,7 +2031,7 @@ table.striped > tbody > tr:nth-child(odd) {
   position: relative;
 }
 
-#promocionActiva {
+/* #promocionActiva {
   display: none;
   position: relative;
   text-align: center;
@@ -2014,7 +2041,7 @@ table.striped > tbody > tr:nth-child(odd) {
   padding: 5px 0;
   opacity: 0.8;
   top: -2px;
-}
+} */
 
 nav-section {
   height: auto;
@@ -2167,10 +2194,10 @@ th {
   display: none;
 }
 
-/* TAMAÑO DE FUENTE SECCIONES X USUARIO */
+
 .sidenav .collapsible {
-  margin: 0 0 0 21px;
-  font-size: 14px !important;
+    margin: 6px 43px 6px 22px;
+    font-size: 14px !important;
 }
 
 .sidenav #submenu li > a.btn-floating {
@@ -2213,7 +2240,7 @@ th {
 }
 
 #mobile-demo .collection a > i.material-icons {
-  font-family: "Material Icons";
+   font-family: Arial, Helvetica, sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -2267,17 +2294,28 @@ th {
   text-align: center;
   font-weight: bold;
   font-size: 16px;
-  /*font-weight: bold;*/
 }
 .menuTitulo {
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  background: linear-gradient(135deg, #2a3f54, #5081b1);
+  /* background: linear-gradient(135deg, #91a6bb, #28a745); */
+   font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700; /* equivale a bold */
+  margin: 0 !important;
+  padding: 10px 5px !important;
+}
+
+
+/* .menuTitulo {
   color: rgb(255, 255, 255);
   text-align: center;
   font-size: 16px;
   background-color: #28a745;
   font-family: "Jura", sans-serif;
-  font-weight: 700;
-  /*font-weight: bold;*/
-}
+  font-weight: 700; 
+} */
 .menu-text span {
   color: #000;
   font-weight: 600;
@@ -2439,18 +2477,14 @@ table {
   transition: 0.25s;
   color: #000000;
   background-color: #bdbdbd;
-  font-family: "Jura", sans-serif;
+   font-family: Arial, Helvetica, sans-serif;
   font-weight: 700;
   font-size: 14px;
-}
-.sidenav {
-  padding-top: 10px;
 }
 
 .sidenav .collapsible-header,
 .sidenav.fixed .collapsible-header {
-  /* background-color: transparent;*/
-  /* border: none; */
+   background: linear-gradient(45deg, rgba(0,0,0,0.42), #6c757d);
   line-height: inherit;
   height: inherit;
   padding: 0 0;
@@ -2483,6 +2517,13 @@ table {
   font-size: 4em;
 }
 
+.submenu-enlace {
+  margin-right: -3px;
+  margin-top: 18px;
+  font-size: 13px;
+  padding-left: 32px;
+}
+
 /*=============================== DASHBOARD===================================*/
 .title-card-dash{
   font-size: 40px;
@@ -2509,23 +2550,32 @@ td, th {
   background: #007bff;
   width: 21%;
 }
+
+/* ======================== LOATION SUCURSALES   =================================== */
 .shop-bodegas {
-  background: #28a745;
+  background: linear-gradient(135deg, #2a3f54, #2a3f54);
+  /* background: linear-gradient(135deg, #26a69a, #28a745); */
+  /* background: linear-gradient(135deg, #867e7e, #184321); */
+  /* background: #28a745; */
   border-top: solid 1px #ffffff70;
-  padding: 4px 0 !important ;
+  padding: 4px 0 !important;
 }
+
 .shop-bodegas a {
   color: #fff;
 }
+
 .shop-bodegas button {
   margin-top: 0;
 }
+
 .shop-bodegas img {
   width: 20px !important;
 }
+
 .shop-bodegas h6 {
   font-size: 14px;
-  font-family: "Oswald";
+   font-family: Arial, Helvetica, sans-serif;
   font-weight: normal;
   color: #fff !important;
   margin-left: -31px;
@@ -2533,24 +2583,29 @@ td, th {
   left: 4px;
   top: 6px;
 }
+
 .shop-bodegas .text-right {
   text-align: right;
 }
+
 .shop-bodegas .img {
   -webkit-box-shadow: 0 4px 6px -6px #222;
   -moz-box-shadow: 0 4px 6px -6px #222;
   box-shadow: 0 4px 6px -6px #222;
 }
+
 .contenedor-sucursales {
   border-width: 0;
   overflow: visible;
   overflow-x: hidden;
   padding: 1em;
 }
+
 .contenedor-sucursales .sucursal {
   border: solid 1px #ddd;
   margin-top: 10px;
 }
+
 .contenedor-sucursales .header-sucursal {
   background: #000;
   color: #fff;
@@ -2560,22 +2615,26 @@ td, th {
   font-weight: normal;
   text-transform: uppercase;
 }
+
 .contenedor-sucursales .description-sucursal {
   padding: 5px 15px;
 }
+
 .contenedor-sucursales h6,
 .contenedor-sucursales span {
   margin: 0;
   padding: 0;
   font-size: 14px;
-  font-family: arial;
+   font-family: Arial, Helvetica, sans-serif;
 }
+
 .contenedor-sucursales h3 {
   font-size: 17px;
   margin: 0;
   padding: 5px 0;
   font-weight: bold;
 }
+
 .contenedor-sucursales .description-sucursal a {
   background: #dcd7cc !important;
   color: #000;
@@ -2583,111 +2642,20 @@ td, th {
   font-size: 13px !important;
   text-align: center !important;
 }
+
 .contenedor-sucursales .sucursal-display {
   color: #000;
-  font-family: arial;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
 }
+
 .reset-info-bodega {
   padding-left: 0 !important;
 }
 
-.shop-bodegas {
-  background: #28a745;
-  border-top: solid 1px #ffffff70;
-  padding: 5px 0;
-}
 
 
-/* ======================== LOATION ======================================== */
-.shop-bodegas {
-  background: #28a745;
-  border-top: solid 1px #ffffff70;
-  padding: 4px 0 !important ;
-}
-.shop-bodegas a {
-  color: #fff;
-}
-.shop-bodegas button {
-  margin-top: 0;
-}
-.shop-bodegas img {
-  width: 20px !important;
-}
-.shop-bodegas h6 {
-  font-size: 14px;
-  font-family: "Oswald";
-  font-weight: normal;
-  color: #fff !important;
-  margin-left: -31px;
-  position: relative;
-  left: 4px;
-  top: 6px;
-}
-.shop-bodegas .text-right {
-  text-align: right;
-}
-.shop-bodegas .img {
-  -webkit-box-shadow: 0 4px 6px -6px #222;
-  -moz-box-shadow: 0 4px 6px -6px #222;
-  box-shadow: 0 4px 6px -6px #222;
-}
-.contenedor-sucursales {
-  border-width: 0;
-  overflow: visible;
-  overflow-x: hidden;
-  padding: 1em;
-}
-.contenedor-sucursales .sucursal {
-  border: solid 1px #ddd;
-  margin-top: 10px;
-}
-.contenedor-sucursales .header-sucursal {
-  background: #000;
-  color: #fff;
-  padding: 5px;
-  margin: 0;
-  font-size: 17px;
-  font-weight: normal;
-  text-transform: uppercase;
-}
-.contenedor-sucursales .description-sucursal {
-  padding: 5px 15px;
-}
-.contenedor-sucursales h6,
-.contenedor-sucursales span {
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  font-family: arial;
-}
-.contenedor-sucursales h3 {
-  font-size: 17px;
-  margin: 0;
-  padding: 5px 0;
-  font-weight: bold;
-}
-.contenedor-sucursales .description-sucursal a {
-  background: #dcd7cc !important;
-  color: #000;
-  border: solid 1px #dcd7cc !important;
-  font-size: 13px !important;
-  text-align: center !important;
-}
-.contenedor-sucursales .sucursal-display {
-  color: #000;
-  font-family: arial;
-  font-size: 13px;
-}
-.reset-info-bodega {
-  padding-left: 0 !important;
-}
 
-.shop-bodegas {
-  background: #28a745;
-  border-top: solid 1px #ffffff70;
-  padding: 5px 0;
-}
 
 
 /*=============================== LOADING ===================================*/
@@ -2731,3 +2699,320 @@ tr.themeColor {
 th.themeColor{
   text-align: center;
 }
+
+/*=============================== CUERPO VISTAS ===================================*/
+
+.codigo-barras-input
+{
+  border-bottom: 1px solid #48a013 !important;
+}
+
+#myTableVerificacion {
+  border-collapse: collapse !important; /* Combina los bordes de las celdas */
+}
+
+#myTableVerificacion th,
+#myTableVerificacion td {
+  /*border: 1px solid rgb(24, 21, 202);*/ /* Añade un borde de 1px sólido en todas las celdas */
+  padding: 8px !important; /* Añade un relleno de 8px para separar el contenido del borde */
+}
+#myTableVerificacion tbody tr:nth-child(even) {
+  background-color: #f2f2f2 !important; /* Color de fondo gris tenue para filas pares */
+}
+
+#myTableVerificacion tbody tr:nth-child(odd) {
+  background-color: #ffffff !important; /* Color de fondo blanco para filas impares */
+}
+#myTableVerificacion tbody td#articulo {
+  text-align: left !important; /* Alinea el contenido de la celda a la izquierda */
+}
+#myTableLectura {
+  text-align: center !important; /* Centrar el texto en las celdas */
+}
+
+#myTableLectura td {
+  padding: 5px !important; /* Añadir espacio entre los elementos de la tabla */
+}
+#myTableLectura tbody tr:nth-child(even) {
+  background-color: #f2f2f2 !important; /* Color de fondo gris tenue para filas pares */
+}
+
+#myTableLectura tbody tr:nth-child(odd) {
+  background-color: #ffffff !important; /* Color de fondo blanco para filas impares */
+}
+
+/*//////REGLAS PARA EL ENCABEZADO DE L OS CONTENEDORES./////*/
+
+#tblcontenedores tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#tblcontenedores tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+#tblbodyLineasOrdenDeCompra {
+  border-collapse: collapse !important; /* Combina los bordes de las celdas */
+}
+
+#tblbodyLineasOrdenDeCompra th,
+#tblbodyLineasOrdenDeCompra td {
+  /*border: 1px solid rgb(24, 21, 202);*/ /* Añade un borde de 1px sólido en todas las celdas */
+  padding: 8px !important; /* Añade un relleno de 8px para separar el contenido del borde */
+}
+#tblbodyLineasOrdenDeCompra tbody tr:nth-child(even) {
+  background-color: #f2f2f2 !important; /* Color de fondo gris tenue para filas pares */
+}
+
+#tblbodyLineasOrdenDeCompra tbody tr:nth-child(odd) {
+  background-color: #ffffff !important; /* Color de fondo blanco para filas impares */
+}
+#tblbodyLineasOrdenDeCompra tbody td#articulo {
+  text-align: left !important; /* Alinea el contenido de la celda a la izquierda */
+}
+
+/* .sidenav{
+    background-color: #4c4e4e !important;
+    width: 349px;
+  } */
+
+#usuario{
+  color: #fff;
+}
+/* #mobile-demo{
+  color: #fff; 
+}*/
+#mobile-demo {
+    width: 20%;
+    background: linear-gradient(45deg, #2a3f54, #2a3f54);
+    color: #fff;
+}
+
+#MenuL{
+  color: #fff;
+}
+
+#usuario{
+  color: #fff !important;
+}
+/* #expand_morefather {
+  background: linear-gradient(45deg, black, #6c757d);
+  color: #fff !important;
+} */
+.margen-pedido{
+  color: #fff !important;
+}
+#inicio{
+  color: #fff !important;
+}
+
+#submenu{
+      background-color: #4c4e4e;
+}
+
+#tblcontenedores {
+  width: 100%;
+  font-size: 12px;
+  display: table;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-top: 15px;
+}
+
+#cantidadDeRegistros{
+  font-size: 1em;
+}
+
+.mensajeText{
+  height: 200px; 
+  overflow-y: scroll;  
+}
+.switch label input[type=checkbox]:checked+.lever {
+  background-color: #6c757d;
+}
+#usuariocodigo {
+  color: #474343 !important;
+}
+
+#bodegaSelectOC {
+  width: 20%; /* Ocupa todo el espacio disponible dentro de su contenedor */
+}
+
+#bodegaButtonOC {
+  width: 20%; /* Ocupa todo el espacio disponible dentro de su contenedor */ 
+}
+
+#bodegaSelect {
+  width: 100%; /* Ocupa todo el espacio disponible dentro de su contenedor */
+}
+
+#bodegaButton {
+  width: 100%; /* Ocupa todo el espacio disponible dentro de su contenedor */ 
+}
+#lbl_bodega_destino{
+  font-size: 1rem !important;
+  color: #837f7f;
+}
+
+#titulo-oc{
+  text-align:center ;
+  text-transform: uppercase;
+}
+.lineasocstyle{
+  width: 10%;
+}
+
+.titulo-vista{
+  text-align:center ;
+  text-transform: uppercase;
+}
+
+.switch-button{
+  margin-bottom: 10px;
+}
+
+.label-button-switch{
+  font-size: 16px !important;
+}
+
+#observaciones{ 
+    width: 100%;
+    height: 8rem;
+    background-color: transparent;
+}
+#lblObservaciones{
+  position: relative;
+}
+
+
+#myTableresumen {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#myTableresumen td, #myTableresumen th {
+  border: 1px solid #e0e0e0; /* Bordes más claros */
+  text-align: center;
+  padding: 6px; /* Espaciado reducido */
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  font-weight: normal; /* Texto no enfatizado */
+}
+
+#myTableresumen tr:nth-child(even) {
+  background-color: #f2f2f2 /* Color de fondo suave */
+}
+
+#myTableresumen tr:nth-child(odd) {
+  background-color: #ffffff; /* Fondo blanco */
+}
+
+#myTableresumen th {
+  background-color: #7e8180;
+  color: white;
+  font-size: 15px; /* Tamaño de fuente más discreto */
+  font-weight: bold; /* Enfatizar encabezados */
+  border-bottom: 2px solid #dddddd; /* Línea de separación clara */
+}
+
+#myTableresumen tr:hover {
+  background-color: #eaf2f8; /* Suave color al pasar el mouse */
+}
+/*////////////// UBICACION//////////////////////////////////////*/
+
+/* Estilo del contenedor del input */
+.input-container-ubicacion {
+  display: flex;
+  flex-direction: column;
+ /* align-items: center;*/
+  margin: 10px;
+   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilo del label */
+.input-container-ubicacion label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4CAF50; /* Verde suave */
+  margin-bottom: 5px;
+}
+
+/* Estilo del input */
+.input-ubicacion {
+  width: 100%;
+  max-width: 300px; /* Limita el ancho máximo */
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 16px;
+  border: 2px solid #ddd; /* Borde suave */
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase; /* Convierte el texto a mayúsculas */
+}
+
+/* Placeholder estilizado */
+.input-ubicacion::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* Efecto hover */
+.input-ubicacion:hover {
+  border-color: #4CAF50; /* Cambia el borde al pasar el mouse */
+}
+
+/* Efecto de enfoque */
+.input-ubicacion:focus {
+  border-color: #4CAF50; /* Verde suave */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Sombra alrededor */
+}
+
+/* Contenedor del botón */
+.btn-container-conteo {
+  display: flex;
+  margin-top: 10px; /* Espaciado superior */
+  margin-bottom: 1em;
+}
+
+/* Estilo para el botón guardar */
+.btn-guardar-conteo {
+  /* background-color: #28a745; */
+  background-color: #218838;
+  border-radius: 5px;
+  color: white;
+  height: 36px;
+  border: none;
+   font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  width: 100%;
+  height: 42px;
+  margin-right: 52px;
+  margin-top: 3rem !important;
+}
+
+/* Hover para el botón */
+.btn-guardar-conteo:hover {
+  background-color: #679170;
+}
+
+/* Focus para el botón */
+.btn-guardar-conteo:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+.datepicker-date-display {
+    background-color: #28a745;
+    color: #fff;
+    padding: 20px 22px;
+    font-weight: 500;
+}
+.datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done {
+    color: #28a745;
+    padding: 0 1rem;
+}
+

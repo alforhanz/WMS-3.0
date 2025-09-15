@@ -153,7 +153,7 @@ var buildUL = function (items) {
         if (key.label == "WMS") {//ENLACE PADRE
           htm += `<li><div class="collapsible-header" id="expand_morefather">                  
                   <span class="margen-pedido"><span class="material-symbols-outlined left" style="margin-top: 13px;margin-right: 15px;">${icono}</span>${key.label}</span>
-                  <span id="expand_more" class="material-icons red-text" style="position: absolute;margin-right: 0; top:13px;padding-right: 0;right: 21px;background: #000;color: white !important;border-radius: 50%;">expand_more</span>
+                  <span id="expand_more" class="material-icons red-text" style="position: absolute;margin-right: 0; top:13px;padding-right: 0;right: 21px;background: transparent;color: white !important;border-radius: 50%;">expand_more</span>
                 </div>`;
         }
         else if (key.label == "INVENTARIO") {
@@ -162,13 +162,12 @@ var buildUL = function (items) {
         else {
           htm += `<li><div class="collapsible-header" id="expand_morefather">
                   <span class="margen-pedido"><span class="material-symbols-outlined left" style="margin-top: 13px;margin-right: 15px;">${icono}</span> ${key.label}</span>
-                  <span id="expand_more" class="material-icons red-text" style="position: absolute;margin-right: 0; top:13px;padding-right: 0;right: 21px;background: #000;color: white !important;border-radius: 50%;">expand_more</span>
+                  <span id="expand_more" class="material-icons red-text" style="position: absolute;margin-right: 0; top:13px;padding-right: 0;right: 21px;background: transparent;color: white !important;border-radius: 50%;">expand_more</span>
                 </div>`;
         }
       } else {
         htm += `<li onclick="javascript:alert('En Desarrollo');">
-                <span class="material-symbols-outlined" style="position: relative;margin-right: 11px;top: 5px;">${icono}</span>
-                  ${key.label}
+                <span class="material-symbols-outlined" style="position: relative;margin-right: 11px;top: 5px;">${icono}</span>${key.label}
                 <a href="javascript:alert('En Desarrollo');" class="btn-floating btn-large waves-effect waves-light red">
                 <i class="icon-chevron-right-circle"></i>
                 </a>`;
@@ -188,12 +187,9 @@ var buildUL = function (items) {
             icono2 = "";
             link = "";
           }
-          htm += `<li class="collection-item" onclick="enlace('${link}');"><span style="padding-left: 5px; font-size:11px">
-          <span class="material-symbols-outlined left" style="margin-right: -3px;margin-top: 18px;font-size: 13px;padding-left: 32px;">remove</span>
-          ${key2.label.toUpperCase()}</span>
-                    <a href="${link}" class="btn-floating btn-large waves-effect waves-light">
-                      <i class="icon-chevron-right-circle">remove</i>
-                    </a>
+
+          htm += `<li class="collection-item" onclick="enlace('${link}');">        
+                    <span class="submenu-enlace">${key2.label.toUpperCase()}<a href="${link}" ></a></span>
                   </li>`;
         });
         htm += `</ul></div>`;

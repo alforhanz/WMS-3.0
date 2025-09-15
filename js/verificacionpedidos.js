@@ -1,12 +1,14 @@
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 const checkbox = document.getElementById('toggleSwitch');
-// let bodega =  bodega = document.getElementById("bodega-sucursal").value;
+
   // Inicializar datepicker de Materialize
   var elems = document.querySelectorAll('.datepicker');
   var instances = M.Datepicker.init(elems, {
     format: 'yyyy-mm-dd', // Formato de fecha
   });
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
     ocultarColumnaLPrep();
    // console.log("DOM completamente cargado y parseado.");
@@ -58,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
               }      
             }
     });
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 function validarFormulario() {
   //revisar como toma el valor 
   var bodega = document.getElementById("bodega").value;
@@ -87,7 +90,8 @@ function validarFormulario() {
     }
     listadoPedido(pBodega, pPedido, pFechaDesde, pFechaHasta, pUsuario, pOpcion);
   }
-}
+}//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 function listadoPedido(pBodega, pPedido, pFechaDesde, pFechaHasta, pUsuario, pOpcion) {
   localStorage.setItem('autoSearchPedidos', 'false'); // Aquí se establece el valor 'false' para la búsqueda de las órdenes de compra
 
@@ -122,7 +126,6 @@ function listadoPedido(pBodega, pPedido, pFechaDesde, pFechaHasta, pUsuario, pOp
 
           document.getElementById("resultadoGeneral").innerHTML = htm;
           mostrarResultadosVerificacionPedidos(nPag, 1);
-
           document.getElementById("carga").innerHTML = "";
           ocultarLoader();
           aplicarEstilosTablaPedidos();
@@ -142,6 +145,8 @@ function listadoPedido(pBodega, pPedido, pFechaDesde, pFechaHasta, pUsuario, pOp
       }
     });
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 function mostrarResultadosVerificacionPedidos(nPag, pag) {
   let htm = "";
   let desde = (pag - 1) * xPag;
@@ -151,7 +156,8 @@ function mostrarResultadosVerificacionPedidos(nPag, pag) {
   htm += paginadorTablas(nPag, pag, 'mostrarResultadosVerificacionPedidos');
   document.getElementById("resultadoPaginador").innerHTML = htm;
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 function resultadosVerificacionPedidos(desde, hasta) {
 
   const bodega = document.getElementById('bodega').value; //obtener el numero de la bodega
@@ -223,6 +229,8 @@ function resultadosVerificacionPedidos(desde, hasta) {
 
   tbody.innerHTML = htm; // Insertar el contenido generado en el tbody 
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 function irDetallePedido(documento, pedido, estado, estado_preparacion) {
   const checkbox = document.getElementById('toggleSwitch');
   let bodega = localStorage.getItem('BodegaUsuario');
