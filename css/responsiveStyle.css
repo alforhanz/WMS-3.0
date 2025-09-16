@@ -3,11 +3,16 @@
 .btn {
     width: 100%;
     height: 45px;
-    background-color: #28a745;
+    /* background-color: #26a69a; */
+    background: linear-gradient(135deg, #4c4e4e, #7e8180);
+
   }
   .btn:hover {
-    background-color: #7e8180 !important;
+    /* background-color: #7e8180 !important; */
+   /* background: linear-gradient(45deg, black, #6c757d); */
+   background: linear-gradient(135deg, #86b1b1, #7e8180);
   }
+
   /* Small only (max-width: 39.9375em = 639px) */
   @media screen and (max-width: 39.9375em) {
     body{
@@ -69,7 +74,7 @@
       position: relative;
       width: 75px;
       height: 34px;
-      background-color: #28a745;
+      background-color: #26a69a;
       border-radius: 5px;
       margin-right: 10px;
       transition: background 0.3s ease;
@@ -91,11 +96,11 @@
       transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease, transform 0.1s ease;
     }
     .switch label input[type="checkbox"]:checked + .lever:after {
-      background-color: #7e8180;
+      background-color: #596571;
       left: 0px;
     }
     .switch label input[type="checkbox"]:checked + .lever {
-      background-color: #28a745;
+      background-color: #4c4e4e
     }
     .switch label .lever:before {
       background-color: rgba(14, 230, 61, 0);
@@ -122,9 +127,9 @@
       font-size: 14px !important;
       }
 
-      #theadDetallestrasladosVerif {
+    #theadDetallestrasladosVerif {
         display: none; /* Oculta los encabezados */
-    }
+      }
 
     #tblDetallestrasladosVerif tbody,
     #tblDetallestrasladosVerif tr,
@@ -141,7 +146,9 @@
       padding: 0em 3em 3em 3em;
     }
 
-
+    #bodega_sucursales {
+      width: 100%;
+    }
     #tblDetallestrasladosVerif tr {
         margin-bottom: 0.9375em; /* 15px en em ≈ 0.9375em */
     }
@@ -253,8 +260,15 @@
 #totalregistros {   
     margin-left: 0!important;
 }
+.label-button-switch {
+    font-size: 12px !important;
+}
+.margen-pedido {
+    padding-top: 17px;  
+}
 
 }  
+
   /* Medium and up (min-width: 40em = 640px) */
   @media screen and (min-width: 40em) {
   
@@ -295,10 +309,10 @@
     .row .col.m4 {
       width: 25%!important;   
   }
-
+/* 
   .grid-container {
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columnas */
-  }
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
+  } */
   }
   
   /* Medium only (min-width: 40em and max-width: 63.9375em = 640px - 1022px) */
@@ -397,7 +411,7 @@
       position: relative;
       width: 75px;
       height: 34px;
-      background-color: #28a745;
+      background-color: #26a69a;
       border-radius: 5px;
       margin-right: 10px;
       transition: background 0.3s ease;
@@ -423,8 +437,11 @@
       left: 0px;
     }
     .switch label input[type="checkbox"]:checked + .lever {
+    background-color: #7e8180;
+      }
+    /* .switch label input[type="checkbox"]:checked + .lever {
       background-color: #28a745;
-    }
+    } */
     .switch label .lever:before {
       background-color: rgba(14, 230, 61, 0);
     }
@@ -457,9 +474,9 @@
     .row .col.l3 {
       width: 25% !important; 
   }
-  .grid-container {
-    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
-  }
+  /* .grid-container {
+    grid-template-columns: repeat(4, minmax(0, 1fr)); 
+  } */
 
     .dash {
     padding: 4em 8em 3em 68em;
@@ -475,9 +492,9 @@
     #bodegaSelect {
       width: 70%;
     }
-    .grid-container {
-      grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
-    }
+    /* .grid-container {
+      grid-template-columns: repeat(4, minmax(0, 1fr)); 
+    } */
 
      .dash {
     padding: 3em 5em 2em 56em;
@@ -551,8 +568,8 @@
     }
     .row {
       margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 1px;
+      margin-right: auto!important;
+      margin-bottom: 1px!important;
     }
     .card-panel1 {
       transition: box-shadow 0.25s;

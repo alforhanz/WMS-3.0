@@ -189,7 +189,7 @@ function resultadosVerificacionPedidos(desde, hasta) {
       let documentoColor = ArrayDataFiltrado[i].ESTADO_PREPARACION === 'A' ? '#FF5733' : '';
       htm += `<td style="color:${documentoColor};">${ArrayDataFiltrado[i].DOCUMENTO}</td>`;
 
-      htm += `<td>${ArrayDataFiltrado[i].DESCRIPCION}</td>`;
+      htm += `<td  style="color:black;">${ArrayDataFiltrado[i].DESCRIPCION}</td>`;
       htm += `<td>${parseFloat(ArrayDataFiltrado[i].TOTAL_UNIDADES).toFixed(2)}</td>`;
       htm += `<td>${parseFloat(ArrayDataFiltrado[i].LINEAS_VERIFICADAS).toFixed(2)}</td>`; 
 

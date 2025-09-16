@@ -632,7 +632,7 @@ htm += `<div class="row" id="totalregistros">
             </label>
           </div>
             <div class="col s6 valign-wrapper">
-            <span>Total de Registros: </span>
+            <span>Total de Registros:  </span>
             <span>${ArrayDataFiltrado.length}</span>
           </div>
         </div>

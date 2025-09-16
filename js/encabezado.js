@@ -35,13 +35,13 @@ class MyHeader extends HTMLElement {
                 </div>
                 <div class="col s1" style="padding-left: 0;">
                   <a href="#" onclick="filtrosModal();"><span class="material-symbols-outlined text-black"
-                      style="font-size: 23px;margin-top: 5px;padding: 10px;background: linear-gradient(135deg, #4c4e4e, #7e8180);border-radius: 5px;color: #ffffff;margin-left: -16px;"><i class="material-icons">filter_list</i></span></a>
+                      style="font-size: 23px;margin-top: 5px;padding: 10px;background: linear-gradient(135deg, #7e8180, #7e8180);border-radius: 5px;color: #ffffff;margin-left: -16px;"><i class="material-icons">filter_list</i></span></a>
                 </div>                
               </div>
                <div >    
-                <label style="margin-left: 40px; color:#fafafa;">
+                <label style="margin-left: 40px;">
                       <input type="checkbox" id="sinExistencias" />
-                      <span>Mostrar busqueda sin existencias </span>
+                      <span class="label-existencias-busqueda";>Mostrar busqueda sin existencias </span>
                     </label>            
               </div>
             </div>
@@ -69,7 +69,7 @@ class MyHeader extends HTMLElement {
       <div class="modal-content">
         <div class="modal-header">
           <div class="close-modal">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat green-text">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">
               <span class="text">CERRAR</span><span class="material-symbols-outlined right">close</span></a>
           </div>
         </div>
