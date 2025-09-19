@@ -645,7 +645,7 @@ htm += `<div class="row" id="totalregistros">
             </a>
           </div>
           <div class="col s6">
-            <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
+            <a style="background: #535162 !important;"class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
               <i class="material-icons right">filter_list</i>
               FILTRAR
             </a>
@@ -1848,7 +1848,7 @@ function cambiarVistaLista() {
               VISTA </a>
             </div>
             <div class="col s6">
-              <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
+              <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
               <i class="material-icons right">filter_list</i>
               FILTRAR </a>
             </div>
@@ -2601,7 +2601,7 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
                 </a>
               </div>
               <div class="col s6">
-                <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
+                <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
                   <i class="material-icons right">filter_list</i>
                   FILTRAR
                 </a>
@@ -2769,7 +2769,7 @@ function cambiarVistaListaEnBodega() {
               </a>
             </div>
             <div class="col s6">
-              <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
+              <a  style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
                 <i class="material-icons right">filter_list</i>
                 FILTRAR
               </a>
@@ -2951,243 +2951,6 @@ function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
     </div>
   `;
 }
-
-
-
-
-
-
-//-----------------------------------------------------------------------------------
-// function cambiarVistaListaEnBodega() {
-//   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-//   let bodegaCod = bodega[0].BODEGA;
-
-//   // Filtrar solo artículos con existencia en bodega
-//   const articulosConExistencia = ArrayDataFiltrado.filter(item =>
-//     parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
-//   );
-
-//   let totalRegistros = articulosConExistencia.length;
-//   let pag = 1; // Página inicial
-//   let desde = (pag - 1) * xPag;
-//   let hasta = Math.min(pag * xPag, totalRegistros);
-//   let nPag = Math.ceil(totalRegistros / xPag);
-//   let htm = "";
-
-//   htm += '<div id="lista-articulo">';
-//   htm += `<div class="col s12">
-//           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
-//           </div>`;
-//   htm += `<div class="row" id="totalregistros">
-//             <div class="col s6">
-//               <span>Total de Registros: </span>
-//               <span>${totalRegistros}</span>
-//             </div>
-//               <div class="col s6">
-//               <label>
-//                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
-//                 <span>Mostrar En Bodega</span>
-//               </label>
-//             </div>
-//           </div>
-//           <div class="row">
-//             <div class="col s6">
-//                 <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaicoEnBodega();">
-//               <i class="material-icons right">apps</i>
-//               VISTA </a>
-//             </div>
-//             <div class="col s6">
-//               <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
-//               <i class="material-icons right">filter_list</i>
-//               FILTRAR </a>
-//             </div>
-//           </div>`;
-
-//   htm += `<table class="striped centered" style="margin-top:5%;">
-//   <thead style="background:#28a745;color:white;">
-//     <tr>
-//       <th style="width:30%;">CODIGO</th>
-//       <th style="width:30%;">CODIGO DE BARRAS</th>
-//       <th style="width:10%;">EN ${bodegaCod}</th>
-//       <th style="width:30%;">ACTION</th>
-//     </tr>
-//   </thead>
-//   <tbody>`;
-
-//   for (let i = desde; i < hasta; i++) {
-//     if (articulosConExistencia[i]) {
-//       htm += `<tr>
-//         <td class="sticky-column text-align:center">
-//           <h5 style="font-size:12px; text-align:left; color:orangered;">${articulosConExistencia[i].ARTICULO}</h5>
-//           <h6 style="font-size: 10px; text-align: left;">${articulosConExistencia[i].DESCRIPCION}</h6>
-//         </td>
-//         <td>${articulosConExistencia[i].CODIGO_BARRAS_INVT || ''}</td>
-//         <td>${Math.floor(articulosConExistencia[i].TOTAL_CANTIDAD_BODEGA)}</td>
-//         <td>
-//           <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(articulosConExistencia[i].ARTICULO)}', '${articulosConExistencia[i].DESCRIPCION}')">visibility</i>
-//           <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(articulosConExistencia[i].ARTICULO)}')" tabindex="1">
-//           <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${articulosConExistencia[i].ARTICULO}','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
-//           <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${articulosConExistencia[i].ARTICULO}','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
-//         </td>
-//       </tr>`;
-//     }
-//   }
-
-//   htm += `</tbody></table>`;
-//   htm += `<div id="resultadoPaginador">`;
-//   htm += paginadorTablasEnBodega(nPag, pag, 'mostrarResultadosVistaListaEnBodega');
-//   htm += `</div></div>`;
-
-//   document.getElementById("resultadoBusqueda").innerHTML = htm;
-//   $("html, body").animate(
-//     { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-//     1000
-//   );
-
-//    const estado = localStorage.getItem("mostrarEnBodega");
-//   if (estado === "1") {
-//       document.getElementById("miCheckbox").checked = true;
-//   } else {
-//       document.getElementById("miCheckbox").checked = false;
-//   }
-
-//   // Guardar array filtrado para la paginación
-//   window.ArticulosBodegaFiltrados = articulosConExistencia;
-// }
-// //-----------------------------------------------------------------------------------
-// function mostrarResultadosVistaListaEnBodega(nPag, pag) {
-//   let htm = "";
-//   let desde = (pag - 1) * xPag;
-//   let hasta = pag * xPag;
-//   resultadosVistaListaEnBodega(desde, hasta);
-//   htm += paginadorTablasEnBodega(nPag, pag, 'mostrarResultadosVistaListaEnBodega');
-//   document.getElementById("resultadoPaginador").innerHTML = htm;
-// }
-// //-----------------------------------------------------------------------------------
-// function resultadosVistaListaEnBodega(desde, hasta) {
-//   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-//   let bodegaCod = bodega[0].BODEGA;
-
-//   const data = window.ArticulosBodegaFiltrados || []; // Usar filtrados
-//   let totalRegistros = data.length;
-//   let htm = "";
-
-//   htm += '<div id="lista-articulo">';
-//   htm += `<div class="col s12">
-//           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
-//           </div>`;
-//   htm += `<div class="row" id="totalregistros">
-//             <div class="col s6">
-//               <span>Total de Registros: </span>
-//               <span>${totalRegistros}</span>
-//             </div>
-//               <div class="col s6">
-//               <label>
-//                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
-//                 <span>Mostrar En Bodega</span>
-//               </label>
-//             </div>
-//           </div>
-//           <div class="row">
-//             <div class="col s6">
-//                 <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaicoEnBodega();">
-//               <i class="material-icons right">apps</i>
-//               VISTA </a>
-//             </div>
-//             <div class="col s6">
-//               <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
-//               <i class="material-icons right">filter_list</i>
-//               FILTRAR </a>
-//             </div>
-//           </div>`;
-
-//   htm += `<table class="striped centered" style="margin-top:5%;">
-//   <thead style="background:#28a745;color:white;">
-//     <tr>
-//       <th style="width:30%;">CODIGO</th>
-//       <th style="width:30%;">CODIGO DE BARRAS</th>
-//       <th style="width:10%;">EN ${bodegaCod}</th>
-//       <th style="width:30%;">ACTION</th>
-//     </tr>
-//   </thead>
-//   <tbody>`;
-//  const estado = localStorage.getItem("mostrarEnBodega");
-//         if (estado === "1") {
-//             document.getElementById("miCheckbox").checked = true;
-//         } else {
-//             document.getElementById("miCheckbox").checked = false;
-//         }
-//   for (let i = desde; i < hasta; i++) {
-//     if (data[i]) {
-//       htm += `<tr>
-//         <td class="sticky-column text-align:center">
-//           <h5 style="font-size:12px; text-align:left; color:orangered;">${data[i].ARTICULO}</h5>
-//           <h6 style="font-size: 10px; text-align: left;">${data[i].DESCRIPCION}</h6>
-//         </td>
-//         <td>${data[i].CODIGO_BARRAS_INVT || ''}</td>
-//         <td>${Math.floor(data[i].TOTAL_CANTIDAD_BODEGA)}</td>
-//         <td>
-//           <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(data[i].ARTICULO)}', '${data[i].DESCRIPCION}')">visibility</i>
-//           <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${data[i].ARTICULO}')" tabindex="1">
-//           <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${data[i].ARTICULO}','${data[i].DESCRIPCION}')" tabindex="1">
-//           <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${data[i].ARTICULO}','${data[i].DESCRIPCION}')" tabindex="1">
-//         </td>
-//       </tr>`;
-//     }
-//   }
-
-//   htm += `</tbody></table></div>`;
-
-//   document.getElementById("resultadoBusqueda").innerHTML = htm;
-//   $("html, body").animate(
-//     { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-//     1000
-//   );   
-// }
-// //------------------------------------------------------------------------------------
-
-// function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
-//   // Generar el select con las páginas
-//   let selected = "";
-//   let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
-//               <option value="" disabled>Páginas</option>`;
-
-//           for (var i = 0; i < nPag; i++) {
-//               if (i + 1 == pag) {
-//                 selected = "selected";
-//               } else {
-//                 selected = "";
-//               }
-//               if (nPag != 1) {
-//                 sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-//                   }</option>`;
-//               }
-//             }
-//   sel += `</select>`;
-
-//   // Botones de navegación
-//   const btnAtras = pag <= 1
-//     ? `<a class="paginador-btn disabled">❮ Anterior</a>`
-//     : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag - 1})">❮ Anterior</a>`;
-
-//   const btnSig = pag >= nPag
-//     ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
-//     : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag + 1})">Siguiente ❯</a>`;
-
-//   // Retornar el HTML con clases en lugar de estilos inline
-//   return `
-//     <div id="paginador" class="paginador-container">
-//       <div class="row paginador-info">
-//         <div class="col s12 center-align">${pag}/${nPag}</div>
-//       </div>
-//       <div class="row paginador-controls">
-//         <div class="col s4 paginador-btn-container">${btnAtras}</div>
-//         <div class="col s4 paginador-select-container">${sel}</div>
-//         <div class="col s4 paginador-btn-container">${btnSig}</div>
-//       </div>
-//     </div>
-//   `;
-// }
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------

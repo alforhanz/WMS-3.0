@@ -3,7 +3,7 @@
 class MyHeader extends HTMLElement {
   connectedCallback() { 
     this.innerHTML = `
-<header id="header">
+<header id="header" class="page-topbar">
     <!-- encabezado logo-->
     <nav class="nav-extended green">
       <div class="row">
@@ -26,7 +26,8 @@ class MyHeader extends HTMLElement {
                       <input class="uil uil-search-alt" data-role="none" id="articulo" placeholder="Buscar" value=""
                         autocomplete="off">
                     </div>
-                    <div class="s2 col">                   
+                    <div class="s2 col">
+                      <!--<button id="buscado" class="search-action ui-btn" onclick="javascript: busquedaGeneral()">Esta funcion no va-->
                       <button id="buscado" class="search-action ui-btn" onclick="javascript: preBusqueda()">
                         <i class="material-icons">search</i>
                       </button>
@@ -34,14 +35,13 @@ class MyHeader extends HTMLElement {
                   </div>
                 </div>
                 <div class="col s1" style="padding-left: 0;">
-                  <a href="#" onclick="filtrosModal();"><span class="material-symbols-outlined text-black"
-                      style="font-size: 23px;margin-top: 5px;padding: 10px;background: linear-gradient(135deg, #7e8180, #7e8180);border-radius: 5px;color: #ffffff;margin-left: -16px;"><i class="material-icons">filter_list</i></span></a>
+                  <a href="#" onclick="filtrosModal();"><span class=" btn-Filtros-Clase material-symbols-outlined text-black"><i class="material-icons">filter_list</i></span></a>
                 </div>                
               </div>
                <div >    
-                <label style="margin-left: 40px;">
+                <label style="margin-left: 40px; color:#fafafa;">
                       <input type="checkbox" id="sinExistencias" />
-                      <span class="label-existencias-busqueda";>Mostrar busqueda sin existencias </span>
+                      <span>Mostrar busqueda sin existencias </span>
                     </label>            
               </div>
             </div>
@@ -50,7 +50,7 @@ class MyHeader extends HTMLElement {
     <!--UBICACION-->
     <div class="row shop-bodegas">
       <a>
-        <div class="ubica-bodega col">
+        <div class="col location">
           <div class="img">
             <img src="img/icon/location.svg?SDdd" alt="">
           </div>
@@ -69,7 +69,7 @@ class MyHeader extends HTMLElement {
       <div class="modal-content">
         <div class="modal-header">
           <div class="close-modal">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat green-text">
               <span class="text">CERRAR</span><span class="material-symbols-outlined right">close</span></a>
           </div>
         </div>
