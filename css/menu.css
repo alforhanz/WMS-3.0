@@ -183,6 +183,14 @@
   width: 23px;
   color: rgb(255 255 255);
 }
+.sidenav li.collection-item:hover,
+.sidenav .collapsible-header:hover {
+  border: 1px solid #6c757d;  
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;  
+}
+
 .btn-large i {
   font-size: 1rem;
 }
