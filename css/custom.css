@@ -15,13 +15,11 @@
    font-family: Arial, Helvetica, sans-serif;
   font-weight: 700;
   font-size: 2em;
-  text-transform: uppercase;
-} *
+  /*text-transform: uppercase;*/
+}
+
 .la_date {
   font-size: 1.313rem !important;
-} */
-main {
-  padding-top: 200px;
 } 
  .margen-25 {
   margin-bottom: 25px;
@@ -35,7 +33,7 @@ main {
   margin-left: 10% !important;
   max-width: 350px;
 }
-#tblfactura,
+/* #tblfactura,
 #tblcotizacion,
 #tblarticulocliente {
   width: 100%;
@@ -43,8 +41,8 @@ main {
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
-}
-#tblfactura tbody:nth-child(odd),
+} */
+/* #tblfactura tbody:nth-child(odd),
 #tblcotizacion tbody:nth-child(odd),
 #tblarticulocliente tbody:nth-child(odd) {
   background: #ffffff !important;
@@ -73,7 +71,7 @@ main {
   border-radius: 5px;
   height: 45px;
   line-height: 45px;
-}
+} */
 .input_expand {
   width: 100% !important;
   height: 40px !important;
@@ -294,11 +292,11 @@ nav a.sidenav-trigger {
   margin: 0;
   font-size: 17px;
   font-weight: normal;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
 }
 #bodega_sucursales .modal-content .sucursal a {
   background-color: #535162 !important;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   border: solid 1px #adadabe0 !important;
   color: #ffffff;
   font-weight: normal !important;
@@ -451,7 +449,7 @@ li.active .collapsible-header .material-icons.iconcollapse {
 #collap-version .collapsible-header.active i,
 #collap-rin .collapsible-header.active i {
   -ms-transform: rotate(0deg);
-  /* IE 9 */
+
   -webkit-transform: rotate(0deg);
   /* Chrome, Safari, Opera */
   transform: rotate(0deg);
@@ -556,7 +554,7 @@ table.striped > tbody > tr:nth-child(odd) {
 .contenedor_ventasmesactual h6 {
   padding: 10px 0;
   font-weight: bold;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
 }
 #total_ventas_dia {
   font-weight: bold;
@@ -566,9 +564,7 @@ table.striped > tbody > tr:nth-child(odd) {
 }
 /* Medium only */
 @media screen and (min-width: 40em) and (max-width: 63.9375em) {
-  main {
-    padding-top: 200px;
-  }
+ 
 }
 
 .app-technology {
@@ -757,7 +753,7 @@ th {
       font-family: Arial, Helvetica, sans-serif;
     font-weight: 700;
     font-size: 3em;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
 }
 }
 /* Large only */
@@ -774,7 +770,7 @@ th {
       font-family: Arial, Helvetica, sans-serif;
     font-weight: 700;
     font-size: 3em;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
 }
 
 /* #switchLecturaContainer{

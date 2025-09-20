@@ -32,8 +32,8 @@
 
 /* TAMAÑO DE FUENTE SECCIONES X USUARIO */
 .sidenav .collapsible {
-  margin: 0 0 0 21px;
-  font-size: 14px !important;
+  margin: 0 0 0 0;
+  font-size: 12px !important;
 }
 
 .sidenav #submenu li > a.btn-floating {
@@ -53,7 +53,11 @@
 .sidenav.fixed .collapsible-body li a {
   padding: 0;
 }
-
+.sidenav .collapsible-body #submenu {
+    border-left: 1px solid #425668;
+    margin-left: 0px;
+    padding-left: 10px;
+}
 #mobile-demo.collection .collection-item {
   padding-left: 0px;
 }
@@ -70,13 +74,13 @@
   -webkit-transition: 0.25s;
   transition: 0.25s;
   color: #000000;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   font-weight: 600;
-  font-size: 14px !important;
+  font-size: 12px !important;
 }
 
 #mobile-demo .collection a > i.material-icons {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -137,7 +141,7 @@
   text-align: center;
   font-size: 16px;
   background-color: #28a745;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-weight: 700;
   /*font-weight: bold;*/
 }
@@ -277,7 +281,7 @@ nav i.material-icons {
   height: 46px;
   line-height: 40px;
   padding: 0 30px;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
 }
@@ -310,13 +314,13 @@ table {
 
 .collection a.collection-item {
   display: block;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   margin: 0 0 4px 0;
   -webkit-transition: 0.25s;
   transition: 0.25s;
   color: #000000;
   background-color: #bdbdbd;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-weight: 700;
   font-size: 14px;
 }

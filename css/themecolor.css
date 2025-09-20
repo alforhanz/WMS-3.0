@@ -1,7 +1,6 @@
 :root {
-  --color-primary: #000; /* Color principal predeterminado (rojo) */
+  --color-primary: #000; 
 }
-
 
 .themeColor{
   background-color:#28a745 !important;
