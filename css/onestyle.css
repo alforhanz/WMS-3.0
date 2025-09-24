@@ -1435,12 +1435,13 @@
 }
 
 .collapsible-body {
+	-webkit-box-sizing: border-box
 	border-bottom: 1px solid #ddd;
 	box-sizing: border-box;
 	display: none;
 	font-size: 14px !important;
 	padding: 0;
-	-webkit-box-sizing: border-box
+	
 }
 
 .color-dash {

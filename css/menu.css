@@ -32,8 +32,8 @@
 
 /* TAMAÑO DE FUENTE SECCIONES X USUARIO */
 .sidenav .collapsible {
-  margin: 0 0 0 0;
-  font-size: 12px !important;
+    margin: 0px 16px 0px -20px;
+    font-size: 11px !important;
 }
 
 .sidenav #submenu li > a.btn-floating {

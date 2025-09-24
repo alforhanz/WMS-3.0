@@ -205,15 +205,14 @@ svg[atributos] {
   width: 24;
 }
 .btn {
-  width: 100%;
-  height: 45px;
-  background-color: #28a745;
-  /* background-color: #28a745; */
-}
-.btn:hover{
-  background-color: #7e8180 !important;
-  /* background-color: #1f8136 !important; */
-}
+    width: 100%;
+    height: 45px;
+    background-color: #28a745;
+    border-radius: 15px;
+  }
+  .btn:hover {
+    background-color: #7e8180 !important;
+  }
 #btn2 {
   width: 42%;
   margin-left: 186px;
@@ -1538,7 +1537,7 @@ th {
 #submenu {
     
     background-color: #2a3f54;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 #tblcontenedores {
@@ -2301,9 +2300,11 @@ font-size: 20px !important;
   padding: 0 10px;
 }
 #totalregistros {
-  padding-bottom: 8px;
-  font-weight: bold;
-  margin-left: 377px;
+    padding-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 476px;
+    margin-top: 17px;
 }
 #totalregistros,
 #vistabusqueda {
@@ -2412,4 +2413,60 @@ font-size: 20px !important;
 }
 .row {   
     margin-bottom: 20px;
+}
+/* .validate{
+  margin-left: 27px!important;
+  width: 50%!important;
+} */
+/*css del modal de las bodegas que se despliega en el header*/
+#bodega_sucursales {
+  height: 100%;
+  top: 20px !important;
+  left: 10px !important;
+  max-height: 100% !important;
+  margin-left: 0px !important;
+}
+#bodega_sucursales .modal-content {
+  padding: 24px !important;
+}
+.header-sucursal {
+  background: #2a3f54;
+  color: #fff;
+  padding: 5px;
+  margin: 0;
+  font-size: 17px;
+  font-weight: normal;
+
+}
+
+#bodega_sucursales .modal-content .sucursal a {
+  background-color: #535162 !important;
+
+  border: solid 1px #adadabe0 !important;
+  color: #ffffff;
+  font-weight: normal !important;
+  border-radius: 15px;
+}
+#bodega_sucursales .sucursal {
+  border: solid 1px #ddd;
+  margin-top: 10px;
+}
+#bodega_sucursales .description-sucursal {
+  padding: 10px;
+}
+#bodega_sucursales strong {
+  font-weight: bold;
+}
+#bodega_sucursales .modal-header {
+  position: relative;
+}
+#bodega_sucursales .modal-header a {
+  width: 120px;
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-weight: bold;
+}
+#bodega_sucursales .modal-header a .material-symbols-outlined {
+  margin-top: 5px;
 }

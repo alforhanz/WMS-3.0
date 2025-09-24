@@ -98,6 +98,14 @@
   color: #fff !important;
   text-shadow: 0 0 #000 !important;
 }
+
+.btn-resultados-busca-articulos {
+    width: 100%!important;
+    height: 45px!important;
+    background: #535162 !important;
+    border-radius: 15px;
+}
+
 .ui-btn span {
   text-align: left !important;
 }

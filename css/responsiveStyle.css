@@ -1,13 +1,6 @@
 /* Estilos responsivos para tamaños de pantalla - Small, Medium, Large */
 /* Reglas base (aplicadas siempre, fuera de media queries) */
-.btn {
-    width: 100%;
-    height: 45px;
-    background-color: #28a745;
-  }
-  .btn:hover {
-    background-color: #7e8180 !important;
-  }
+
   /* Small only (max-width: 39.9375em = 639px) */
   @media screen and (max-width: 39.9375em) {
     body{
@@ -282,7 +275,7 @@
   } */
     .sidenav {
       background-color: #2a3f54 !important;
-      width: 20%;
+      width: 16%;
     }
 
     #tblDetallestrasladosVerif th,
@@ -414,17 +407,7 @@
       background-color: #a9a4a4;
       box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
       transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease, transform 0.1s ease;
-    }
-    /* .switch label input[type="checkbox"]:checked + .lever:after {
-      background-color: #7e8180;
-      left: 0px;
-    }
-    .switch label input[type="checkbox"]:checked + .lever {
-      background-color: #28a745;
-    }
-    .switch label .lever:before {
-      background-color: rgba(14, 230, 61, 0);
-    } */
+    } 
     .input-field > label {
       font-size: 1.2rem;
     }
@@ -457,15 +440,41 @@
   .grid-container {
     grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
   }
-    /* .sidenav li {
-          float: none;
-          line-height: 28px;
-      }
+    .btn {
+    width: 23%;
+    height: 45px;
+    background-color: #28a745;
+    border-radius: 15px;
+}
+    .ui-btn {
+      font-size: 16px !important;
+      font-weight: normal !important;
+      margin: 0.5em 0;
+      padding: 0.7em 1em;
+      display: block;
+      position: relative;
+      text-align: center;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      cursor: pointer;
+      /* user-select: none; */
+      text-decoration: none !important;
+    }
+  #bodega_sucursales{
+    width: 20%;
+    left: 462px !important;
+  }
 
-   #submenu {
-          background-color: #2a3f54;
-          font-size: 10px;
-    } */
+  .sub-header {
+    font-weight: bold;
+    text-align: center;
+    padding-top: 10px;
+    margin: 15px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: 3em; 
+}
 
 }
   
@@ -480,7 +489,25 @@
     .grid-container {
       grid-template-columns: repeat(4, minmax(0, 1fr)); /* 2 columnas */
     }
-
+    .btn {
+    width: 23%;
+    height: 45px;
+    background-color: #28a745;
+    border-radius: 15px;
+    }
+  #bodega_sucursales{
+    width: 20%;
+    left: 462px !important;
+  }
+  .sub-header {
+    font-weight: bold;
+    text-align: center;
+    padding-top: 10px;
+    margin: 15px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: 3em;    
+}
   }
   
   /* Reglas adicionales que no encajan exactamente en los rangos solicitados */
@@ -697,7 +724,7 @@
       border-color: #ddd !important;
     }
     .ui-btn {
-      font-size: 16px !important;
+      font-size: 12px !important;
       font-weight: normal !important;
       margin: 0.5em 0;
       padding: 0.7em 1em;

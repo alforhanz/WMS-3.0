@@ -639,13 +639,13 @@ htm += `<div class="row" id="totalregistros">
         
         <div class="row" id="vistabusqueda">
           <div class="col s6">
-            <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaLista();">
+            <a class="btn btn-resultados-busca-articulos browser-default" href="javascript:void(0);" onclick="cambiarVistaLista();">
               <i class="material-icons right">list</i>
               VISTA
             </a>
           </div>
           <div class="col s6">
-            <a style="background: #535162 !important;"class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
+            <a class="btn btn-resultados-busca-articulos browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
               <i class="material-icons right">filter_list</i>
               FILTRAR
             </a>
@@ -1843,12 +1843,12 @@ function cambiarVistaLista() {
           </div>
           <div class="row">
             <div class="col s6">
-                <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico();">
+                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico();">
               <i class="material-icons right">apps</i>
               VISTA </a>
             </div>
             <div class="col s6">
-              <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
+              <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
               <i class="material-icons right">filter_list</i>
               FILTRAR </a>
             </div>
@@ -1857,10 +1857,10 @@ function cambiarVistaLista() {
   htm += `<table class="striped centered" style="margin-top:5%;">
   <thead style="background:#28a745;color:white;">
     <tr>
-      <th style="width:30%;">CODIGO</th>
-      <th style="width:30%;">CODIGO DE BARRAS</th>
-      <th style="width:10%;">EN ${bodegaCod}</th>
-      <th style="width:30%;">ACTION</th>
+      <th style="width:30%;">Código</th>
+      <th style="width:30%;">Código<br>de Barras</th>
+      <th style="width:10%;">En ${bodegaCod}</th>
+      <th style="width:30%;">Opc.</th>
     </tr>
   </thead>
   <tbody>`;
@@ -1937,12 +1937,12 @@ function resultadosVistaLista(desde, hasta) {
           </div>
           <div class="row">
             <div class="col s6">
-                <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico(${desde},${hasta});">
+                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico(${desde},${hasta});">
               <i class="material-icons right">apps</i>
               VISTA </a>
             </div>
             <div class="col s6">
-              <a class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
+              <a class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
               <i class="material-icons right">filter_list</i>
               FILTRAR </a>
             </div>
@@ -2595,13 +2595,13 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
             </div>            
             <div class="row" id="vistabusqueda">
               <div class="col s6">
-                <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaListaEnBodega();">
+                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaListaEnBodega();">
                   <i class="material-icons right">list</i>
                   VISTA
                 </a>
               </div>
               <div class="col s6">
-                <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
+                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
                   <i class="material-icons right">filter_list</i>
                   FILTRAR
                 </a>
@@ -2763,13 +2763,13 @@ function cambiarVistaListaEnBodega() {
           </div>
           <div class="row">
             <div class="col s6">
-              <a style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaicoEnBodega();">
+              <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaicoEnBodega();">
                 <i class="material-icons right">apps</i>
                 VISTA
               </a>
             </div>
             <div class="col s6">
-              <a  style="background: #535162 !important;" class="btn browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
+              <a  style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
                 <i class="material-icons right">filter_list</i>
                 FILTRAR
               </a>
@@ -2779,10 +2779,10 @@ function cambiarVistaListaEnBodega() {
   htm += `<table class="striped centered" style="margin-top:5%;">
   <thead style="background:#28a745;color:white;">
     <tr>
-      <th style="width:30%;">CODIGO</th>
-      <th style="width:30%;">CODIGO DE BARRAS</th>
-      <th style="width:10%;">EN ${bodegaCod}</th>
-      <th style="width:30%;">ACTION</th>
+      <th style="width:30%;">Código</th>
+      <th style="width:30%;">Código <br> de Barras</th>
+      <th style="width:10%;">En ${bodegaCod}</th>
+      <th style="width:30%;">Opc.</th>
     </tr>
   </thead>
   <tbody id="tablaBodyEnBodega">`;
