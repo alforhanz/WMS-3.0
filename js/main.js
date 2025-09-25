@@ -216,13 +216,13 @@ function filtrosModal() {
           </div>`;
     htm += `<div class="row">
           <div class="col s6">
-            <a onclick="preBusqueda();" class="btn ">
+            <a onclick="preBusqueda();" class="btn  btn-filtros-result ">
               <i class="material-icons left">check</i>
               Aceptar
             </a>
           </div>
           <div class="col s6">
-            <a onclick="LimpiarFiltroPre();" class="btn">
+            <a onclick="LimpiarFiltroPre();" class="btn btn-filtros-result ">
               <i class="material-icons left">update</i>
               Limpiar
             </a>
@@ -966,13 +966,13 @@ function FiltrarModal(IDCategoria, seccion) {
   }
   htm += `<div class="row">
           <div class="col s6">
-            <a onclick="Filtrar(${IDCategoria},${seccion});" class="btn waves-light green darken-4 expand-car">
+            <a onclick="Filtrar(${IDCategoria},${seccion});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
               <i class="material-icons left">filter_list</i>
               Aceptar
             </a>
           </div>
           <div class="col s6">
-            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn waves-light green darken-4 expand-car">
+            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
               <i class="material-icons left">update</i>
               Limpiar
             </a>
@@ -3125,13 +3125,13 @@ function FiltrarModalEnBodega(IDCategoria, seccion) {
   }
   htm += `<div class="row">
           <div class="col s6">
-            <a onclick="FiltrarEnBodega(${IDCategoria},${seccion});" class="btn waves-light green darken-4 expand-car">
+            <a onclick="FiltrarEnBodega(${IDCategoria},${seccion});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
               <i class="material-icons left">filter_list</i>
               Aceptar
             </a>
           </div>
           <div class="col s6">
-            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn waves-light green darken-4 expand-car">
+            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
               <i class="material-icons left">update</i>
               Limpiar
             </a>

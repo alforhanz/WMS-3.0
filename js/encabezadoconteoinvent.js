@@ -12,27 +12,27 @@ class MyHeader extends HTMLElement {
           </div>
           <div class="s8 col center-align">
             <a href="home.html" class="brand-logo"></a>
-             <h2 style="text-align:center ; text-transform: uppercase; margin-left:2em; font-size: 25px;"><b>Conteo de Inventario</b></h2>
+             <h2 style="text-align:center ; text-transform: uppercase; margin-left:2em; font-size: 20px;"><b>Conteo de Inventario</b></h2>
           </div>
         </div>
       </nav>   
   
-      <!--UBICACION-->
-      <div class="row shop-bodegas">
-        <a>
-          <div class="col s2">
-            <div class="img">
-              <img src="img/icon/location.svg?SDdd" alt="">
-            </div>
+    <!--UBICACION-->
+    <div class="row shop-bodegas">
+      <a>
+        <div class="col location">
+          <div class="img">
+            <img src="img/icon/location.svg?SDdd" alt="">
           </div>
-          <div class="col s9">
-            <h6 id="bodega-sucursal">Seleccionar Sucursal</h6>
-          </div>
-        </a>
-        <input type="hidden" id="bodega" />
-        <input type="hidden" id="txtCategoria" />
-      </div>
-      <!--UBICACION-->
+        </div>
+        <div class="col s9">
+          <h6 id="bodega-sucursal">Seleccionar Sucursal</h6>
+        </div>
+      </a>
+      <input type="hidden" id="bodega" />
+      <input type="hidden" id="txtCategoria" />
+    </div>
+    <!--UBICACION-->
   
       <!--  MODAL DE LAS BODEGAS  -->
       <div id="bodega_sucursales" class="modal">

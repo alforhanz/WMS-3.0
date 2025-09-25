@@ -12,6 +12,7 @@ body{
   overflow-x: hidden;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 12px;
+  background-color: #F7F7F7;
 }
 main {
   position: relative;
@@ -209,6 +210,7 @@ svg[atributos] {
     height: 45px;
     background-color: #28a745;
     border-radius: 15px;
+    text-transform: capitalize!important;
   }
   .btn:hover {
     background-color: #7e8180 !important;
@@ -1542,7 +1544,7 @@ th {
 
 #tblcontenedores {
   width: 100%;
-  font-size: 12px;
+  font-size: 11px;
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
@@ -1770,7 +1772,7 @@ th {
 
 /* Estilos para los botones de descarga */
 .btn-container-conteo {
-  display: flex;
+  /* display: flex; */
   justify-content: flex-start;
   align-items: center;
   gap: 15px; /* Espaciado entre los botones */
@@ -2469,4 +2471,7 @@ font-size: 20px !important;
 }
 #bodega_sucursales .modal-header a .material-symbols-outlined {
   margin-top: 5px;
+}
+.btn-filtros-result{
+  width: 100%!important;
 }
