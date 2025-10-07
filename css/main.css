@@ -2475,3 +2475,46 @@ font-size: 20px !important;
 .btn-filtros-result{
   width: 100%!important;
 }
+/*/////////////////REGLAS DEL BOTON FLOTANTE RESULTADO BUSQUEDA DE ARTICULOS////////////////*/
+/*******************************************************************************************/
+.fixed-action-btn {
+    position: relative!important;
+    right: 0px;
+    bottom: 0px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    z-index: 997;
+}
+.btn-floating.btn-large {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+}
+.btn-floating i {
+    width: inherit;
+    display: inline-grid!important;
+    text-align: center;
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 40px;
+}
+
+.fixed-action-btn ul {
+    left: 0;
+    right: 0;
+    text-align: center;
+    position: fixed!important;
+    bottom: 64px;
+    margin: 0;
+    visibility: hidden;
+}
+
+.fixed-action-btn.direction-left ul, .fixed-action-btn.direction-right ul {  
+    text-align: left;
+    right: 100px;
+    top: 68%;
+    transform: translateY(-50%);
+    height: 100%;  
+    width: 500px;
+}
+

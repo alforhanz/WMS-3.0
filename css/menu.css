@@ -165,11 +165,6 @@
 }
 
 /***MENU****/
-.btn-floating.btn-large {
-  width: 22px;
-  height: 23px;
-  padding: 0;
-}
 .sidenav li > a.btn-floating {
   margin: -6px 234px;
   margin-top: -25px;

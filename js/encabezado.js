@@ -47,7 +47,7 @@ class MyHeader extends HTMLElement {
             </div>
             <!--FIN BUSCADOR-->
 
-    <!--UBICACION-->
+       <!--UBICACION-->
     <div class="row shop-bodegas">
       <a>
         <div class="col location">
