@@ -1,6 +1,10 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario);  
+
 //console.log("DOM cargado");
 fechasDeInventario();
 
@@ -301,7 +305,8 @@ async function resumen() {
 
     try {
         const pSistema = 'WMS';
-        const pUsuario = localStorage.getItem('username');
+        const pUsuario = document.getElementById('hUsuario').value;
+        // // localStorage.getItem('username');
         const pOpcion = 'D';
         const pBodega = document.getElementById('bodega').value;
         const pFecha = document.getElementById('fecha_ini').value;
@@ -544,7 +549,8 @@ async function resumenGeneral() {
 
     try {
         const pSistema = 'WMS';
-        const pUsuario = localStorage.getItem('username');
+        const pUsuario = document.getElementById('hUsuario').value;
+        //// localStorage.getItem('username');
         const pOpcion = 'R';
         const pBodega = document.getElementById('bodega').value;
         const pFecha = document.getElementById('fecha_ini').value;
@@ -858,7 +864,8 @@ function guardaParcialMenteLectura() {
         return;
     }
 
-    const pUsuario = localStorage.getItem('username');
+    const pUsuario =document.getElementById('hUsuario').value;
+    // // localStorage.getItem('username');
     const pBodega = document.getElementById('bodega').value;
     const pEstado = 'G';
     const pFecha = document.getElementById('fecha_ini').value;
@@ -953,7 +960,8 @@ function finalizaConteoInventario() {
     console.log('Total de registros: ');
     console.log(dataArray.length);
 
-    const pUsuario = localStorage.getItem('username');
+    const pUsuario = document.getElementById('hUsuario').value;
+    //// localStorage.getItem('username');
     const pBodega = document.getElementById('bodega').value;
     const pEstado = 'P';
     const pFecha = document.getElementById('fecha_ini').value;
@@ -1097,7 +1105,8 @@ function fechasDeInventario() {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function eliminarFilaResumen(icon) {
-    let usuario = localStorage.getItem('username');
+    let usuario = document.getElementById('hUsuario').value;
+    //// localStorage.getItem('username');
     let bodega = document.getElementById('bodega').value;
     let fechaSelect = document.getElementById('fecha_ini').value;
     let row = icon.closest('tr'); // Obtiene la fila más cercana

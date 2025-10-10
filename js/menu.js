@@ -18,6 +18,7 @@ let menuEnlaces = [
   { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: ""},//CONSULTAS
     { MODULO: 12, SUBMODULO: 1, ICON: "", LINK: "verificacionDeOrdenesDeCompraProcesadas.html"}, 
     { MODULO: 12, SUBMODULO: 2, ICON: "", LINK: "detalleTrasladoVerificados.html"},  
+      { MODULO: 12, SUBMODULO: 3, ICON: "", LINK: "paqueteDeContenedoresVerificados.html"}, 
 
   { MODULO: 13, SUBMODULO: 0, ICON: "rocket", LINK: ""},//Operacion
    { MODULO: 13, SUBMODULO: 1, ICON: "", LINK: "ingresaCodigoBarra.html"},//ingresa cod barras

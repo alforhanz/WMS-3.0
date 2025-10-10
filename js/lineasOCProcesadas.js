@@ -2,6 +2,11 @@
 var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {
+    
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario);   
+
 cargarBodegas();
   //--------------------------------------------------------------------------
 if (localStorage.getItem("OrdenDeCompra")) {
@@ -9,7 +14,7 @@ if (localStorage.getItem("OrdenDeCompra")) {
     // let pBodega = localStorage.getItem("bodegaOC");  
     // let pBodega = document.getElementById("bodega-sucursal").value;  
     let pBodega = document.getElementById("bodega").value;
-    let pUsuario=localStorage.getItem("username");
+    let pUsuario=document.getElementById('hUsuario').value;//localStorage.getItem("username");
     //---------------------------------------------------------------------------
     cargarDetalleOrdenDeCompra(OrdenDeCompra,pBodega,pUsuario);
     //localStorage.removeItem("dataArray");//borra los elementos leidos del localstorage.    

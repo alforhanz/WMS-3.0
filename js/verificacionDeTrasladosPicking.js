@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Código que se ejecuta cuando el DOM se haya cargado
   console.log('El DOM se ha cargado completamente.');
+
+  let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario);  
   
   // Inicializar datepicker de Materialize
   var elems = document.querySelectorAll('.datepicker');

@@ -2517,4 +2517,6 @@ font-size: 20px !important;
     height: 100%;  
     width: 500px;
 }
-
+.tabs {
+    background-color:#f7f7f7; 
+}

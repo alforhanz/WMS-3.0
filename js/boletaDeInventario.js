@@ -4,6 +4,9 @@ let totalPaginas = 1; // Total de páginas
 let datosResumen = [];  // Definir la variable global para almacenar los datos del resumen
 
 document.addEventListener("DOMContentLoaded", function () {
+    let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
   fechasDeInventario();
   //limpiarTabla();
   //console.log("DOM cargado completamente ...");
@@ -72,7 +75,7 @@ function fechasDeInventario() {
 async function presentarBoleta(){
 
     let pSistema = 'WMS';
-    let pUsuario = localStorage.getItem('username');
+    let pUsuario = document.getElementById('hUsuario').value;// localStorage.getItem('username')
     let TipoConsulta = 'D';    
     let FechaProceso = document.getElementById('fecha_ini').value;
     let Bodega = document.getElementById('bodega').value;  
@@ -124,7 +127,7 @@ async function presentarBoleta(){
 /////////////////////////////////////////////////////////////////////////////////
 async function validarBoleta() {
     let pSistema = 'WMS';
-    let pUsuario = localStorage.getItem('username');
+    let pUsuario = document.getElementById('hUsuario').value;// localStorage.getItem('username')
     let TipoConsulta = 'R';    
     let FechaProceso = document.getElementById('fecha_ini').value;
     let Bodega = document.getElementById('bodega').value;  
@@ -228,7 +231,7 @@ function agregarColumnaValidated() {
 async function actualizaCostos(){
 
     let pSistema = 'WMS';
-    let pUsuario = localStorage.getItem('username');
+    let pUsuario = document.getElementById('hUsuario').value;// localStorage.getItem('username')
     let pOrigen = 'S';      
     
     const params = new URLSearchParams({
@@ -276,7 +279,7 @@ async function crearBoleta(){
     //     confirmButtonColor: "#28a745",
     //   });
     let pSistema = 'WMS';
-    let pUsuario = localStorage.getItem('username');
+    let pUsuario = document.getElementById('hUsuario').value;// localStorage.getItem('username')
     let pOrigen = 'I';    
     let FechaProceso = document.getElementById('fecha_ini').value;
     let Bodega = document.getElementById('bodega').value;  

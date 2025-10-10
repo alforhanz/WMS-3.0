@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
-
   <!--Import Materialize Icons-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet"
@@ -16,22 +14,19 @@
   <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
   <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
   <!-- FONTS -->
-  <style>
-    /* @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap'); */
+  <style>  
     @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-  </style>
-  <!-- FONTS -->
+  </style>  
   <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/encabezado.js" type="text/javascript"></script>
 
-  <title>Verificador de Contenedores - WMS</title>
+  <title>Paquetes de Contenedores Verificados - WMS</title>
 </head>
 
 <body id="home" tabindex="-1">
@@ -41,7 +36,7 @@
   <main>
     <div id="contenedorLoader"></div>
     <div id="resultadoBusqueda">
-      <h2 class="titulo-vista">Verificador de Contenedores</h2>
+      <h2 class="titulo-vista">Paquetes de Contenedores Verificados</h2>
       <div id="contenedorLoader"></div>
       <div id="carga" class="carga-style"></div>
       <div class="container">
@@ -68,16 +63,13 @@
           </div>
         </div>
         <!-- BODEGA DE DESTINO -->
-        <label id="lbl_bodega_destino" for="bodegaSelectOC">Cambiar bodega de destino</label>
-        <!-- <div class="row" style="display: flex; align-items: center;"> -->
+        <label id="lbl_bodega_destino" for="bodegaSelectOC">Cambiar bodega de destino</label>       
         <div class=" bodega-destino-container row">
           <div class="col-md-6">
             <select id="bodegaSelectOC" class="browser-default">
               <option value="" disabled selected>Seleccione una bodega</option>
             </select>
           </div><br>
-
-
           <!-- Boton Buscar Contenedores -->
           <div class="row col-md-12 S12">
             <button id="verifica-contenedores" class="btn waves-effect waves-light" type="submit"
@@ -85,7 +77,6 @@
               <i class="material-icons right">send</i>
             </button>
           </div>
-
           <div class="row">
             <ul id="tabs-swipe-demo" class="tabs">
               <li class="tab col s3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a>
@@ -149,20 +140,21 @@
                 </table>
                 <div id="resultadoPaginador"></div>
               </div>
-
-                <!--Text area para los mensajes-->
-              <div id="mensajes" class="container">
-                <div class="centered col s12">
-                  <label for="mensajeText" ></label>
-                  <textarea id="mensajeText"></textarea>
-                </div>
-              </div>
             </div>
-           
-
           </div>
           <!-- Cierre de tabla de resultados -->
-       
+          <!--Text area para los mensajes-->
+        <div id="mensajes" class="container">
+            <div class="centered col s12">
+                <textarea id="mensajeText" title="Escribe tu mensaje" placeholder="Escribe tu mensaje aquí..."></textarea>
+            </div>
+        </div>
+
+          <!-- <div id="mensajes" class="container">
+            <div class="centered col s12">
+              <textarea id="mensajeText"></textarea>
+            </div>
+          </div> -->
 
         </div>
       </div>

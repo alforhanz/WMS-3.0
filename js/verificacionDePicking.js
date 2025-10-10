@@ -9,6 +9,9 @@ const checkbox = document.getElementById('toggleSwitch');
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM completamente cargado y parseado.");
 
+  let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
     const busqueda = localStorage.getItem('autoSearchPedidos');
     
     //revisar como toma el valor
@@ -75,7 +78,8 @@ function validarFormulario() {
     var pPedido = $('#pPedido').val();
     var pFechaHasta = $('#fecha_fin').val();
     var pFechaDesde = $('#fecha_ini').val();
-    var pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
+    var pUsuario = document.getElementById('hUsuario').value;
+    // document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
     let pOpcion = $('#toggleSwitch').prop('checked');
     
     if (pOpcion) {

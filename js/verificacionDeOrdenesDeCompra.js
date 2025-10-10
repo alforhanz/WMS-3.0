@@ -1,7 +1,10 @@
 
 
     document.addEventListener("DOMContentLoaded", function (){
-      
+      let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
+
       const busqueda = localStorage.getItem('autoSearchOrdenDeComprasList');
       localStorage.setItem('switchLecturaState', 'true');
       //revisar como toma el valor
@@ -80,7 +83,7 @@ function ValidaOrdenesDeCompra() {
     var pBodega = document.getElementById("bodega").value;
     var pOrden = $('#pOrden').val();
     let pOpcion = $('#toggleSwitch').prop('checked');
-    var pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
+    var pUsuario = document.getElementById('hUsuario').value;//document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
     let pFechaDesde =  document.getElementById('fecha_ini').value; 
     let pFechaHasta = document.getElementById('fecha_fin').value;
 

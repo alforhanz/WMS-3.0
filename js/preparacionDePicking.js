@@ -2,6 +2,10 @@
 var detallePedidoList = "";
 
 document.addEventListener("DOMContentLoaded", function () {
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
+
   //--------------------------------------------------------------------------
   if (localStorage.getItem("documento")) {
 
@@ -34,6 +38,7 @@ function cargarDetallePedido(documento, pedido, estado) {
       if (result.msg === "SUCCESS") {
         if (result.lineaspedido.length != 0) {
           detallePedidoList = result.lineaspedido;
+          console.log(detallePedidoList);
           armarTablaVerificacion(detallePedidoList);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detallePedidoList.some(
@@ -96,7 +101,12 @@ function validarCodigoBarras(input) {
   var codigoValido = false;
 
   for (var i = 0; i < pedidoList.length; i++) {
-    if ((pedidoList[i].ARTICULO && pedidoList[i].ARTICULO.toUpperCase() === codbarra) || (pedidoList[i].CODIGO_BARRA && pedidoList[i].CODIGO_BARRA.toUpperCase() === codbarra)) {
+      let codigosArrayArticulo = [];
+    if (pedidoList[i].codigos_barras) {
+      codigosArrayArticulo = pedidoList[i].codigos_barras.split("|").map((codigo) => codigo.toUpperCase());      
+    }
+
+    if ((pedidoList[i].ARTICULO && pedidoList[i].ARTICULO.toUpperCase() === codbarra) || (pedidoList[i].CODIGO_BARRA && pedidoList[i].CODIGO_BARRA.toUpperCase() === codbarra)|| codigosArrayArticulo.includes(codbarra)) {
       span.textContent = pedidoList[i].ARTICULO;
       cantFila.value = 1;
 
@@ -679,7 +689,8 @@ function confirmarGuardadoParcial() {
 //FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
   //var dataArray = JSON.parse(localStorage.getItem('dataArray'));
-  let pUsuario = localStorage.getItem('username');
+  let pUsuario = document.getElementById('hUsuario').value;
+  // localStorage.getItem('username');
   var pConsecutivoPed = localStorage.getItem('pedidoSelect');
   //var detalleCantidad = parseFloat(document.querySelector('#myTableVerificacion tbody tr:first-child td:nth-child(3)').innerText);
   var pBodega = document.getElementById('bodega').value;
@@ -782,7 +793,8 @@ function confirmaProcesar() {
 
 //FUNCION DE Procesar el pedido
 function procesar() {
-  let pUsuario = localStorage.getItem('username');
+  let pUsuario = document.getElementById('hUsuario').value;
+  // localStorage.getItem('username');
   var pConsecutivoPed = localStorage.getItem('pedidoSelect');
   var pBodega = document.getElementById('bodega').value;
   // Array para almacenar todas las cantidades y artículos

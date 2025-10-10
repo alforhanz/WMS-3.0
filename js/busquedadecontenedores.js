@@ -2,6 +2,9 @@
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function (){ 
   //console.log("DOM cargado...");
+     let usuario=document.getElementById('hUsuario').value;
+    console.log(usuario);
+  localStorage.setItem('UserID',usuario);
   const busqueda = localStorage.getItem('SearchParameterFlag');
   localStorage.setItem('switch_procesados', 'false');
   if (busqueda === "true") {
@@ -67,7 +70,8 @@ function validarBusquedaContenedor() {
 
   let switchContenedor = localStorage.getItem('contenedorSwitch');
   let pSistema = 'WMS';
-  let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML; 
+  // let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML; 
+  let pUsuario = document.getElementById('hUsuario').value;
   let pOpcion = switchContenedor === "false" ? "A" : "E";
   let pBodegaEnvia = document.getElementById("bodega").value;
   let pBodegaDestino=  document.getElementById("bodegaSelectOC").value;

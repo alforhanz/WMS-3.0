@@ -5,6 +5,9 @@ var detallePedidoList = "";
   /////////////////////////////////////////////////////////////////////
  /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
 
   //inicializarBotones();
   //--------------------------------------------------------------------------
@@ -39,6 +42,8 @@ function cargarDetallePedido(documento, pedido, estado) {
       if (result.msg === "SUCCESS") {
         if (result.lineaspedido.length != 0) {
           detallePedidoList = result.lineaspedido;
+           console.log("Lineas Pedido");
+            console.log(detallePedidoList);
           armarTablaVerificacion(detallePedidoList);       
           armarTablaLectura(detallePedidoList);
         }
@@ -131,7 +136,8 @@ function armarTablaLectura(detallePedidoList) {
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var pedidoList = detallePedidoList;
-
+   console.log("Lineas Pedido");
+  console.log(pedidoList);
   const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
 
   const row = input.closest('tr');
@@ -143,7 +149,12 @@ function validarCodigoBarras(input) {
   var codigoValido = false;
 
   for (var i = 0; i < pedidoList.length; i++) {
-    if ((pedidoList[i].ARTICULO && pedidoList[i].ARTICULO.toUpperCase() === codbarra) || (pedidoList[i].CODIGO_BARRA && pedidoList[i].CODIGO_BARRA.toUpperCase() === codbarra)) {
+     let codigosArrayArticulo = [];
+    if (pedidoList[i].codigos_barras) {
+      codigosArrayArticulo = pedidoList[i].codigos_barras.split("|").map((codigo) => codigo.toUpperCase());      
+    }
+
+    if ((pedidoList[i].ARTICULO && pedidoList[i].ARTICULO.toUpperCase() === codbarra) || (pedidoList[i].CODIGO_BARRA && pedidoList[i].CODIGO_BARRA.toUpperCase() === codbarra)|| codigosArrayArticulo.includes(codbarra)) {
       span.textContent = pedidoList[i].ARTICULO;
       cantFila.value = 1;
 
@@ -671,40 +682,31 @@ function confirmarGuardadoParcial() {
 //FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
   //var dataArray = JSON.parse(localStorage.getItem('dataArray'));
-  let pUsuario = localStorage.getItem("username");
+  let pUsuario = document.getElementById('hUsuario').value;
+  // localStorage.getItem("username");
   var pConsecutivoPed = localStorage.getItem("pedidoSelect");
-  //var detalleCantidad = parseFloat(document.querySelector('#myTableVerificacion tbody tr:first-child td:nth-child(3)').innerText);
   var pBodega = document.getElementById("bodega").value;
-
   // Array para almacenar todas las cantidades y artículos
   var detalles = [];
   localStorage.removeItem("mensajes");
   // Iterar sobre todas las filas de la tabla
-
   // Iterar sobre las filas de la tabla (excluyendo el encabezado)
 
       let table = document.getElementById("myTableVerificacion");
 
       for (let i = 1; i < table.rows.length; i++) {
         let row = table.rows[i];
-
         // Obtener el valor del artículo
         let articulo = row
           .querySelector("#verifica-articulo span")
           .textContent.trim();
-
         // Obtener la cantidad pedida
         let cantidadPedida = row
           .querySelector("#cantidadPedida")
           .textContent.trim();
-
         // Obtener la cantidad leída
         let cantidadLeida =
-          row.querySelector("#cantidadLeida").textContent.trim() || 0;
-
-        // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
-        //       cantidadLeida = 0;
-        //   }
+          row.querySelector("#cantidadLeida").textContent.trim() || 0;  
 
         // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
         var detalle = {
@@ -716,26 +718,6 @@ function guardaParcialMente() {
         // Agregar el objeto al array
         detalles.push(detalle);
       }
-  // $('#myTableVerificacion tbody tr').each(function () {
-  //   var articulo = $(this).find('td:first-child').text().trim();
-  //   var articulo = $(this).find('h5:first-child').text().trim();
-  //   var cantidad = parseFloat($(this).find('td:nth-child(3)').text());
-  //   var cantLeida = parseFloat($(this).find('td:nth-child(4)').text());
-
-  //   if (isNaN(cantLeida) || cantLeida == undefined || cantLeida == null || cantLeida == "") {
-  //     cantLeida = 0;
-  //     // cantLeida = "";
-  //   }
-  //   // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
-  //   var detalle = {
-  //     ARTICULO: articulo,
-  //     CANT_CONSEC: cantidad,
-  //     CANT_LEIDA: cantLeida
-  //   };
-
-  //   // Agregar el objeto al array
-  //   detalles.push(detalle);
-  // });
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = JSON.stringify(detalles);
 
@@ -810,7 +792,8 @@ function confirmaProcesar() {
  /////////////////////////////////////////////////////////////////////
 //FUNCION DE Procesar el pedido
 function procesar() {
-  let pUsuario = localStorage.getItem('username');
+  let pUsuario = document.getElementById('hUsuario').value;
+  // localStorage.getItem('username');
   var pConsecutivoPed = localStorage.getItem('pedidoSelect');
   var pBodega = document.getElementById('bodega').value;
   // Array para almacenar todas las cantidades y artículos

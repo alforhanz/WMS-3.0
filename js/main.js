@@ -12,14 +12,6 @@ var itemsToDelete_NoProm = "";
 var promoToDelete = "";
 let acumToDelete = JSON.parse(sessionStorage.getItem("itemsToDelete"));
 //-----------------------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('.fixed-action-btn');
-  var instances = M.FloatingActionButton.init(elems, {
-    direction: 'left',
-    hoverEnabled: false
-  });
-});
-
 document.addEventListener("DOMContentLoaded", function () {
   console.log('DOM cargado...')
    //--------------------------------------------------
@@ -36,10 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  
+
 });
-
-
-
 //-----------------------------------------------------------------------------------
 function validate_login() {
   const user = sessionStorage.getItem("user");
@@ -1876,44 +1868,19 @@ function cambiarVistaLista() {
   for (let i = desde; i < hasta; i++) {
     if (ArrayDataFiltrado[i]) {
       htm += `<tr>`;
+      //cambiar mostrar existencias
       htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${ArrayDataFiltrado[i].ARTICULO}</h5><h6 style="font-size: 10px; text-align: left;">${ArrayDataFiltrado[i].DESCRIPCION}</td>
               <td>${ArrayDataFiltrado[i].CODIGO_BARRAS_INVT ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT : ''}</td>
               <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
-                <td class="action-position display">
-                  <div class="fixed-action-btn">
-                    <a class="btn-floating btn-large waves-effect waves-light red ">
-                      <i class="material-icons">add</i>
-                    </a>
-                    <ul>
-                      <li><a class="btn-floating red"><i class="material-icons">visibility</i></a></li>
-                      <li><a class="btn-floating yellow darken-1"><i class="material-icons">forklift</i></a></li>
-                      <li><a class="btn-floating green"><i class="material-icons">info</i></a></li>
-                      <li><a class="btn-floating blue"><i class="material-icons">code</i></a></li>
-                    </ul>
-                  </div>
-                </td>`;
+              <td>
+                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}', '${ArrayDataFiltrado[i].DESCRIPCION}')">visibility</i>              
+                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}')" tabindex="1">                
+               <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+               <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+              </td>`;
       htm += `</tr>`;
     }
   }
-
-
-
-
-  // for (let i = desde; i < hasta; i++) {
-  //   if (ArrayDataFiltrado[i]) {
-  //     htm += `<tr>`;
-  //     htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${ArrayDataFiltrado[i].ARTICULO}</h5><h6 style="font-size: 10px; text-align: left;">${ArrayDataFiltrado[i].DESCRIPCION}</td>
-  //             <td>${ArrayDataFiltrado[i].CODIGO_BARRAS_INVT ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT : ''}</td>
-  //             <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
-  //             <td>
-  //               <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}', '${ArrayDataFiltrado[i].DESCRIPCION}')">visibility</i>              
-  //               <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}')" tabindex="1">                
-  //              <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-  //              <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-  //             </td>`;
-  //     htm += `</tr>`;
-  //   }
-  // }
 
   htm += `</tbody>
           </table>`;

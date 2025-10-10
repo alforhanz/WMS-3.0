@@ -3,9 +3,12 @@ var detalleLineasContenedoreses=[];
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function (){ 
+    let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+   //localStorage.setItem('UserID',usuario);
   cargarBodegas();
   console.log("Verificador de contenedores DOM cargado...");
-    //permisoCrearPaquete();  
+  //permisoCrearPaquete();  
 });
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -24,7 +27,8 @@ function validarBusquedaContenedor() {
   }
   else {
     let pSistema ="WMS";
-    let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;    
+    let pUsuario= document.getElementById('hUsuario').value;
+    // let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;    
     let pOpcion ="A";
     // let pBodegaEnvia = document.getElementById("bodega").value;
      let pBodegaEnvia = bodega;
@@ -208,43 +212,122 @@ function armarTablaLectura(detalleLineasContenedor) {
 }
 //////////     FUNCIONES PARA LA PESTAÑA LECTURA - VALIDA EL CODIGO LEIDO   ///////////////////////
 ///// Funcion que valida el codigo leido en el imput ////////////
+
+
 function validarCodigoBarras(input) {
-    const LineasContenedor = detalleLineasContenedoreses;
-    const codbarra = input.value.trim().toUpperCase();
-    const row = input.closest('tr');
-    const firstTd = row.querySelector('td:first-child');
-    const span = firstTd.querySelector('span');
-    const siguienteTd = row.querySelector('.codigo-barras-cell2');
-    const cantFila = siguienteTd.querySelector('.codigo-barras-input');
+  var LineasContenedor = detalleLineasContenedoreses;
 
-const codigoValido = LineasContenedor.some(item => {       
-        const articulo = item.Articulo ? item.Articulo.toUpperCase() : '';
-        const codigoBarra = item.Codigo_Barra ? item.Codigo_Barra.toUpperCase() : '';
-            if (articulo === codbarra || codigoBarra === codbarra) {
-                span.textContent = item.Articulo;
-                cantFila.value = 1;            
-                input.setAttribute('readonly', 'readonly');            
-                crearNuevaFila();
-                guardarTablaEnArray();
-                return true; 
-            }
-            return false;
-        });
+  const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
 
-    if (!codigoValido) {
-        const codigoBarrasCell = row.querySelector('.codigo-barras-cell');
-        const codigoBarrasInput = codigoBarrasCell.querySelector('.codigo-barras-input');
-        codigoBarrasInput.value = '';
+  const row = input.closest('tr');
+  const firstTd = row.querySelector('td:first-child');
+  const span = firstTd.querySelector('span');
+  const siguienteTd = row.querySelector('.codigo-barras-cell2');
+  const cantFila = siguienteTd.querySelector('.codigo-barras-input');
 
-        Swal.fire({
-            icon: 'warning',
-            title: '¡Código no válido!',
-            text: 'El código ingresado no coincide con ningún artículo del contenedor. Intente nuevamente.',
-            confirmButtonColor: '#28a745',
-        });
-    }
+  var codigoValido = false;
+
+  for (var i = 0; i < LineasContenedor.length; i++) {      
+    let codigosArrayArticulo = [];
+        if (LineasContenedor[i].codigos_barras) {
+        codigosArrayArticulo = LineasContenedor[i].codigos_barras.split("|").map((codigo) => codigo.toUpperCase());      
+        }
+
+
+      if ((LineasContenedor[i].Articulo && LineasContenedor[i].Articulo.toUpperCase() === codbarra) || (LineasContenedor[i].Codigo_Barra && LineasContenedor[i].Codigo_Barra.toUpperCase() === codbarra)|| codigosArrayArticulo.includes(codbarra)){
+               if(LineasContenedor[i].total_cedi > 0){
+                    span.textContent = LineasContenedor[i].Articulo;
+                    cantFila.value = 1;
+                    // Bloquear la celda del código de barras
+                    input.setAttribute('readonly', 'readonly');
+                    // Aquí se genera una fila nueva vacía
+                    crearNuevaFila();
+                    // Llamar función que guarda artículos en la tabla
+                    guardarTablaEnArray();          
+                    codigoValido = true;
+                    break;
+               }else{                 
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '¡Articulo sin Existencias!',
+                            text: 'La referencia '+LineasContenedor[i].Articulo+' no cuenta con existencias',
+                            confirmButtonColor: '#28a745',
+                        });
+                          codigoValido = true;
+                                const codigoBarrasCell = row.querySelector('.codigo-barras-cell');
+                                const codigoBarrasInput = codigoBarrasCell.querySelector('.codigo-barras-input');
+                                codigoBarrasInput.value = '';
+                         break;
+               }
+      }
+  }
+
+  if (!codigoValido) {
+      // Borrar el contenido de la celda COD
+      const codigoBarrasCell = row.querySelector('.codigo-barras-cell');
+      const codigoBarrasInput = codigoBarrasCell.querySelector('.codigo-barras-input');
+      codigoBarrasInput.value = '';
+
+      Swal.fire({
+          icon: 'warning',
+          title: '¡Código no válido!',
+          text: 'El código ingresado no coincide con ningún artículo del pedido. Intente nuevamente.',
+          confirmButtonColor: '#28a745',
+      });
+  }
 }
-///////////////   Funcion que crea la nueva fila en la pestaña lectura ////////////////
+
+
+// function validarCodigoBarras(input) {
+//     const LineasContenedor = detalleLineasContenedoreses;
+//     const codbarra = input.value.trim().toUpperCase();
+//     const row = input.closest('tr');
+//     const firstTd = row.querySelector('td:first-child');
+//     const span = firstTd.querySelector('span');
+//     const siguienteTd = row.querySelector('.codigo-barras-cell2');
+//     const cantFila = siguienteTd.querySelector('.codigo-barras-input');
+
+// const codigoValido = LineasContenedor.some(item => {       
+//         const articulo = item.Articulo ? item.Articulo.toUpperCase() : '';
+//         const codigosBarras = item.Codigo_Barra ? item.Codigo_Barra.toUpperCase() : '';
+//         // const codigosBarra= item.codigos_barras ? item.codigos_barras.toUpperCase() : '';
+
+//             let codigosArrayArticulo = [];
+//                     if (LineasContenedor[i].codigos_barras) {
+//                     codigosArrayArticulo = LineasContenedor[i].codigos_barras.split("|").map((codigo) => codigo.toUpperCase());      
+//                     }
+
+//             if (articulo === codbarra || codigoBarra === codbarra || codigosArrayArticulo.includes(codbarra)) {
+//                 span.textContent = item.Articulo;
+//                 cantFila.value = 1;            
+//                 input.setAttribute('readonly', 'readonly');            
+//                 crearNuevaFila();
+//                 guardarTablaEnArray();
+//                 return true; 
+//             }
+//             return false;
+//         });
+
+//     if (!codigoValido) {
+//         const codigoBarrasCell = row.querySelector('.codigo-barras-cell');
+//         const codigoBarrasInput = codigoBarrasCell.querySelector('.codigo-barras-input');
+//         codigoBarrasInput.value = '';
+
+//         Swal.fire({
+//             icon: 'warning',
+//             title: '¡Código no válido!',
+//             text: 'El código ingresado no coincide con ningún artículo del contenedor. Intente nuevamente.',
+//             confirmButtonColor: '#28a745',
+//         });
+//     }
+// }
+
+
+
+
+
+
+/////////////   Funcion que crea la nueva fila en la pestaña lectura ////////////////
 function crearNuevaFila() {
   const tableBody = document.querySelector('#tblbodyLectura');
  
@@ -723,7 +806,7 @@ document.querySelector('a[href="#tabla-verificacion"]').addEventListener('click'
 function guardaParcialMente() {
         //var dataArray = JSON.parse(localStorage.getItem('dataArray'));
         let pSistema = "WMS";        
-        let pUsuario = localStorage.getItem('username');
+        let pUsuario = document.getElementById('hUsuario').value;
         let pOpcion = "L";
         let pBodegaOrigen= document.getElementById("bodega").value;
         let pBodegaDestino =document.getElementById("bodegaSelectOC").value;
@@ -898,7 +981,7 @@ function confirmaProcesar() {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'No se pudo obtener los datos del API'
+                            text: error
                         });
                     }); 
                 } else {
@@ -945,7 +1028,7 @@ function confirmaProcesar() {
 
 function procesarContenedor() {
         let pSistema = "WMS";        
-        let pUsuario = localStorage.getItem('username');
+        let pUsuario = document.getElementById('hUsuario').value;
         let pOpcion = "R";
         let pBodegaOrigen= document.getElementById("bodega").value;
         let pBodegaDestino =document.getElementById("bodegaSelectOC").value;
@@ -1138,7 +1221,8 @@ function permisoCrearPaquete(){
 
 async function imprimirPaqueteReporte(respuesta) {
     let pSistema = "WMS";        
-    let pUsuario = localStorage.getItem('username');
+    let pUsuario = document.getElementById('hUsuario').value;
+    // localStorage.getItem('username');
     let pTipoConsulta = "l";
     let pPaquete = respuesta;
 

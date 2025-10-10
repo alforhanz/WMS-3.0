@@ -1,4 +1,8 @@
     document.addEventListener("DOMContentLoaded", function (){
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario);  
+
       const busqueda = localStorage.getItem('busquedaPrevia');
       
       //revisar como toma el valor
@@ -26,7 +30,8 @@ function ValidaOrdenesDeCompra() {
     let pBodega = document.getElementById("bodega").value;
     let pOrden = $('#pOrden').val();   
     let pOpcion = "P";
-    let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
+    let pUsuario =document.getElementById('hUsuario').value;
+    //  document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
     let pFechaDesde =  document.getElementById('fecha_ini').value; 
     let pFechaHasta = document.getElementById('fecha_fin').value;
     const params =

@@ -3,6 +3,7 @@ var detalleLineasContenedor = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   //--------------------------------------------------------------------------
+  
   if (localStorage.getItem("contenedor")) {
     let contenedor = localStorage.getItem("contenedor");  
     let bodegaSolicita = localStorage.getItem("bodega_solicita");  
@@ -135,7 +136,13 @@ function validarCodigoBarras(input) {
   var codigoValido = false;
 
   for (var i = 0; i < LineasContenedor.length; i++) {      
-      if ((LineasContenedor[i].Articulo && LineasContenedor[i].Articulo.toUpperCase() === codbarra) || (LineasContenedor[i].Codigo_Barra && LineasContenedor[i].Codigo_Barra.toUpperCase() === codbarra)){
+    let codigosArrayArticulo = [];
+        if (LineasContenedor[i].codigos_barras) {
+        codigosArrayArticulo = LineasContenedor[i].codigos_barras.split("|").map((codigo) => codigo.toUpperCase());      
+        }
+
+
+      if ((LineasContenedor[i].Articulo && LineasContenedor[i].Articulo.toUpperCase() === codbarra) || (LineasContenedor[i].Codigo_Barra && LineasContenedor[i].Codigo_Barra.toUpperCase() === codbarra)|| codigosArrayArticulo.includes(codbarra)){
                if(LineasContenedor[i].total_cedi > 0){
                     span.textContent = LineasContenedor[i].Articulo;
                     cantFila.value = 1;
@@ -620,8 +627,6 @@ function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
         <td hidden></td> <!-- Celda oculta para solicitud -->
     `;
 }
-
-
 
 // function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
 //     // Obtener la referencia del cuerpo de la tabla

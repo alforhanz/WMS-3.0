@@ -37,8 +37,7 @@
 
 </head>
 
-<!-- <body id="home" tabindex="-1"> -->
-  <body>
+<body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
   <!--HEADER-->
@@ -82,9 +81,9 @@
             <table id="myTableLectura" class="display">
               <thead>
                 <tr class="themeColor2">
-                  <th style="width: 30%;">Articulo</th>
-                  <th id="codigoBarrasHeader" style="width: 30%;">Cod</th>
-                  <th style="width: 20%;">Cant</th>
+                  <th style="width: 30%;">ARTICULO</th>
+                  <th id="codigoBarrasHeader" style="width: 30%;">COD</th>
+                  <th style="width: 20%;">CANT</th>
                   <th style="width: 10%;">CL</th>
                 </tr>
               </thead>
@@ -96,7 +95,11 @@
                   <td class="codigo-barras-cell">
                     <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
                       onchange="validarCodigoBarras(this)" autofocus><label for="codigo-barras" hidden></label>
-                  </td>                
+                  </td>
+                  <!-- <td class="codigo-barras-cell">                    
+                    <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
+                      oninput="validarCodigoBarras(this)" autofocus><label for="codigo-barras" hidden></label>
+                  </td> -->
                   <td class="codigo-barras-cell2">
                     <input id="cant-leida" class="codigo-barras-input" type="text" class="codigo-barras-input" value=""
                       onchange="validarCantidades(this)"><label for="codigo-barras" hidden></label>

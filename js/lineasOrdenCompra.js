@@ -2,6 +2,10 @@
 var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {
+  let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
+
   const verificacionTab = document.querySelector('a[href="#tabla-verificacion"]');
   const observacionesContainer = document.getElementById('observaciones-container');
   
@@ -21,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("OrdenDeCompra")) {
     let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");      
     let pBodega = document.getElementById("bodega").value;
-    let pUsuario=localStorage.getItem("username");
+    let pUsuario=document.getElementById('hUsuario').value;//localStorage.getItem("username");
     loadSwitchState();
     //---------------------------------------------------------------------------
     cargarDetalleOrdenDeCompra(OrdenDeCompra,pBodega,pUsuario);   
@@ -1255,7 +1259,7 @@ function actualizaOrdenDeComprasList(){
     if (localStorage.getItem("OrdenDeCompra")) {
         let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");      
         let pBodega = document.getElementById("bodega").value;
-        let pUsuario=localStorage.getItem("username");
+        let pUsuario=document.getElementById('hUsuario').value;//localStorage.getItem("username");
         const pOrden = OrdenDeCompra;//Se asigna el número del peddido a una variable constante para pasarlo como parametro
         const params =
             "?pBodega=" +

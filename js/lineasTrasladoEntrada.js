@@ -2,6 +2,10 @@
 var detalleTrasladoList = "";
 
 document.addEventListener("DOMContentLoaded", function () {
+let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
+
   //--------------------------------------------------------------------------  
     var documento = localStorage.getItem("traslado");    
     cargarLineasTraslado(documento);    
@@ -668,7 +672,8 @@ let guardarParcialHabilitado = activaGuardadoParcial();
     //FUNCION DE GUARDADO PARCIAL
     function guardaParcialMente() {
     
-      let pUsuario = localStorage.getItem('username');
+      let pUsuario = document.getElementById('hUsuario').value;
+      // localStorage.getItem('username');
       let pConsecutivo = localStorage.getItem('traslado');   
       let pBodega = document.getElementById('bodega').value;
       let pTipoConsecutivo = "E";    
@@ -793,7 +798,8 @@ for (let i = 1; i < table.rows.length; i++) {
   
 //FUNCION DE Procesar el traslado
 function procesar() {
-      let pUsuario = localStorage.getItem('username');
+      let pUsuario = document.getElementById('hUsuario').value;
+      // localStorage.getItem('username');
       let pConsecutivo = localStorage.getItem('traslado');   
       let pBodega = document.getElementById('bodega').value;
       let pTipoConsecutivo = "E";    

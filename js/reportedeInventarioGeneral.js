@@ -4,6 +4,10 @@ let totalPaginas = 1; // Total de páginas
 let datosResumen = [];  // Definir la variable global para almacenar los datos del resumen
 
 document.addEventListener("DOMContentLoaded", function () {   
+
+  let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario); 
     const checkClase = document.getElementById("clase-todas");    
     localStorage.setItem("check_Clase", checkClase.checked);
     const checkMarca = document.getElementById("marca-todas");
@@ -581,7 +585,7 @@ function habilitaSeis(){
 async function resumenGeneral(){
 
   const pSistema = 'WMS';
-  const pUsuario = localStorage.getItem('username');
+  const pUsuario = document.getElementById('hUsuario').value;//localStorage.getItem("username");
   let pTipoRpt = document.getElementById('tipoResumido').checked ? 'R' : 'D';
   const pSoloContados = document.getElementById('articulosContados').checked?'S' : 'N';
   const pFecha = document.getElementById('fecha_ini').value;

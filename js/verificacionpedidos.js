@@ -8,12 +8,13 @@ const checkbox = document.getElementById('toggleSwitch');
   });
 
 document.addEventListener("DOMContentLoaded", function () {
-    ocultarColumnaLPrep();
-   // console.log("DOM completamente cargado y parseado.");
-    //localStorage.clear();
-    const busqueda = localStorage.getItem('autoSearchPedidos');
     
-    //revisar como toma el valor
+  let usuario=document.getElementById('hUsuario').value;
+    console.log('hUsuario:',usuario);
+    //localStorage.setItem('UserID',usuario);
+
+    ocultarColumnaLPrep();
+    const busqueda = localStorage.getItem('autoSearchPedidos');
     if (busqueda === "true") {
             // Obtener los parámetros de búsqueda del localStorage
             const parametrosBusqueda = localStorage.getItem('parametrosBusqueda');
@@ -76,7 +77,8 @@ function validarFormulario() {
     var pPedido = $('#pPedido').val();
     var pFechaHasta = $('#fecha_fin').val();
     var pFechaDesde = $('#fecha_ini').val();
-    var pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
+    var pUsuario = document.getElementById('hUsuario').value;
+    // document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
     let pOpcion = $('#toggleSwitch').prop('checked');
     
     if (pOpcion) {
