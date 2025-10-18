@@ -1,31 +1,40 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-document.addEventListener("DOMContentLoaded", function (){ 
-  //console.log("DOM cargado...");
-     let usuario=document.getElementById('hUsuario').value;
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("BUSQUEDA DE CONTENEDORES DOM cargado...");
+    let usuario = document.getElementById("hUsuario").value;
     console.log(usuario);
-  localStorage.setItem('UserID',usuario);
-  const busqueda = localStorage.getItem('SearchParameterFlag');
-  localStorage.setItem('switch_procesados', 'false');
-  if (busqueda === "true") {
-    
-    const parametrosBusqueda = localStorage.getItem('parametrosBusquedaContenedor');
-    localStorage.setItem('contenedorSwitch',true);
-    
-    if(parametrosBusqueda){
-          const params = new URLSearchParams(parametrosBusqueda);
-          const pSistema = params.get('pSistema')
-          const pUsuario = params.get('pUsuario');
-          const pOpcion = params.get('pOpcion');
-          const pBodegaEnvia = params.get('pBodegaEnvia');
-          const pBodegaDestino= params.get('pBodegaDestino');
-          const pFechaDesde = params.get('pFechaDesde');
-          const pFechaHasta = params.get('pFechaHasta');          
-         
-          enviarDatosControlador(pSistema, pUsuario, pOpcion, pBodegaEnvia,pBodegaDestino,pFechaDesde,pFechaHasta);
-        }        
+    localStorage.setItem("UserID", usuario);
+    const busqueda = localStorage.getItem("SearchParameterFlag");
+    localStorage.setItem("switch_procesados", "false");
+    if (busqueda === "true") {
+      const parametrosBusqueda = localStorage.getItem(
+        "parametrosBusquedaContenedor"
+      );
+      localStorage.setItem("contenedorSwitch", true);
+
+    if (parametrosBusqueda) {
+        const params = new URLSearchParams(parametrosBusqueda);
+        const pSistema = params.get("pSistema") ?? "";
+        const pUsuario = params.get("pUsuario") ?? "";
+        const pOpcion = params.get("pOpcion") ?? "";
+        const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
+        const pBodegaDestino = params.get("pBodegaDestino") ?? "";
+        const pFechaDesde = params.get("pFechaDesde") ?? "";
+        const pFechaHasta = params.get("pFechaHasta") ?? "";
+
+        enviarDatosControlador(
+          pSistema,
+          pUsuario,
+          pOpcion,
+          pBodegaEnvia,
+          pBodegaDestino,
+          pFechaDesde,
+          pFechaHasta
+        );
+      }
     }
-    cargarBodegas(); 
+    cargarBodegas();
 });
 // Función para cargar las bodegas
 /////////////////////////////////////////////////////////////////////

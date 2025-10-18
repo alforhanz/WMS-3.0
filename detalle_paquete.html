@@ -38,61 +38,40 @@
     <div id="resultadoBusqueda">
       <div id="carga" class="carga-style"></div>
       <div class="container">
-        <h2 class="titulo-vista">Paquetes de Contenedores Verificados</h2>
-        <div class="row">
-          <div id="menup">
-          </div>
+        <h2 class="titulo-vista">Detalles de Paquetes Creados</h2>   
+         <div class="row"><label id="documento"></label></div>    
+          <div id="menup"></div>
           <div class="row">
-            <div class="input-field col s12">
-              <input placeholder="Ingrese el consecutivo del paquete" id="Aplicacion" type="text" class="validate">  
-              <label for="Aplicacion"></label>
-            </div>
-          </div>
-          <div class="input-field col s6">
-            <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker" onclick="limpiarResultadoGeneral()">
-            <label for="fecha_ini">Fecha Desde</label>
-          </div>
-          <div class="input-field col s6">
-            <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker" onclick="limpiarResultadoGeneral()">
-            <label for="fecha_fin">Fecha Final</label>
-          </div>
-        </div>
-        <!-- BODEGA DE DESTINO -->
-        <label id="lbl_bodega_destino" for="bodegaSelectPack">Cambiar bodega de destino</label>       
-          <div class=" bodega-destino-container row">
-            <div class="col-md-6">
-              <select id="bodegaSelectPack" class="browser-default">
-                <option value="" disabled selected>Seleccione una bodega</option>
-              </select>
-            </div><br>
-        <!-- Boton Buscar paquetes -->
-        <div class="row col-md-12 S12">
-          <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit"
-            onclick="cargarParametros()">Mostrar Paquetes
-            <i class="material-icons right">send</i>
-          </button>
-        </div>
-        <div class="row">
-          <label id="cantidadDeRegistros"> Registros:</label>
+             <label id="cantidadDeRegistros"> Registros:</label>
+            <!-- <div class="imppdf">
+              <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
+                <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
+              </button>
+              <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar PDF</label>
+            </div>             -->
+          </div>         
+        
           <div class="row">
             <div id="resultadoGeneral"></div>
             <table id="tblResultados" class="display centered">
               <thead>
                 <tr class="themeColor2">
-                  <th class=" lineasocstyle">Traslado</th>
-                  <th class=" lineasocstyle">Usuario</th>
+                  <th class=" lineasocstyle">Articulo</th>
+                  <th class=" lineasocstyle">Cantidad<br></th>
                   <th class=" lineasocstyle">Fecha</th>
-                  <th class=" lineasocstyle">Bodega Destino</th>                 
+                  <th class=" lineasocstyle">Bodegas<br>Origen/Destino</th>                 
                 </tr>
               </thead>
-              <tbody id="tblbodyResultados">
-                
-              </tbody>
+              <tbody id="tblbodyResultados"></tbody>
             </table>
             <div id="resultadoPaginador"></div>
           </div>
-        </div>
-      </div>
+          <div class="imppdf">
+            <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
+              <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
+            </button>
+            <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar reporte en PDF</label>
+          </div>
     </div>
   </main>
 
@@ -108,7 +87,7 @@
   <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
   <script type="text/javascript" src="js/main.js?v1.1" defer></script>
   <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/paquetesDeContenedoresVerificados.js" defer></script>
+  <script type="text/javascript" src="js/datellePaquete.js" defer></script>
   <script type="tex/javascript" src="js/paginacion.js"></script>
   <script type="text/javascript" src="js/loader.js"></script>
   <!--JavaScript local-->

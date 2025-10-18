@@ -1576,6 +1576,9 @@ th {
 #usuariocodigo {
   color: #474343 !important;
 }
+#bodegaSelectPack {
+  width: 20%; /* Ocupa todo el espacio disponible dentro de su contenedor */
+}
 
 #bodegaSelectOC {
   width: 20%; /* Ocupa todo el espacio disponible dentro de su contenedor */
@@ -2519,4 +2522,25 @@ font-size: 20px !important;
 }
 .tabs {
     background-color:#f7f7f7; 
+}
+
+.resultados-Tabla{
+  text-align: center;
+  font-size: 10px;
+}
+
+#tblbodyResultados tr:nth-child(odd) {
+  background-color: #f9f9f9; /* Gris claro */
+}
+
+#tblbodyResultados tr:nth-child(even) {
+  background-color: #D7D5D5; /* Azul muy claro */
+  
+}
+
+#tblbodyResultados tr:hover {
+  background-color: #76828d ; /* Azul más fuerte al pasar el mouse */
+}
+#traslado{
+  text-align: left;
 }

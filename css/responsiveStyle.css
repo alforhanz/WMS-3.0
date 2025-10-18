@@ -208,6 +208,10 @@
     /* Centra el select */
   }
 
+#bodegaSelectPack {
+  width: 100%; /* Ocupa todo el espacio disponible dentro de su contenedor */
+}
+
   #bodegaSelectOC {
     width: 100% !important;
     /* Ocupa todo el espacio disponible dentro de su contenedor */

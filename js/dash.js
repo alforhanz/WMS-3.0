@@ -1,6 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener('DOMContentLoaded', function() {
+  localStorage.clear();
   $('.dropdown-trigger').dropdown();
   var elems = document.querySelectorAll('.dropdown-trigger');
   getDataDash(); 
@@ -12,8 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
 ////////////////////////////////////
 
 function getDataDash() {
-  var usuarioSinComillas = localStorage.getItem('username');
-  var usuario = usuarioSinComillas.replace(/"/g, "");
+  // var usuarioSinComillas = localStorage.getItem('username');
+  let usuario =  document.getElementById('hUsuario').value;
+  // usuarioSinComillas.replace(/"/g, "");
   const params = "?pUsuario=" + usuario;
  
 
@@ -59,8 +61,9 @@ function getDataDash() {
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function generarGraficas() {
-    var usuarioSinComillas = localStorage.getItem('username');
-    var usuario = usuarioSinComillas.replace(/"/g, "");
+    // var usuarioSinComillas = localStorage.getItem('username');
+   let usuario =  document.getElementById('hUsuario').value;
+    // usuarioSinComillas.replace(/"/g, "");
     const params = "?pUsuario=" + usuario;
   
     fetch(env.API_URL + "wmsgetdashinfo/2" + params, myInit)
