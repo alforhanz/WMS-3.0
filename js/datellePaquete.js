@@ -69,8 +69,7 @@ function cargarParametros() {
     const fechaIni = params.get("fechaIni") ?? "";
     const fechaFin = params.get("fechaFin") ?? "";
     const BodegaOrigen = params.get("BodegaOrigen") ?? "";
-    const Aplicacion = localStorage.getItem("ConsecutivoPaquete");
-    
+    const Aplicacion = localStorage.getItem("ConsecutivoPaquete");    
 
     const para =
       "?pSistema=" +

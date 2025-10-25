@@ -3,9 +3,9 @@ var detalleLineasContenedoreses=[];
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function (){ 
-     console.log("Verificador de contenedores DOM cargado...");
+    // console.log("Verificador de contenedores DOM cargado...");
     let usuario=document.getElementById('hUsuario').value;
-    console.log('hUsuario:',usuario);
+   // console.log('hUsuario:',usuario);
    //localStorage.setItem('UserID',usuario);
   cargarBodegas();
  
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function (){
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function validarBusquedaContenedor() {  
-    var bodega = document.getElementById("bodega").value;
+    let bodega = document.getElementById("bodega").value;
     let pBodegaDestino = document.getElementById("bodegaSelectOC").value; 
     let pPlaca = document.getElementById("placa-camion").value;   
 
@@ -29,11 +29,12 @@ function validarBusquedaContenedor() {
      mostrarLoader();
         let pSistema ="WMS";
         let pUsuario= document.getElementById('hUsuario').value;   
-        let pOpcion ="A";   
+        let pOpcion ="B";   
         let pBodegaEnvia = bodega;  
         let pConsecutivo = $('#pContenedor').val();  
-        let pEstado ="AW"
+        let pEstado =""
         let pFechaDesde = $('#fecha_ini').val(); 
+        let pArticulo = ""
 
         const params =
                     "?pSistema="+
@@ -51,14 +52,17 @@ function validarBusquedaContenedor() {
                         "&pEstado="+
                         pEstado+
                         "&pFechaDesde=" +
-                        pFechaDesde;    
+                        pFechaDesde+
+                        "&pArticulo="+
+                        pArticulo
+                        ;    
         enviarDatosControlador(params);                             
         }
 }
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function enviarDatosControlador(params) {    
-    console.log('BUSQUEDA CONTENEDOR PARAMETROS\n '+params);
+   // console.log('BUSQUEDA CONTENEDOR PARAMETROS\n '+params);
     localStorage.setItem('parametrosBusquedaContenedor', params);
     fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
         .then((response) => response.json())
@@ -70,8 +74,8 @@ function enviarDatosControlador(params) {
                 armarTablaLectura(detalleLineasContenedoreses);
                 guardarTablaEnArray();  
                 armarTablaVerificacion(detalleLineasContenedoreses);
-                console.log('REsultados:');
-                console.log(detalleLineasContenedoreses);
+               // console.log('REsultados:');
+               // console.log(detalleLineasContenedoreses);
                 Swal.fire({
                     icon: "info",
                     title: "Información",            
@@ -471,7 +475,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
       <td class="devolver" style="text-align: left;">
          <i class="material-icons" 
            style="color: #FF0000; cursor: pointer;" 
-           onclick="devolverArticulo('${detalle.Articulo}', '${detalle.Contenedor}','${isNaN(parseFloat(detalle.Cant_Verificada)) ? 0 : parseFloat(detalle.Cant_Verificada).toFixed(2)}')">reply</i>
+           onclick="autorizaDevolucion('${detalle.Articulo}', '${detalle.Contenedor}','${isNaN(parseFloat(detalle.Cant_Verificada)) ? 0 : parseFloat(detalle.Cant_Verificada).toFixed(2)}')">reply</i>
       </td>        
     `;
     tbody.appendChild(newRow);
@@ -505,7 +509,7 @@ function verificacion() {
     cantidadesTotales[art] = (cantidadesTotales[art] || 0) + cant;
   });
 
-  console.log("Totales agrupados:", cantidadesTotales);
+ // console.log("Totales agrupados:", cantidadesTotales);
 
   // Recorrer filas para verificar coincidencias
   filas.forEach(fila => {
@@ -559,7 +563,7 @@ function verificacion() {
   const mensajeText = document.getElementById('mensajeText');
   if (mensajeText) mensajeText.value = mensajesArray.join('\n');
 
-  console.log("Mensajes generados:", mensajesArray);
+ // console.log("Mensajes generados:", mensajesArray);
 }////FIN de VERIFICACION
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -695,7 +699,7 @@ for (let i = 1; i < table.rows.length; i++) {
 }
 console.log("detallesARRAY:\n ",detalles);
 
-  console.log(`Total de registros a enviar: ${detalles.length}`);
+ // console.log(`Total de registros a enviar: ${detalles.length}`);
 
   // 🔁 Dividir el array en chunks de 20
   const chunkSize = 20;
@@ -704,7 +708,7 @@ console.log("detallesARRAY:\n ",detalles);
     chunks.push(detalles.slice(i, i + chunkSize));
   }
 
-  console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
+ // console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
 
   // ⚙️ Configuración base del fetch
   const myInit = {
@@ -728,15 +732,15 @@ console.log("detallesARRAY:\n ",detalles);
       "&pReferencia=" + pReferencia +
       "&pComentario=" + pComentario;
 
-    console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
-    console.log("jsonPaquete=\n",decodeURIComponent(jsonPaquete));
-    console.log("Fin...")
+   // console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
+   // console.log("jsonPaquete=\n",decodeURIComponent(jsonPaquete));
+   // console.log("Fin...")
     //llamada al API...
     try {
       const response = await fetch(env.API_URL + "guardacreapaquete" + params, myInit);
       const result = await response.json();
 
-      console.log(`✅ Lote ${i + 1} procesado`, result);
+     // console.log(`✅ Lote ${i + 1} procesado`, result);
 
       if (result.msg !== "SUCCESS") {
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
@@ -751,7 +755,7 @@ console.log("detallesARRAY:\n ",detalles);
   // 🎉 Mensaje final si todo fue bien
   Swal.fire({
     icon: "success",
-    title: "Todos los datos fueron enviados correctamente",
+    title: "Todos los datos fueron Guardados correctamente",
     confirmButtonText: "Aceptar",
     confirmButtonColor: "#28a745",
     cancelButtonColor: "#6e7881",
@@ -796,17 +800,17 @@ function ConfirmaCrearPaqueteContenedores() {
                     fetch(env.API_URL + "wmsautorizacioncontenedor")
                     .then((response) => response.json())     
                     .then((resultado) => {    
-                        // console.log('Autorizacion Resultado: ');
-                        // console.log(resultado.respuesta);      
+                        //// console.log('Autorizacion Resultado: ');
+                        //// console.log(resultado.respuesta);      
                         const respuesta = resultado.respuesta[0];
                         if (respuesta && respuesta.USUARIO === result.value.usuario && respuesta.PIN === result.value.contraseña) {
-                            // console.log("Credenciales válidas");
-                            // console.log(respuesta.USUARIO);
+                            //// console.log("Credenciales válidas");
+                            //// console.log(respuesta.USUARIO);
                             localStorage.setItem('UsuarioAutorizacion',respuesta.USUARIO);
                             // Realiza la acción deseada, como procesar el contenedor
                            CrearPaqueteContenedores();
                         } else {
-                            // console.log("Credenciales inválidas");
+                            //// console.log("Credenciales inválidas");
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -870,16 +874,16 @@ function CrearPaqueteContenedores() {
         "&pComentario="+
         pComentario ; 
 
-         console.log("Params:\n"+params);
+        // console.log("Params:\n"+params);
         fetch(env.API_URL + "guardacreapaquete" + params, myInit)
         .then((response) => response.json())
         .then((result) => {
-            console.log("Respuesta del SP");
-            console.log(result.respuesta);
+           // console.log("Respuesta del SP");
+           // console.log(result.respuesta);
         if (result.msg === "SUCCESS") {
             if (result.respuesta.length != 0) {
                 let respuesta=result.respuesta[0].Respuesta;
-                console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
+               // console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
                 if (result.respuesta[0].Respuesta.toUpperCase().startsWith("TRAS")) {
                     Swal.fire({
                                 icon: "success",
@@ -908,7 +912,7 @@ function CrearPaqueteContenedores() {
                         })
                 }
             }else{
-                console.log("El API no devolvio nada");
+               // console.log("El API no devolvio nada");
             }
          } else {
             }
@@ -992,7 +996,7 @@ async function imprimirPaqueteReporte(respuesta) {
         "&pTipoConsulta=" + pTipoConsulta +        
         "&pPaquete=" + pPaquete;
 
-    console.log("Params:\n" + params);
+   // console.log("Params:\n" + params);
 
     // const response = await fetch(env.API_URL + "imprimepaquete" + params, myInit);
     // const result = await response.json();
@@ -1000,7 +1004,7 @@ fetch(env.API_URL + "imprimepaquete" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
     if (result.msg === "SUCCESS" && result.respuesta.length > 0) {
-        console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
+       // console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
 
         // Crear PDF (p = portrait / vertical)
         const { jsPDF } = window.jspdf;
@@ -1052,25 +1056,84 @@ fetch(env.API_URL + "imprimepaquete" + params, myInit)
                     columnStyles: {0: { cellWidth: 120 },}
                     });
 
-            console.log("Se generó el pdf");
+           // console.log("Se generó el pdf");
 
 // Descargar PDF
        doc.save("Reporte_Paquete_" + pPaquete + ".pdf");       
 
     } else {
-        console.log("El API no devolvió nada");
+       // console.log("El API no devolvió nada");
     }
 });
 }
+
 // Función para devolver un artículo eliminado del Contenedor
-// Función para devolver un artículo eliminado del Contenedor
+function autorizaDevolucion(articulo, contenedor, cantidadPreparada){
+                      Swal.fire({
+                title: "Ingrese sus credenciales",
+                html:
+                '<input id="swal-input1" class="swal2-input" placeholder="Usuario" autocomplete="off">' +
+                '<input id="swal-input2" class="swal2-input" placeholder="Contraseña" type="password" autocomplete="off">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Aprobar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#6e7881",
+                preConfirm: () => {
+                    const usuario = document.getElementById('swal-input1').value.toUpperCase();
+                    const contraseña = document.getElementById('swal-input2').value;
+                    return { usuario: usuario, contraseña: contraseña };
+                }
+            }).then((result) => {
+                if (!result.isDismissed && result.value && result.value.usuario && result.value.contraseña) {
+                    fetch(env.API_URL + "wmsautorizacioncontenedor")
+                    .then((response) => response.json())     
+                    .then((resultado) => {    
+                        //// console.log('Autorizacion Resultado: ');
+                        //// console.log(resultado.respuesta);      
+                        const respuesta = resultado.respuesta[0];
+                        if (respuesta && respuesta.USUARIO === result.value.usuario && respuesta.PIN === result.value.contraseña) {
+                            //// console.log("Credenciales válidas");
+                            //// console.log(respuesta.USUARIO);
+                            localStorage.setItem('UsuarioAutorizacion',respuesta.USUARIO);
+                            // Realiza la acción deseada, como procesar el contenedor
+                            devolverArticulo(articulo, contenedor, cantidadPreparada);
+                        } else {
+                            //// console.log("Credenciales inválidas");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Credenciales inválidas'
+                            });
+                        }
+                    }).catch((error) => {
+                        // console.error('Error al obtener los datos del API:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error
+                        });
+                    }); 
+                } else {
+                    // console.error('Error: No se pudieron obtener los valores de usuario y contraseña del Swal');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudieron obtener los valores de usuario y contraseña del Swal'
+                    });
+                }
+            });
+}
+
 function devolverArticulo(articulo, contenedor, cantidadPreparada) {
-  const dataArray = JSON.parse(localStorage.getItem('dataArray')) || [];
-  console.log("📦 DataArray:", dataArray);
+  const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+ // console.log("📦 DataArray:", dataArray);
 
   // Buscar si el artículo existe dentro del arreglo
   const encontrado = dataArray.find(
-    item => item.ARTICULO.trim().toUpperCase() === articulo.trim().toUpperCase()
+    (item) =>
+      item.ARTICULO.trim().toUpperCase() === articulo.trim().toUpperCase()
   );
 
   // Si no se encuentra, mostramos advertencia y detenemos la ejecución
@@ -1080,7 +1143,7 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
       text: `El artículo ${articulo} no tiene registros de lectura.`,
       icon: "warning",
       confirmButtonText: "Aceptar",
-      confirmButtonColor: "#6e7881"
+      confirmButtonColor: "#6e7881",
     });
     return;
   }
@@ -1106,59 +1169,223 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
     confirmButtonText: "Sí, devolver",
     cancelButtonText: "Cancelar",
     confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6e7881"
-  }).then(result => {
+    cancelButtonColor: "#6e7881",
+  }).then((result) => {
     if (result.isConfirmed) {
-      console.log(`✅ Artículo: ${articulo}`);
-      console.log(`📦 Contenedor: ${contenedor}`);
-      console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
-      console.log(`📉 Cantidad leída: ${cantidadLeida}`);
-      console.log(`🔁 Diferencia devuelta: ${diferencia}`);
+      //// console.log(`✅ Artículo: ${articulo}`);
+      //// console.log(`📦 Contenedor: ${contenedor}`);
+      //// console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
+      //// console.log(`📉 Cantidad leída: ${cantidadLeida}`);
+      //// console.log(`🔁 Diferencia devuelta: ${diferencia}`);
 
-      // Aquí implementas la lógica real de devolución:
-      // - Actualizar localStorage
-      // - Registrar movimiento en backend
-      // - Refrescar la tabla, etc.
-      
-      Swal.fire({
-        title: "Artículo devuelto",
-        text: `Se registró la devolución del artículo ${articulo}.`,
-        icon: "success",
-        confirmButtonText: "Aceptar",
-        confirmButtonColor: "#28a745"
-      });
+      let pSistema = "WMS";
+      let pUsuario = document.getElementById("hUsuario").value;
+      let pOpcion = "c";
+      let pBodegaEnvia = document.getElementById("bodega").value;
+      let pBodegaDestino = document.getElementById("bodegaSelectOC").value;
+      let pConsecutivo = $("#pContenedor").val();
+      let pEstado = "";
+      let pFechaDesde = $("#fecha_ini").val();
+      let pArticulo = articulo;
+
+      const params =
+        "?pSistema=" +
+        pSistema +
+        "&pUsuario=" +
+        pUsuario +
+        "&pOpcion=" +
+        pOpcion +
+        "&pBodegaEnvia=" +
+        pBodegaEnvia +
+        "&pBodegaDestino=" +
+        pBodegaDestino +
+        "&pContenedor=" +
+        pConsecutivo +
+        "&pEstado=" +
+        pEstado +
+        "&pFechaDesde=" +
+        pFechaDesde +
+        "&pArticulo=" +
+        pArticulo;
+     // console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+      localStorage.setItem("parametrosBusquedaContenedor", params);
+      fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.msg === "SUCCESS") {
+            detalleLineasContenedoreses = result.respuesta;
+            if (result.respuesta.length != 0) {
+             
+             // console.log('REsultados:');
+             // console.log(detalleLineasContenedoreses);
+              mostrarTablaEnSwal(detalleLineasContenedoreses);
+              
+            } else {
+              Swal.fire({
+                icon: "info",
+                title: "Información",
+                text: "Ocurrio un error al cargar las lineas para devolución",
+                confirmButtonColor: "#28a745",
+              });
+            }
+            document.getElementById("carga").innerHTML = "";
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "error",
+              text: "Se registro un error en la llamada al API",
+              confirmButtonColor: "#28a745",
+            });
+          }
+        });
     }
   });
 }
 
+async function mostrarTablaEnSwal(data) {
+  let pSistema = "WMS";
+  let pUsuario = document.getElementById("hUsuario").value;
+  let pOpcion = "D";
+  let BodegaEnvia = document.getElementById("bodega").value;
+  let BodegaSolic = localStorage.getItem("bodega_solicita");
+  let pUsuarioAutorizacion = localStorage.getItem("UsuarioAutorizacion") || "";
 
+  const articulo = data[0]?.Articulo || "Sin Artículo";
 
+  // Generar filas de la tabla
+  const tableRows = data
+    .map(
+      (item, index) => `
+      <tr>
+        <td><h5>${item.Contenedor || ""}</h5><h6>${
+        item.Traslado || ""
+      }</h6></td>
+        <td>${Number(item.Cant_Verificada || 0).toFixed(2)}</td>
+        <td><input type="number" min="0" class="devolver-input" data-index="${index}" placeholder="0" style="width: 80px;"></td>
+      </tr>
+    `
+    )
+    .join("");
 
+  const htmlContent = `
+    <table class="highlight centered" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Contenedor</th>
+          <th>Cant. Preparada</th>
+          <th>Cant. a Devolver</th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  `;
 
+  const { value: cantidades } = await Swal.fire({
+    title: `Líneas para devolución - Artículo: ${articulo}`,
+    html: htmlContent,
+    icon: "info",
+    confirmButtonText: "Aceptar",
+    confirmButtonColor: "#28a745",
+    showCancelButton: true,
+    cancelButtonText: "Cancelar",
+    preConfirm: () => {
+      const inputs = document.querySelectorAll(".devolver-input");
+      const cantidades = Array.from(inputs).map((input) => {
+        const index = parseInt(input.getAttribute("data-index"));
+        const cantLeida = parseFloat(input.value) || 0;
+        const cantPreparada = Number(data[index].Cant_Verificada || 0);
 
+        // Validar que CANT_LEIDA no exceda CANT_PREPARADA
+        if (cantLeida > cantPreparada) {
+          throw new Error(MESSAGES.ERROR_EXCEEDS(data[index].Contenedor));
+        }
 
+        return {
+          index,
+          CONTENEDOR: data[index].Contenedor,
+          SOLICITUD: data[index].Traslado,
+          CANT_PREPARADA: cantPreparada,
+          CANT_LEIDA: cantLeida,
+        };
+      });
 
-// function devolverArticulo(articulo, contenedor, cantidadPreparada) {
-//     const dataArray = JSON.parse(localStorage.getItem('dataArray')) || [];
-//     console.log("DataArray", dataArray);
-//   swal.fire({
-//     title: "Devolver Artículo",
-//     text: `¿Estás seguro de devolver el artículo ${articulo} del contenedor ${contenedor} con cantidad ${cantidadPreparada}?`,
-//     icon: "question",
-//     showCancelButton: true,
-//     confirmButtonText: "Sí, devolver",
-//     cancelButtonText: "Cancelar",
-//     confirmButtonColor: "#28a745",
-//     cancelButtonColor: "#6e7881",
-//   }).then(result => {
-//     if (result.isConfirmed) {
-//       console.log(`🌀 Artículo devuelto: ${articulo}, Contenedor: ${contenedor}, Cantidad: ${cantidadPreparada-cantidadLeida}`);
-//       // Aquí puedes implementar la lógica para devolver el artículo.
-//     }
-//   });
-// }
+      // Filtrar solo las filas con CANT_LEIDA > 0
+      return cantidades.filter((c) => c.CANT_LEIDA > 0);
+    },
+  });
 
+  if (cantidades) {
+    const jsonDetalles = JSON.stringify(
+      cantidades.map(
+        ({ CONTENEDOR, SOLICITUD, CANT_PREPARADA, CANT_LEIDA }) => ({
+          CONTENEDOR,
+          SOLICITUD,
+          CANT_PREPARADA,
+          CANT_LEIDA,
+        })
+      )
+    );
 
+    const params =
+      "?pSistema=" +
+      pSistema +
+      "&pUsuario=" +
+      pUsuario +
+      "&pOpcion=" +
+      pOpcion +
+      "&BodegaSolic=" +
+      BodegaSolic +
+      "&BodegaEnvia=" +
+      BodegaEnvia +
+      "&pUsuarioAutorizacion=" +
+      pUsuarioAutorizacion +
+      "&jsonDetalles=" +
+      jsonDetalles;
+    // Enviar al backend
+    try {
+      await enviarCantidadesDevolucion(params);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: MESSAGES.ERROR_API,
+        confirmButtonColor: "#28a745",
+      });
+    }
+  }
+}
+
+// Ejemplo de función para enviar cantidades al backend (implementar según API)
+async function enviarCantidadesDevolucion(parametros) {
+  fetch(env.API_URL + "devolverarticulocontenedor" + parametros, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log("Respuesta del SP");
+      console.log(result.respuesta[0].Respuesta);
+
+      console.log("Respuesta Contenedor");
+      console.log(result);
+
+      if (result.msg === "SUCCESS") {
+        if (result.respuesta.length != 0) {
+          // Resto del código de éxito
+          Swal.fire({
+            icon: "success",
+            title: "Articulo devuelto correctamente",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#6e7881",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Redirecciona a tu otra vista aquí
+              // window.location.href = 'BusquedaDeContenedores.html';
+            }
+          });
+        }
+      } else {
+      }
+    });
+}
 
 
 
@@ -1167,7 +1394,7 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
 // function CrearPaqueteContenedores() {
 //         let result = "TRAS81-0000031086";        
 //        if (result.toUpperCase().startsWith("TRAS")) {
-//                 console.log("Respuesta del API:\n" + result);
+//                // console.log("Respuesta del API:\n" + result);
 //                 Swal.fire({
 //                             icon: "success",
 //                             title: "Se creó el paquete N° " + result+ " con éxito",
