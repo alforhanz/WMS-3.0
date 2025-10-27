@@ -74,8 +74,8 @@ function enviarDatosControlador(params) {
                 armarTablaLectura(detalleLineasContenedoreses);
                 guardarTablaEnArray();  
                 armarTablaVerificacion(detalleLineasContenedoreses);
-               // console.log('REsultados:');
-               // console.log(detalleLineasContenedoreses);
+               console.log('REsultados:');
+               console.log(detalleLineasContenedoreses);
                 Swal.fire({
                     icon: "info",
                     title: "Información",            
@@ -185,8 +185,8 @@ function armarTablaLectura(detalleLineasContenedor) {
     tbody.innerHTML = '';
 
     detalleLineasContenedor.forEach(function (detalle) {
-        if (detalle.Cant_leida != null && detalle.Cant_leida !== "") { 
-            if(detalle.Cant_leida!=0){
+        if (detalle.Cant_Verificada != null && detalle.Cant_Verificada !== "") { 
+            if(detalle.Cant_Verificada!=0){
             var newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>
@@ -196,7 +196,7 @@ function armarTablaLectura(detalleLineasContenedor) {
                     <input id="codigo-barras" type="text" class="codigo-barras-input" value="${detalle.Codigo_Barra || ''}" onchange="validarCodigoBarras(this)" autofocus>
                 </td>
                 <td class="codigo-barras-cell2" style="text-align: center;">
-                    <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="${detalle.Cant_leida || ''}" onchange="guardarTablaEnArray(this)">
+                    <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="${detalle.Cant_Verificada || ''}" onchange="guardarTablaEnArray(this)">
                 </td>
                 <td class="codigo-barras-cell2" style="text-align: center;">
                 <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
@@ -718,8 +718,8 @@ console.log("detallesARRAY:\n ",detalles);
 
   // 🔄 Enviar cada lote secuencialmente recorremos el array detalles[] dividido segun el tamaño de los paquetes
   for (let i = 0; i < chunks.length; i++) {
-    const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-
+    //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
+  const jsonPaquete = JSON.stringify(chunks[i]);
     const params =
       "?pSistema=" + pSistema +
       "&pUsuario=" + pUsuario +
@@ -740,7 +740,7 @@ console.log("detallesARRAY:\n ",detalles);
       const response = await fetch(env.API_URL + "guardacreapaquete" + params, myInit);
       const result = await response.json();
 
-     // console.log(`✅ Lote ${i + 1} procesado`, result);
+     console.log(`✅ Lote ${i + 1} procesado`, result);
 
       if (result.msg !== "SUCCESS") {
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
@@ -878,12 +878,12 @@ function CrearPaqueteContenedores() {
         fetch(env.API_URL + "guardacreapaquete" + params, myInit)
         .then((response) => response.json())
         .then((result) => {
-           // console.log("Respuesta del SP");
-           // console.log(result.respuesta);
+           console.log("Respuesta del SP");
+           console.log(result.respuesta);
         if (result.msg === "SUCCESS") {
             if (result.respuesta.length != 0) {
                 let respuesta=result.respuesta[0].Respuesta;
-               // console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
+                console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
                 if (result.respuesta[0].Respuesta.toUpperCase().startsWith("TRAS")) {
                     Swal.fire({
                                 icon: "success",
@@ -1304,6 +1304,7 @@ async function mostrarTablaEnSwal(data) {
           index,
           CONTENEDOR: data[index].Contenedor,
           SOLICITUD: data[index].Traslado,
+          ARTICULO:articulo, 
           CANT_PREPARADA: cantPreparada,
           CANT_LEIDA: cantLeida,
         };
@@ -1317,9 +1318,10 @@ async function mostrarTablaEnSwal(data) {
   if (cantidades) {
     const jsonDetalles = JSON.stringify(
       cantidades.map(
-        ({ CONTENEDOR, SOLICITUD, CANT_PREPARADA, CANT_LEIDA }) => ({
+        ({ CONTENEDOR, SOLICITUD, ARTICULO,CANT_PREPARADA, CANT_LEIDA }) => ({
           CONTENEDOR,
           SOLICITUD,
+          ARTICULO,
           CANT_PREPARADA,
           CANT_LEIDA,
         })
