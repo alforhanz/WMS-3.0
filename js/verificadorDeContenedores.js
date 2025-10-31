@@ -1,5 +1,282 @@
 //Variable global que contiene el detalle del contenedor
 var detalleLineasContenedoreses=[];
+
+const dataContenedores = [
+  {
+    ID: 1,
+    Contenedor: "M81-0000023255",
+    Traslado: "S02-0000014709",
+    Articulo: "215/60R17 ANN",
+    Descripcion: "LLANTA ANNAITE AN616 96H",
+    Codigo_Barra: "2072510302352",
+    codigos_barras: "2072510302352||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 2,
+    Contenedor: "M81-0000023255|M81-0000023256",
+    Traslado: "S02-0000014709|S02-0000014710",
+    Articulo: "215/60R17 FR",
+    Descripcion: "LLANTA FRONWAY ROADPOWER HT 100H XL",
+    Codigo_Barra: "6938628248686",
+    codigos_barras: "6938628248686||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 164,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 16,
+    Cant_Verificada: 16,
+    Cant_Leida: 16,
+    Cant_Dif: 0,
+    Mas_Linea: "S",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 3,
+    Contenedor: "M81-0000023255",
+    Traslado: "S02-0000014710",
+    Articulo: "215/60R17 FRO",
+    Descripcion: "LLANTA FRONWAY VANPLUS 09 109/107T 8L",
+    Codigo_Barra: "6938628226066",
+    codigos_barras: "6938628226066||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 8,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 8,
+    Cant_Verificada: 8,
+    Cant_Leida: 8,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 4,
+    Contenedor: "M81-0000023256",
+    Traslado: "S02-0000014709",
+    Articulo: "215/60R17 KH",
+    Descripcion: "LLANTA KUMHO TA11 96T",
+    Codigo_Barra: "8808956155513",
+    codigos_barras: "8808956155513||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 5,
+    Contenedor: "M81-0000023256",
+    Traslado: "S02-0000014709",
+    Articulo: "215/60R17 KHM",
+    Descripcion: "LLANTA KUMHO KH32 96H",
+    Codigo_Barra: "8808956159801",
+    codigos_barras: "8808956159801||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 6,
+    Contenedor: "M81-0000023257",
+    Traslado: "S02-0000014710",
+    Articulo: "215/60R17 KUMHO",
+    Descripcion: "LLANTA KUMHO TA51 96T",
+    Codigo_Barra: "8808956300395",
+    codigos_barras: "8808956300395||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 7,
+    Contenedor: "M81-0000023255",
+    Traslado: "S02-0000014710",
+    Articulo: "265/70R17 FALK",
+    Descripcion: "LLANTA FALKEN WILDPEAK HT02 115/121S",
+    Codigo_Barra: "332848A3002ZA",
+    codigos_barras: "332848A3002ZA||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 10,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 6,
+    Cant_Verificada: 6,
+    Cant_Leida: 6,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 8,
+    Contenedor: "M81-0000023255",
+    Traslado: "S02-0000014709",
+    Articulo: "265/70R17 FK",
+    Descripcion: "LLANTA FALKEN WILDPEAK AT01 113S",
+    Codigo_Barra: "296047A3002Ja",
+    codigos_barras: "296047A3002Ja||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 9,
+    Contenedor: "M81-0000023255|M81-0000023256",
+    Traslado: "S02-0000014709|S02-0000014710",
+    Articulo: "265/70R17 FLK",
+    Descripcion: "LLANTA FALKEN WILDPEAK AT03 10L (121/118S)",
+    Codigo_Barra: "323833A3102Za",
+    codigos_barras: "323833A3102Za|323833A3002Ja|323833A3102SO",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 569,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 6,
+    Cant_Verificada: 6,
+    Cant_Leida: 6,
+    Cant_Dif: 0,
+    Mas_Linea: "S",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 10,
+    Contenedor: "M81-0000023256",
+    Traslado: "S02-0000014709",
+    Articulo: "265/70R17 ILI",
+    Descripcion: "LLANTA ILINK PENTERRA RT 115Q",
+    Codigo_Barra: "6932094132661",
+    codigos_barras: "||6932094132661",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 1,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 1,
+    Cant_Verificada: 1,
+    Cant_Leida: 1,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 11,
+    Contenedor: "M81-0000023257",
+    Traslado: "S02-0000014710",
+    Articulo: "265/70R17 KH",
+    Descripcion: "LLANTA KUMHO HT55 113T",
+    Codigo_Barra: "8808956293246",
+    codigos_barras: "||8808956293246",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 9,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 9,
+    Cant_Verificada: 9,
+    Cant_Leida: 9,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 12,
+    Contenedor: "M81-0000023257",
+    Traslado: "S02-0000014709",
+    Articulo: "RIN 17 RE2213 5H 528",
+    Descripcion: "INFINIT 17X8 5/114.3 ET35 CB73.1 GUNMETAL FAC MACH (GMFM)",
+    Codigo_Barra: null,
+    codigos_barras: "||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 4,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 3,
+    Cant_Verificada: 3,
+    Cant_Leida: 3,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  },
+  {
+    ID: 13,
+    Contenedor: "M81-0000023256",
+    Traslado: "S02-0000014709",
+    Articulo: "RIN 18 188158 6H 643",
+    Descripcion: "INFINIT 18X9 6/114.3 ET0 CB66.1 (B +MILL SPK)",
+    Codigo_Barra: null,
+    codigos_barras: "||",
+    Bodega_Solicita: "B-02",
+    Fecha_Aprobacion: "28/10/2025",
+    total_cedi: 4,
+    Estado_tm: "C",
+    Estado_ml: "PW",
+    Estado_pl: "V",
+    Cant_Pedida: 4,
+    Cant_Verificada: 4,
+    Cant_Leida: 4,
+    Cant_Dif: 0,
+    Mas_Linea: "N",
+    NOMBRE: "Por enviar"
+  }
+];
+
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function (){ 
@@ -185,8 +462,8 @@ function armarTablaLectura(detalleLineasContenedor) {
     tbody.innerHTML = '';
 
     detalleLineasContenedor.forEach(function (detalle) {
-        if (detalle.Cant_Verificada != null && detalle.Cant_Verificada !== "") { 
-            if(detalle.Cant_Verificada!=0){
+        if (detalle.Cant_Leida != null && detalle.Cant_Leida !== "") { 
+            if(detalle.Cant_Leida!=0){
             var newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>
@@ -196,7 +473,7 @@ function armarTablaLectura(detalleLineasContenedor) {
                     <input id="codigo-barras" type="text" class="codigo-barras-input" value="${detalle.Codigo_Barra || ''}" onchange="validarCodigoBarras(this)" autofocus>
                 </td>
                 <td class="codigo-barras-cell2" style="text-align: center;">
-                    <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="${detalle.Cant_Verificada || ''}" onchange="guardarTablaEnArray(this)">
+                    <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="${detalle.Cant_Leida || ''}" onchange="guardarTablaEnArray(this)">
                 </td>
                 <td class="codigo-barras-cell2" style="text-align: center;">
                 <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
@@ -746,6 +1023,7 @@ console.log("detallesARRAY:\n ",detalles);
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
         break; // Si hay un error, detén el proceso
       }
+
     } catch (err) {
       console.error(`🚨 Error al enviar lote ${i + 1}:`, err);
       break;
@@ -759,7 +1037,13 @@ console.log("detallesARRAY:\n ",detalles);
     confirmButtonText: "Aceptar",
     confirmButtonColor: "#28a745",
     cancelButtonColor: "#6e7881",
-  });
+  }).then((result) => {
+            if (result.isConfirmed) {
+                
+
+                }});
+            
+
 }
 ///////FUNCION PARA PROCESAR//////       
 function ConfirmaCrearPaqueteContenedores() {   
@@ -777,7 +1061,8 @@ function ConfirmaCrearPaqueteContenedores() {
           if(validarVerificacion()) {
             // Si todas están marcadas, procesar el contenedor
              localStorage.removeItem("UsuarioAutorizacion");
-             CrearPaqueteContenedores();
+             console.log('Se creara el paquete'+validarVerificacion);
+            CrearPaqueteContenedores();
         } else {
                 Swal.fire({
                 title: "Ingrese sus credenciales",
@@ -804,11 +1089,12 @@ function ConfirmaCrearPaqueteContenedores() {
                         //// console.log(resultado.respuesta);      
                         const respuesta = resultado.respuesta[0];
                         if (respuesta && respuesta.USUARIO === result.value.usuario && respuesta.PIN === result.value.contraseña) {
-                            //// console.log("Credenciales válidas");
-                            //// console.log(respuesta.USUARIO);
+                            console.log("Credenciales válidas");
+                            console.log(respuesta.USUARIO);
                             localStorage.setItem('UsuarioAutorizacion',respuesta.USUARIO);
                             // Realiza la acción deseada, como procesar el contenedor
                            CrearPaqueteContenedores();
+
                         } else {
                             //// console.log("Credenciales inválidas");
                             Swal.fire({
@@ -919,22 +1205,41 @@ function CrearPaqueteContenedores() {
         }); 
 }
 // FUNCION PARA VERIFICAR EL CHECK EN LA COLUNA DE VERIFICACO
-function validarVerificacion() {
-    // Obtener todas las celdas de verificación
-    var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
-    // Iterar sobre cada celda de verificación
-    for (var i = 0; i < celdasVerificacion.length; i++) {
-        // Obtener el span dentro de la celda
-        var spanVerificacion = celdasVerificacion[i].querySelector('span.material-icons');
-        // Verificar si el span no está presente o su contenido no es 'done_all'
-        if (!spanVerificacion || spanVerificacion.textContent !== 'done_all') {
-            // Si encuentra una celda sin verificar, retorna false
-            return false;
-        }
-    } 
-    // Si todas las celdas están verificadas, retorna true
-    return true;
-}
+/**
+ * Valida que TODAS las filas tengan el ícono 'done_all' en la columna de Verificación (índice 5)
+ * @returns {boolean} true → todas verificadas, false → alguna no lo está
+ */
+const validarVerificacion = () => {
+  const filas = document.querySelectorAll('#tblbodyLineasContenedor tr');
+  
+  // Si no hay filas → no está verificado
+  if (filas.length === 0) return false;
+
+  return Array.from(filas).every(row => {
+    const celdaVerif = row.cells[6]; // Columna 6 (Verif)
+    if (!celdaVerif) return false;
+
+    const icono = celdaVerif.querySelector('.material-icons');
+    return icono?.textContent?.trim() === 'done_all';
+  });
+};
+
+// function validarVerificacion() {
+//     // Obtener todas las celdas de verificación
+//     var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
+//     // Iterar sobre cada celda de verificación
+//     for (var i = 0; i < celdasVerificacion.length; i++) {
+//         // Obtener el span dentro de la celda
+//         var spanVerificacion = celdasVerificacion[i].querySelector('span.material-icons');
+//         // Verificar si el span no está presente o su contenido no es 'done_all'
+//         if (!spanVerificacion || spanVerificacion.textContent !== 'done_all') {
+//             // Si encuentra una celda sin verificar, retorna false
+//             return false;
+//         }
+//     } 
+//     // Si todas las celdas están verificadas, retorna true
+//     return true;
+// }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 function columnaEstaVacia() {
     // Selecciona todas las celdas con id "cantidadLeida" dentro del cuerpo de la tabla
@@ -1363,7 +1668,8 @@ async function enviarCantidadesDevolucion(parametros) {
     .then((response) => response.json())
     .then((result) => {
       console.log("Respuesta del SP");
-      console.log(result.respuesta[0].Respuesta);
+      console.log(result.respuesta);
+      // console.log(result.respuesta[0].Respuesta);
 
       console.log("Respuesta Contenedor");
       console.log(result);
@@ -1379,17 +1685,51 @@ async function enviarCantidadesDevolucion(parametros) {
             cancelButtonColor: "#6e7881",
           }).then((result) => {
             if (result.isConfirmed) {
-              // Redirecciona a tu otra vista aquí
-              // window.location.href = 'BusquedaDeContenedores.html';
-            }
-          });
-        }
-      } else {
-      }
+                  const parametrosBusqueda = localStorage.getItem( "parametrosBusquedaPaquete");
+                  if (parametrosBusqueda) {
+                          const params = new URLSearchParams(parametrosBusqueda);
+                          const pSistema = params.get("pSistema") ?? "";
+                          const pUsuario = params.get("pUsuario") ?? "";
+                          const pOpcion = params.get("pOpcion") ?? "";
+                          const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
+                          const pContenedor = params.get("pContenedor") ?? "";
+                          const pEstado =""
+                          const pFechaDesde = params.get("pFechaDesde") ?? "";
+                          const pArticulo = pArticulo = ""
+
+                          const paramset =
+                                      "?pSistema="+
+                                          pSistema+
+                                          "&pUsuario="+
+                                          pUsuario+
+                                          "&pOpcion="+
+                                          pOpcion+
+                                          "&pBodegaEnvia=" +
+                                          pBodegaEnvia+                         
+                                          "&pContenedor=" +
+                                          pContenedor+
+                                          "&pEstado="+
+                                          pEstado+
+                                          "&pFechaDesde=" +
+                                          pFechaDesde+
+                                          "&pArticulo="+
+                                          pArticulo
+                                          ;    
+                          enviarDatosControlador(paramset); 
+                        } 
+              }});
+          }
+        } else {
+          }
     });
 }
 
+function prueba(){
+ armarTablaLectura(dataContenedores);
+ guardarTablaEnArray();
+ armarTablaVerificacion(dataContenedores);
 
+}
 
 // FUNCION PARA CREAR EL PAQUETE
 // procesar quemado para priuebas
