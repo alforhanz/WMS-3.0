@@ -232,7 +232,7 @@ function resultadosVerificacionContenedores(desde, hasta) {
     const key = ArrayDataFiltrado[i];
     let backgroundColor = i % 2 === 0 ? "" : "#D7D5D5";
 
-    htm += `<tr onclick="irDetalleContenedor('${key.Contenedor}','${pOpcion}', '${key.Bodega_Solicita}')" style="background-color:${backgroundColor};">`;
+    htm += `<tr onclick="irDetalleContenedor('${key.Contenedor}','${pOpcion}', '${key.Bodega_Solicita}','${key.Estado_Pdt}')" style="background-color:${backgroundColor};">`;
    //CONTENEDOR
     htm += `<td>${key.Contenedor || ''}</td>`;
    //CANT SOLICITADA 
@@ -242,7 +242,7 @@ function resultadosVerificacionContenedores(desde, hasta) {
     //CANT PREPADADA //informacion quemada, en espera de LineaAprobada Vitalio agregar al SP    
     htm += `<td>${pOpcion === "A" ? Number(key.LineaPreparada || 0).toFixed(2) : Number(key.LineaContada || 0).toFixed(2)}</td>`;
     htm += `<td>${key.Bodega_Solicita || ''}</td>`;
-    htm += `<td>${key.Fecha_Creacion || ''}</td>`;
+    htm += `<td>${key.Fecha_Creacion || ''}</td>`;    
     htm += `</tr>`;
   }
   tbody.innerHTML = htm; // Insertar el contenido generado en el tbody
@@ -282,10 +282,11 @@ function paginadorTablasContenedor(nPag, pag, dynamicFunction) {
 }
 /////////////////////////////////////////////////////////////////////
 //////////////////FUNCION PARA MOSTRAR EL DETALLE DE LOS PEDIDOS///////////
-function irDetalleContenedor(pTraslado,pOpcion, Bodega_Solicita) {
+function irDetalleContenedor(pTraslado,pOpcion, Bodega_Solicita,Estado_Pdt ) {
   localStorage.setItem("contenedor", pTraslado);
   localStorage.setItem("bodega_solicita", Bodega_Solicita);
   localStorage.setItem("contenDetalleOPC",pOpcion);
+  localStorage.setItem("estado_Pdt",Estado_Pdt);
   console.log('contenDetalleOPC',pOpcion);
   window.location.href = 'lineasContenedor.html';
 }

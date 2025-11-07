@@ -7,8 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("contenedor")) {
     let contenedor = localStorage.getItem("contenedor");  
     let bodegaSolicita = localStorage.getItem("bodega_solicita");  
+    let estado_Pdt=localStorage.getItem("estado_Pdt");
     //---------------------------------------------------------------------------
-    cargarDetalleContenedor(contenedor,bodegaSolicita);
+    cargarDetalleContenedor(contenedor,bodegaSolicita,estado_Pdt);
     //localStorage.removeItem("dataArray");//borra los elementos leidos del localstorage.    
   } else {
     Swal.fire({
@@ -18,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 });
-function cargarDetalleContenedor(contenedor, bodegaSolicita) {
+function cargarDetalleContenedor(contenedor, bodegaSolicita,estado_Pdt) {
         let pSistema='WMS'
         let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;      
         let opcion = localStorage.getItem('contenDetalleOPC');
@@ -30,6 +31,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita) {
         let pBodegaEnvia = document.getElementById("bodega").value;
         let pBodegaSolicita =bodegaSolicita;
         let pConsecutivo = contenedor;
+        let pEstado = estado_Pdt;
    
   // Concatena la variable con texto y asigna el valor al label documento y pedido
   document.getElementById("contenedor").innerHTML = "Número de Contenedor: " + contenedor;
@@ -47,7 +49,10 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita) {
                     "&pBodegaSolicita="+
                     pBodegaSolicita+  
                     "&pConsecutivo="+
-                    pConsecutivo;               
+                    pConsecutivo+
+                    "&pEstado="+
+                    pEstado
+                    ;               
 console.log("Parametros Detalle contenedor\n"+params);
 
   fetch(env.API_URL + "contenedor" + params, myInit)//obtierne las lineas del contenedor
@@ -818,10 +823,10 @@ function mostrarProcesoEnConstruccion() {
         var pConsecutivo = localStorage.getItem('contenedor');        
         // Array para almacenar todas las cantidades y artículos
         let detalles = [];
-        let pEstado = "";
+        let pEstado = null;
        let pBodegaEnvia = document.getElementById("bodega").value;
        let pBodegaDestino = localStorage.getItem("bodega_solicita"); 
-       let pUsuarioAutorizacion = localStorage.getItem('UsuarioAutorizacion') || "";
+       let pUsuarioAutorizacion = localStorage.getItem('UsuarioAutorizacion') || null;
                             // Obtener la tabla
         let table = document.getElementById("myTableVerificacion");
 
@@ -839,11 +844,7 @@ function mostrarProcesoEnConstruccion() {
                 let cantidadPedida = row.querySelector("#cantidadPedida").textContent.trim();
                 
                 // Obtener la cantidad leída
-                let cantidadLeida = row.querySelector("#cantidadLeida").textContent.trim() || 0;
-
-                // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
-                //       cantidadLeida = 0;
-                //   }
+                let cantidadLeida = row.querySelector("#cantidadLeida").textContent.trim() || 0;           
 
                     // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
                     var detalle = {
@@ -857,7 +858,7 @@ function mostrarProcesoEnConstruccion() {
                     detalles.push(detalle);
             }
             // Convertir el array de objetos a formato JSON
-    var jsonDetalles = JSON.stringify(detalles);
+    var jsonDetalles =  encodeURIComponent(JSON.stringify(detalles));
     console.log('JSONDetalles:\n\t:'+jsonDetalles);
     const params =
         "?pSistema="+
@@ -866,13 +867,13 @@ function mostrarProcesoEnConstruccion() {
         pUsuario +
         "&pOpcion="+
         pOpcion+
-        "&pModulo"+
+        "&pModulo="+
         pModulo+
         "&pConsecutivo=" +   
         pConsecutivo +
         "&jsonDetalles=" +
-        jsonDetalles+
-        "&pEstado"+
+       jsonDetalles+
+        "&pEstado="+
         pEstado+
         "&pBodegaEnvia="+
         pBodegaEnvia+
@@ -880,22 +881,24 @@ function mostrarProcesoEnConstruccion() {
         pBodegaDestino+
         "&pUsuarioAutorizacion="+
         pUsuarioAutorizacion ;               
-        console.log('Parametros: \n'+params);
+        //console.log('Parametros: \n'+params);
         fetch(env.API_URL + "contenedor" + params, myInit)
         .then((response) => response.json())     
         .then((result) => {  
             console.log("Respuesta del SP");
-            console.log(result.contenedor);      
+            console.log(result.contenedor);  
+            console.log('mensaje '+result.message);    
 
-            console.log("Respuesta Contenedor");
-            console.log(result);  
+            // console.log("Respuesta Contenedor");
+            // console.log(result);  
 
             if (result.msg === "SUCCESS") {
             if (result.contenedor.length != 0) {   
                 // Resto del código de éxito
                 Swal.fire({
                     icon: "success",
-                    title: "Datos guardados correctamente",
+                    //title: "Datos guardados correctamente",
+                    title: result.message,
                     confirmButtonText: "Aceptar",
                     confirmButtonColor: "#28a745",
                     cancelButtonColor: "#6e7881",
@@ -907,7 +910,8 @@ function mostrarProcesoEnConstruccion() {
                 });
             }          
             } 
-            else{            
+            else{   
+                console.log(result.message);         
             }
         });      
     
