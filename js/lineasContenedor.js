@@ -1120,7 +1120,8 @@ function procesarContenedor() {
                 // Resto del código de éxito
                 Swal.fire({
                     icon: "success",
-                    title: "Contenedor procesado correctamente",
+                    //title: "Contenedor procesado correctamente",
+                    title: result.message,
                     confirmButtonText: "Aceptar",
                     confirmButtonColor: "#28a745",
                     cancelButtonColor: "#6e7881",

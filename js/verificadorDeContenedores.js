@@ -1,281 +1,281 @@
 //Variable global que contiene el detalle del contenedor
 var detalleLineasContenedoreses=[];
 
-const dataContenedores = [
-  {
-    ID: 1,
-    Contenedor: "M81-0000023255",
-    Traslado: "S02-0000014709",
-    Articulo: "215/60R17 ANN",
-    Descripcion: "LLANTA ANNAITE AN616 96H",
-    Codigo_Barra: "2072510302352",
-    codigos_barras: "2072510302352||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 2,
-    Contenedor: "M81-0000023255|M81-0000023256",
-    Traslado: "S02-0000014709|S02-0000014710",
-    Articulo: "215/60R17 FR",
-    Descripcion: "LLANTA FRONWAY ROADPOWER HT 100H XL",
-    Codigo_Barra: "6938628248686",
-    codigos_barras: "6938628248686||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 164,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 16,
-    Cant_Verificada: 16,
-    Cant_Leida: 16,
-    Cant_Dif: 0,
-    Mas_Linea: "S",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 3,
-    Contenedor: "M81-0000023255",
-    Traslado: "S02-0000014710",
-    Articulo: "215/60R17 FRO",
-    Descripcion: "LLANTA FRONWAY VANPLUS 09 109/107T 8L",
-    Codigo_Barra: "6938628226066",
-    codigos_barras: "6938628226066||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 8,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 8,
-    Cant_Verificada: 8,
-    Cant_Leida: 8,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 4,
-    Contenedor: "M81-0000023256",
-    Traslado: "S02-0000014709",
-    Articulo: "215/60R17 KH",
-    Descripcion: "LLANTA KUMHO TA11 96T",
-    Codigo_Barra: "8808956155513",
-    codigos_barras: "8808956155513||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 5,
-    Contenedor: "M81-0000023256",
-    Traslado: "S02-0000014709",
-    Articulo: "215/60R17 KHM",
-    Descripcion: "LLANTA KUMHO KH32 96H",
-    Codigo_Barra: "8808956159801",
-    codigos_barras: "8808956159801||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 6,
-    Contenedor: "M81-0000023257",
-    Traslado: "S02-0000014710",
-    Articulo: "215/60R17 KUMHO",
-    Descripcion: "LLANTA KUMHO TA51 96T",
-    Codigo_Barra: "8808956300395",
-    codigos_barras: "8808956300395||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 7,
-    Contenedor: "M81-0000023255",
-    Traslado: "S02-0000014710",
-    Articulo: "265/70R17 FALK",
-    Descripcion: "LLANTA FALKEN WILDPEAK HT02 115/121S",
-    Codigo_Barra: "332848A3002ZA",
-    codigos_barras: "332848A3002ZA||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 10,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 6,
-    Cant_Verificada: 6,
-    Cant_Leida: 6,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 8,
-    Contenedor: "M81-0000023255",
-    Traslado: "S02-0000014709",
-    Articulo: "265/70R17 FK",
-    Descripcion: "LLANTA FALKEN WILDPEAK AT01 113S",
-    Codigo_Barra: "296047A3002Ja",
-    codigos_barras: "296047A3002Ja||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 9,
-    Contenedor: "M81-0000023255|M81-0000023256",
-    Traslado: "S02-0000014709|S02-0000014710",
-    Articulo: "265/70R17 FLK",
-    Descripcion: "LLANTA FALKEN WILDPEAK AT03 10L (121/118S)",
-    Codigo_Barra: "323833A3102Za",
-    codigos_barras: "323833A3102Za|323833A3002Ja|323833A3102SO",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 569,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 6,
-    Cant_Verificada: 6,
-    Cant_Leida: 6,
-    Cant_Dif: 0,
-    Mas_Linea: "S",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 10,
-    Contenedor: "M81-0000023256",
-    Traslado: "S02-0000014709",
-    Articulo: "265/70R17 ILI",
-    Descripcion: "LLANTA ILINK PENTERRA RT 115Q",
-    Codigo_Barra: "6932094132661",
-    codigos_barras: "||6932094132661",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 1,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 1,
-    Cant_Verificada: 1,
-    Cant_Leida: 1,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 11,
-    Contenedor: "M81-0000023257",
-    Traslado: "S02-0000014710",
-    Articulo: "265/70R17 KH",
-    Descripcion: "LLANTA KUMHO HT55 113T",
-    Codigo_Barra: "8808956293246",
-    codigos_barras: "||8808956293246",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 9,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 9,
-    Cant_Verificada: 9,
-    Cant_Leida: 9,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 12,
-    Contenedor: "M81-0000023257",
-    Traslado: "S02-0000014709",
-    Articulo: "RIN 17 RE2213 5H 528",
-    Descripcion: "INFINIT 17X8 5/114.3 ET35 CB73.1 GUNMETAL FAC MACH (GMFM)",
-    Codigo_Barra: null,
-    codigos_barras: "||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 4,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 3,
-    Cant_Verificada: 3,
-    Cant_Leida: 3,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  },
-  {
-    ID: 13,
-    Contenedor: "M81-0000023256",
-    Traslado: "S02-0000014709",
-    Articulo: "RIN 18 188158 6H 643",
-    Descripcion: "INFINIT 18X9 6/114.3 ET0 CB66.1 (B +MILL SPK)",
-    Codigo_Barra: null,
-    codigos_barras: "||",
-    Bodega_Solicita: "B-02",
-    Fecha_Aprobacion: "28/10/2025",
-    total_cedi: 4,
-    Estado_tm: "C",
-    Estado_ml: "PW",
-    Estado_pl: "V",
-    Cant_Pedida: 4,
-    Cant_Verificada: 4,
-    Cant_Leida: 4,
-    Cant_Dif: 0,
-    Mas_Linea: "N",
-    NOMBRE: "Por enviar"
-  }
-];
+// const dataContenedores = [
+//   {
+//     ID: 1,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 ANN",
+//     Descripcion: "LLANTA ANNAITE AN616 96H",
+//     Codigo_Barra: "2072510302352",
+//     codigos_barras: "2072510302352||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 2,
+//     Contenedor: "M81-0000023255|M81-0000023256",
+//     Traslado: "S02-0000014709|S02-0000014710",
+//     Articulo: "215/60R17 FR",
+//     Descripcion: "LLANTA FRONWAY ROADPOWER HT 100H XL",
+//     Codigo_Barra: "6938628248686",
+//     codigos_barras: "6938628248686||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 164,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 16,
+//     Cant_Verificada: 16,
+//     Cant_Leida: 16,
+//     Cant_Dif: 0,
+//     Mas_Linea: "S",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 3,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014710",
+//     Articulo: "215/60R17 FRO",
+//     Descripcion: "LLANTA FRONWAY VANPLUS 09 109/107T 8L",
+//     Codigo_Barra: "6938628226066",
+//     codigos_barras: "6938628226066||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 8,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 8,
+//     Cant_Verificada: 8,
+//     Cant_Leida: 8,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 4,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 KH",
+//     Descripcion: "LLANTA KUMHO TA11 96T",
+//     Codigo_Barra: "8808956155513",
+//     codigos_barras: "8808956155513||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 5,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 KHM",
+//     Descripcion: "LLANTA KUMHO KH32 96H",
+//     Codigo_Barra: "8808956159801",
+//     codigos_barras: "8808956159801||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 6,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014710",
+//     Articulo: "215/60R17 KUMHO",
+//     Descripcion: "LLANTA KUMHO TA51 96T",
+//     Codigo_Barra: "8808956300395",
+//     codigos_barras: "8808956300395||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 7,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014710",
+//     Articulo: "265/70R17 FALK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK HT02 115/121S",
+//     Codigo_Barra: "332848A3002ZA",
+//     codigos_barras: "332848A3002ZA||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 10,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 6,
+//     Cant_Verificada: 6,
+//     Cant_Leida: 6,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 8,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014709",
+//     Articulo: "265/70R17 FK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK AT01 113S",
+//     Codigo_Barra: "296047A3002Ja",
+//     codigos_barras: "296047A3002Ja||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 9,
+//     Contenedor: "M81-0000023255|M81-0000023256",
+//     Traslado: "S02-0000014709|S02-0000014710",
+//     Articulo: "265/70R17 FLK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK AT03 10L (121/118S)",
+//     Codigo_Barra: "323833A3102Za",
+//     codigos_barras: "323833A3102Za|323833A3002Ja|323833A3102SO",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 569,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 6,
+//     Cant_Verificada: 6,
+//     Cant_Leida: 6,
+//     Cant_Dif: 0,
+//     Mas_Linea: "S",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 10,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "265/70R17 ILI",
+//     Descripcion: "LLANTA ILINK PENTERRA RT 115Q",
+//     Codigo_Barra: "6932094132661",
+//     codigos_barras: "||6932094132661",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 11,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014710",
+//     Articulo: "265/70R17 KH",
+//     Descripcion: "LLANTA KUMHO HT55 113T",
+//     Codigo_Barra: "8808956293246",
+//     codigos_barras: "||8808956293246",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 9,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 9,
+//     Cant_Verificada: 9,
+//     Cant_Leida: 9,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 12,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014709",
+//     Articulo: "RIN 17 RE2213 5H 528",
+//     Descripcion: "INFINIT 17X8 5/114.3 ET35 CB73.1 GUNMETAL FAC MACH (GMFM)",
+//     Codigo_Barra: null,
+//     codigos_barras: "||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 4,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 3,
+//     Cant_Verificada: 3,
+//     Cant_Leida: 3,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 13,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "RIN 18 188158 6H 643",
+//     Descripcion: "INFINIT 18X9 6/114.3 ET0 CB66.1 (B +MILL SPK)",
+//     Codigo_Barra: null,
+//     codigos_barras: "||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 4,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 4,
+//     Cant_Verificada: 4,
+//     Cant_Leida: 4,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   }
+// ];
 
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -292,10 +292,10 @@ document.addEventListener("DOMContentLoaded", function (){
 /////////////////////////////////////////////////////////////////////
 function validarBusquedaContenedor() {  
     let bodega = document.getElementById("bodega").value;
-    let pBodegaDestino = document.getElementById("bodegaSelectOC").value; 
+    let pBodegaSolicita = document.getElementById("bodegaSelectOC").value; 
     let pPlaca = document.getElementById("placa-camion").value;   
 
-  if (pPlaca===""||pBodegaDestino=="") {
+  if (pPlaca===""||pBodegaSolicita=="") {
     Swal.fire({
       icon: 'warning',
       title: 'Advertencia',
@@ -323,7 +323,7 @@ function validarBusquedaContenedor() {
                         "&pBodegaEnvia=" +
                         pBodegaEnvia+
                         "&pBodegaDestino=" +
-                        pBodegaDestino+ 
+                        pBodegaSolicita+ 
                         "&pContenedor=" +
                         pConsecutivo+
                         "&pEstado="+
@@ -333,14 +333,16 @@ function validarBusquedaContenedor() {
                         "&pArticulo="+
                         pArticulo
                         ;    
+        localStorage.setItem('parametrosBusquedaPaquete', params);
+      
         enviarDatosControlador(params);                             
         }
 }
  /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function enviarDatosControlador(params) {    
-   // console.log('BUSQUEDA CONTENEDOR PARAMETROS\n '+params);
-    localStorage.setItem('parametrosBusquedaContenedor', params);
+   console.log('BUSQUEDA CONTENEDOR PARAMETROS\n '+params);
+   // localStorage.setItem('parametrosBusquedaContenedor', params);
     fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
         .then((response) => response.json())
         .then((result) => {
@@ -351,6 +353,7 @@ function enviarDatosControlador(params) {
                 armarTablaLectura(detalleLineasContenedoreses);
                 guardarTablaEnArray();  
                 armarTablaVerificacion(detalleLineasContenedoreses);
+                mostrarPestanaLectura();
                console.log('REsultados:');
                console.log(detalleLineasContenedoreses);
                 Swal.fire({
@@ -381,6 +384,16 @@ function enviarDatosControlador(params) {
         });
     ocultarLoader();
 }
+
+function mostrarPestanaLectura() {
+    // Cambia la pestaña activa
+    const tabLectura = document.querySelector('#tabs-swipe-demo a[href="#tabla-lectura"]');
+    tabLectura.click(); // Simula el clic
+
+    // Opcional: enfocar el input del código de barras
+    document.getElementById('codigo-barras').focus();
+}
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function limpiarResultadoGeneral() {
@@ -405,24 +418,22 @@ if (tabla) {
     tbody.innerHTML = "";
   }
 }
-localStorage.removeItem('SearchParameterFlag');
-localStorage.removeItem('parametrosBusquedaContenedor');
+// localStorage.removeItem('SearchParameterFlag');
+// localStorage.removeItem('parametrosBusquedaContenedor');
 
 }
 function limpiarTblLectura() {
-  const tabla = document.getElementById("myTableLectura");
+    const tabla = document.getElementById("myTableLectura");
 
-// Limpiar el contenido del tbody de la tabla si la tabla existe
-if (tabla) {
-  let tbody = tabla.querySelector("tbody");
-  if (tbody) {
-    tbody.innerHTML = "";
-  }
-}
-
-localStorage.removeItem('SearchParameterFlag');
-localStorage.removeItem('parametrosBusquedaContenedor');
-
+  // Limpiar el contenido del tbody de la tabla si la tabla existe
+  if (tabla) {
+    let tbody = tabla.querySelector("tbody");
+    if (tbody) {
+      tbody.innerHTML = "";
+    }
+  } 
+// localStorage.removeItem('SearchParameterFlag');
+// localStorage.removeItem('parametrosBusquedaContenedor');
 }
 // Función para cargar las bodegas
 function cargarBodegas() {
@@ -1685,38 +1696,39 @@ async function enviarCantidadesDevolucion(parametros) {
             cancelButtonColor: "#6e7881",
           }).then((result) => {
             if (result.isConfirmed) {
-                  const parametrosBusqueda = localStorage.getItem( "parametrosBusquedaPaquete");
-                  if (parametrosBusqueda) {
-                          const params = new URLSearchParams(parametrosBusqueda);
-                          const pSistema = params.get("pSistema") ?? "";
-                          const pUsuario = params.get("pUsuario") ?? "";
-                          const pOpcion = params.get("pOpcion") ?? "";
-                          const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
-                          const pContenedor = params.get("pContenedor") ?? "";
-                          const pEstado =""
-                          const pFechaDesde = params.get("pFechaDesde") ?? "";
-                          const pArticulo = pArticulo = ""
+                      actualizaTablaVerificacion();
+                  // const parametrosBusqueda = localStorage.getItem( "parametrosBusquedaPaquete");
+                  // if (parametrosBusqueda) {
+                  //         const params = new URLSearchParams(parametrosBusqueda);
+                  //         const pSistema = params.get("pSistema") ?? "";
+                  //         const pUsuario = params.get("pUsuario") ?? "";
+                  //         const pOpcion = params.get("pOpcion") ?? "";
+                  //         const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
+                  //         const pContenedor = params.get("pContenedor") ?? "";
+                  //         const pEstado =""
+                  //         const pFechaDesde = params.get("pFechaDesde") ?? "";
+                  //         const pArticulo = pArticulo = ""
 
-                          const paramset =
-                                      "?pSistema="+
-                                          pSistema+
-                                          "&pUsuario="+
-                                          pUsuario+
-                                          "&pOpcion="+
-                                          pOpcion+
-                                          "&pBodegaEnvia=" +
-                                          pBodegaEnvia+                         
-                                          "&pContenedor=" +
-                                          pContenedor+
-                                          "&pEstado="+
-                                          pEstado+
-                                          "&pFechaDesde=" +
-                                          pFechaDesde+
-                                          "&pArticulo="+
-                                          pArticulo
-                                          ;    
-                          enviarDatosControlador(paramset); 
-                        } 
+                  //         const paramset =
+                  //                     "?pSistema="+
+                  //                         pSistema+
+                  //                         "&pUsuario="+
+                  //                         pUsuario+
+                  //                         "&pOpcion="+
+                  //                         pOpcion+
+                  //                         "&pBodegaEnvia=" +
+                  //                         pBodegaEnvia+                         
+                  //                         "&pContenedor=" +
+                  //                         pContenedor+
+                  //                         "&pEstado="+
+                  //                         pEstado+
+                  //                         "&pFechaDesde=" +
+                  //                         pFechaDesde+
+                  //                         "&pArticulo="+
+                  //                         pArticulo
+                  //                         ;    
+                  //         enviarDatosControlador(paramset); 
+                  //       } 
               }});
           }
         } else {
@@ -1724,12 +1736,54 @@ async function enviarCantidadesDevolucion(parametros) {
     });
 }
 
-function prueba(){
- armarTablaLectura(dataContenedores);
- guardarTablaEnArray();
- armarTablaVerificacion(dataContenedores);
+
+function actualizaTablaVerificacion(){
+ const parametrosBusqueda = localStorage.getItem( "parametrosBusquedaPaquete");
+                  if (parametrosBusqueda) {
+                          const params = new URLSearchParams(parametrosBusqueda);
+                          const pSistema = params.get("pSistema") ?? "";
+                          const pUsuario = params.get("pUsuario") ?? "";
+                          const pOpcion = params.get("pOpcion") ?? "";
+                          const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
+                          const pBodegaSolicita = params.get('pBodegaDestino')
+                          const pConsecutivo = params.get("pContenedor") ?? "";
+                          const pEstado =""
+                          const pFechaDesde = params.get("pFechaDesde") ?? "";
+                          const pArticulo =""
+
+                          const paramset =
+                                            "?pSistema="+
+                                            pSistema+
+                                            "&pUsuario="+
+                                            pUsuario+
+                                            "&pOpcion="+
+                                            pOpcion+
+                                            "&pBodegaEnvia=" +
+                                            pBodegaEnvia+
+                                            "&pBodegaDestino=" +
+                                            pBodegaSolicita+ 
+                                            "&pContenedor=" +
+                                            pConsecutivo+
+                                            "&pEstado="+
+                                            pEstado+
+                                            "&pFechaDesde=" +
+                                            pFechaDesde+
+                                            "&pArticulo="+
+                                            pArticulo
+                                            ;   
+                          console.log(''+parametrosBusqueda);                  
+                          console.log('PARAMSET'+paramset);
+                          enviarDatosControlador(paramset); 
+                        } 
 
 }
+
+// function prueba(){
+//  armarTablaLectura(dataContenedores);
+//  guardarTablaEnArray();
+//  armarTablaVerificacion(dataContenedores);
+
+// }
 
 // FUNCION PARA CREAR EL PAQUETE
 // procesar quemado para priuebas
