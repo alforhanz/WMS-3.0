@@ -13,13 +13,13 @@ var promoToDelete = "";
 let acumToDelete = JSON.parse(sessionStorage.getItem("itemsToDelete"));
 //-----------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-  console.log('DOM cargado...')
-   //--------------------------------------------------
+  console.log("DOM cargado...");
+  //--------------------------------------------------
   validate_login();
   existeBodega();
   localStorage.setItem("sinExistencias", "false");
   const checkbox = document.getElementById("sinExistencias");
-  if(checkbox){
+  if (checkbox) {
     checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         localStorage.setItem("sinExistencias", "true");
@@ -28,15 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
-  
-
 });
 //-----------------------------------------------------------------------------------
 function validate_login() {
   const user = sessionStorage.getItem("user");
   if (user) {
-    const usuario = existe_Usuario();    
+    const usuario = existe_Usuario();
     document.getElementById("usuario").innerHTML = usuario;
     document.getElementById("hUsuario").value = usuario;
   } else {
@@ -88,10 +85,10 @@ $(document).ready(function () {
           } else {
             alert("Else de condición");
           }
-        } else {         
+        } else {
         }
       });
-  }); 
+  });
 });
 
 /////////////////////////////////////// LOGOUT //////////////////////////-------------
@@ -109,7 +106,7 @@ function logout() {
 
   // Redirigir al usuario a la página de inicio
   window.location.href = "index.html";
-   // window.location.href = 'http://200.124.12.146:8108/session/close.php';
+  // window.location.href = 'http://200.124.12.146:8108/session/close.php';
 }
 //-----------------------------------------------------------------------------------
 function enlace(link) {
@@ -122,20 +119,21 @@ function existeBodega() {
   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
   if (bodega) {
     document.getElementById("bodega-sucursal").innerHTML = bodega[0].NOMBRE;
-    document.getElementById("bodega").value = bodega[0].BODEGA;   
+    document.getElementById("bodega").value = bodega[0].BODEGA;
   }
 }
 //--------------------FILTROS MODAL DEL BUSCADOR-------------------------------------
 function filtrosModal() {
-  let htm = "", IDCategoria = "1055";
+  let htm = "",
+    IDCategoria = "1055";
   let elem = document.getElementById("modalFiltro");
   let instance = M.Modal.getInstance(elem);
 
-  if (elem.style.display === 'none') {
+  if (elem.style.display === "none") {
     instance.open();
   } else {
     instance.open();
-    localStorage.removeItem('claseSelect');
+    localStorage.removeItem("claseSelect");
     htm = ` <div class="row">
             <div class="col s12">
               <ul class="collapsible">
@@ -231,23 +229,25 @@ function filtrosModal() {
     ////console.log(htm);
     document.getElementById("divFiltro").innerHTML = htm;
     // Llamar las marcas por API
-    getFiltros().then(() => {
-      // Una vez que los datos estén listos, llamamos a MostrarClases()
-      document.getElementById("filtroclase").innerHTML = MostrarClases(1);
-    }).catch((error) => {
-      console.error("Error:", error);
-    });
+    getFiltros()
+      .then(() => {
+        // Una vez que los datos estén listos, llamamos a MostrarClases()
+        document.getElementById("filtroclase").innerHTML = MostrarClases(1);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
     $(".collapsible").collapsible();
   }
 }
 //----------------------------Filtros Pre Busqueda-----------------------------------
 function getFiltros(clase, marca, tipo, subtipo, subtipo2, envase) {
-  clase = clase !== undefined ? clase : '';
-  marca = marca !== undefined ? marca : '';
-  tipo = tipo !== undefined ? tipo : '';
-  subtipo = subtipo !== undefined ? subtipo : '';
-  subtipo2 = subtipo2 !== undefined ? subtipo2 : '';
-  envase = envase !== undefined ? envase : '';
+  clase = clase !== undefined ? clase : "";
+  marca = marca !== undefined ? marca : "";
+  tipo = tipo !== undefined ? tipo : "";
+  subtipo = subtipo !== undefined ? subtipo : "";
+  subtipo2 = subtipo2 !== undefined ? subtipo2 : "";
+  envase = envase !== undefined ? envase : "";
 
   params =
     "?clase=" +
@@ -270,42 +270,51 @@ function getFiltros(clase, marca, tipo, subtipo, subtipo2, envase) {
         if (result.filtros.length > 0) {
           ArrayData = formatData(result.filtros);
           //console.log("Datos formateados:", ArrayData);
-          if (ArrayData.some(item => item.hasOwnProperty('CLASIFICACION_2'))) {
-            localStorage.setItem('claseSelect', clase);
-            localStorage.removeItem('marcaSelect');
-            localStorage.removeItem('tipoSelect');
-            localStorage.removeItem('subtipoSelect');
-            localStorage.removeItem('subtipo2Select');
-            localStorage.removeItem('envaseSelect');
+          if (
+            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_2"))
+          ) {
+            localStorage.setItem("claseSelect", clase);
+            localStorage.removeItem("marcaSelect");
+            localStorage.removeItem("tipoSelect");
+            localStorage.removeItem("subtipoSelect");
+            localStorage.removeItem("subtipo2Select");
+            localStorage.removeItem("envaseSelect");
             document.getElementById("filtromarca").innerHTML = MostrarMarcas(1);
-          }
-          else if (ArrayData.some(item => item.hasOwnProperty('CLASIFICACION_3'))) {
-            localStorage.setItem('marcaSelect', marca);
-            localStorage.removeItem('tipoSelect');
-            localStorage.removeItem('subtipoSelect');
-            localStorage.removeItem('subtipo2Select');
-            localStorage.removeItem('envaseSelect');
+          } else if (
+            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_3"))
+          ) {
+            localStorage.setItem("marcaSelect", marca);
+            localStorage.removeItem("tipoSelect");
+            localStorage.removeItem("subtipoSelect");
+            localStorage.removeItem("subtipo2Select");
+            localStorage.removeItem("envaseSelect");
             document.getElementById("filtrotipo").innerHTML = MostrarTipos(1);
-          }
-          else if (ArrayData.some(item => item.hasOwnProperty('CLASIFICACION_4'))) {
-            localStorage.setItem('tipoSelect', tipo);
-            localStorage.removeItem('subtipoSelect');
-            localStorage.removeItem('subtipo2Select');
-            localStorage.removeItem('envaseSelect');
-            document.getElementById("filtrosubtipo").innerHTML = MostrarSubTipos(1);
-          }
-          else if (ArrayData.some(item => item.hasOwnProperty('CLASIFICACION_5'))) {
-            localStorage.setItem('subtipoSelect', subtipo);
-            localStorage.removeItem('subtipo2Select');
-            localStorage.removeItem('envaseSelect');
-            document.getElementById("filtrosubtipo2").innerHTML = MostrarSubTipos2(1);
-          }
-          else if (ArrayData.some(item => item.hasOwnProperty('CLASIFICACION_6'))) {
-            localStorage.setItem('subtipo2Select', subtipo2);
-            localStorage.removeItem('envaseSelect');
+          } else if (
+            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_4"))
+          ) {
+            localStorage.setItem("tipoSelect", tipo);
+            localStorage.removeItem("subtipoSelect");
+            localStorage.removeItem("subtipo2Select");
+            localStorage.removeItem("envaseSelect");
+            document.getElementById("filtrosubtipo").innerHTML =
+              MostrarSubTipos(1);
+          } else if (
+            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_5"))
+          ) {
+            localStorage.setItem("subtipoSelect", subtipo);
+            localStorage.removeItem("subtipo2Select");
+            localStorage.removeItem("envaseSelect");
+            document.getElementById("filtrosubtipo2").innerHTML =
+              MostrarSubTipos2(1);
+          } else if (
+            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_6"))
+          ) {
+            localStorage.setItem("subtipo2Select", subtipo2);
+            localStorage.removeItem("envaseSelect");
             // localStorage.setItem('envaseSelect', envase);
-            document.getElementById("filtroenvase").innerHTML = MostrarEnvases(1);
-          }         
+            document.getElementById("filtroenvase").innerHTML =
+              MostrarEnvases(1);
+          }
         } else {
           Swal.fire({
             icon: "warning",
@@ -325,7 +334,6 @@ function getFiltros(clase, marca, tipo, subtipo, subtipo2, envase) {
 }
 //-----------------------------------------------------------------------------------
 function formatData(data) {
-  
   return data.map((item) => {
     // Verificar si el objeto item tiene la columna DESCRIPCION
     if ("DESCRIPCION" in item) {
@@ -395,14 +403,14 @@ function cerrarModal() {
 //-----------------------------------------------------------------------------------
 $("#articulo").on("keypress", function (e) {
   if (e.keyCode == 13 || e.keyCode == 9) {
-    e.preventDefault();   
-    preBusqueda();    
+    e.preventDefault();
+    preBusqueda();
   }
 });
 //-----------------------------------------------------------------------------------
 $("#txtRuc").on("keypress", function (e) {
   if (e.keyCode == 13 || e.keyCode == 9) {
-    e.preventDefault();   
+    e.preventDefault();
   }
 });
 //-----------------------------------------------------------------------------------
@@ -477,25 +485,25 @@ $(document).ready(function () {
 function preBusqueda() {
   // let nPag = 0;
   let pag = 1;
-  
+
   let articulo = document.getElementById("articulo").value.trim();
-  
-localStorage.removeItem('mostrarEnBodega');
+
+  localStorage.removeItem("mostrarEnBodega");
   const art = encodeURIComponent(articulo);
   let bodega = document.getElementById("bodega").value;
-  let clase = localStorage.getItem('claseSelect') || '';
-  let marca = localStorage.getItem('marcaSelect') || '';
-  let tipo = localStorage.getItem('tipoSelect') || '';
-  let envase = localStorage.getItem('envaseSelect') || '';
+  let clase = localStorage.getItem("claseSelect") || "";
+  let marca = localStorage.getItem("marcaSelect") || "";
+  let tipo = localStorage.getItem("tipoSelect") || "";
+  let envase = localStorage.getItem("envaseSelect") || "";
   const checkbox = document.getElementById("sinExistencias");
   const sinExistencias = checkbox ? checkbox.checked : false;
   // localStorage.setItem("sinExistencias",sinExistencias);
   let existenciaBusqueda = "";
-  
-  if (sinExistencias) {    
+
+  if (sinExistencias) {
     console.log("Buscando con ítems sin existencias...");
-     existenciaBusqueda = "N";  
-  } else {    
+    existenciaBusqueda = "N";
+  } else {
     console.log("Buscando solo ítems con existencias...");
     existenciaBusqueda = "S";
   }
@@ -518,7 +526,7 @@ localStorage.removeItem('mostrarEnBodega');
     bodega +
     "&pTipoBodega=" +
     0;
-    mostrarLoader();
+  mostrarLoader();
   fetch(env.API_URL + "wmsbusquedaarticulos/1" + params, myInit)
     .then((response) => {
       if (!response.ok) {
@@ -538,20 +546,20 @@ localStorage.removeItem('mostrarEnBodega');
     })
     .then((result) => {
       if (result && result.msg === "SUCCESS") {
-        console.log('Cantidad de Registros: ', result.data.length);
+        console.log("Cantidad de Registros: ", result.data.length);
         console.log(result.data);
-        
+
         if (result.data.length > 0) {
           ArrayData = result.data;
-          ArrayDataFiltrado = result.data;          
+          ArrayDataFiltrado = result.data;
           ArrayData2 = result.data;
-         localStorage.setItem("articulo-Busqueda", JSON.stringify(ArrayData));
+          localStorage.setItem("articulo-Busqueda", JSON.stringify(ArrayData));
 
           //console.log("DATA DE BUSQUEDA...", ArrayData);
           let totales = ArrayDataFiltrado.length;
           nPag = Math.ceil(totales / xPag);
           LimpiarFiltroPre(1);
-          mostrarResultadosBusqueda(nPag, pag);        
+          mostrarResultadosBusqueda(nPag, pag);
           ocultarLoader();
         } else {
           Swal.fire({
@@ -576,7 +584,6 @@ localStorage.removeItem('mostrarEnBodega');
 }
 //-----------------------------------------------------------------------------------
 function mostrarResultadosBusqueda(nPag, pag) {
- 
   let htm = "";
   let desde = (pag - 1) * xPag;
   let hasta = Math.min(pag * xPag, ArrayDataFiltrado.length);
@@ -606,16 +613,15 @@ function mostrarResultados(desde, hasta) {
   let bodegaLabel = "";
   let url = "";
 
-      const checkbox = document.getElementById("sinExistencias");
-if(checkbox){
-let esistencias= localStorage.getItem("sinExistencias")==="true";
-          if(esistencias){
-            checkbox.checked=true;
-          }else{
-            checkbox.checked=false;
-          }
-}
-    
+  const checkbox = document.getElementById("sinExistencias");
+  if (checkbox) {
+    let esistencias = localStorage.getItem("sinExistencias") === "true";
+    if (esistencias) {
+      checkbox.checked = true;
+    } else {
+      checkbox.checked = false;
+    }
+  }
 
   htm += '<div id="lista-articulo">';
   htm += `<div class="col s12">
@@ -624,7 +630,7 @@ let esistencias= localStorage.getItem("sinExistencias")==="true";
           
           `;
 
-htm += `<div class="row" id="totalregistros">        
+  htm += `<div class="row" id="totalregistros">        
           <div class="col s6 valign-wrapper">
             <label>
               <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -657,14 +663,20 @@ htm += `<div class="row" id="totalregistros">
   for (let i = desde; i < hasta; i++) {
     if (ArrayDataFiltrado[i]) {
       let DArticulo = ArrayDataFiltrado[i].ARTICULO.replace("/", "-");
-      const cantBodega = parseFloat(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA) || 0;
+      const cantBodega =
+        parseFloat(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA) || 0;
 
       // Etiqueta de bodega
-      bodegaLabel = cantBodega > 0 ? `<span class="mi-tienda">En Bodega</span>` : `<span></span>`;
+      bodegaLabel =
+        cantBodega > 0
+          ? `<span class="mi-tienda">En Bodega</span>`
+          : `<span></span>`;
 
       // URL de la imagen (manejo de FOTO = "S" o "N")
       const imagenUrl =
-        ArrayDataFiltrado[i].FOTO === "S"? `${env.API_IMAGE}/${DArticulo}` : "https://via.placeholder.com/150?text=Sin+Imagen"; // Imagen por defecto si FOTO = "N"
+        ArrayDataFiltrado[i].FOTO === "S"
+          ? `${env.API_IMAGE}/${DArticulo}`
+          : "https://via.placeholder.com/150?text=Sin+Imagen"; // Imagen por defecto si FOTO = "N"
 
       url = `href="#"`;
 
@@ -678,32 +690,42 @@ htm += `<div class="row" id="totalregistros">
         colorReorden = "deep-orange accent-3";
       } else if (ArrayDataFiltrado[i].color === "V") {
         colorReorden = "green darken-1";
-      }     
-      htm +=`<div class="container-img">
+      }
+      htm += `<div class="container-img">
                  <div id="envoltorio">
                <a ${url}>                
-                 <img src="${env.API_IMAGE}/${DArticulo}" width="100%" data-src="' + site + 'image/displayimage/' + varArt + '" alt="' + ArrayData[i].ARTICULO + '">
+                 <img src="${
+                   env.API_IMAGE
+                 }/${DArticulo}" width="100%" data-src="' + site + 'image/displayimage/' + varArt + '" alt="' + ArrayData[i].ARTICULO + '">
                   ${bodegaLabel}
                </a>
                <div class="flotante-acciones ${colorReorden}">
                   <div class="link-flotante-acciones-forklift " >
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="mostrarExistencias('${ArrayDataFiltrado[i].ARTICULO}')">
+                   <a id="dropbtn${i}" class="dropbtn2x" onclick="mostrarExistencias('${
+        ArrayDataFiltrado[i].ARTICULO
+      }')">
                      <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" tabindex="1">
                    </a>             
                  </div>
                   <div class="link-flotante-acciones-bar-code ">
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                   <a id="dropbtn${i}" class="dropbtn2x" onclick="impCodBar('${
+        ArrayDataFiltrado[i].ARTICULO
+      }','${ArrayDataFiltrado[i].DESCRIPCION}')">
                    <img src="./img/icon/bar-code.svg"  width="22" height="22">
                    </a>             
                  </div>
                     <div class="link-flotante-acciones-information " >
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                   <a id="dropbtn${i}" class="dropbtn2x" onclick="information('${
+        ArrayDataFiltrado[i].ARTICULO
+      }','${ArrayDataFiltrado[i].DESCRIPCION}')">
                    <img src="./img/icon/information.svg"  width="22" height="22">
                    </a>             
                  </div>
                </div>          
              </div>
-          <h3 class="articulo-titulo">Nombre: ${ArrayDataFiltrado[i].ARTICULO}</h3>
+          <h3 class="articulo-titulo">Nombre: ${
+            ArrayDataFiltrado[i].ARTICULO
+          }</h3>
           <h4>Descripción: ${ArrayDataFiltrado[i].DESCRIPCION}</h4>
           <h4>Cantidad: ${cantBodega.toFixed(2)}</h4>
         </div>`;
@@ -726,21 +748,24 @@ function paginador(nPag, pag) {
       selected = "";
     }
     if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-        }</option>`;
+      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
+        parseInt(i) + 1
+      }</option>`;
     }
   }
   sel += `</select>`;
 
   if (pag <= 1) btnAtras = `<a style="color: #aba7a7;">❮ Anterior</a>`;
   else
-    btnAtras = `<a onclick="mostrarResultadosBusqueda(${nPag} , ${parseInt(pag) - 1
-      });">❮ Anterior</a>`;
+    btnAtras = `<a onclick="mostrarResultadosBusqueda(${nPag} , ${
+      parseInt(pag) - 1
+    });">❮ Anterior</a>`;
 
   if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
   else
-    btnSig = `<a onclick="mostrarResultadosBusqueda(${nPag},${parseInt(pag) + 1
-      })">Siguiente ❯</a>`;
+    btnSig = `<a onclick="mostrarResultadosBusqueda(${nPag},${
+      parseInt(pag) + 1
+    })">Siguiente ❯</a>`;
 
   return `<div id="paginador">
         <div class="row">
@@ -796,7 +821,7 @@ function ordenarDescripcion(data) {
 //--------------------FILTROS SOBRE LOS RESULTADOS-----------------------------------
 //-----------------------------------------------------------------------------------
 function FiltrarModal(IDCategoria, seccion) {
-  let htm = "";  
+  let htm = "";
   let elem = document.getElementById("modalFiltro");
   let instance = M.Modal.getInstance(elem);
   instance.open();
@@ -978,21 +1003,20 @@ function FiltrarModal(IDCategoria, seccion) {
             </a>
           </div>
         </div>`;
-        document.getElementById("divFiltro").innerHTML = htm;
-        document.getElementById("filtroclases").innerHTML = MostrarClases();
-        document.getElementById("filtromarcas").innerHTML = MostrarMarcas();
-        document.getElementById("filtrotipos").innerHTML = MostrarTipos();
-        document.getElementById("filtrosubtipos").innerHTML = MostrarSubTipos();
-        document.getElementById("filtrosubtipos2").innerHTML = MostrarSubTipos2();
-        document.getElementById("filtroenvases").innerHTML = MostrarEnvases();
-        $(".collapsible").collapsible();
-        // const estado = localStorage.getItem("mostrarEnBodega");
-        // if (estado === "1") {
-        //     document.getElementById("miCheckbox").checked = true;
-        // } else {
-        //     document.getElementById("miCheckbox").checked = false;
-        // }
-
+  document.getElementById("divFiltro").innerHTML = htm;
+  document.getElementById("filtroclases").innerHTML = MostrarClases();
+  document.getElementById("filtromarcas").innerHTML = MostrarMarcas();
+  document.getElementById("filtrotipos").innerHTML = MostrarTipos();
+  document.getElementById("filtrosubtipos").innerHTML = MostrarSubTipos();
+  document.getElementById("filtrosubtipos2").innerHTML = MostrarSubTipos2();
+  document.getElementById("filtroenvases").innerHTML = MostrarEnvases();
+  $(".collapsible").collapsible();
+  // const estado = localStorage.getItem("mostrarEnBodega");
+  // if (estado === "1") {
+  //     document.getElementById("miCheckbox").checked = true;
+  // } else {
+  //     document.getElementById("miCheckbox").checked = false;
+  // }
 }
 //--------------------------------Mostrar Marcas-------------------------------------
 function MostrarMarcas(opt) {
@@ -1184,7 +1208,7 @@ function MostrarEnvases(opt) {
 function mostrarFiltro(data, id, opt) {
   data = ordenarDescripcion(data);
   let claseSelect, marcaSelect, tipoSelect, subtipoSelect, subtipo2Select;
-  claseSelect = localStorage.getItem('claseSelect');
+  claseSelect = localStorage.getItem("claseSelect");
   var htm = "";
   var i = parseInt(1);
   if (data.length > 0) {
@@ -1194,76 +1218,96 @@ function mostrarFiltro(data, id, opt) {
           //Clase
           case 1:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros('${key.VALOR}');">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
+              key.VALOR
+            }');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //Marca
           case 2:
-            claseSelect = localStorage.getItem('claseSelect');
+            claseSelect = localStorage.getItem("claseSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //Tipo
           case 3:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //SubTipo
           case 4:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
-            tipoSelect = localStorage.getItem('tipoSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
+            tipoSelect = localStorage.getItem("tipoSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           case 5:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
-            tipoSelect = localStorage.getItem('tipoSelect');
-            subtipoSelect = localStorage.getItem('subtipoSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
+            tipoSelect = localStorage.getItem("tipoSelect");
+            subtipoSelect = localStorage.getItem("subtipoSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           case 6:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="guardarEnvaseSelect(${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="guardarEnvaseSelect(${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           default:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltro('${id}','${id + i}');">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltro('${id}','${id + i}');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1277,7 +1321,7 @@ function mostrarFiltro(data, id, opt) {
 }
 //--------------------------Guardar Envase Seleccionado------------------------------
 function guardarEnvaseSelect(envaseSelect) {
-  localStorage.setItem('envaseSelect', envaseSelect);
+  localStorage.setItem("envaseSelect", envaseSelect);
 }
 //-----------------------------------------------------------------------------------
 function getFiltro(id, txtInput) {
@@ -1287,7 +1331,6 @@ function getFiltro(id, txtInput) {
     valorST = "",
     valorST2 = "",
     valorE = "";
- 
 
   let chk = "";
   //-------------------Marca-------------------------------------
@@ -1504,7 +1547,6 @@ function getFiltro(id, txtInput) {
       $("#txtETV").val(valorETH);
     }
   }
-
 }
 //-----------------------------------------------------------------------------------
 function BuscarBorrar(cadena, value) {
@@ -1627,7 +1669,7 @@ function Filtrar(IDCategoria, seccion) {
       confirmButtonColor: "#000",
     });
     return false;
-  } 
+  }
 }
 //-----------------------------------------------------------------------------------
 function getFiltrarResultado(filtradoPor) {
@@ -1674,16 +1716,15 @@ function LimpiarFiltroPre(opt) {
     //Quitar check en categorias
     $("input[type='checkbox']").prop("checked", false);
     //Vaciar localStorage
-    localStorage.removeItem('claseSelect');
-    localStorage.removeItem('marcaSelect');
-    localStorage.removeItem('tipoSelect');
-    localStorage.removeItem('subtipoSelect');
-    localStorage.removeItem('subtipo2Select');
-    localStorage.removeItem('envaseSelect');
+    localStorage.removeItem("claseSelect");
+    localStorage.removeItem("marcaSelect");
+    localStorage.removeItem("tipoSelect");
+    localStorage.removeItem("subtipoSelect");
+    localStorage.removeItem("subtipo2Select");
+    localStorage.removeItem("envaseSelect");
     clearFiltros = true;
     cerrarModal();
-  }
-  else {
+  } else {
     Swal.fire({
       title: "¿Deseas limpiar toda la información?",
       icon: "warning",
@@ -1710,12 +1751,12 @@ function LimpiarFiltroPre(opt) {
         //Quitar check en categorias
         $("input[type='checkbox']").prop("checked", false);
         //Vaciar localStorage
-        localStorage.removeItem('claseSelect');
-        localStorage.removeItem('marcaSelect');
-        localStorage.removeItem('tipoSelect');
-        localStorage.removeItem('subtipoSelect');
-        localStorage.removeItem('subtipo2Select');
-        localStorage.removeItem('envaseSelect');
+        localStorage.removeItem("claseSelect");
+        localStorage.removeItem("marcaSelect");
+        localStorage.removeItem("tipoSelect");
+        localStorage.removeItem("subtipoSelect");
+        localStorage.removeItem("subtipo2Select");
+        localStorage.removeItem("envaseSelect");
         clearFiltros = true;
       }
     });
@@ -1748,8 +1789,8 @@ function LimpiarFiltro(IDCategoria) {
 }
 //------------------Mostrar el loading antes de enviar la solicitud-------------------
 function mostrarLoading() {
-  $('.loading').show();
-  document.querySelector('.loading').style.display = 'block';
+  $(".loading").show();
+  document.querySelector(".loading").style.display = "block";
 }
 
 //---------------FUNCION PAGINADOR PARA BUSQUEDA PEDIDOS/COTIZACIONES-----------------
@@ -1767,21 +1808,24 @@ function paginadorPedidos(nPag, pag, IDCategoria) {
       selected = "";
     }
     if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-        }</option>`;
+      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
+        parseInt(i) + 1
+      }</option>`;
     }
   }
   sel += `</select>`;
 
   if (pag <= 1) btnAtras = `<a style="color:#aba7a7;">❮ Anterior</a>`;
   else
-    btnAtras = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag} , ${parseInt(pag) - 1
-      }, ${IDCategoria});">❮ Anterior</a>`;
+    btnAtras = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag} , ${
+      parseInt(pag) - 1
+    }, ${IDCategoria});">❮ Anterior</a>`;
 
   if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
   else
-    btnSig = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag},${parseInt(pag) + 1
-      },${IDCategoria})">Siguiente ❯</a>`;
+    btnSig = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag},${
+      parseInt(pag) + 1
+    },${IDCategoria})">Siguiente ❯</a>`;
 
   return `
           <div id="paginador">
@@ -1807,10 +1851,10 @@ function paginadorPedidos(nPag, pag, IDCategoria) {
 //---------------------- cambio de vista      ---------------------------------------
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
-function cambiarVistaMosaico(){
-   let totales = ArrayDataFiltrado.length;
-          nPag = Math.ceil(totales / xPag);       
-          mostrarResultadosBusqueda(nPag, 1);
+function cambiarVistaMosaico() {
+  let totales = ArrayDataFiltrado.length;
+  nPag = Math.ceil(totales / xPag);
+  mostrarResultadosBusqueda(nPag, 1);
 }
 //-----------------------------------------------------------------------------------
 function cambiarVistaLista() {
@@ -1827,7 +1871,6 @@ function cambiarVistaLista() {
   htm += `<div class="col s12">
           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
-
 
   htm += `<div class="row" id="totalregistros">          
             <div class="col s6 valign-wrapper">
@@ -1869,14 +1912,32 @@ function cambiarVistaLista() {
     if (ArrayDataFiltrado[i]) {
       htm += `<tr>`;
       //cambiar mostrar existencias
-      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${ArrayDataFiltrado[i].ARTICULO}</h5><h6 style="font-size: 10px; text-align: left;">${ArrayDataFiltrado[i].DESCRIPCION}</td>
-              <td>${ArrayDataFiltrado[i].CODIGO_BARRAS_INVT ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT : ''}</td>
+      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${
+        ArrayDataFiltrado[i].ARTICULO
+      }</h5><h6 style="font-size: 10px; text-align: left;">${
+        ArrayDataFiltrado[i].DESCRIPCION
+      }</td>
+              <td>${
+                ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
+                  ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
+                  : ""
+              }</td>
               <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
               <td>
-                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}', '${ArrayDataFiltrado[i].DESCRIPCION}')">visibility</i>              
-                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}')" tabindex="1">                
-               <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-               <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
+                  ArrayDataFiltrado[i].ARTICULO
+                )}', '${
+        ArrayDataFiltrado[i].DESCRIPCION
+      }')">visibility</i>              
+                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
+                  ArrayDataFiltrado[i].ARTICULO
+                )}')" tabindex="1">                
+               <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${
+                 ArrayDataFiltrado[i].ARTICULO
+               }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+               <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${
+                 ArrayDataFiltrado[i].ARTICULO
+               }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
               </td>`;
       htm += `</tr>`;
     }
@@ -1886,7 +1947,7 @@ function cambiarVistaLista() {
           </table>`;
 
   htm += `<div id="resultadoPaginador">`;
-  htm += paginadorTablas(nPag, pag, 'mostrarResultadosVistaLista');
+  htm += paginadorTablas(nPag, pag, "mostrarResultadosVistaLista");
   htm += `</div>`;
 
   htm += "</div>";
@@ -1904,16 +1965,17 @@ function mostrarResultadosVistaLista(nPag, pag) {
   let htm = "";
   let desde = (pag - 1) * xPag;
   let hasta = pag * xPag;
- 
+
   resultadosVistaLista(desde, hasta);
-  htm += paginadorTablas(nPag, pag, 'mostrarResultadosVistaLista');
+  htm += paginadorTablas(nPag, pag, "mostrarResultadosVistaLista");
   document.getElementById("resultadoPaginador").innerHTML = htm;
 }
 //-----------------------------------------------------------------------------------
 function resultadosVistaLista(desde, hasta) {
   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
   let bodegaCod = bodega[0].BODEGA;
-  let totalRegistros = 0, htm = "";
+  let totalRegistros = 0,
+    htm = "";
   totalRegistros = ArrayDataFiltrado.length;
   // let nPag = Math.ceil(totalRegistros / xPag);
 
@@ -1921,9 +1983,8 @@ function resultadosVistaLista(desde, hasta) {
   htm += `<div class="col s12">
           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
-         
-  
-          htm += `<div class="row" id="totalregistros">           
+
+  htm += `<div class="row" id="totalregistros">           
              <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -1962,14 +2023,32 @@ function resultadosVistaLista(desde, hasta) {
   for (let i = desde; i < hasta; i++) {
     if (ArrayDataFiltrado[i]) {
       htm += `<tr>`;
-      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${ArrayDataFiltrado[i].ARTICULO}</h5><h6 style="font-size: 10px; text-align: left;">${ArrayDataFiltrado[i].DESCRIPCION}</td>
-              <td>${ArrayDataFiltrado[i].CODIGO_BARRAS_INVT ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT : ''}</td>
+      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${
+        ArrayDataFiltrado[i].ARTICULO
+      }</h5><h6 style="font-size: 10px; text-align: left;">${
+        ArrayDataFiltrado[i].DESCRIPCION
+      }</td>
+              <td>${
+                ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
+                  ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
+                  : ""
+              }</td>
               <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
               <td>
-                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}', '${ArrayDataFiltrado[i].DESCRIPCION}')">visibility</i>              
-                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${ArrayDataFiltrado[i].ARTICULO}')" tabindex="1">
-                <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-                <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
+                  ArrayDataFiltrado[i].ARTICULO
+                )}', '${
+        ArrayDataFiltrado[i].DESCRIPCION
+      }')">visibility</i>              
+                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${
+                  ArrayDataFiltrado[i].ARTICULO
+                }')" tabindex="1">
+                <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${
+                  ArrayDataFiltrado[i].ARTICULO
+                }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+                <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${
+                  ArrayDataFiltrado[i].ARTICULO
+                }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
               </td>`; // Puedes poner aquí el botón de acción que desees
       htm += `</tr>`;
     }
@@ -1997,18 +2076,19 @@ function paginadorTablas(nPag, pag, dynamicFunction) {
   let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
               <option value="" disabled>Páginas</option>`;
 
-          for (var i = 0; i < nPag; i++) {
-              if (i + 1 == pag) {
-                selected = "selected";
-              } else {
-                selected = "";
-              }
-              if (nPag != 1) {
-                sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-                  }</option>`;
-              }
-            }
-              // for (let i = 0; i < nPag; i++) {
+  for (var i = 0; i < nPag; i++) {
+    if (i + 1 == pag) {
+      selected = "selected";
+    } else {
+      selected = "";
+    }
+    if (nPag != 1) {
+      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
+        parseInt(i) + 1
+      }</option>`;
+    }
+  }
+  // for (let i = 0; i < nPag; i++) {
   //   selected = i + 1 === pag ? "selected" : "";
   //   if (nPag !== 1) {
   //     sel += `<option value="${i + 1}" ${selected}>${i + 1}</option>`;
@@ -2017,13 +2097,19 @@ function paginadorTablas(nPag, pag, dynamicFunction) {
   sel += `</select>`;
 
   // Botones de navegación
-  const btnAtras = pag <= 1
-    ? `<a class="paginador-btn disabled">❮ Anterior</a>`
-    : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag - 1})">❮ Anterior</a>`;
+  const btnAtras =
+    pag <= 1
+      ? `<a class="paginador-btn disabled">❮ Anterior</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
+          pag - 1
+        })">❮ Anterior</a>`;
 
-  const btnSig = pag >= nPag
-    ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
-    : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag + 1})">Siguiente ❯</a>`;
+  const btnSig =
+    pag >= nPag
+      ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
+          pag + 1
+        })">Siguiente ❯</a>`;
 
   // Retornar el HTML con clases en lugar de estilos inline
   return `
@@ -2058,13 +2144,16 @@ function mostrarImagen(codigo, descripcion) {
     html: `
       <div>
         <h3>${code}</h3>
-        <img src="${env.API_IMAGE}/${code.replace("/", "-")}" alt="Imagen" width="200" height="200">
+        <img src="${env.API_IMAGE}/${code.replace(
+      "/",
+      "-"
+    )}" alt="Imagen" width="200" height="200">
         <p>${descripcion}</p>
       </div>
     `,
     customClass: {
-      title: 'img-tamaño-articulo'
-    }
+      title: "img-tamaño-articulo",
+    },
   });
 }
 //-----------------------------------------------------------------------------------
@@ -2084,7 +2173,7 @@ function mostrarExistencias(p_Articulo) {
     showConfirmButton: false,
     didOpen: function () {
       Swal.showLoading();
-    }
+    },
   });
 
   // Ruta del API
@@ -2094,67 +2183,71 @@ function mostrarExistencias(p_Articulo) {
   const params = `?p_Articulo=${encodeURIComponent(code)}`;
 
   fetch(apiUrl + params, {
-    method: 'GET',
-    cache: 'no-cache',
+    method: "GET",
+    cache: "no-cache",
     headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
-        throw new Error('La solicitud no fue exitosa');
+        throw new Error("La solicitud no fue exitosa");
       }
       return response.json();
     })
-    .then(data => {
-          console.log('Existencias')
-          console.log(data.reporte);
-          console.log('cant registros:', data.reporte.length)
-          if(data.reporte.length > 0){
-                var existenciaArticulos = data.reporte; // Accede a la propiedad 'reporte'
-                  var tablaHtml = '<table style="border-collapse: collapse; width: 100%;">' +
-                    '<thead>' +
-                    '<tr style="border-bottom: 1px solid #ddd;">' +
-                    '<th style="text-align: left; padding: 8px;"> Bodega </th>' +
-                    '<th style="text-align: center; padding: 8px;"> Cantidad </th>' +
-                    '</tr>' +
-                    '</thead>' +
-                    '<tbody>';
+    .then((data) => {
+      console.log("Existencias");
+      console.log(data.reporte);
+      console.log("cant registros:", data.reporte.length);
+      if (data.reporte.length > 0) {
+        var existenciaArticulos = data.reporte; // Accede a la propiedad 'reporte'
+        var tablaHtml =
+          '<table style="border-collapse: collapse; width: 100%;">' +
+          "<thead>" +
+          '<tr style="border-bottom: 1px solid #ddd;">' +
+          '<th style="text-align: left; padding: 8px;"> Bodega </th>' +
+          '<th style="text-align: center; padding: 8px;"> Cantidad </th>' +
+          "</tr>" +
+          "</thead>" +
+          "<tbody>";
 
-                  existenciaArticulos.forEach(articulo => {
-                    tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">' +
-                      '<td style="text-align: left; padding: 8px;">' + articulo.NOMBRE + '</td>' +
-                      '<td style="text-align: center; padding: 8px;">' + parseFloat(articulo.CANTIDAD).toFixed(2) + '</td>' +
-                      '</tr>';
-                  });
+        existenciaArticulos.forEach((articulo) => {
+          tablaHtml +=
+            '<tr style="border-bottom: 1px solid #ddd;">' +
+            '<td style="text-align: left; padding: 8px;">' +
+            articulo.NOMBRE +
+            "</td>" +
+            '<td style="text-align: center; padding: 8px;">' +
+            parseFloat(articulo.CANTIDAD).toFixed(2) +
+            "</td>" +
+            "</tr>";
+        });
 
-                  tablaHtml += '</tbody>' + '</table>';
+        tablaHtml += "</tbody>" + "</table>";
 
-                  Swal.fire({
-                    title: "Artículo: " + code, // Usar decodificado
-                    html: tablaHtml,
-                    confirmButtonText: "Aceptar",
-                    confirmButtonColor: "#55b251"
-                  });
-
-          }else{
-            Swal.fire({
-                title: "Artículo: " + code, // Usar decodificado
-                text:"Sin existencias",
-                confirmButtonText: "Aceptar",
-                confirmButtonColor: "#55b251"
-              });
-          }     
-     
+        Swal.fire({
+          title: "Artículo: " + code, // Usar decodificado
+          html: tablaHtml,
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#55b251",
+        });
+      } else {
+        Swal.fire({
+          title: "Artículo: " + code, // Usar decodificado
+          text: "Sin existencias",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#55b251",
+        });
+      }
     })
-    .catch(error => {
-      console.error('Error:', error);
+    .catch((error) => {
+      console.error("Error:", error);
       Swal.fire({
         title: "Error",
         text: "Ocurrió un error al obtener los registros de existencia",
         icon: "error",
-        confirmButtonColor: "#55b251"
+        confirmButtonColor: "#55b251",
       });
     });
 }
@@ -2174,7 +2267,7 @@ function sucursalbremen(tienda, id_tienda) {
     },
   ];
   sessionStorage.setItem("bodega", JSON.stringify(newbodega));
-  
+
   const bodegaChange = document.getElementById("bodega");
 
   if (bodegaChange) {
@@ -2184,23 +2277,24 @@ function sucursalbremen(tienda, id_tienda) {
         fechasDeInventario(); // Llamar solo si existe
       });
       fechasDeInventario(); // Llamada inicial solo si existe
-    }  
-  }  
+    }
+  }
 }
 //-----------------------------------------------------------------------------------
-function impCodBar(p_Articulo,p_Descripcion) {
- localStorage.setItem('impCodeBar', p_Articulo);
- localStorage.setItem('descripcionImpCode',p_Descripcion);
- //window.location.href = 'barcodeGen.html';
-mostrarModalGeneradorCodigoBarras();
+function impCodBar(p_Articulo, p_Descripcion) {
+  localStorage.setItem("impCodeBar", p_Articulo);
+  localStorage.setItem("descripcionImpCode", p_Descripcion);
+  //window.location.href = 'barcodeGen.html';
+  mostrarModalGeneradorCodigoBarras();
 }
 //-----------------------------------------------------------------------------------
 function mostrarModalGeneradorCodigoBarras() {
   const esPantallaPequena = window.matchMedia("(max-width: 600px)").matches;
-  
+
   Swal.fire({
-    title: 'Generador de Códigos de Barras',
-    width: esPantallaPequena ? '100%' : '60%',     padding: '2em',
+    title: "Generador de Códigos de Barras",
+    width: esPantallaPequena ? "100%" : "60%",
+    padding: "2em",
     showConfirmButton: false,
     showCloseButton: true,
     html: `
@@ -2266,117 +2360,121 @@ function mostrarModalGeneradorCodigoBarras() {
     `,
 
     didOpen: () => {
-  // Cargar script QRCode dinámicamente
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-  script.onload = () => {
-    inicializarGenerador(); // solo inicializa después que el script esté listo
-  };
-  document.body.appendChild(script);
-}
+      // Cargar script QRCode dinámicamente
+      const script = document.createElement("script");
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      script.onload = () => {
+        inicializarGenerador(); // solo inicializa después que el script esté listo
+      };
+      document.body.appendChild(script);
+    },
   });
 }
 //-----------------------------------------------------------------------------------
 function inicializarGenerador() {
-  const codigo = localStorage.getItem('impCodeBar');
+  const codigo = localStorage.getItem("impCodeBar");
   //const descripcion = localStorage.getItem('descripcionImpCode');
 
-  const inputData = document.getElementById('data');
-  const descripcionElement = document.createElement('p');
-  descripcionElement.style.marginTop = '10px';
-  descripcionElement.style.fontSize = '16px';
-  descripcionElement.style.fontFamily = 'Arial, sans-serif';
+  const inputData = document.getElementById("data");
+  const descripcionElement = document.createElement("p");
+  descripcionElement.style.marginTop = "10px";
+  descripcionElement.style.fontSize = "16px";
+  descripcionElement.style.fontFamily = "Arial, sans-serif";
 
   if (codigo && inputData) {
     inputData.value = codigo;
     generateBarcode();
   }
 
-  document.getElementById('symbology').addEventListener('change', generateBarcode);
-  document.getElementById('data').addEventListener('input', generateBarcode);
-  document.getElementById('size').addEventListener('change', generateBarcode);
+  document
+    .getElementById("symbology")
+    .addEventListener("change", generateBarcode);
+  document.getElementById("data").addEventListener("input", generateBarcode);
+  document.getElementById("size").addEventListener("change", generateBarcode);
 
-  document.getElementById('printBarcode').addEventListener('click', imprimeCodigo);
-  M.FormSelect.init(document.querySelectorAll('select'));
-
+  document
+    .getElementById("printBarcode")
+    .addEventListener("click", imprimeCodigo);
+  M.FormSelect.init(document.querySelectorAll("select"));
 }
 //-----------------------------------------------------------------------------------
 function generateBarcode() {
-    const symbology = document.getElementById('symbology').value;
-    const data = document.getElementById('data').value;
-    const size = parseFloat(document.getElementById('size').value);
-    const descripcion = localStorage.getItem('descripcionImpCode'); // Obtener descripción directamente
+  const symbology = document.getElementById("symbology").value;
+  const data = document.getElementById("data").value;
+  const size = parseFloat(document.getElementById("size").value);
+  const descripcion = localStorage.getItem("descripcionImpCode"); // Obtener descripción directamente
 
-    const barcodeContainer = document.getElementById('barcode');
-    barcodeContainer.innerHTML = '';
+  const barcodeContainer = document.getElementById("barcode");
+  barcodeContainer.innerHTML = "";
 
-    if (data.trim() === '') {
-        return;
-    }
+  if (data.trim() === "") {
+    return;
+  }
 
-    const wrapper = document.createElement('div');
-    wrapper.style.textAlign = 'center';
+  const wrapper = document.createElement("div");
+  wrapper.style.textAlign = "center";
 
-    if (symbology === 'QR') {
-        generateQRCode(data, size, wrapper);
-    } else if (symbology === 'CODE128') {
-        generate1DBarcode(symbology, data, size, wrapper);
-    }
+  if (symbology === "QR") {
+    generateQRCode(data, size, wrapper);
+  } else if (symbology === "CODE128") {
+    generate1DBarcode(symbology, data, size, wrapper);
+  }
 
-    // Agregar la descripción debajo del código
-    if (descripcion) {
-        const descElement = document.createElement('p');
-        descElement.textContent = descripcion;
-        descElement.style.marginTop = '10px';
-        descElement.style.fontSize = '16px';
-        descElement.style.fontFamily = 'Arial, sans-serif';
-        wrapper.appendChild(descElement);
-    }
+  // Agregar la descripción debajo del código
+  if (descripcion) {
+    const descElement = document.createElement("p");
+    descElement.textContent = descripcion;
+    descElement.style.marginTop = "10px";
+    descElement.style.fontSize = "16px";
+    descElement.style.fontFamily = "Arial, sans-serif";
+    wrapper.appendChild(descElement);
+  }
 
-    barcodeContainer.appendChild(wrapper);
+  barcodeContainer.appendChild(wrapper);
 }
 //-----------------------------------------------------------------------------------
 function generate1DBarcode(format, data, size, container) {
-    const canvas = document.createElement('canvas');
-    JsBarcode(canvas, data, {
-        format: format,
-        width: 2 * size,
-        height: 100 * size,
-        displayValue: true
-    });
-    container.appendChild(canvas);
+  const canvas = document.createElement("canvas");
+  JsBarcode(canvas, data, {
+    format: format,
+    width: 2 * size,
+    height: 100 * size,
+    displayValue: true,
+  });
+  container.appendChild(canvas);
 }
 //-----------------------------------------------------------------------------------
 function generateQRCode(data, size, container) {
-    const qrContainer = document.createElement('div');
-    new QRCode(qrContainer, {
-        text: data,
-        width: 150 * size,
-        height: 150 * size
-    });
-    container.appendChild(qrContainer);
+  const qrContainer = document.createElement("div");
+  new QRCode(qrContainer, {
+    text: data,
+    width: 150 * size,
+    height: 150 * size,
+  });
+  container.appendChild(qrContainer);
 }
 //-----------------------------------------------------------------------------------
 function imprimeCodigo() {
-    const data = document.getElementById('data').value;
-    const symbology = document.getElementById('symbology').value;
-    const size = parseFloat(document.getElementById('size').value);
-    const descripcion = localStorage.getItem('descripcionImpCode');
+  const data = document.getElementById("data").value;
+  const symbology = document.getElementById("symbology").value;
+  const size = parseFloat(document.getElementById("size").value);
+  const descripcion = localStorage.getItem("descripcionImpCode");
 
-    if (!data.trim()) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'Por favor, ingrese un valor para generar el código de barras antes de imprimir.',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#55b251'
-        });
-        return;
-    }
+  if (!data.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Sin datos",
+      text: "Por favor, ingrese un valor para generar el código de barras antes de imprimir.",
+      confirmButtonText: "Aceptar",
+      confirmButtonColor: "#55b251",
+    });
+    return;
+  }
 
-    // Crear una nueva ventana para imprimir
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
+  // Crear una nueva ventana para imprimir
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(`
         <html>
         <head>
             <title>Imprimir Código de Barras</title>
@@ -2409,7 +2507,7 @@ function imprimeCodigo() {
                     const data = "${data}";
                     const size = ${size};
                     const symbology = "${symbology}";
-                    const descripcion = "${descripcion || ''}";
+                    const descripcion = "${descripcion || ""}";
                     const printContainer = document.getElementById('printBarcode');
                     const wrapper = document.createElement('div');
                     wrapper.style.textAlign = 'center';
@@ -2452,27 +2550,22 @@ function imprimeCodigo() {
         </body>
         </html>
     `);
-    printWindow.document.close();
+  printWindow.document.close();
 
-    // Mostrar notificación de impresión
-    Swal.fire({
-        icon: 'info',
-        title: 'Imprimiendo',
-        text: 'Imprimiendo código...',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#55b251'
-    });
+  // Mostrar notificación de impresión
+  Swal.fire({
+    icon: "info",
+    title: "Imprimiendo",
+    text: "Imprimiendo código...",
+    confirmButtonText: "Aceptar",
+    confirmButtonColor: "#55b251",
+  });
 }
 //-----------------------------------------------------------------------------------
-function information(codeArticulo,descripcion){
+function information(codeArticulo, descripcion) {
+  let pUsuario = document.getElementById("hUsuario").value;
+  const params = "?pUsuario=" + pUsuario + "&pCodigo=" + codeArticulo;
 
-let pUsuario = localStorage.getItem('username');
-const params =
-    "?pUsuario=" +
-    pUsuario +
-    "&pCodigo=" +
-    codeArticulo;
-  
   // Realizar la petición para obtener el detalle de los traslados
   fetch(env.API_URL + "detallearticulo" + params, myInit)
     .then((response) => response.json())
@@ -2481,8 +2574,8 @@ const params =
         if (result.resultado.length !== 0) {
           //console.log("Detalle del traslado:", result.resultado[0].NOTAS);
           Swal.fire({
-                title: "Artículo: " + codeArticulo,
-                html: `
+            title: "Artículo: " + codeArticulo,
+            html: `
                   <div style="text-align: left;">Descripción:
                     ${descripcion}<br><br>
                     El color <span style="color:red; font-weight:bold;">rojo</span> indica existencias por debajo del punto de reorden, se recomienda hacer solicitud de este artículo o referencia.<br><br>
@@ -2492,15 +2585,13 @@ const params =
                     <p style="text-align: justify;">${result.resultado[0].NOTAS}</p>
                   </div>
                 `,
-                confirmButtonText: "Aceptar",
-                confirmButtonColor: "#55b251"
-              });
-        }        
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#55b251",
+          });
+        }
       }
     });
 }
-
-
 
 // ////////////////////////////////////////////////////////////////////////////////////////////////
 // //////////////////////////MOSTRAR RESULTADOS EN BODEGA ////////////////////////////////////////
@@ -2510,78 +2601,77 @@ var articulosConExistencia = new Array();
 // //-----------------------------Filtros sobre el resultado de la búsqueda--------------
 // // Evento de cambio del checkbox
 function toggleMostrarEnBodega() {
-    const check = document.getElementById("miCheckbox");
-    const isChecked = check.checked;
+  const check = document.getElementById("miCheckbox");
+  const isChecked = check.checked;
 
-    // Guardar el estado en localStorage
-    localStorage.setItem("mostrarEnBodega", isChecked ? "1" : "0");
+  // Guardar el estado en localStorage
+  localStorage.setItem("mostrarEnBodega", isChecked ? "1" : "0");
 
-    if (isChecked) {
-        // Filtrar artículos con existencia en bodega > 0
-    articulosConExistencia = ArrayData2.filter(item =>parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0);
-    let nPag = Math.ceil(articulosConExistencia.length / xPag);  
+  if (isChecked) {
+    // Filtrar artículos con existencia en bodega > 0
+    articulosConExistencia = ArrayData2.filter(
+      (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
+    );
+    let nPag = Math.ceil(articulosConExistencia.length / xPag);
     let pag = 1;
 
-        
-        mostrarResultadosBusquedaEnBodega(nPag, pag);
-        ocultarLoader();     
-        //FiltrarModalEnBodega();
-        
-    } else {
-          let pag = 1;
-          let totales = ArrayDataFiltrado.length;
-          let nPag = Math.ceil(totales / xPag);
-          LimpiarFiltroPre(1);
-          mostrarResultadosBusqueda(nPag, pag);        
-          ocultarLoader();        
-         // FiltrarModal();       
-    }
+    mostrarResultadosBusquedaEnBodega(nPag, pag);
+    ocultarLoader();
+    //FiltrarModalEnBodega();
+  } else {
+    let pag = 1;
+    let totales = ArrayDataFiltrado.length;
+    let nPag = Math.ceil(totales / xPag);
+    LimpiarFiltroPre(1);
+    mostrarResultadosBusqueda(nPag, pag);
+    ocultarLoader();
+    // FiltrarModal();
+  }
 }
 // //-----------------------------------------------------------------------------------
-function mostrarResultadosBusquedaEnBodega(nPag, pag){
+function mostrarResultadosBusquedaEnBodega(nPag, pag) {
   let htm = "";
-    let desde = (pag - 1) * xPag;
-    let data = articulosConExistencia;
-    let hasta = Math.min(pag * xPag, data.length);
+  let desde = (pag - 1) * xPag;
+  let data = articulosConExistencia;
+  let hasta = Math.min(pag * xPag, data.length);
 
-    if (desde >= data.length) {
-        desde = 0;
-        hasta = Math.min(xPag, data.length);
-        pag = 1;
-    }
+  if (desde >= data.length) {
+    desde = 0;
+    hasta = Math.min(xPag, data.length);
+    pag = 1;
+  }
 
-    htm = mostrarResultadosEnBodega(desde, hasta, data);
-    htm += paginadorEnBodega(nPag, pag);
+  htm = mostrarResultadosEnBodega(desde, hasta, data);
+  htm += paginadorEnBodega(nPag, pag);
 
-    document.getElementById("resultadoBusqueda").innerHTML = htm;
-    $("html, body").animate(
-        { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-        1000
-    );
-    $("select").formSelect();
-    $(".dropdown-trigger").dropdown();
+  document.getElementById("resultadoBusqueda").innerHTML = htm;
+  $("html, body").animate(
+    { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
+    1000
+  );
+  $("select").formSelect();
+  $(".dropdown-trigger").dropdown();
 
-     const estado = localStorage.getItem("mostrarEnBodega");
-        if (estado === "1") {
-            document.getElementById("miCheckbox").checked = true;
-        } else {
-            document.getElementById("miCheckbox").checked = false;
-        }
+  const estado = localStorage.getItem("mostrarEnBodega");
+  if (estado === "1") {
+    document.getElementById("miCheckbox").checked = true;
+  } else {
+    document.getElementById("miCheckbox").checked = false;
+  }
 }
 // //-----------------------------------------------------------------------------------
 function mostrarResultadosEnBodega(desde, hasta, data) {
-    let htm = "";
-    let bodegaLabel = "";
+  let htm = "";
+  let bodegaLabel = "";
 
-    htm += '<div id="lista-articulo">';
-    htm += `<div class="col s12">
+  htm += '<div id="lista-articulo">';
+  htm += `<div class="col s12">
               <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
             </div>           
                          
             `;
 
-            
-    htm += `<div class="row" id="totalregistros">              
+  htm += `<div class="row" id="totalregistros">              
               <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -2608,26 +2698,28 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
               </div>
             </div>`;
 
-    htm += '<div class="grid-container">';
+  htm += '<div class="grid-container">';
 
-    for (let i = desde; i < hasta; i++) {
-        if (data[i]) {
-            let DArticulo = data[i].ARTICULO.replace("/", "-");
-            let cantBodega = parseFloat(data[i].TOTAL_CANTIDAD_BODEGA) || 0;
+  for (let i = desde; i < hasta; i++) {
+    if (data[i]) {
+      let DArticulo = data[i].ARTICULO.replace("/", "-");
+      let cantBodega = parseFloat(data[i].TOTAL_CANTIDAD_BODEGA) || 0;
 
-            bodegaLabel = `<span class="mi-tienda">En Bodega</span>`;
+      bodegaLabel = `<span class="mi-tienda">En Bodega</span>`;
 
-            let colorReorden = "";
-            if (data[i].color === "R") colorReorden = "red accent-4";
-            else if (data[i].color === "A") colorReorden = "light-blue darken-1";
-            else if (data[i].color === "N") colorReorden = "deep-orange accent-3";
-            else if (data[i].color === "V") colorReorden = "green darken-1";
+      let colorReorden = "";
+      if (data[i].color === "R") colorReorden = "red accent-4";
+      else if (data[i].color === "A") colorReorden = "light-blue darken-1";
+      else if (data[i].color === "N") colorReorden = "deep-orange accent-3";
+      else if (data[i].color === "V") colorReorden = "green darken-1";
 
-            htm += `
+      htm += `
             <div class="container-img">
               <div id="envoltorio">
                 <a href="#">                
-                  <img src="${env.API_IMAGE}/${DArticulo}" width="100%" alt="${data[i].ARTICULO}">
+                  <img src="${env.API_IMAGE}/${DArticulo}" width="100%" alt="${
+        data[i].ARTICULO
+      }">
                   ${bodegaLabel}
                 </a>
                 <div class="flotante-acciones ${colorReorden}">
@@ -2637,12 +2729,16 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
                     </a>             
                   </div>
                   <div class="link-flotante-acciones-bar-code">
-                    <a onclick="impCodBar('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+                    <a onclick="impCodBar('${data[i].ARTICULO}','${
+        data[i].DESCRIPCION
+      }')">
                       <img src="./img/icon/bar-code.svg" width="22" height="22">
                     </a>             
                   </div>
                   <div class="link-flotante-acciones-information">
-                    <a onclick="information('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+                    <a onclick="information('${data[i].ARTICULO}','${
+        data[i].DESCRIPCION
+      }')">
                       <img src="./img/icon/information.svg" width="22" height="22">
                     </a>             
                   </div>
@@ -2652,20 +2748,17 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
               <h4>Descripción: ${data[i].DESCRIPCION}</h4>
               <h4>Cantidad: ${cantBodega.toFixed(2)}</h4>
             </div>`;
-        }
-       
     }
-      // const estado = localStorage.getItem("mostrarEnBodega");
-      //   if (estado === "1") {
-      //       document.getElementById("miCheckbox").checked = true;
-      //   } else {
-      //       document.getElementById("miCheckbox").checked = false;
-      //   }
-    htm += "</div></div>";
-  
-    return htm;
+  }
+  // const estado = localStorage.getItem("mostrarEnBodega");
+  //   if (estado === "1") {
+  //       document.getElementById("miCheckbox").checked = true;
+  //   } else {
+  //       document.getElementById("miCheckbox").checked = false;
+  //   }
+  htm += "</div></div>";
 
- 
+  return htm;
 }
 //-----------------------------------------------------------------------------------
 function paginadorEnBodega(nPag, pag) {
@@ -2680,21 +2773,24 @@ function paginadorEnBodega(nPag, pag) {
       selected = "";
     }
     if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-        }</option>`;
+      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
+        parseInt(i) + 1
+      }</option>`;
     }
   }
   sel += `</select>`;
 
   if (pag <= 1) btnAtras = `<a style="color: #aba7a7;">❮ Anterior</a>`;
   else
-    btnAtras = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag} , ${parseInt(pag) - 1
-      });">❮ Anterior</a>`;
+    btnAtras = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag} , ${
+      parseInt(pag) - 1
+    });">❮ Anterior</a>`;
 
   if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
   else
-    btnSig = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag},${parseInt(pag) + 1
-      })">Siguiente ❯</a>`;
+    btnSig = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag},${
+      parseInt(pag) + 1
+    })">Siguiente ❯</a>`;
 
   return `<div id="paginador">
         <div class="row">
@@ -2719,12 +2815,11 @@ function paginadorEnBodega(nPag, pag) {
 // //////////////////////////MOSTRAR RESULTADOS Tabla lista  EN BODEGA ////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-
 //-----------------------------------------------------------------------------------
-function cambiarVistaMosaicoEnBodega(){
+function cambiarVistaMosaicoEnBodega() {
   let totales = articulosConExistencia.length;
-          nPag = Math.ceil(totales / xPag);       
-          mostrarResultadosBusquedaEnBodega(nPag, 1);   
+  nPag = Math.ceil(totales / xPag);
+  mostrarResultadosBusquedaEnBodega(nPag, 1);
 }
 
 //-----------------------------------------------------------------------------------
@@ -2733,8 +2828,8 @@ function cambiarVistaListaEnBodega() {
   let bodegaCod = bodega[0].BODEGA;
 
   // Filtrar solo artículos con existencia en bodega
-  const articulosConExistencia = ArrayDataFiltrado.filter(item =>
-    parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
+  const articulosConExistencia = ArrayDataFiltrado.filter(
+    (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
   );
 
   let totalRegistros = articulosConExistencia.length;
@@ -2748,7 +2843,7 @@ function cambiarVistaListaEnBodega() {
   htm += `<div class="col s12">
           <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
-          
+
   htm += `<div class="row" id="totalregistros">           
             <div class="col s6 valign-wrapper">
               <label>
@@ -2791,16 +2886,28 @@ function cambiarVistaListaEnBodega() {
     if (articulosConExistencia[i]) {
       htm += `<tr>
         <td class="sticky-column text-align:center">
-          <h5 style="font-size:12px; text-align:left; color:orangered;">${articulosConExistencia[i].ARTICULO}</h5>
-          <h6 style="font-size: 10px; text-align: left;">${articulosConExistencia[i].DESCRIPCION}</h6>
+          <h5 style="font-size:12px; text-align:left; color:orangered;">${
+            articulosConExistencia[i].ARTICULO
+          }</h5>
+          <h6 style="font-size: 10px; text-align: left;">${
+            articulosConExistencia[i].DESCRIPCION
+          }</h6>
         </td>
-        <td>${articulosConExistencia[i].CODIGO_BARRAS_INVT || ''}</td>
+        <td>${articulosConExistencia[i].CODIGO_BARRAS_INVT || ""}</td>
         <td>${Math.floor(articulosConExistencia[i].TOTAL_CANTIDAD_BODEGA)}</td>
         <td>
-          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(articulosConExistencia[i].ARTICULO)}', '${articulosConExistencia[i].DESCRIPCION}')">visibility</i>
-          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(articulosConExistencia[i].ARTICULO)}')" tabindex="1">
-          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${articulosConExistencia[i].ARTICULO}','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
-          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${articulosConExistencia[i].ARTICULO}','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
+          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
+            articulosConExistencia[i].ARTICULO
+          )}', '${articulosConExistencia[i].DESCRIPCION}')">visibility</i>
+          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
+            articulosConExistencia[i].ARTICULO
+          )}')" tabindex="1">
+          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
+            articulosConExistencia[i].ARTICULO
+          }','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
+          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${
+            articulosConExistencia[i].ARTICULO
+          }','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
         </td>
       </tr>`;
     }
@@ -2808,7 +2915,11 @@ function cambiarVistaListaEnBodega() {
 
   htm += `</tbody></table>`;
   htm += `<div id="resultadoPaginador">`;
-  htm += paginadorTablasEnBodega(nPag, pag, 'mostrarResultadosVistaListaEnBodega');
+  htm += paginadorTablasEnBodega(
+    nPag,
+    pag,
+    "mostrarResultadosVistaListaEnBodega"
+  );
   htm += `</div></div>`;
 
   document.getElementById("resultadoBusqueda").innerHTML = htm;
@@ -2844,7 +2955,11 @@ function mostrarResultadosVistaListaEnBodega(nPag, pag) {
   resultadosVistaListaEnBodega(desde, hasta);
 
   // Actualizar la paginación
-  const paginadorHtml = paginadorTablasEnBodega(nPag, pag, 'mostrarResultadosVistaListaEnBodega');
+  const paginadorHtml = paginadorTablasEnBodega(
+    nPag,
+    pag,
+    "mostrarResultadosVistaListaEnBodega"
+  );
   const paginadorElement = document.getElementById("resultadoPaginador");
   if (paginadorElement) {
     paginadorElement.innerHTML = paginadorHtml;
@@ -2872,16 +2987,28 @@ function resultadosVistaListaEnBodega(desde, hasta) {
     if (data[i]) {
       rows += `<tr>
         <td class="sticky-column text-align:center">
-          <h5 style="font-size:12px; text-align:left; color:orangered;">${data[i].ARTICULO}</h5>
-          <h6 style="font-size: 10px; text-align: left;">${data[i].DESCRIPCION}</h6>
+          <h5 style="font-size:12px; text-align:left; color:orangered;">${
+            data[i].ARTICULO
+          }</h5>
+          <h6 style="font-size: 10px; text-align: left;">${
+            data[i].DESCRIPCION
+          }</h6>
         </td>
-        <td>${data[i].CODIGO_BARRAS_INVT || ''}</td>
+        <td>${data[i].CODIGO_BARRAS_INVT || ""}</td>
         <td>${Math.floor(data[i].TOTAL_CANTIDAD_BODEGA)}</td>
         <td>
-          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(data[i].ARTICULO)}', '${data[i].DESCRIPCION}')">visibility</i>
-          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(data[i].ARTICULO)}')" tabindex="1">
-          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${data[i].ARTICULO}','${data[i].DESCRIPCION}')" tabindex="1">
-          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${data[i].ARTICULO}','${data[i].DESCRIPCION}')" tabindex="1">
+          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
+            data[i].ARTICULO
+          )}', '${data[i].DESCRIPCION}')">visibility</i>
+          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
+            data[i].ARTICULO
+          )}')" tabindex="1">
+          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
+            data[i].ARTICULO
+          }','${data[i].DESCRIPCION}')" tabindex="1">
+          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${
+            data[i].ARTICULO
+          }','${data[i].DESCRIPCION}')" tabindex="1">
         </td>
       </tr>`;
     }
@@ -2901,19 +3028,19 @@ function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
   let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
               <option value="" disabled>Páginas</option>`;
 
-          for (var i = 0; i < nPag; i++) {
-              if (i + 1 == pag) {
-                selected = "selected";
-              } else {
-                selected = "";
-              }
-              if (nPag != 1) {
-                sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${parseInt(i) + 1
-                  }</option>`;
-              }
-            }
+  for (var i = 0; i < nPag; i++) {
+    if (i + 1 == pag) {
+      selected = "selected";
+    } else {
+      selected = "";
+    }
+    if (nPag != 1) {
+      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
+        parseInt(i) + 1
+      }</option>`;
+    }
+  }
   sel += `</select>`;
-
 
   // let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
   //             <option value="" disabled>Páginas</option>`;
@@ -2930,13 +3057,19 @@ function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
   // }
   // sel += `</select>`;
 
-  const btnAtras = pag <= 1
-    ? `<a class="paginador-btn disabled">❮ Anterior</a>`
-    : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag - 1})">❮ Anterior</a>`;
+  const btnAtras =
+    pag <= 1
+      ? `<a class="paginador-btn disabled">❮ Anterior</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
+          pag - 1
+        })">❮ Anterior</a>`;
 
-  const btnSig = pag >= nPag
-    ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
-    : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${pag + 1})">Siguiente ❯</a>`;
+  const btnSig =
+    pag >= nPag
+      ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
+          pag + 1
+        })">Siguiente ❯</a>`;
 
   return `
     <div id="paginador" class="paginador-container">
@@ -2956,7 +3089,7 @@ function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
 //-----------------------------------------------------------------------------------
 //-----------------------------  FILTROS --------------------------------------------
 function FiltrarModalEnBodega(IDCategoria, seccion) {
-  let htm = "";  
+  let htm = "";
   let elem = document.getElementById("modalFiltro");
   let instance = M.Modal.getInstance(elem);
   instance.open();
@@ -3137,22 +3270,23 @@ function FiltrarModalEnBodega(IDCategoria, seccion) {
             </a>
           </div>
         </div>`;
-      document.getElementById("divFiltro").innerHTML = htm;
-      document.getElementById("filtroclases").innerHTML = MostrarClasesEnBodega();
-      document.getElementById("filtromarcas").innerHTML = MostrarMarcasEnBodega();
-      document.getElementById("filtrotipos").innerHTML = MostrarTiposEnBodega();
-      document.getElementById("filtrosubtipos").innerHTML = MostrarSubTiposEnBodega();
-      document.getElementById("filtrosubtipos2").innerHTML = MostrarSubTipos2EnBodega();
-      document.getElementById("filtroenvases").innerHTML = MostrarEnvasesEnBodega();
-      $(".collapsible").collapsible();
+  document.getElementById("divFiltro").innerHTML = htm;
+  document.getElementById("filtroclases").innerHTML = MostrarClasesEnBodega();
+  document.getElementById("filtromarcas").innerHTML = MostrarMarcasEnBodega();
+  document.getElementById("filtrotipos").innerHTML = MostrarTiposEnBodega();
+  document.getElementById("filtrosubtipos").innerHTML =
+    MostrarSubTiposEnBodega();
+  document.getElementById("filtrosubtipos2").innerHTML =
+    MostrarSubTipos2EnBodega();
+  document.getElementById("filtroenvases").innerHTML = MostrarEnvasesEnBodega();
+  $(".collapsible").collapsible();
 
   const estado = localStorage.getItem("mostrarEnBodega");
   if (estado === "1") {
-      document.getElementById("miCheckbox").checked = true;
+    document.getElementById("miCheckbox").checked = true;
   } else {
-      document.getElementById("miCheckbox").checked = false;
+    document.getElementById("miCheckbox").checked = false;
   }
-
 }
 function FiltrarEnBodega(IDCategoria, seccion) {
   let pag = 1;
@@ -3264,7 +3398,7 @@ function FiltrarEnBodega(IDCategoria, seccion) {
       confirmButtonColor: "#000",
     });
     return false;
-  } 
+  }
 }
 function getFiltrarResultadoEnBodega(filtradoPor) {
   //console.log("Estas pasando por getFiltrarResultadoEnBodega");
@@ -3480,7 +3614,7 @@ function MostrarEnvasesEnBodega(opt) {
 function mostrarFiltroEnBodega(data, id, opt) {
   data = ordenarDescripcion(data);
   let claseSelect, marcaSelect, tipoSelect, subtipoSelect, subtipo2Select;
-  claseSelect = localStorage.getItem('claseSelect');
+  claseSelect = localStorage.getItem("claseSelect");
   var htm = "";
   var i = parseInt(1);
   if (data.length > 0) {
@@ -3490,76 +3624,96 @@ function mostrarFiltroEnBodega(data, id, opt) {
           //Clase
           case 1:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros('${key.VALOR}');">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
+              key.VALOR
+            }');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //Marca
           case 2:
-            claseSelect = localStorage.getItem('claseSelect');
+            claseSelect = localStorage.getItem("claseSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //Tipo
           case 3:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           //SubTipo
           case 4:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
-            tipoSelect = localStorage.getItem('tipoSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
+            tipoSelect = localStorage.getItem("tipoSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           case 5:
-            claseSelect = localStorage.getItem('claseSelect');
-            marcaSelect = localStorage.getItem('marcaSelect');
-            tipoSelect = localStorage.getItem('tipoSelect');
-            subtipoSelect = localStorage.getItem('subtipoSelect');
+            claseSelect = localStorage.getItem("claseSelect");
+            marcaSelect = localStorage.getItem("marcaSelect");
+            tipoSelect = localStorage.getItem("tipoSelect");
+            subtipoSelect = localStorage.getItem("subtipoSelect");
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
+              key.VALOR
+            });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           case 6:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="guardarEnvaseSelect(${key.VALOR});">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="guardarEnvaseSelect(${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
             break;
           default:
             htm += `<label>
-                  <input type="checkbox" value="${key.VALOR
-              }" name="${id}[]" id="${id + i
-              }"  onchange="getFiltro('${id}','${id + i}');">
+                  <input type="checkbox" value="${
+                    key.VALOR
+                  }" name="${id}[]" id="${
+              id + i
+            }"  onchange="getFiltro('${id}','${id + i}');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3571,17 +3725,16 @@ function mostrarFiltroEnBodega(data, id, opt) {
     return htm;
   } else return "<label >Filtro no existe</label>";
 }
-(function() {
-    const originalAddEventListener = EventTarget.prototype.addEventListener;
-    EventTarget.prototype.addEventListener = function(type, listener, options) {
-        if (type === 'touchmove' && options !== false) {
-            if (typeof options === 'object') {
-                options.passive = true;
-            } else {
-                options = { passive: true };
-            }
-        }
-        return originalAddEventListener.call(this, type, listener, options);
-    };
+(function () {
+  const originalAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function (type, listener, options) {
+    if (type === "touchmove" && options !== false) {
+      if (typeof options === "object") {
+        options.passive = true;
+      } else {
+        options = { passive: true };
+      }
+    }
+    return originalAddEventListener.call(this, type, listener, options);
+  };
 })();
-

@@ -49,12 +49,12 @@
 //   { TRASLADO: "TRAS81-0000030570", USUARIO: "CI/JULIDIAZ", FECHA: "03/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" }
 // ];
 
-var paquetesCreadosArray=[];
+var paquetesCreadosArray = [];
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Consulta de creación de Paquetes DOM cargado...");
- let documento=document.getElementById('documento');
-documento.textContent=localStorage.getItem("ConsecutivoPaquete");  
+  let documento = document.getElementById("documento");
+  documento.textContent = localStorage.getItem("ConsecutivoPaquete");
 
   cargarParametros();
 });
@@ -69,7 +69,7 @@ function cargarParametros() {
     const fechaIni = params.get("fechaIni") ?? "";
     const fechaFin = params.get("fechaFin") ?? "";
     const BodegaOrigen = params.get("BodegaOrigen") ?? "";
-    const Aplicacion = localStorage.getItem("ConsecutivoPaquete");    
+    const Aplicacion = localStorage.getItem("ConsecutivoPaquete");
 
     const para =
       "?pSistema=" +
@@ -89,50 +89,50 @@ function cargarParametros() {
     enviarDatosControlador(para);
   }
 }
-function enviarDatosControlador(params) {      
-
-    fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
-        .then((response) => response.json())
-        .then((result) => {
-        if (result.msg === "SUCCESS") {
-            // ocultarLoader();
-            paquetesCreadosArray=result.respuesta; 
-            if (result.respuesta.length != 0) {               
-                armarTablaResultados(paquetesCreadosArray);
-                console.log('REsultados:');
-                console.log(paquetesCreadosArray);
-            }else{
-                // ocultarLoader();
-            Swal.fire({
-                icon: "info",
-                title: "Información",            
-                text: "No hay registros asignados para el usuario",
-                confirmButtonColor: "#28a745",
-            });
-            }
-            document.getElementById("carga").innerHTML = "";        
+function enviarDatosControlador(params) {
+  fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        // ocultarLoader();
+        paquetesCreadosArray = result.respuesta;
+        if (result.respuesta.length != 0) {
+          armarTablaResultados(paquetesCreadosArray);
+          console.log("REsultados:");
+          console.log(paquetesCreadosArray);
+        } else {
+          // ocultarLoader();
+          Swal.fire({
+            icon: "info",
+            title: "Información",
+            text: "No hay registros asignados para el usuario",
+            confirmButtonColor: "#28a745",
+          });
         }
-        else {
-            Swal.fire({
-                icon: "error",
-                title: "error",            
-                text: "Se registro un error en la aplicación",
-                confirmButtonColor: "#28a745",
-            });
-        }
+        document.getElementById("carga").innerHTML = "";
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "error",
+          text: "Se registro un error en la aplicación",
+          confirmButtonColor: "#28a745",
         });
-    ocultarLoader();
+      }
+    });
+  ocultarLoader();
 }
 function armarTablaResultados(detallePaquetesEncabezado) {
-  
-  const tbody = document.getElementById('tblbodyResultados');
-  tbody.innerHTML = '';    
+  const tbody = document.getElementById("tblbodyResultados");
+  tbody.innerHTML = "";
 
-  const cantidadDeRegistrosLabel = document.getElementById('cantidadDeRegistros');
-  cantidadDeRegistrosLabel.textContent = 'Cantidad de registros: ' + detallePaquetesEncabezado.length;
+  const cantidadDeRegistrosLabel = document.getElementById(
+    "cantidadDeRegistros"
+  );
+  cantidadDeRegistrosLabel.textContent =
+    "Cantidad de registros: " + detallePaquetesEncabezado.length;
 
-    detallePaquetesEncabezado.forEach((detalle) => {
-    const newRow = document.createElement('tr');
+  detallePaquetesEncabezado.forEach((detalle) => {
+    const newRow = document.createElement("tr");
     newRow.innerHTML = `
       <td class="traslado resultados-Tabla"><h5>${detalle.ARTICULO}</h5><br>${detalle.DESCRIPCION}</td>        
       <td class="usertraslado resultados-Tabla">${detalle.CANTIDAD}</td>
@@ -144,7 +144,7 @@ function armarTablaResultados(detallePaquetesEncabezado) {
 }
 async function imprimirPaqueteReporte() {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'pt'); // Portrait, puntos
+  const doc = new jsPDF("p", "pt"); // Portrait, puntos
 
   const marginX = 40;
   const marginY = 40;
@@ -154,14 +154,14 @@ async function imprimirPaqueteReporte() {
 
   // 📅 Obtener fecha y hora actual
   const fecha = new Date();
-  const fechaStr = fecha.toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
+  const fechaStr = fecha.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   });
-  const horaStr = fecha.toLocaleTimeString('es-ES', {
-    hour: '2-digit',
-    minute: '2-digit'
+  const horaStr = fecha.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const fechaCompleta = `Fecha: ${fechaStr}  ${horaStr}`;
 
@@ -169,13 +169,13 @@ async function imprimirPaqueteReporte() {
   const pageWidth = doc.internal.pageSize.width;
 
   // 📅 Fecha en esquina superior derecha (arriba del título)
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   const fechaWidth = doc.getTextWidth(fechaCompleta);
   doc.text(fechaCompleta, pageWidth - fechaWidth - marginX, marginY - 10);
 
   // 🏢 Nombre de la empresa (centrado)
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   const empresa = "CENTRAL DE LUBRICANTES";
   const empresaWidth = doc.getTextWidth(empresa);
@@ -195,9 +195,9 @@ async function imprimirPaqueteReporte() {
 
   // 📊 Generar tabla desde HTML
   doc.autoTable({
-    html: '#tblResultados',
+    html: "#tblResultados",
     startY: marginY + 75,
-    styles: { fontSize: 9, halign: 'center' },
+    styles: { fontSize: 9, halign: "center" },
     headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255] },
     alternateRowStyles: { fillColor: [245, 245, 245] },
     margin: { left: marginX, right: marginX },
@@ -207,32 +207,30 @@ async function imprimirPaqueteReporte() {
   const footerText = "Documento generado automáticamente por el sistema WMS";
   doc.setFontSize(9);
   doc.setTextColor(100);
-  doc.text(
-    footerText,
-    marginX,
-    doc.internal.pageSize.height - 20
-  );
+  doc.text(footerText, marginX, doc.internal.pageSize.height - 20);
 
   // 💾 Guardar con nombre dinámico (fecha incluida)
-  const nombreArchivo = `Reporte_Paquete_${pPaquete}_${fechaStr.replace(/\//g, "-")}.pdf`;
+  const nombreArchivo = `Reporte_Paquete_${pPaquete}_${fechaStr.replace(
+    /\//g,
+    "-"
+  )}.pdf`;
   doc.save(nombreArchivo);
 }
 // async function imprimirPaqueteReporte() {
-//     let pSistema = "WMS";        
+//     let pSistema = "WMS";
 //     let pUsuario = document.getElementById('hUsuario').value;
-//     // localStorage.getItem('username');
+//     // document.getElementById('hUsuario').value;
 //     let pTipoConsulta = "L";
 //     let pPaquete = localStorage.getItem("ConsecutivoPaquete");
 
 //     const params =
 //         "?pSistema=" + pSistema +
 //         "&pUsuario=" + pUsuario +
-//         "&pTipoConsulta=" + pTipoConsulta +        
+//         "&pTipoConsulta=" + pTipoConsulta +
 //         "&pPaquete=" + pPaquete;
 
 //     console.log("Params:\n" + params);
 
-   
 // fetch(env.API_URL + "imprimepaquete" + params, myInit)
 //     .then((response) => response.json())
 //     .then((result) => {
@@ -248,34 +246,34 @@ async function imprimirPaqueteReporte() {
 //         doc.setFontSize(16);
 //         doc.setFont("helvetica", "bold");
 //         doc.text("CREACIÓN DE PAQUETES", doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
-        
+
 //         doc.setFontSize(14);
 //         doc.setFont("helvetica", "normal");
 //         doc.text("PAQUETE: " + pPaquete, doc.internal.pageSize.getWidth() / 2, 60, { align: "center" });
 
-//         doc.setFontSize(12);        
+//         doc.setFontSize(12);
 //         doc.text("Camión: " + (result.respuesta[0].REFERENCIA || "N/A"), 40, 90);
 
 //         // Definir columnas (encabezados)
-//         const columnas = [           
-//             "ARTÍCULO",  
-//             "CÓDIGO\nBARRAS",         
+//         const columnas = [
+//             "ARTÍCULO",
+//             "CÓDIGO\nBARRAS",
 //             "CANT\nSOLI",
 //             "CANT\nPREP.",
-//             "CANT\nVERIF.",  
+//             "CANT\nVERIF.",
 //             "CONSECUTIVO\nPaquete",
-//             "FECHA\nCREACIÓN"           
+//             "FECHA\nCREACIÓN"
 //         ];
 
 //         // Mapear los datos a filas
-//         const filas = result.respuesta.map(item => [           
-//             `${item.articulo}\n${item.descripcion}`,        
+//         const filas = result.respuesta.map(item => [
+//             `${item.articulo}\n${item.descripcion}`,
 //             item.Codigo_Barra,
-//             item.LineaConsecutivo,           
+//             item.LineaConsecutivo,
 //             item.LineaAprobada,
-//             item.LineaVerificada,    
-//             item.Paquete,                    
-//             item.Fecha_Aplicacion                     
+//             item.LineaVerificada,
+//             item.Paquete,
+//             item.Fecha_Aplicacion
 //         ]);
 
 //                 // Generar tabla debajo del encabezado
@@ -283,16 +281,16 @@ async function imprimirPaqueteReporte() {
 //                     head: [columnas],
 //                     body: filas,
 //                     startY: 140,
-//                     styles: { fontSize: 8, cellWidth: "wrap" }, 
+//                     styles: { fontSize: 8, cellWidth: "wrap" },
 //                     headStyles: { fillColor: [40, 167, 69] },
-//                     tableWidth: "auto",     
+//                     tableWidth: "auto",
 //                     columnStyles: {0: { cellWidth: 120 },}
 //                     });
 
 //             console.log("Se generó el pdf");
 
 // // Descargar PDF
-//        doc.save("Reporte_Paquete_" + pPaquete + ".pdf");       
+//        doc.save("Reporte_Paquete_" + pPaquete + ".pdf");
 
 //     } else {
 //         console.log("El API no devolvió nada");
@@ -304,23 +302,23 @@ function limpiarResultadoGeneral() {
   const resultadoPaginador = document.getElementById("resultadoPaginador");
   const totalRegistros = document.getElementById("cantidadDeRegistros");
 
- // Limpiar el contenido del paginador si existe
- if (resultadoPaginador) {
-  resultadoPaginador.innerHTML = "";
-}
-
-// Limpiar el contenido de totalRegistros si existe
-if (totalRegistros) {
-  totalRegistros.innerHTML = "";
-}
-
-// Limpiar el contenido del tbody de la tabla si la tabla existe
-if (tabla) {
-  let tbody = tabla.querySelector("tbody");
-  if (tbody) {
-    tbody.innerHTML = "";
+  // Limpiar el contenido del paginador si existe
+  if (resultadoPaginador) {
+    resultadoPaginador.innerHTML = "";
   }
-}
-localStorage.removeItem('SearchParameterFlag');
-localStorage.removeItem('parametrosBusquedaPaquete');
+
+  // Limpiar el contenido de totalRegistros si existe
+  if (totalRegistros) {
+    totalRegistros.innerHTML = "";
+  }
+
+  // Limpiar el contenido del tbody de la tabla si la tabla existe
+  if (tabla) {
+    let tbody = tabla.querySelector("tbody");
+    if (tbody) {
+      tbody.innerHTML = "";
+    }
+  }
+  localStorage.removeItem("SearchParameterFlag");
+  localStorage.removeItem("parametrosBusquedaPaquete");
 }
