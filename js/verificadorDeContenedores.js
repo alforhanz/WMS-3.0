@@ -1065,7 +1065,7 @@ async function guardaParcialMente() {
   for (let i = 0; i < chunks.length; i++) {
     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
     const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-    //const jsonPaquete = JSON.stringify(chunks[i]);
+   // const jsonPaquete = JSON.stringify(chunks[i]);
     const params =
       "?pSistema=" +
       pSistema +
@@ -1120,7 +1120,7 @@ async function guardaParcialMente() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      //mostrarPestanaLectura();
+      mostrarPestanaLectura();
     }
   });
 }

@@ -30,7 +30,7 @@
   }
 
   h5 {
-    font-size: 12px !important;
+    font-size: 9px !important;
     /*text-transform: uppercase;*/
     font-weight: bold;
     line-height: 110%;
@@ -39,7 +39,7 @@
   }
 
   h6 {
-    font-size: 11px !important;
+    font-size: 9px !important;
     line-height: 110%;
     margin: 0;
   }
@@ -280,6 +280,10 @@
   }
 #btnCodBarras{
   width: 100%;
+}
+
+.material-icons {   
+    font-size: 18px!important;
 }
 
 }
@@ -650,20 +654,20 @@
     padding: 14px 16px;
   }
 
-  h5 {
-    font-size: 12px !important;
+  /* h5 { */
+    /* font-size: 12px !important; */
     /*text-transform: uppercase;*/
-    font-weight: bold;
+    /* font-weight: bold;
     line-height: 110%;
     margin: 5px;
     text-align: left;
-  }
+  } */
 
-  h6 {
+  /* h6 {
     font-size: 11px !important;
     line-height: 110%;
     margin: 0;
-  }
+  } */
 
   .row {
     margin-left: auto;

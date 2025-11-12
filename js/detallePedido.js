@@ -64,10 +64,7 @@ function armarTablaLectura(detallePedidoList) {
   tbody.innerHTML = "";
 
   detallePedidoList.forEach(function (detalle) {
-    if (
-      detalle.CANTIDAD_VERIFICADA != null &&
-      detalle.CANTIDAD_VERIFICADA !== ""
-    ) {
+    if (detalle.CANTIDAD_VERIFICADA != null && detalle.CANTIDAD_VERIFICADA !== "" && detalle.CANTIDAD_VERIFICADA > 0 ) {
       // Verificar si CANTIDAD_VERIFICADA tiene un valor
       var newRow = document.createElement("tr");
       var disabled =

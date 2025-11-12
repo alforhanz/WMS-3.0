@@ -11,7 +11,7 @@ body{
   padding: 0;
   overflow-x: hidden;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   background-color: #F7F7F7;
 }
 main {
@@ -643,7 +643,7 @@ svg[atributos] {
 }
 #myTableLectura {
   width: 100%;
-  font-size: 12px;
+  font-size: 10px;
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
