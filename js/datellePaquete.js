@@ -52,7 +52,7 @@
 var paquetesCreadosArray = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Consulta de creación de Paquetes DOM cargado...");
+  //console.log("Consulta de creación de Paquetes DOM cargado...");
   let documento = document.getElementById("documento");
   documento.textContent = localStorage.getItem("ConsecutivoPaquete");
 
@@ -98,8 +98,8 @@ function enviarDatosControlador(params) {
         paquetesCreadosArray = result.respuesta;
         if (result.respuesta.length != 0) {
           armarTablaResultados(paquetesCreadosArray);
-          console.log("REsultados:");
-          console.log(paquetesCreadosArray);
+          //console.log("REsultados:");
+          //console.log(paquetesCreadosArray);
         } else {
           // ocultarLoader();
           Swal.fire({
@@ -229,13 +229,13 @@ async function imprimirPaqueteReporte() {
 //         "&pTipoConsulta=" + pTipoConsulta +
 //         "&pPaquete=" + pPaquete;
 
-//     console.log("Params:\n" + params);
+//     //console.log("Params:\n" + params);
 
 // fetch(env.API_URL + "imprimepaquete" + params, myInit)
 //     .then((response) => response.json())
 //     .then((result) => {
 //     if (result.msg === "SUCCESS" && result.respuesta.length > 0) {
-//         console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
+//         //console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
 
 //         // Crear PDF (p = portrait / vertical)
 //         const { jsPDF } = window.jspdf;
@@ -287,13 +287,13 @@ async function imprimirPaqueteReporte() {
 //                     columnStyles: {0: { cellWidth: 120 },}
 //                     });
 
-//             console.log("Se generó el pdf");
+//             //console.log("Se generó el pdf");
 
 // // Descargar PDF
 //        doc.save("Reporte_Paquete_" + pPaquete + ".pdf");
 
 //     } else {
-//         console.log("El API no devolvió nada");
+//         //console.log("El API no devolvió nada");
 //     }
 // });
 // }

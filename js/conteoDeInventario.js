@@ -2,10 +2,10 @@
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
+  //console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
-  //console.log("DOM cargado");
+  ////console.log("DOM cargado");
   fechasDeInventario();
 
   //inicializarBotonesDescarga();
@@ -326,7 +326,7 @@ async function resumen() {
     if (result.msg === "SUCCESS") {
       datosResumen = result.resumen || [];
       labelCantidadRegistros.textContent = `Cantidad de registros: ${datosResumen.length}`;
-      console.log(datosResumen);
+      //console.log(datosResumen);
       renderizarDatos(datosResumen);
       if (datosResumen.length > 0) {
         inicializarBotonesDescarga();
@@ -914,7 +914,7 @@ function confirmarGuardadoParcialLectura() {
 /////////////////////////////////////////////////////////////////////
 function guardaParcialMenteLectura() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")); // Obtener como objeto
-  //console.log("Data a enviar:", dataArray);
+  ////console.log("Data a enviar:", dataArray);
 
   if (!dataArray || dataArray.length === 0) {
     console.error("No hay datos en el localStorage para enviar.");
@@ -936,13 +936,13 @@ function guardaParcialMenteLectura() {
       JSON.stringify(chunk)
     )}&pUbicacion=${pUbicacion}`;
 
-    //console.log(`Enviando bloque ${index + 1}/${totalChunks}:`, chunk);
+    ////console.log(`Enviando bloque ${index + 1}/${totalChunks}:`, chunk);
 
     fetch(env.API_URL + "wmsguardaconteoinv/I" + params, myInit)
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          //console.log(`Bloque ${index + 1} guardado con éxito.`);
+          ////console.log(`Bloque ${index + 1} guardado con éxito.`);
           limpiarResultadoGeneral();
           crearNuevaFila();
         } else {
@@ -977,7 +977,7 @@ function confirmaFinalizar() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      //console.log('LLama a finalizar conteo');
+      ////console.log('LLama a finalizar conteo');
       finalizaConteoInventario();
     }
   });
@@ -985,8 +985,8 @@ function confirmaFinalizar() {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function finalizaConteoInventario() {
-  //console.log('datosResumen:');
-  //console.log(datosResumen);
+  ////console.log('datosResumen:');
+  ////console.log(datosResumen);
 
   // // Crear el arreglo para almacenar los datos
   const dataArray = [];
@@ -1017,8 +1017,8 @@ function finalizaConteoInventario() {
     console.error("No hay datos en la tabla para enviar.");
     return;
   }
-  console.log("Total de registros: ");
-  console.log(dataArray.length);
+  //console.log("Total de registros: ");
+  //console.log(dataArray.length);
 
   const pUsuario = document.getElementById("hUsuario").value;
   //// document.getElementById('hUsuario').value;
@@ -1038,16 +1038,15 @@ function finalizaConteoInventario() {
       JSON.stringify(chunk)
     )}&pUbicacion=${pUbicacion}`;
 
-    console.log(`Enviando bloque ${index + 1}/${totalChunks}:`, chunk);
+    //console.log(`Enviando bloque ${index + 1}/${totalChunks}:`, chunk);
 
     fetch(env.API_URL + "wmsguardaconteoinv/I" + params, myInit)
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          console.log("Resultado del API: ");
-          console.log(result.conteoguardado[0].Mensaje);
-          console.log(`Bloque ${index + 1} finalizado con éxito.`);
-
+          //console.log("Resultado del API: ");
+          //console.log(result.conteoguardado[0].Mensaje);
+          //console.log(`Bloque ${index + 1} finalizado con éxito.`);
           // Cambiar automáticamente a la pestaña "Lectura"
           // const tabsInstance = M.Tabs.getInstance(document.querySelector('.tabs'));
           // tabsInstance.select('tabla-lectura');
@@ -1094,7 +1093,7 @@ function limpiarResultadoGeneral() {
     ubicacion.value = ""; // Limpia el input
   }
 
-  //console.log("Tabla de lectura y campos relacionados limpiados correctamente.");
+  ////console.log("Tabla de lectura y campos relacionados limpiados correctamente.");
   crearNuevaFila();
 }
 /////////////////////////////////////////////////////////////////////
@@ -1124,8 +1123,8 @@ function fechasDeInventario() {
     .then((response) => response.json())
     .then((result) => {
       const resultado = result.fechainv; // Arreglo con las fechas
-      //console.log("Fechas programadas: ");
-      //console.log(resultado);
+      ////console.log("Fechas programadas: ");
+      ////console.log(resultado);
 
       const fechaSelect = document.getElementById("fecha_ini");
 

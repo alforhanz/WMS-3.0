@@ -1,10 +1,10 @@
 // document.addEventListener("DOMContentLoaded", function () {
-//   console.log('DOM cargado imp code bar...');
+//   //console.log('DOM cargado imp code bar...');
 //   let codigo = localStorage.getItem('impCodeBar');
 //   let descripcion = localStorage.getItem('descripcionImpCode');
 //   const inputData = document.getElementById('data');
 //   const descripcionElement = document.getElementById('descripcion');
-  
+
 //   if (codigo && inputData) {
 //     inputData.value = codigo; // Asignar el valor al input
 //     generateBarcode(); // Generar el código de barras automáticamente
@@ -104,17 +104,17 @@
 //         <head>
 //             <title>Imprimir Código de Barras</title>
 //             <style>
-//                 body { 
-//                     display: flex; 
-//                     flex-direction: column; 
-//                     justify-content: center; 
-//                     align-items: center; 
-//                     height: 100vh; 
-//                     margin: 0; 
-//                     font-family: Arial, sans-serif; 
+//                 body {
+//                     display: flex;
+//                     flex-direction: column;
+//                     justify-content: center;
+//                     align-items: center;
+//                     height: 100vh;
+//                     margin: 0;
+//                     font-family: Arial, sans-serif;
 //                 }
-//                 canvas, div { 
-//                     margin: 0 auto; 
+//                 canvas, div {
+//                     margin: 0 auto;
 //                 }
 //                 p {
 //                     margin-top: 10px;
@@ -136,7 +136,7 @@
 //                     const printContainer = document.getElementById('printBarcode');
 //                     const wrapper = document.createElement('div');
 //                     wrapper.style.textAlign = 'center';
-                    
+
 //                     if (symbology === 'QR') {
 //                         const qrContainer = document.createElement('div');
 //                         new QRCode(qrContainer, {
@@ -186,4 +186,3 @@
 //         confirmButtonColor: '#55b251'
 //     });
 // }
-

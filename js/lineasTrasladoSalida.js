@@ -3,7 +3,7 @@ var detalleTrasladoList = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
+  //console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   //--------------------------------------------------------------------------
@@ -48,8 +48,8 @@ function cargarLineasTraslado(documento) {
         if (result.lineastraslados.length !== 0) {
           // Guardar el detalle del traslado en una variable
           detalleTrasladoList = result.lineastraslados;
-          console.log("Detalle del traslado:");
-          console.log(detalleTrasladoList);
+          //console.log("Detalle del traslado:");
+          //console.log(detalleTrasladoList);
 
           // Guardar la aplicación en localStorage
           localStorage.setItem(
@@ -206,8 +206,8 @@ function armarTablaLectura(detalleTrasladoList) {
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var TrasladoList = detalleTrasladoList;
-  console.log("Lineas Traslado");
-  console.log(TrasladoList);
+  //console.log("Lineas Traslado");
+  //console.log(TrasladoList);
   const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
 
   const row = input.closest("tr");
@@ -662,7 +662,7 @@ function verificacion() {
     btnRegresar.setAttribute("hidden", "hidden");
   } else {
     // const btnRegresar = document.getElementById('btnRegresar');
-    console.log("activa btn regresar");
+    //console.log("activa btn regresar");
     btnRegresar.removeAttribute("hidden");
     btnGuardar.setAttribute("hidden", "hidden");
     btnProcesar.setAttribute("hidden", "hidden");
@@ -869,15 +869,15 @@ function guardaParcialMente() {
     pBodegaDestino +
     "&pAplicacion=" +
     pAplicacion;
-  console.log("PARAMETROS DE GUARDADO");
-  console.log(params);
-  console.log("Aqui guardamos los traslados de entrada");
+  //console.log("PARAMETROS DE GUARDADO");
+  //console.log(params);
+  //console.log("Aqui guardamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
   // window.location.href = 'verificacionDeTraslados.html';
   fetch(env.API_URL + "wmsguardadopickingtraslado/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      //console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.trasladoguardado.length != 0) {
           // Resto del código de éxito
@@ -996,15 +996,15 @@ function procesar() {
     pBodegaDestino +
     "&pAplicacion=" +
     pAplicacion;
-  console.log("PARAMETROS DE PROCESADO");
-  console.log(params);
-  console.log("Aqui procesamos los traslados de entrada");
+  //console.log("PARAMETROS DE PROCESADO");
+  //console.log(params);
+  //console.log("Aqui procesamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
   window.location.href = "verificacionDeTraslados.html";
   fetch(env.API_URL + "wmsguardadopickingtraslado/P" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      //console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.trasladopreparado.length != 0) {
           // Resto del código de éxito

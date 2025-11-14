@@ -142,7 +142,7 @@ function verTrasladosLista() {
     pTipoTransaccion;
 
   localStorage.setItem("parametrosBusqueda", params);
-  console.log("Parametros:\n" + params);
+  //console.log("Parametros:\n" + params);
 
   listadoTraslados(params);
 } //Fin de ver traslados lista
@@ -217,9 +217,9 @@ function listadoTraslados(parametros) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        console.log("TRASLADOS");
-        console.log(result.resultado);
-        console.log("Done");
+        //console.log("TRASLADOS");
+        //console.log(result.resultado);
+        //console.log("Done");
 
         if (result.resultado.length != 0) {
           ArrayData = result.resultado;
@@ -250,7 +250,7 @@ function listadoTraslados(parametros) {
           ocultarLoader();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -671,7 +671,7 @@ async function cargarClasificacionesCLase() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -715,7 +715,7 @@ async function cargarClasificacionesMarca() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -758,7 +758,7 @@ async function cargarClasificacionesTipo() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -803,7 +803,7 @@ async function cargarClasificacionesVenta() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -857,7 +857,7 @@ async function cargarClasificacionesEnvase() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -915,7 +915,7 @@ async function cargarClasificacionesSeis() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }

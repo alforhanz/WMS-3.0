@@ -49,144 +49,146 @@
 //   { TRASLADO: "TRAS81-0000030570", USUARIO: "CI/JULIDIAZ", FECHA: "03/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" }
 // ];
 
-var paquetesCreadosArray=[];
+var paquetesCreadosArray = [];
 
-document.addEventListener("DOMContentLoaded", function (){     
-    console.log("Consulta de creación de Paquetes DOM cargado...");  
-    const parametrosBusqueda = localStorage.getItem('parametrosBusquedaPaquete');
-        if (parametrosBusqueda) {
-            const params = new URLSearchParams(parametrosBusqueda);
-            const pSistema = params.get("pSistema") ?? "";
-            const pUsuario = params.get("pUsuario") ?? "";
-            const pOpcion = params.get("pOpcion") ?? "";
-            const fechaIni = params.get("fechaIni") ?? "";
-            const fechaFin = params.get("fechaFin") ?? "";
-            const BodegaOrigen = params.get("BodegaOrigen") ?? "";
-            const Aplicacion = params.get("Aplicacion") ?? "";
+document.addEventListener("DOMContentLoaded", function () {
+  //console.log("Consulta de creación de Paquetes DOM cargado...");
+  const parametrosBusqueda = localStorage.getItem("parametrosBusquedaPaquete");
+  if (parametrosBusqueda) {
+    const params = new URLSearchParams(parametrosBusqueda);
+    const pSistema = params.get("pSistema") ?? "";
+    const pUsuario = params.get("pUsuario") ?? "";
+    const pOpcion = params.get("pOpcion") ?? "";
+    const fechaIni = params.get("fechaIni") ?? "";
+    const fechaFin = params.get("fechaFin") ?? "";
+    const BodegaOrigen = params.get("BodegaOrigen") ?? "";
+    const Aplicacion = params.get("Aplicacion") ?? "";
 
-        const para =
-            "?pSistema=" +
-            pSistema +
-            "&pUsuario=" +
-            pUsuario +
-            "&pOpcion=" +
-            pOpcion +
-            "&fechaIni=" +
-            fechaIni +
-            "&fechaFin=" +
-            fechaFin +
-            "&BodegaOrigen=" +
-            BodegaOrigen +
-            "&Aplicacion=" +
-            Aplicacion;
-        enviarDatosControlador(para);
-        }
-    
-    cargarBodegas();   
+    const para =
+      "?pSistema=" +
+      pSistema +
+      "&pUsuario=" +
+      pUsuario +
+      "&pOpcion=" +
+      pOpcion +
+      "&fechaIni=" +
+      fechaIni +
+      "&fechaFin=" +
+      fechaFin +
+      "&BodegaOrigen=" +
+      BodegaOrigen +
+      "&Aplicacion=" +
+      Aplicacion;
+    enviarDatosControlador(para);
+  }
+
+  cargarBodegas();
 });
-function cargarParametros() {  
-   
-     mostrarLoader();
-        let pSistema ="WMS";
-        let pUsuario= document.getElementById('hUsuario').value;   
-        let pOpcion ="R";   
-        let fechaIni = $('#fecha_ini').val(); 
-        let fechaFin = $('#fecha_fin').val();              
-        let BodegaOrigen = document.getElementById("bodega").value;
-        let Aplicacion = $('#Aplicacion').val() ? $('#Aplicacion').val().trim() : "";   
-        
-        const params =
-                        "?pSistema="+
-                        pSistema+
-                        "&pUsuario="+
-                        pUsuario+
-                        "&pOpcion="+
-                        pOpcion+
-                        "&fechaIni=" +
-                        fechaIni+
-                        "&fechaFin=" +
-                        fechaFin+
-                        "&BodegaOrigen=" +
-                        BodegaOrigen+                                                 
-                        "&Aplicacion=" +
-                        Aplicacion;    
-        enviarDatosControlador(params); 
-}
-function enviarDatosControlador(params) {    
-    console.log('BUSQUEDA Paquete PARAMETROS\n '+params);
-    localStorage.setItem('parametrosBusquedaPaquete', params);
+function cargarParametros() {
+  mostrarLoader();
+  let pSistema = "WMS";
+  let pUsuario = document.getElementById("hUsuario").value;
+  let pOpcion = "R";
+  let fechaIni = $("#fecha_ini").val();
+  let fechaFin = $("#fecha_fin").val();
+  let BodegaOrigen = document.getElementById("bodega").value;
+  let Aplicacion = $("#Aplicacion").val() ? $("#Aplicacion").val().trim() : "";
 
-    fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
-        .then((response) => response.json())
-        .then((result) => {
-        if (result.msg === "SUCCESS") {
-            // ocultarLoader();
-            paquetesCreadosArray=result.respuesta; 
-            if (result.respuesta.length != 0) {               
-                armarTablaResultados(paquetesCreadosArray);
-                console.log('REsultados:');
-                console.log(paquetesCreadosArray);
-            }else{
-                // ocultarLoader();
-            Swal.fire({
-                icon: "info",
-                title: "Información",            
-                text: "No hay registros asignados para el usuario",
-                confirmButtonColor: "#28a745",
-            });
-            }
-            document.getElementById("carga").innerHTML = "";        
+  const params =
+    "?pSistema=" +
+    pSistema +
+    "&pUsuario=" +
+    pUsuario +
+    "&pOpcion=" +
+    pOpcion +
+    "&fechaIni=" +
+    fechaIni +
+    "&fechaFin=" +
+    fechaFin +
+    "&BodegaOrigen=" +
+    BodegaOrigen +
+    "&Aplicacion=" +
+    Aplicacion;
+  enviarDatosControlador(params);
+}
+function enviarDatosControlador(params) {
+  //console.log('BUSQUEDA Paquete PARAMETROS\n '+params);
+  localStorage.setItem("parametrosBusquedaPaquete", params);
+
+  fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        // ocultarLoader();
+        paquetesCreadosArray = result.respuesta;
+        if (result.respuesta.length != 0) {
+          armarTablaResultados(paquetesCreadosArray);
+          //console.log('REsultados:');
+          //console.log(paquetesCreadosArray);
+        } else {
+          // ocultarLoader();
+          Swal.fire({
+            icon: "info",
+            title: "Información",
+            text: "No hay registros asignados para el usuario",
+            confirmButtonColor: "#28a745",
+          });
         }
-        else {
-            Swal.fire({
-                icon: "error",
-                title: "error",            
-                text: "Se registro un error en la aplicación",
-                confirmButtonColor: "#28a745",
-            });
-        }
+        document.getElementById("carga").innerHTML = "";
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "error",
+          text: "Se registro un error en la aplicación",
+          confirmButtonColor: "#28a745",
         });
-    ocultarLoader();
+      }
+    });
+  ocultarLoader();
 }
 function cargarBodegas() {
-fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
-    .then(response => response.json())
-    .then(data => {
-    const bodegasSelect = document.getElementById('bodegaSelectPack');
-    if (data.respuesta && Array.isArray(data.respuesta)) {
+  fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
+    .then((response) => response.json())
+    .then((data) => {
+      const bodegasSelect = document.getElementById("bodegaSelectPack");
+      if (data.respuesta && Array.isArray(data.respuesta)) {
         // Limpiar las opciones existentes
-        bodegasSelect.innerHTML = '<option value="" disabled selected>Seleccione una bodega</option>';
-        
+        bodegasSelect.innerHTML =
+          '<option value="" disabled selected>Seleccione una bodega</option>';
+
         // Agregar opciones nuevas
-        data.respuesta.forEach(bodega => {
-        const option = document.createElement('option');
-        option.value = bodega.BODEGA;
-        option.textContent = bodega.NOMBRE;
-        bodegasSelect.appendChild(option);
+        data.respuesta.forEach((bodega) => {
+          const option = document.createElement("option");
+          option.value = bodega.BODEGA;
+          option.textContent = bodega.NOMBRE;
+          bodegasSelect.appendChild(option);
         });
 
         // Re-inicializar el select para aplicar los cambios
         M.FormSelect.init(bodegasSelect);
-    } else {
-        console.error('No se encontraron bodegas.');
-    }
+      } else {
+        console.error("No se encontraron bodegas.");
+      }
     })
-    .catch(error => console.error('Error al cargar las bodegas:', error));
+    .catch((error) => console.error("Error al cargar las bodegas:", error));
 }
 function armarTablaResultados(detallePaquetesEncabezado) {
-  const tbody = document.getElementById('tblbodyResultados');
-  tbody.innerHTML = '';
+  const tbody = document.getElementById("tblbodyResultados");
+  tbody.innerHTML = "";
 
-  const cantidadDeRegistrosLabel = document.getElementById('cantidadDeRegistros');
-  cantidadDeRegistrosLabel.textContent = 'Cantidad de registros: ' + detallePaquetesEncabezado.length;
+  const cantidadDeRegistrosLabel = document.getElementById(
+    "cantidadDeRegistros"
+  );
+  cantidadDeRegistrosLabel.textContent =
+    "Cantidad de registros: " + detallePaquetesEncabezado.length;
 
-    detallePaquetesEncabezado.forEach((detalle) => {
-    const newRow = document.createElement('tr');
-    newRow.addEventListener('click', () => {
-    const Aplicacion= detalle.TRASLADO;
-     irAlDetalle(Aplicacion);    
+  detallePaquetesEncabezado.forEach((detalle) => {
+    const newRow = document.createElement("tr");
+    newRow.addEventListener("click", () => {
+      const Aplicacion = detalle.TRASLADO;
+      irAlDetalle(Aplicacion);
     });
-    
+
     newRow.innerHTML = `
       <td class="traslado resultados-Tabla">${detalle.TRASLADO}</td>        
       <td class="usertraslado resultados-Tabla">${detalle.USUARIO}</td>
@@ -197,40 +199,36 @@ function armarTablaResultados(detallePaquetesEncabezado) {
     tbody.appendChild(newRow);
   });
 }
-function  irAlDetalle(Aplicacion) {
-        localStorage.setItem("ConsecutivoPaquete", Aplicacion);
-        window.location.href = 'detalle_paquete.html';
-} 
+function irAlDetalle(Aplicacion) {
+  localStorage.setItem("ConsecutivoPaquete", Aplicacion);
+  window.location.href = "detalle_paquete.html";
+}
 function limpiarResultadoGeneral() {
   const tabla = document.getElementById("tblResultados");
   const resultadoPaginador = document.getElementById("resultadoPaginador");
   const totalRegistros = document.getElementById("cantidadDeRegistros");
-  const bodegaDestino= document.getElementById("bodegaSelectPack");
+  const bodegaDestino = document.getElementById("bodegaSelectPack");
 
-
-
- // Limpiar el contenido del paginador si existe
- if (resultadoPaginador) {
-  resultadoPaginador.innerHTML = "";
-}
-
-if(bodegaDestino){
-    bodegaDestino.innerHTML="";
-}
-// Limpiar el contenido de totalRegistros si existe
-if (totalRegistros) {
-  totalRegistros.innerHTML = "";
-}
-
-// Limpiar el contenido del tbody de la tabla si la tabla existe
-if (tabla) {
-  let tbody = tabla.querySelector("tbody");
-  if (tbody) {
-    tbody.innerHTML = "";
+  // Limpiar el contenido del paginador si existe
+  if (resultadoPaginador) {
+    resultadoPaginador.innerHTML = "";
   }
-}
-localStorage.removeItem('SearchParameterFlag');
-localStorage.removeItem('parametrosBusquedaPaquete');
 
+  if (bodegaDestino) {
+    bodegaDestino.innerHTML = "";
+  }
+  // Limpiar el contenido de totalRegistros si existe
+  if (totalRegistros) {
+    totalRegistros.innerHTML = "";
+  }
 
+  // Limpiar el contenido del tbody de la tabla si la tabla existe
+  if (tabla) {
+    let tbody = tabla.querySelector("tbody");
+    if (tbody) {
+      tbody.innerHTML = "";
+    }
+  }
+  localStorage.removeItem("SearchParameterFlag");
+  localStorage.removeItem("parametrosBusquedaPaquete");
 }

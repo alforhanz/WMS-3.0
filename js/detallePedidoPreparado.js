@@ -6,7 +6,7 @@ var detallePedidoList = "";
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
+  //console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   //inicializarBotones();
@@ -39,8 +39,8 @@ function cargarDetallePedido(documento, pedido, estado) {
       if (result.msg === "SUCCESS") {
         if (result.lineaspedido.length != 0) {
           detallePedidoList = result.lineaspedido;
-          console.log("Lineas Pedido");
-          console.log(detallePedidoList);
+          //console.log("Lineas Pedido");
+          //console.log(detallePedidoList);
           armarTablaVerificacion(detallePedidoList);
           armarTablaLectura(detallePedidoList);
         }
@@ -133,8 +133,8 @@ function armarTablaLectura(detallePedidoList) {
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var pedidoList = detallePedidoList;
-  console.log("Lineas Pedido");
-  console.log(pedidoList);
+  //console.log("Lineas Pedido");
+  //console.log(pedidoList);
   const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
 
   const row = input.closest("tr");
@@ -566,14 +566,14 @@ function verificacion() {
   if (pedidofinalizado === "true") {
     if (guardarParcialHabilitado) {
       const btnGuardar = document.getElementById("btnGuardar");
-      //console.log("activa bonton guardar");
+      ////console.log("activa bonton guardar");
       btnGuardar.removeAttribute("hidden");
     } else {
       btnGuardar.setAttribute("hidden", "hidden");
     }
     if (procesarHabilitado && estadoPedido === "F") {
       const btnProcesar = document.getElementById("btnProcesar");
-      //console.log("activa btn Procesar");
+      ////console.log("activa btn Procesar");
       btnProcesar.removeAttribute("hidden");
     } else {
       btnGuardar.removeAttribute("hidden");
@@ -581,7 +581,7 @@ function verificacion() {
     }
   } else {
     const btnRegresar = document.getElementById("btnRegresar");
-    console.log("activa btn regresar");
+    //console.log("activa btn regresar");
     btnRegresar.removeAttribute("hidden");
   }
 
@@ -792,7 +792,7 @@ function guardaParcialMente() {
   fetch(env.API_URL + "wmsguardadopicking/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      //console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.pedidoguardado.length != 0) {
           // Resto del código de éxito
@@ -908,7 +908,7 @@ function procesar() {
   fetch(env.API_URL + "wmsguardadopicking/PP" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      //console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.pedidoprocesado.length != 0) {
           Swal.fire({

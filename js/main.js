@@ -13,7 +13,7 @@ var promoToDelete = "";
 let acumToDelete = JSON.parse(sessionStorage.getItem("itemsToDelete"));
 //-----------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM cargado...");
+  //console.log("DOM cargado...");
   //--------------------------------------------------
   validate_login();
   existeBodega();
@@ -226,7 +226,7 @@ function filtrosModal() {
             </a>
           </div>
         </div>`;
-    ////console.log(htm);
+    //////console.log(htm);
     document.getElementById("divFiltro").innerHTML = htm;
     // Llamar las marcas por API
     getFiltros()
@@ -269,7 +269,7 @@ function getFiltros(clase, marca, tipo, subtipo, subtipo2, envase) {
       if (result.msg === "SUCCESS") {
         if (result.filtros.length > 0) {
           ArrayData = formatData(result.filtros);
-          //console.log("Datos formateados:", ArrayData);
+          ////console.log("Datos formateados:", ArrayData);
           if (
             ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_2"))
           ) {
@@ -501,10 +501,10 @@ function preBusqueda() {
   let existenciaBusqueda = "";
 
   if (sinExistencias) {
-    console.log("Buscando con ítems sin existencias...");
+    //console.log("Buscando con ítems sin existencias...");
     existenciaBusqueda = "N";
   } else {
-    console.log("Buscando solo ítems con existencias...");
+    //console.log("Buscando solo ítems con existencias...");
     existenciaBusqueda = "S";
   }
   const params =
@@ -546,8 +546,8 @@ function preBusqueda() {
     })
     .then((result) => {
       if (result && result.msg === "SUCCESS") {
-        console.log("Cantidad de Registros: ", result.data.length);
-        console.log(result.data);
+        //console.log("Cantidad de Registros: ", result.data.length);
+        //console.log(result.data);
 
         if (result.data.length > 0) {
           ArrayData = result.data;
@@ -555,7 +555,7 @@ function preBusqueda() {
           ArrayData2 = result.data;
           localStorage.setItem("articulo-Busqueda", JSON.stringify(ArrayData));
 
-          //console.log("DATA DE BUSQUEDA...", ArrayData);
+          ////console.log("DATA DE BUSQUEDA...", ArrayData);
           let totales = ArrayDataFiltrado.length;
           nPag = Math.ceil(totales / xPag);
           LimpiarFiltroPre(1);
@@ -800,7 +800,7 @@ function closetooltips() {
 }
 //-----------------------------------------------------------------------------------
 // function CerrarModal(key) {
-//   //console.log(key);
+//   ////console.log(key);
 //   elem = document.getElementById(key);
 //   let instance = M.Modal.getInstance(elem);
 //   instance.close();
@@ -1339,7 +1339,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let marcaID = $("#" + txtInput).val();
       let marcaH = $("#txtMarcasV").val();
-      //console.log(marcaH);
+      ////console.log(marcaH);
       if (marcaH.length > 0) {
         valorM += marcaH + "," + marcaID;
       } else {
@@ -1363,7 +1363,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let claseID = $("#" + txtInput).val();
       let claseH = $("#txtClasesV").val();
-      //console.log(claseH);
+      ////console.log(claseH);
       if (claseH.length > 0) {
         valorC += claseH + "," + claseID;
       } else {
@@ -1387,7 +1387,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let tipoID = $("#" + txtInput).val();
       let tipoH = $("#txtTiposV").val();
-      //console.log(tipoH);
+      ////console.log(tipoH);
       if (tipoH.length > 0) {
         valorT += tipoH + "," + tipoID;
       } else {
@@ -1411,7 +1411,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let subtipoID = $("#" + txtInput).val();
       let subtipoH = $("#txtSubTiposV").val();
-      //console.log(subtipoH);
+      ////console.log(subtipoH);
       if (subtipoH.length > 0) {
         valorST += subtipoH + "," + subtipoID;
       } else {
@@ -1435,7 +1435,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let subtipo2ID = $("#" + txtInput).val();
       let subtipo2H = $("#txtSubTipos2V").val();
-      //console.log(subtipo2H);
+      ////console.log(subtipo2H);
       if (subtipo2H.length > 0) {
         valorST2 += subtipo2H + "," + subtipo2ID;
       } else {
@@ -1459,7 +1459,7 @@ function getFiltro(id, txtInput) {
     if (chk == true) {
       let envaseID = $("#" + txtInput).val();
       let envaseH = $("#txtEnvasesV").val();
-      //console.log(envaseH);
+      ////console.log(envaseH);
       if (envaseH.length > 0) {
         valorE += envaseH + "," + envaseID;
       } else {
@@ -1478,7 +1478,7 @@ function getFiltro(id, txtInput) {
     }
   }
   //-------------------Ancho-------------------------------------
-  //console.log(id);
+  ////console.log(id);
   if (id == "txtAncho") {
     chk = $("#" + txtInput).is(":checked");
     if (chk == true) {
@@ -1567,8 +1567,8 @@ function Filtrar(IDCategoria, seccion) {
   instance.close();
   let r = $("#rematetxt").is(":checked");
   let i = $("#incompletotxt").is(":checked");
-  ////console.log("Valor de i: " + i);
-  // //console.log(ArrayData);
+  //////console.log("Valor de i: " + i);
+  // ////console.log(ArrayData);
   let clase = document.getElementById("txtClasesV").value;
   let marca = document.getElementById("txtMarcasV").value;
   let tipo = document.getElementById("txtTiposV").value;
@@ -1645,15 +1645,15 @@ function Filtrar(IDCategoria, seccion) {
   ) {
     viewImcompletos = true;
   }
-  //console.log(ArrayDataFiltrado);
+  ////console.log(ArrayDataFiltrado);
   let totales = ArrayDataFiltrado.length;
   nPag = Math.ceil(totales / xPag);
   if (totales > 0) {
-    //console.log(IDCategoria + "-" + seccion);
+    ////console.log(IDCategoria + "-" + seccion);
     if (IDCategoria == "1030" && seccion != 0) {
       if (seccion == 1) {
         mostrarResultadosFiltrosReferencia(nPag, pag, idCat);
-        //console.log("Esta pasando por aqui");
+        ////console.log("Esta pasando por aqui");
       }
       if (seccion == 2) {
         mostrarResultadosFiltrosIntercambio(nPag, pag, idCat);
@@ -1673,9 +1673,9 @@ function Filtrar(IDCategoria, seccion) {
 }
 //-----------------------------------------------------------------------------------
 function getFiltrarResultado(filtradoPor) {
-  //console.log("Estas pasando por getFiltrarResultado");
-  //console.log(ArrayData);
-  //console.log(filtradoPor);
+  ////console.log("Estas pasando por getFiltrarResultado");
+  ////console.log(ArrayData);
+  ////console.log(filtradoPor);
   if (
     filtradoPor.INCOMPLETO &&
     filtradoPor.INCOMPLETO.length > 0 &&
@@ -1795,8 +1795,8 @@ function mostrarLoading() {
 
 //---------------FUNCION PAGINADOR PARA BUSQUEDA PEDIDOS/COTIZACIONES-----------------
 function paginadorPedidos(nPag, pag, IDCategoria) {
-  //console.log("desde: " + (pag - 1) * xPag + " hasta: " + pag * xPag);
-  //console.log("nPag:" + nPag + "- pag:" + pag);
+  ////console.log("desde: " + (pag - 1) * xPag + " hasta: " + pag * xPag);
+  ////console.log("nPag:" + nPag + "- pag:" + pag);
   //MUESTRA LA CANTIDAD DE PAGINA
   let selected = "";
   sel = `<select class="browser-default" onchange="mostrarResultadosBusquedaPedidos(${nPag}, this.value,${IDCategoria})">
@@ -2138,7 +2138,7 @@ function mostrarImagen(codigo, descripcion) {
     console.error("Error decodificando código:", e);
     code = codigo; // Usar codificado como respaldo
   }
-  //console.log(env.API_IMAGE+"/"+code.replace("/", "-"));
+  ////console.log(env.API_IMAGE+"/"+code.replace("/", "-"));
   Swal.fire({
     confirmButtonColor: "#28a745",
     html: `
@@ -2197,9 +2197,9 @@ function mostrarExistencias(p_Articulo) {
       return response.json();
     })
     .then((data) => {
-      console.log("Existencias");
-      console.log(data.reporte);
-      console.log("cant registros:", data.reporte.length);
+      //console.log("Existencias");
+      //console.log(data.reporte);
+      //console.log("cant registros:", data.reporte.length);
       if (data.reporte.length > 0) {
         var existenciaArticulos = data.reporte; // Accede a la propiedad 'reporte'
         var tablaHtml =
@@ -2253,7 +2253,7 @@ function mostrarExistencias(p_Articulo) {
 }
 //-----------------------------------------------------------------------------------
 function sucursalbremen(tienda, id_tienda) {
-  ////console.log("Tienda: " + tienda + " " + "Id: " + id_tienda);
+  //////console.log("Tienda: " + tienda + " " + "Id: " + id_tienda);
   document.getElementById("bodega-sucursal").innerHTML = tienda;
   document.getElementById("bodega").value = id_tienda;
   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
@@ -2572,7 +2572,7 @@ function information(codeArticulo, descripcion) {
     .then((result) => {
       if (result.msg === "SUCCESS") {
         if (result.resultado.length !== 0) {
-          //console.log("Detalle del traslado:", result.resultado[0].NOTAS);
+          ////console.log("Detalle del traslado:", result.resultado[0].NOTAS);
           Swal.fire({
             title: "Artículo: " + codeArticulo,
             html: `
@@ -3296,8 +3296,8 @@ function FiltrarEnBodega(IDCategoria, seccion) {
   instance.close();
   let r = $("#rematetxt").is(":checked");
   let i = $("#incompletotxt").is(":checked");
-  ////console.log("Valor de i: " + i);
-  // //console.log(articulosConExistencia);
+  //////console.log("Valor de i: " + i);
+  // ////console.log(articulosConExistencia);
   let clase = document.getElementById("txtClasesV").value;
   let marca = document.getElementById("txtMarcasV").value;
   let tipo = document.getElementById("txtTiposV").value;
@@ -3374,15 +3374,15 @@ function FiltrarEnBodega(IDCategoria, seccion) {
   ) {
     viewImcompletos = true;
   }
-  //console.log(articulosConExistencia);
+  ////console.log(articulosConExistencia);
   let totales = articulosConExistencia.length;
   nPag = Math.ceil(totales / xPag);
   if (totales > 0) {
-    //console.log(IDCategoria + "-" + seccion);
+    ////console.log(IDCategoria + "-" + seccion);
     if (IDCategoria == "1030" && seccion != 0) {
       if (seccion == 1) {
         mostrarResultadosFiltrosReferencia(nPag, pag, idCat);
-        //console.log("Esta pasando por aqui");
+        ////console.log("Esta pasando por aqui");
       }
       if (seccion == 2) {
         mostrarResultadosFiltrosIntercambio(nPag, pag, idCat);
@@ -3401,9 +3401,9 @@ function FiltrarEnBodega(IDCategoria, seccion) {
   }
 }
 function getFiltrarResultadoEnBodega(filtradoPor) {
-  //console.log("Estas pasando por getFiltrarResultadoEnBodega");
-  //console.log(articulosConExistencia);
-  //console.log(filtradoPor);
+  ////console.log("Estas pasando por getFiltrarResultadoEnBodega");
+  ////console.log(articulosConExistencia);
+  ////console.log(filtradoPor);
   if (
     filtradoPor.INCOMPLETO &&
     filtradoPor.INCOMPLETO.length > 0 &&

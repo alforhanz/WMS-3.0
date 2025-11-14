@@ -280,9 +280,9 @@ var detalleLineasContenedoreses = [];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  // console.log("Verificador de contenedores DOM cargado...");
+  // //console.log("Verificador de contenedores DOM cargado...");
   let usuario = document.getElementById("hUsuario").value;
-  // console.log('hUsuario:',usuario);
+  // //console.log('hUsuario:',usuario);
   //localStorage.setItem('UserID',usuario);
   cargarBodegas();
 
@@ -339,7 +339,7 @@ function validarBusquedaContenedor() {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function enviarDatosControlador(params) {
-  console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+  //console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
   // localStorage.setItem('parametrosBusquedaContenedor', params);
   fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
     .then((response) => response.json())
@@ -352,8 +352,8 @@ function enviarDatosControlador(params) {
           guardarTablaEnArray();
           armarTablaVerificacion(detalleLineasContenedoreses);
           mostrarPestanaLectura();
-          console.log("REsultados:");
-          console.log(detalleLineasContenedoreses);
+          //console.log("REsultados:");
+          //console.log(detalleLineasContenedoreses);
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -810,7 +810,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
 //VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
 function verificacion() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-  //console.log("DataArray", dataArray);
+  ////console.log("DataArray", dataArray);
 
   const tabla = document.getElementById("tblcontenedores");
   if (!tabla)
@@ -836,7 +836,7 @@ function verificacion() {
     cantidadesTotales[art] = (cantidadesTotales[art] || 0) + cant;
   });
 
-  // console.log("Totales agrupados:", cantidadesTotales);
+  // //console.log("Totales agrupados:", cantidadesTotales);
 
   // Recorrer filas para verificar coincidencias
   filas.forEach((fila) => {
@@ -894,7 +894,7 @@ function verificacion() {
   const mensajeText = document.getElementById("mensajeText");
   if (mensajeText) mensajeText.value = mensajesArray.join("\n");
 
-  // console.log("Mensajes generados:", mensajesArray);
+  // //console.log("Mensajes generados:", mensajesArray);
 } ////FIN de VERIFICACION
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1042,9 +1042,9 @@ async function guardaParcialMente() {
       CANT_LEIDA: cantidadLeida,
     });
   }
-  console.log("detallesARRAY:\n ", detalles);
+  //console.log("detallesARRAY:\n ", detalles);
 
-  // console.log(`Total de registros a enviar: ${detalles.length}`);
+  // //console.log(`Total de registros a enviar: ${detalles.length}`);
 
   // 🔁 Dividir el array en chunks de 20
   const chunkSize = 20;
@@ -1053,7 +1053,7 @@ async function guardaParcialMente() {
     chunks.push(detalles.slice(i, i + chunkSize));
   }
 
-  // console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
+  // //console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
 
   // ⚙️ Configuración base del fetch
   const myInit = {
@@ -1065,7 +1065,7 @@ async function guardaParcialMente() {
   for (let i = 0; i < chunks.length; i++) {
     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
     const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-   // const jsonPaquete = JSON.stringify(chunks[i]);
+    // const jsonPaquete = JSON.stringify(chunks[i]);
     const params =
       "?pSistema=" +
       pSistema +
@@ -1087,10 +1087,10 @@ async function guardaParcialMente() {
       pReferencia +
       "&pComentario=" +
       pComentario;
-    //console.log('PARAMETROS: '+params);
-    console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
-    console.log("jsonPaquete=\n", jsonPaquete);
-    console.log("Fin...");
+    ////console.log('PARAMETROS: '+params);
+    //console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
+    //console.log("jsonPaquete=\n", jsonPaquete);
+    //console.log("Fin...");
     //llamada al API...
     try {
       const response = await fetch(
@@ -1099,7 +1099,7 @@ async function guardaParcialMente() {
       );
       const result = await response.json();
 
-      console.log(`✅ Lote ${i + 1} procesado`, result);
+      //console.log(`✅ Lote ${i + 1} procesado`, result);
 
       if (result.msg !== "SUCCESS") {
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
@@ -1140,7 +1140,7 @@ function ConfirmaCrearPaqueteContenedores() {
       if (validarVerificacion()) {
         // Si todas están marcadas, procesar el contenedor
         localStorage.removeItem("UsuarioAutorizacion");
-        console.log("Se creara el paquete" + validarVerificacion);
+        //console.log("Se creara el paquete" + validarVerificacion);
         CrearPaqueteContenedores();
       } else {
         Swal.fire({
@@ -1171,16 +1171,16 @@ function ConfirmaCrearPaqueteContenedores() {
             fetch(env.API_URL + "wmsautorizacioncontenedor")
               .then((response) => response.json())
               .then((resultado) => {
-                //// console.log('Autorizacion Resultado: ');
-                //// console.log(resultado.respuesta);
+                //// //console.log('Autorizacion Resultado: ');
+                //// //console.log(resultado.respuesta);
                 const respuesta = resultado.respuesta[0];
                 if (
                   respuesta &&
                   respuesta.USUARIO === result.value.usuario &&
                   respuesta.PIN === result.value.contraseña
                 ) {
-                  console.log("Credenciales válidas");
-                  console.log(respuesta.USUARIO);
+                  //console.log("Credenciales válidas");
+                  //console.log(respuesta.USUARIO);
                   localStorage.setItem(
                     "UsuarioAutorizacion",
                     respuesta.USUARIO
@@ -1188,7 +1188,7 @@ function ConfirmaCrearPaqueteContenedores() {
                   // Realiza la acción deseada, como procesar el contenedor
                   CrearPaqueteContenedores();
                 } else {
-                  //// console.log("Credenciales inválidas");
+                  //// //console.log("Credenciales inválidas");
                   Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -1251,16 +1251,16 @@ function CrearPaqueteContenedores() {
     "&pComentario=" +
     pComentario;
 
-  // console.log("Params:\n"+params);
+  // //console.log("Params:\n"+params);
   fetch(env.API_URL + "guardacreapaquete" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log("Respuesta del SP");
-      console.log(result.respuesta);
+      //console.log("Respuesta del SP");
+      //console.log(result.respuesta);
       if (result.msg === "SUCCESS") {
         if (result.respuesta.length != 0) {
           let respuesta = result.respuesta[0].Respuesta;
-          console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
+          //console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
           if (result.respuesta[0].Respuesta.toUpperCase().startsWith("TRAS")) {
             Swal.fire({
               icon: "success",
@@ -1288,7 +1288,7 @@ function CrearPaqueteContenedores() {
             });
           }
         } else {
-          // console.log("El API no devolvio nada");
+          // //console.log("El API no devolvio nada");
         }
       } else {
       }
@@ -1396,7 +1396,7 @@ async function imprimirPaqueteReporte(respuesta) {
     "&pPaquete=" +
     pPaquete;
 
-  // console.log("Params:\n" + params);
+  // //console.log("Params:\n" + params);
 
   // const response = await fetch(env.API_URL + "imprimepaquete" + params, myInit);
   // const result = await response.json();
@@ -1404,7 +1404,7 @@ async function imprimirPaqueteReporte(respuesta) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS" && result.respuesta.length > 0) {
-        // console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
+        // //console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
 
         // Crear PDF (p = portrait / vertical)
         const { jsPDF } = window.jspdf;
@@ -1470,12 +1470,12 @@ async function imprimirPaqueteReporte(respuesta) {
           columnStyles: { 0: { cellWidth: 120 } },
         });
 
-        // console.log("Se generó el pdf");
+        // //console.log("Se generó el pdf");
 
         // Descargar PDF
         doc.save("Reporte_Paquete_" + pPaquete + ".pdf");
       } else {
-        // console.log("El API no devolvió nada");
+        // //console.log("El API no devolvió nada");
       }
     });
 }
@@ -1510,21 +1510,21 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
       fetch(env.API_URL + "wmsautorizacioncontenedor")
         .then((response) => response.json())
         .then((resultado) => {
-          //// console.log('Autorizacion Resultado: ');
-          //// console.log(resultado.respuesta);
+          //// //console.log('Autorizacion Resultado: ');
+          //// //console.log(resultado.respuesta);
           const respuesta = resultado.respuesta[0];
           if (
             respuesta &&
             respuesta.USUARIO === result.value.usuario &&
             respuesta.PIN === result.value.contraseña
           ) {
-            //// console.log("Credenciales válidas");
-            //// console.log(respuesta.USUARIO);
+            //// //console.log("Credenciales válidas");
+            //// //console.log(respuesta.USUARIO);
             localStorage.setItem("UsuarioAutorizacion", respuesta.USUARIO);
             // Realiza la acción deseada, como procesar el contenedor
             devolverArticulo(articulo, contenedor, cantidadPreparada);
           } else {
-            //// console.log("Credenciales inválidas");
+            //// //console.log("Credenciales inválidas");
             Swal.fire({
               icon: "error",
               title: "Error",
@@ -1553,7 +1553,7 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
 
 function devolverArticulo(articulo, contenedor, cantidadPreparada) {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-  // console.log("📦 DataArray:", dataArray);
+  // //console.log("📦 DataArray:", dataArray);
 
   // Buscar si el artículo existe dentro del arreglo
   const encontrado = dataArray.find(
@@ -1597,11 +1597,11 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      //// console.log(`✅ Artículo: ${articulo}`);
-      //// console.log(`📦 Contenedor: ${contenedor}`);
-      //// console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
-      //// console.log(`📉 Cantidad leída: ${cantidadLeida}`);
-      //// console.log(`🔁 Diferencia devuelta: ${diferencia}`);
+      //// //console.log(`✅ Artículo: ${articulo}`);
+      //// //console.log(`📦 Contenedor: ${contenedor}`);
+      //// //console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
+      //// //console.log(`📉 Cantidad leída: ${cantidadLeida}`);
+      //// //console.log(`🔁 Diferencia devuelta: ${diferencia}`);
 
       let pSistema = "WMS";
       let pUsuario = document.getElementById("hUsuario").value;
@@ -1632,7 +1632,7 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
         pFechaDesde +
         "&pArticulo=" +
         pArticulo;
-      // console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+      // //console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
       localStorage.setItem("parametrosBusquedaContenedor", params);
       fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
         .then((response) => response.json())
@@ -1640,8 +1640,8 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
           if (result.msg === "SUCCESS") {
             detalleLineasContenedoreses = result.respuesta;
             if (result.respuesta.length != 0) {
-              // console.log('REsultados:');
-              // console.log(detalleLineasContenedoreses);
+              // //console.log('REsultados:');
+              // //console.log(detalleLineasContenedoreses);
               mostrarTablaEnSwal(detalleLineasContenedoreses);
             } else {
               Swal.fire({
@@ -1785,12 +1785,12 @@ async function enviarCantidadesDevolucion(parametros) {
   fetch(env.API_URL + "devolverarticulocontenedor" + parametros, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log("Respuesta del SP");
-      console.log(result.respuesta);
-      // console.log(result.respuesta[0].Respuesta);
+      //console.log("Respuesta del SP");
+      //console.log(result.respuesta);
+      // //console.log(result.respuesta[0].Respuesta);
 
-      console.log("Respuesta Contenedor");
-      console.log(result);
+      //console.log("Respuesta Contenedor");
+      //console.log(result);
 
       if (result.msg === "SUCCESS") {
         if (result.respuesta.length != 0) {
@@ -1877,8 +1877,8 @@ function actualizaTablaVerificacion() {
       pFechaDesde +
       "&pArticulo=" +
       pArticulo;
-    console.log("" + parametrosBusqueda);
-    console.log("PARAMSET" + paramset);
+    //console.log("" + parametrosBusqueda);
+    //console.log("PARAMSET" + paramset);
     enviarDatosControlador(paramset);
   }
 }
@@ -1895,7 +1895,7 @@ function actualizaTablaVerificacion() {
 // function CrearPaqueteContenedores() {
 //         let result = "TRAS81-0000031086";
 //        if (result.toUpperCase().startsWith("TRAS")) {
-//                // console.log("Respuesta del API:\n" + result);
+//                // //console.log("Respuesta del API:\n" + result);
 //                 Swal.fire({
 //                             icon: "success",
 //                             title: "Se creó el paquete N° " + result+ " con éxito",

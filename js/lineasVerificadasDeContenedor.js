@@ -34,8 +34,8 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita) {
       if (result.msg === "SUCCESS") {
         if (result.respuesta.length != 0) {
           detalleLineasContenedor = result.respuesta;
-          console.log("Lineas de Contenedor:");
-          console.log(detalleLineasContenedor);
+          //console.log("Lineas de Contenedor:");
+          //console.log(detalleLineasContenedor);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleLineasContenedor.some(
             (detalle) =>
@@ -46,7 +46,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita) {
             // Llamar a armarTablaLectura después de armar la tabla de verificación
             armarTablaLectura(detalleLineasContenedor);
             guardarTablaEnArray();
-            //console.log("guardado parcial");
+            ////console.log("guardado parcial");
           }
         }
         armarTablaVerificacion(detalleLineasContenedor);
@@ -802,11 +802,11 @@ function guardaParcialMente() {
   fetch(env.API_URL + "contenedor/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log("Respuesta del SP");
-      console.log(result.contenedor);
+      //console.log("Respuesta del SP");
+      //console.log(result.contenedor);
 
-      console.log("Respuesta Contenedor");
-      console.log(result);
+      //console.log("Respuesta Contenedor");
+      //console.log(result);
 
       if (result.msg === "SUCCESS") {
         if (result.contenedor.length != 0) {
@@ -878,16 +878,16 @@ function confirmaProcesar() {
             fetch(env.API_URL + "wmsautorizacioncontenedor")
               .then((response) => response.json())
               .then((resultado) => {
-                console.log("Autorizacion Resultado: ");
-                console.log(resultado.respuesta);
+                //console.log("Autorizacion Resultado: ");
+                //console.log(resultado.respuesta);
                 const respuesta = resultado.respuesta[0];
                 if (
                   respuesta &&
                   respuesta.USUARIO === result.value.usuario &&
                   respuesta.PIN === result.value.contraseña
                 ) {
-                  console.log("Credenciales válidas");
-                  console.log(respuesta.USUARIO);
+                  //console.log("Credenciales válidas");
+                  //console.log(respuesta.USUARIO);
                   localStorage.setItem(
                     "UsuarioAutorizacion",
                     respuesta.USUARIO
@@ -895,7 +895,7 @@ function confirmaProcesar() {
                   // Realiza la acción deseada, como procesar el contenedor
                   procesarContenedor();
                 } else {
-                  console.log("Credenciales inválidas");
+                  //console.log("Credenciales inválidas");
                   Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -1031,7 +1031,7 @@ function procesarContenedor() {
     pUsuarioAutorizacion;
   let vacia = columnaEstaVacia();
   if (vacia) {
-    console.log("la columna de cantidad leida esta vacia...");
+    //console.log("la columna de cantidad leida esta vacia...");
     Swal.fire({
       icon: "warning",
       title: "La columna de cantidad leida esta vacia",
@@ -1040,7 +1040,7 @@ function procesarContenedor() {
       cancelButtonColor: "#6e7881",
     });
   } else {
-    console.log("Se ha guardado con exito el contenedor...");
+    //console.log("Se ha guardado con exito el contenedor...");
 
     fetch(env.API_URL + "contenedor/P" + params, myInit)
       .then((response) => response.json())
