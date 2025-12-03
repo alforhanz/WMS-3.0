@@ -15,7 +15,7 @@ function InsertaCodigoBarra() {
   fetch(env.API_URL + "wmsinsertacodigobarra" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      //console.log('rESULTADO\n'+ result.codigobarra[0].Mensaje );
+      console.log("rESULTADO\n" + result.codigobarra[0].Mensaje);
       if (result.msg === "SUCCESS") {
         Swal.fire({
           position: "centered",

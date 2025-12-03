@@ -3,7 +3,7 @@ var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log("hUsuario:", usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   const verificacionTab = document.querySelector(
@@ -61,10 +61,10 @@ function cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario) {
           detalleLineasOrdenDeCompra = result.detalleOC;
           let lineas = JSON.stringify(detalleLineasOrdenDeCompra);
           localStorage.setItem("lineasOC", lineas);
-          //console.log("listadoOC1");
-          //console.log(detalleLineasOrdenDeCompra);
-          //   //console.log("Detalles de la Orden: "+pOrden);
-          //    //console.log(result);
+          console.log("listadoOC1");
+          console.log(detalleLineasOrdenDeCompra);
+          //   console.log("Detalles de la Orden: "+pOrden);
+          //    console.log(result);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleLineasOrdenDeCompra.some(
             (detalle) =>
@@ -703,9 +703,11 @@ function verificacion() {
           // Agregar el span a la celda
           celdaVerificado.appendChild(spanVerificacion);
         }
-        ////console.log(arrayLectura.ARTICULO + ' - ' + arrayLectura.CANTIDAD_LEIDA);
+        console.log(
+          arrayLectura.ARTICULO + " - " + arrayLectura.CANTIDAD_LEIDA
+        );
       } else {
-        //console.log("no hay coincidencias");
+        console.log("no hay coincidencias");
         //localStorage.setItem('diferencias',false);
       }
     });
@@ -995,7 +997,7 @@ function guardaParcialMenteLectura() {
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          //console.log(`Chunk ${index + 1} guardado con éxito.`);
+          console.log(`Chunk ${index + 1} guardado con éxito.`);
           // Aquí puedes manejar el resultado de cada chunk
         } else {
           console.error(`Error al guardar chunk ${index + 1}:`, result);
@@ -1069,7 +1071,7 @@ function guardaParcialMente() {
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          //console.log(`Chunk ${index + 1} guardado con éxito.`);
+          console.log(`Chunk ${index + 1} guardado con éxito.`);
           // Manejar la respuesta de éxito de los chunks
           if (index === totalChunks - 1) {
             // Último chunk
@@ -1195,7 +1197,7 @@ function autorizacion(usuario, contrasena) {
       if (result.autorizacion[0].respuesta === 0) {
         procesarOrdenDeCompra();
       } else {
-        //console.log("no autorizado\n" + result.autorizacion[0].respuesta);
+        console.log("no autorizado\n" + result.autorizacion[0].respuesta);
         Swal.fire({
           icon: "warning",
           title: "Credenciales incorrectas",
@@ -1210,7 +1212,7 @@ function autorizacion(usuario, contrasena) {
       }
     })
     .catch((error) => {
-      //console.log("Error en la solicitud:", error);
+      console.log("Error en la solicitud:", error);
     });
 }
 
@@ -1283,7 +1285,7 @@ function procesarOrdenDeCompra() {
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          //console.log("Bloque " + (i + 1) + " procesado con éxito.");
+          console.log("Bloque " + (i + 1) + " procesado con éxito.");
         } else {
           console.error("Error en bloque " + (i + 1) + ": ", result);
         }
@@ -1391,7 +1393,7 @@ function actualizaOrdenDeComprasList() {
             detalleLineasOrdenDeCompra = result.detalleOC;
             let lineas = JSON.stringify(detalleLineasOrdenDeCompra);
             localStorage.setItem("lineasOC", lineas);
-            // //console.log(detalleLineasOrdenDeCompra);
+            // console.log(detalleLineasOrdenDeCompra);
             //validarCodigoBarras(codigoBarra);
           }
         }

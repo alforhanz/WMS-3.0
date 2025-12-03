@@ -1,9 +1,9 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  //console.log("BUSQUEDA DE CONTENEDORES DOM cargado...");
+  console.log("BUSQUEDA DE CONTENEDORES DOM cargado...");
   let usuario = document.getElementById("hUsuario").value;
-  //console.log(usuario);
+  console.log(usuario);
   localStorage.setItem("UserID", usuario);
   const busqueda = localStorage.getItem("SearchParameterFlag");
   localStorage.setItem("switch_procesados", "false");
@@ -134,18 +134,18 @@ function enviarDatosControlador(
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      ////console.log("Datos de la API:", result); // Depuración
+      console.log("Datos de la API:", result); // Depuración
       if (result.msg === "SUCCESS") {
         if (result.contenedor && result.contenedor.length > 0) {
           ArrayData = result.contenedor;
           ArrayDataFiltrado = result.contenedor;
 
-          //console.log("ArrayDataFiltrado:", ArrayDataFiltrado); // Depuración
+          console.log("ArrayDataFiltrado:", ArrayDataFiltrado); // Depuración
 
           let cantReg = ArrayDataFiltrado.length;
           let nPag = Math.ceil(cantReg / xPag);
 
-          ////console.log("nPag:", nPag, "cantReg:", cantReg, "xPag:", xPag); // Depuración
+          console.log("nPag:", nPag, "cantReg:", cantReg, "xPag:", xPag); // Depuración
 
           // Mostrar total de registros
           const htm = `<div class="row" id="totalregistros">
@@ -213,7 +213,7 @@ function mostrarResultadosVerificacionContenedores(nPag, pag) {
   let desde = (pag - 1) * xPag;
   let hasta = pag * xPag;
 
-  ////console.log("Mostrando página:", pag, "desde:", desde, "hasta:", hasta); // Depuración
+  console.log("Mostrando página:", pag, "desde:", desde, "hasta:", hasta); // Depuración
   resultadosVerificacionContenedores(desde, hasta);
 
   let htm = paginadorTablasContenedor(
@@ -324,7 +324,7 @@ function irDetalleContenedor(pTraslado, pOpcion, Bodega_Solicita, Estado_Pdt) {
   localStorage.setItem("bodega_solicita", Bodega_Solicita);
   localStorage.setItem("contenDetalleOPC", pOpcion);
   localStorage.setItem("estado_Pdt", Estado_Pdt);
-  //console.log('contenDetalleOPC',pOpcion);
+  console.log("contenDetalleOPC", pOpcion);
   window.location.href = "lineasContenedor.html";
 }
 /////////////////////////////////////////////////////////////////////

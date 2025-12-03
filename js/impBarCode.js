@@ -1,5 +1,5 @@
 // document.addEventListener("DOMContentLoaded", function () {
-//   //console.log('DOM cargado imp code bar...');
+//   console.log('DOM cargado imp code bar...');
 //   let codigo = localStorage.getItem('impCodeBar');
 //   let descripcion = localStorage.getItem('descripcionImpCode');
 //   const inputData = document.getElementById('data');

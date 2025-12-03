@@ -52,7 +52,7 @@
 var paquetesCreadosArray = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-  //console.log("Consulta de creación de Paquetes DOM cargado...");
+  console.log("Consulta de creación de Paquetes DOM cargado...");
   const parametrosBusqueda = localStorage.getItem("parametrosBusquedaPaquete");
   if (parametrosBusqueda) {
     const params = new URLSearchParams(parametrosBusqueda);
@@ -112,7 +112,7 @@ function cargarParametros() {
   enviarDatosControlador(params);
 }
 function enviarDatosControlador(params) {
-  //console.log('BUSQUEDA Paquete PARAMETROS\n '+params);
+  console.log("BUSQUEDA Paquete PARAMETROS\n " + params);
   localStorage.setItem("parametrosBusquedaPaquete", params);
 
   fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
@@ -123,8 +123,8 @@ function enviarDatosControlador(params) {
         paquetesCreadosArray = result.respuesta;
         if (result.respuesta.length != 0) {
           armarTablaResultados(paquetesCreadosArray);
-          //console.log('REsultados:');
-          //console.log(paquetesCreadosArray);
+          console.log("REsultados:");
+          console.log(paquetesCreadosArray);
         } else {
           // ocultarLoader();
           Swal.fire({

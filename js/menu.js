@@ -96,14 +96,14 @@ function cargarMenu() {
     .then((response) => response.json())
     .catch((error) => console.error("Error:", error))
     .then((result) => {
-      // //console.log("Resultado de los modulos");
-      // //console.log(result);
+      // console.log("Resultado de los modulos");
+      // console.log(result);
       ArrayMenu = result.menu;
-      // //console.log("OPCIONES DE MENU");
-      // //console.log(ArrayMenu);
+      // console.log("OPCIONES DE MENU");
+      // console.log(ArrayMenu);
       var source = builddata();
-      // //console.log("MENU");
-      // //console.log(source);
+      // console.log("MENU");
+      // console.log(source);
       buildUL(source);
     });
 }

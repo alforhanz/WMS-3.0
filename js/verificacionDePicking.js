@@ -6,10 +6,10 @@ var instances = M.Datepicker.init(elems, {
   format: "yyyy-mm-dd", // Formato de fecha
 });
 document.addEventListener("DOMContentLoaded", function () {
-  //console.log("DOM completamente cargado y parseado.");
+  console.log("DOM completamente cargado y parseado.");
 
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
   const busqueda = localStorage.getItem("autoSearchPedidos");
 
@@ -159,7 +159,7 @@ function listadoPedido(
           ocultarLoader();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -236,7 +236,7 @@ function irDetallePedido(documento, pedido, estado) {
   // Extraer solo el número de la bodega
   let bodegaNumero = bodega.match(/\d+/)[0];
 
-  //console.log(bodegaNumero); // Esto mostrará "52" si el valor original era "B-52"
+  console.log(bodegaNumero); // Esto mostrará "52" si el valor original era "B-52"
   localStorage.setItem("pedidos_finalizados", checkbox.checked);
   localStorage.setItem("documento", documento);
   localStorage.setItem("pedidoSelect", pedido);

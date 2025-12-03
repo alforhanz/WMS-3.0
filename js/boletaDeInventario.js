@@ -5,11 +5,11 @@ let datosResumen = []; // Definir la variable global para almacenar los datos de
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
   fechasDeInventario();
   //limpiarTabla();
-  ////console.log("DOM cargado completamente ...");
+  console.log("DOM cargado completamente ...");
   // Inicializar el select de Materialize
   var elems = document.querySelectorAll("select");
   M.FormSelect.init(elems);
@@ -31,8 +31,8 @@ function fechasDeInventario() {
     .then((response) => response.json())
     .then((result) => {
       const resultado = result.fechainv; // Arreglo con las fechas
-      //////console.log("Fechas programadas: ");
-      //////console.log(resultado);
+      console.log("Fechas programadas: ");
+      console.log(resultado);
 
       const fechaSelect = document.getElementById("fecha_ini");
 
@@ -103,8 +103,8 @@ async function presentarBoleta() {
           datosResumen = result.resultado;
           const btnValidarBoleta = document.getElementById("btnValidarBoleta");
           btnValidarBoleta.disabled = false;
-          //console.log('BOLETA DE INVENTARIO');
-          //console.log(result.resultado)
+          console.log("BOLETA DE INVENTARIO");
+          console.log(result.resultado);
           generarTablaBoleta(datosResumen);
           inicializarBotonesDescarga();
         } else {
@@ -118,7 +118,7 @@ async function presentarBoleta() {
         }
         ocultarLoader();
       } else {
-        ////console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -154,8 +154,8 @@ async function validarBoleta() {
         const btnCrearBoleta = document.getElementById("btnCrearBoleta"); // Referencia al botón
         const btnValidarBoleta = document.getElementById("btnValidarBoleta");
         if (result.resultado.length > 0) {
-          ////console.log('BOLETA DE INVENTARIO');
-          ////console.log(result.resultado);
+          console.log("BOLETA DE INVENTARIO");
+          console.log(result.resultado);
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -194,7 +194,7 @@ async function validarBoleta() {
 
         ocultarLoader();
       } else {
-        ////console.log("Error en el SP");
+        console.log("Error en el SP");
         ocultarLoader();
       }
     })
@@ -247,8 +247,8 @@ async function actualizaCostos() {
           datosResumen = result.resultado;
           const btnValidarBoleta = document.getElementById("btnValidarBoleta");
           btnValidarBoleta.disabled = false;
-          ////console.log('BOLETA DE INVENTARIO');
-          ////console.log(result.resultado)
+          console.log("BOLETA DE INVENTARIO");
+          console.log(result.resultado);
           crearBoleta();
         } else {
           limpiarTabla();
@@ -261,7 +261,7 @@ async function actualizaCostos() {
         }
         ocultarLoader();
       } else {
-        ////console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -298,8 +298,8 @@ async function crearBoleta() {
           datosResumen = result.resultado;
           const btnValidarBoleta = document.getElementById("btnValidarBoleta");
           btnValidarBoleta.disabled = false;
-          ////console.log('BOLETA DE INVENTARIO');
-          ////console.log(result.resultado)
+          console.log("BOLETA DE INVENTARIO");
+          console.log(result.resultado);
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -317,7 +317,7 @@ async function crearBoleta() {
         }
         ocultarLoader();
       } else {
-        ////console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -601,18 +601,18 @@ function limpiarTabla() {
 
   if (btnDescargarExcel) {
     btnDescargarExcel.setAttribute("hidden", "");
-    ////console.log("Ocultando btnDescargarExcel"); // Para depuración
+    console.log("Ocultando btnDescargarExcel"); // Para depuración
   }
   if (lblExcel) {
     lblExcel.setAttribute("hidden", "");
-    ////console.log("Ocultando lblExcel"); // Para depuración
+    console.log("Ocultando lblExcel"); // Para depuración
   }
   if (btnDescargarPDF) {
     btnDescargarPDF.setAttribute("hidden", "");
-    ////console.log("Ocultando btnDescargarPDF"); // Para depuración
+    console.log("Ocultando btnDescargarPDF"); // Para depuración
   }
   if (lblPDF) {
     lblPDF.setAttribute("hidden", "");
-    ////console.log("Ocultando lblPDF"); // Para depuración
+    console.log("Ocultando lblPDF"); // Para depuración
   }
 }

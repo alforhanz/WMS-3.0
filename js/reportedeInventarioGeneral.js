@@ -5,7 +5,7 @@ let datosResumen = []; // Definir la variable global para almacenar los datos de
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
   const checkClase = document.getElementById("clase-todas");
   localStorage.setItem("check_Clase", checkClase.checked);
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   checkEnvase.addEventListener("change", habilitaEnvase);
   checkSeis.addEventListener("change", habilitaSeis);
 
-  //console.log('DOM del reporte caRGADO...');
+  console.log("DOM del reporte caRGADO...");
 
   const tipoDetallado = document.getElementById("tipoDetallado");
   const tipoResumido = document.getElementById("tipoResumido");
@@ -92,8 +92,8 @@ function fechasDeInventario() {
     .then((response) => response.json())
     .then((result) => {
       const resultado = result.fechainv; // Arreglo con las fechas
-      ////console.log("Fechas programadas: ");
-      ////console.log(resultado);
+      console.log("Fechas programadas: ");
+      console.log(resultado);
 
       const fechaSelect = document.getElementById("fecha_ini");
 
@@ -162,7 +162,7 @@ async function cargarClasificacionesCLase() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -206,7 +206,7 @@ async function cargarClasificacionesMarca() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -249,7 +249,7 @@ async function cargarClasificacionesTipo() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -294,7 +294,7 @@ async function cargarClasificacionesVenta() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -348,7 +348,7 @@ async function cargarClasificacionesEnvase() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -406,7 +406,7 @@ async function cargarClasificacionesSeis() {
           limpiarTabla();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -642,14 +642,14 @@ async function resumenGeneral() {
       if (result.msg === "SUCCESS") {
         if (result.resultado.length > 0) {
           datosResumen = result.resultado;
-          //console.log('TIPO DE REPORTE:');
+          console.log("TIPO DE REPORTE:");
           if (
             pTipoRpt === "R" &&
             pAgrupadoClase === "S" &&
             pAgrupadoMarca === "S"
           ) {
-            //console.log('llamamos a Resumido, Clase, MArca');
-            //console.log(result.resultado)
+            console.log("llamamos a Resumido, Clase, MArca");
+            console.log(result.resultado);
             generarReporteInventarioRCM(datosResumen);
             inicializarBotonesDescarga();
           } else if (
@@ -657,8 +657,8 @@ async function resumenGeneral() {
             pAgrupadoClase === "N" &&
             pAgrupadoMarca === "S"
           ) {
-            //console.log('llamamos a Resumido, MArca');
-            //console.log(result.resultado)
+            console.log("llamamos a Resumido, MArca");
+            console.log(result.resultado);
             generarReporteInventarioRM(datosResumen);
             inicializarBotonesDescarga();
           } else if (
@@ -666,8 +666,8 @@ async function resumenGeneral() {
             pAgrupadoClase === "S" &&
             pAgrupadoMarca === "N"
           ) {
-            //console.log('llamamos a Resumido, Clase');
-            //console.log(result.resultado)
+            console.log("llamamos a Resumido, Clase");
+            console.log(result.resultado);
             generarReporteInventarioRC(datosResumen);
             inicializarBotonesDescarga();
           } else if (
@@ -675,8 +675,8 @@ async function resumenGeneral() {
             pAgrupadoClase === "N" &&
             pAgrupadoMarca === "N"
           ) {
-            //console.log('llamamos a Detallado, Todas las Clasificaciones');
-            //console.log(result.resultado)
+            console.log("llamamos a Detallado, Todas las Clasificaciones");
+            console.log(result.resultado);
             generarReporteInventarioD(datosResumen);
             inicializarBotonesDescarga();
           }
@@ -691,7 +691,7 @@ async function resumenGeneral() {
 
         ocultarLoader();
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -1323,30 +1323,30 @@ function descargarPDF() {
     ? "S"
     : "N";
 
-  //console.log('TIPO DE REPORTE:');
+  console.log("TIPO DE REPORTE:");
   if (pTipoRpt === "R" && pAgrupadoClase === "S" && pAgrupadoMarca === "S") {
-    //console.log('Descarga Resumido, Clase, MArca');
+    console.log("Descarga Resumido, Clase, MArca");
     descargarPDFRCM();
   } else if (
     pTipoRpt === "R" &&
     pAgrupadoClase === "N" &&
     pAgrupadoMarca === "S"
   ) {
-    //console.log('Descarga a Resumido, MArca');
+    console.log("Descarga a Resumido, MArca");
     descargarPDFRM();
   } else if (
     pTipoRpt === "R" &&
     pAgrupadoClase === "S" &&
     pAgrupadoMarca === "N"
   ) {
-    //console.log('Descarga a Resumido, Clase');
+    console.log("Descarga a Resumido, Clase");
     descargarPDFRC();
   } else if (
     pTipoRpt === "D" &&
     pAgrupadoClase === "N" &&
     pAgrupadoMarca === "N"
   ) {
-    //console.log('Descarga a Detallado, Todas las Clasificaciones');
+    console.log("Descarga a Detallado, Todas las Clasificaciones");
     descargarPDFDetalle();
   }
 }

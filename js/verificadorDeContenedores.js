@@ -280,9 +280,9 @@ var detalleLineasContenedoreses = [];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  // ////console.log("Verificador de contenedores DOM cargado...");
+  // console.log("Verificador de contenedores DOM cargado...");
   let usuario = document.getElementById("hUsuario").value;
-  // ////console.log('hUsuario:',usuario);
+  // console.log('hUsuario:',usuario);
   //localStorage.setItem('UserID',usuario);
   cargarBodegas();
 
@@ -339,7 +339,7 @@ function validarBusquedaContenedor() {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function enviarDatosControlador(params) {
-  ////console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+  console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
   // localStorage.setItem('parametrosBusquedaContenedor', params);
   fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
     .then((response) => response.json())
@@ -352,8 +352,8 @@ function enviarDatosControlador(params) {
           guardarTablaEnArray();
           armarTablaVerificacion(detalleLineasContenedoreses);
           mostrarPestanaLectura();
-          ////console.log("REsultados:");
-          ////console.log(detalleLineasContenedoreses);
+          console.log("REsultados:");
+          console.log(detalleLineasContenedoreses);
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -810,7 +810,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
 //VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
 function verificacion() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-  //////console.log("DataArray", dataArray);
+  console.log("DataArray", dataArray);
 
   const tabla = document.getElementById("tblcontenedores");
   if (!tabla)
@@ -836,7 +836,7 @@ function verificacion() {
     cantidadesTotales[art] = (cantidadesTotales[art] || 0) + cant;
   });
 
-  // ////console.log("Totales agrupados:", cantidadesTotales);
+  // console.log("Totales agrupados:", cantidadesTotales);
 
   // Recorrer filas para verificar coincidencias
   filas.forEach((fila) => {
@@ -894,7 +894,7 @@ function verificacion() {
   const mensajeText = document.getElementById("mensajeText");
   if (mensajeText) mensajeText.value = mensajesArray.join("\n");
 
-  // ////console.log("Mensajes generados:", mensajesArray);
+  // console.log("Mensajes generados:", mensajesArray);
 } ////FIN de VERIFICACION
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -902,6 +902,7 @@ function verificacion() {
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 function inicializarBotones() {
   // Crear los botones y el contenedor
+  const contenedorTblLectura = document.createElement("div");
   const contenedorBotones = document.createElement("div");
   const botonProcesar = document.createElement("button");
   const botonGuardarParcial = document.createElement("button");
@@ -938,13 +939,19 @@ function inicializarBotones() {
   botonProcesar.style.height = "40px";
   botonProcesar.style.marginbottom = "25px";
 
+  contenedorTblLectura.appendChild(botonGuardarParcial);
   // Agregar botones al contenedor
   contenedorBotones.appendChild(botonGuardarParcial);
   contenedorBotones.appendChild(botonProcesar);
 
   // Obtener tabla de verificación
+  const tablaLectura = document.getElementById("myTableLectura");
   const tablaVerificacion = document.getElementById("tblcontenedores");
 
+  tablaLectura.parentNode.insertBefore(
+    contenedorTblLectura,
+    tablaLectura.nextSibling
+  );
   // Insertar contenedor de botones después de la tabla de verificación
   tablaVerificacion.parentNode.insertBefore(
     contenedorBotones,
@@ -992,7 +999,7 @@ function confirmarGuardadoParcial() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      guardaParcialMente();   
+      guardaParcialMente();
     }
   });
 }
@@ -1038,9 +1045,9 @@ async function guardaParcialMente() {
       CANT_LEIDA: cantidadLeida,
     });
   }
-  ////console.log("detallesARRAY:\n ", detalles);
+  console.log("detallesARRAY:\n ", detalles);
 
-  // ////console.log(`Total de registros a enviar: ${detalles.length}`);
+  // console.log(`Total de registros a enviar: ${detalles.length}`);
 
   // 🔁 Dividir el array en chunks de 20
   const chunkSize = 20;
@@ -1049,7 +1056,7 @@ async function guardaParcialMente() {
     chunks.push(detalles.slice(i, i + chunkSize));
   }
 
-  // ////console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
+  // console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
 
   // ⚙️ Configuración base del fetch
   const myInit = {
@@ -1083,10 +1090,10 @@ async function guardaParcialMente() {
       pReferencia +
       "&pComentario=" +
       pComentario;
-    //////console.log('PARAMETROS: '+params);
-    ////console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
-    ////console.log("jsonPaquete=\n", jsonPaquete);
-    ////console.log("Fin...");
+    console.log("PARAMETROS: " + params);
+    console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
+    console.log("jsonPaquete=\n", jsonPaquete);
+    console.log("Fin...");
     //llamada al API...
     try {
       const response = await fetch(
@@ -1095,7 +1102,7 @@ async function guardaParcialMente() {
       );
       const result = await response.json();
 
-      ////console.log(`✅ Lote ${i + 1} procesado`, result);
+      console.log(`✅ Lote ${i + 1} procesado`, result);
 
       if (result.msg !== "SUCCESS") {
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
@@ -1120,7 +1127,6 @@ async function guardaParcialMente() {
     }
   });
 }
-
 
 async function guardaPaquete() {
   let pSistema = "WMS";
@@ -1163,9 +1169,9 @@ async function guardaPaquete() {
       CANT_LEIDA: cantidadLeida,
     });
   }
-  //console.log("detallesARRAY:\n ", detalles);
+  console.log("detallesARRAY:\n ", detalles);
 
-  //console.log(`Total de registros a enviar: ${detalles.length}`);
+  console.log(`Total de registros a enviar: ${detalles.length}`);
 
   // 🔁 Dividir el array en chunks de 20
   const chunkSize = 20;
@@ -1174,7 +1180,9 @@ async function guardaPaquete() {
     chunks.push(detalles.slice(i, i + chunkSize));
   }
 
-  //console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
+  console.log(
+    `Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`
+  );
 
   // ⚙️ Configuración base del fetch
   const myInit = {
@@ -1208,10 +1216,10 @@ async function guardaPaquete() {
       pReferencia +
       "&pComentario=" +
       pComentario;
-    ////console.log('PARAMETROS: '+params);
-    //console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
-    //console.log("jsonPaquete=\n", jsonPaquete);
-    //console.log("Fin...");
+    console.log("PARAMETROS: " + params);
+    console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
+    console.log("jsonPaquete=\n", jsonPaquete);
+    console.log("Fin...");
     // llamada al API...
     try {
       const response = await fetch(
@@ -1220,7 +1228,7 @@ async function guardaPaquete() {
       );
       const result = await response.json();
 
-      //console.log(`✅ Lote ${i + 1} procesado`, result);
+      console.log(`✅ Lote ${i + 1} procesado`, result);
 
       if (result.msg !== "SUCCESS") {
         console.warn(`⚠️ Error en lote ${i + 1}`, result);
@@ -1233,8 +1241,10 @@ async function guardaPaquete() {
   }
 
   // 🎉 Mensaje final si todo fue bien
-  //console.log("Se guardaron los elementos de la tabla lectura y se va a crear el paquete.");
- ConfirmaCrearPaqueteContenedores();
+  console.log(
+    "Se guardaron los elementos de la tabla lectura y se va a crear el paquete."
+  );
+  ConfirmaCrearPaqueteContenedores();
   // Swal.fire({
   //   icon: "success",
   //   title: "Todos los datos fueron Guardados correctamente",
@@ -1249,10 +1259,105 @@ async function guardaPaquete() {
 }
 
 ///////FUNCION PARA PROCESAR//////
+// function ConfirmaCrearPaqueteContenedores() {
+//   Swal.fire({
+//     icon: "warning",
+//     title: "¿Desea crear el paquete?",
+//     showCancelButton: true,
+//     confirmButtonText: "Continuar",
+//     cancelButtonText: "Cancelar",
+//     confirmButtonColor: "#28a745",
+//     cancelButtonColor: "#6e7881",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       // Verificar si todas las celdas de verificación están marcadas
+//       if (validarVerificacion()) {
+//         // Si todas están marcadas, procesar el contenedor
+//         localStorage.removeItem("UsuarioAutorizacion");
+//         console.log("Se creara el paquete" + validarVerificacion);
+//         CrearPaqueteContenedores();
+//       } else {
+//         Swal.fire({
+//           title: "Ingrese sus credenciales",
+//           html:
+//             '<input id="swal-input1" class="swal2-input" placeholder="Usuario" autocomplete="off">' +
+//             '<input id="swal-input2" class="swal2-input" placeholder="Contraseña" type="password" autocomplete="off">',
+//           focusConfirm: false,
+//           showCancelButton: true,
+//           confirmButtonText: "Aprobar",
+//           cancelButtonText: "Cancelar",
+//           confirmButtonColor: "#28a745",
+//           cancelButtonColor: "#6e7881",
+//           preConfirm: () => {
+//             const usuario = document
+//               .getElementById("swal-input1")
+//               .value.toUpperCase();
+//             const contraseña = document.getElementById("swal-input2").value;
+//             return { usuario: usuario, contraseña: contraseña };
+//           },
+//         }).then((result) => {
+//           if (
+//             !result.isDismissed &&
+//             result.value &&
+//             result.value.usuario &&
+//             result.value.contraseña
+//           ) {
+//             fetch(env.API_URL + "wmsautorizacioncontenedor")
+//               .then((response) => response.json())
+//               .then((resultado) => {
+//                 //// console.log('Autorizacion Resultado: ');
+//                 //// console.log(resultado.respuesta);
+//                 const respuesta = resultado.respuesta[0];
+//                 if (
+//                   respuesta &&
+//                   respuesta.USUARIO === result.value.usuario &&
+//                   respuesta.PIN === result.value.contraseña
+//                 ) {
+//                   console.log("Credenciales válidas");
+//                   console.log(respuesta.USUARIO);
+//                   localStorage.setItem(
+//                     "UsuarioAutorizacion",
+//                     respuesta.USUARIO
+//                   );
+//                   // Realiza la acción deseada, como procesar el contenedor
+//                   CrearPaqueteContenedores();
+//                 } else {
+//                   //// console.log("Credenciales inválidas");
+//                   Swal.fire({
+//                     icon: "error",
+//                     title: "Error",
+//                     text: "Credenciales inválidas",
+//                   });
+//                 }
+//               })
+//               .catch((error) => {
+//                 // console.error('Error al obtener los datos del API:', error);
+//                 Swal.fire({
+//                   icon: "error",
+//                   title: "Error",
+//                   text: error,
+//                 });
+//               });
+//           } else {
+//             // console.error('Error: No se pudieron obtener los valores de usuario y contraseña del Swal');
+//             Swal.fire({
+//               icon: "error",
+//               title: "Error",
+//               text: "No se pudieron obtener los valores de usuario y contraseña del Swal",
+//             });
+//           }
+//         });
+//       }
+//     }
+//   });
+// }
 function ConfirmaCrearPaqueteContenedores() {
+  // Obtener todas las celdas de verificación
+  //var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
+
   Swal.fire({
     icon: "warning",
-    title: "¿Desea crear el paquete?",
+    title: "¿Desea procesar el contenedor?",
     showCancelButton: true,
     confirmButtonText: "Continuar",
     cancelButtonText: "Cancelar",
@@ -1263,8 +1368,7 @@ function ConfirmaCrearPaqueteContenedores() {
       // Verificar si todas las celdas de verificación están marcadas
       if (validarVerificacion()) {
         // Si todas están marcadas, procesar el contenedor
-        localStorage.removeItem("UsuarioAutorizacion");
-        ////console.log("Se creara el paquete" + validarVerificacion);
+        //localStorage.removeItem("UsuarioAutorizacion");
         CrearPaqueteContenedores();
       } else {
         Swal.fire({
@@ -1279,40 +1383,30 @@ function ConfirmaCrearPaqueteContenedores() {
           confirmButtonColor: "#28a745",
           cancelButtonColor: "#6e7881",
           preConfirm: () => {
-            const usuario = document
-              .getElementById("swal-input1")
-              .value.toUpperCase();
+            const usuario = document.getElementById("swal-input1").value.toUpperCase();
             const contraseña = document.getElementById("swal-input2").value;
             return { usuario: usuario, contraseña: contraseña };
-          },
-        }).then((result) => {
-          if (
-            !result.isDismissed &&
-            result.value &&
-            result.value.usuario &&
-            result.value.contraseña
-          ) {
-            fetch(env.API_URL + "wmsautorizacioncontenedor")
+          },}).then((result) => {
+          
+          if (!result.isDismissed && result.value && result.value.usuario && result.value.contraseña) {
+               const params = "?pSistema=" +
+                              'WMS' +
+                              "&pUsuario=" +
+                              result.value.usuario  +
+                              "&pOpcion=" +
+                              result.value.contraseña;                  
+
+             fetch(env.API_URL + "wmsautorizaciones"+params)
               .then((response) => response.json())
               .then((resultado) => {
-                //// ////console.log('Autorizacion Resultado: ');
-                //// ////console.log(resultado.respuesta);
-                const respuesta = resultado.respuesta[0];
-                if (
-                  respuesta &&
-                  respuesta.USUARIO === result.value.usuario &&
-                  respuesta.PIN === result.value.contraseña
-                ) {
-                  ////console.log("Credenciales válidas");
-                  ////console.log(respuesta.USUARIO);
-                  localStorage.setItem(
-                    "UsuarioAutorizacion",
-                    respuesta.USUARIO
-                  );
-                  // Realiza la acción deseada, como procesar el contenedor
-                  CrearPaqueteContenedores();
+                console.log("Autorizacion Resultado: ");
+                console.log(resultado.autorizacion[0].mensaje);
+               
+              if(resultado.autorizacion[0].mensaje === "OK") {
+                  console.log("Credenciales válidas");              
+                 CrearPaqueteContenedores();
                 } else {
-                  //// ////console.log("Credenciales inválidas");
+                  console.log("Credenciales inválidas");
                   Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -1321,15 +1415,17 @@ function ConfirmaCrearPaqueteContenedores() {
                 }
               })
               .catch((error) => {
-                // console.error('Error al obtener los datos del API:', error);
+                console.error("Error al obtener los datos del API:", error);
                 Swal.fire({
                   icon: "error",
                   title: "Error",
-                  text: error,
+                  text: "No se pudo obtener los datos del API",
                 });
               });
           } else {
-            // console.error('Error: No se pudieron obtener los valores de usuario y contraseña del Swal');
+            console.error(
+              "Error: No se pudieron obtener los valores de usuario y contraseña del Swal"
+            );
             Swal.fire({
               icon: "error",
               title: "Error",
@@ -1341,6 +1437,8 @@ function ConfirmaCrearPaqueteContenedores() {
     }
   });
 }
+
+
 function CrearPaqueteContenedores() {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
@@ -1375,16 +1473,16 @@ function CrearPaqueteContenedores() {
     "&pComentario=" +
     pComentario;
 
-  // ////console.log("Params:\n"+params);
+  // console.log("Params:\n"+params);
   fetch(env.API_URL + "guardacreapaquete" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      ////console.log("Respuesta del SP");
-      ////console.log(result.respuesta);
+      console.log("Respuesta del SP");
+      console.log(result.respuesta);
       if (result.msg === "SUCCESS") {
         if (result.respuesta.length != 0) {
           let respuesta = result.respuesta[0].Respuesta;
-          ////console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
+          console.log("Respuesta del API:\n" + result.respuesta[0].Respuesta);
           if (result.respuesta[0].Respuesta.toUpperCase().startsWith("TRAS")) {
             Swal.fire({
               icon: "success",
@@ -1401,7 +1499,7 @@ function CrearPaqueteContenedores() {
                 imprimirPaqueteReporte(respuesta);
                 limpiarResultadoGeneral();
                 limpiarMensajes();
-               location.reload(); 
+                location.reload();
               }
             });
           } else {
@@ -1413,7 +1511,7 @@ function CrearPaqueteContenedores() {
             });
           }
         } else {
-          //console.log("El API no devolvio nada");
+          console.log("El API no devolvio nada");
         }
       } else {
       }
@@ -1504,7 +1602,7 @@ async function imprimirPaqueteReporte(respuesta) {
     "&pPaquete=" +
     pPaquete;
 
-  // ////console.log("Params:\n" + params);
+  // console.log("Params:\n" + params);
 
   // const response = await fetch(env.API_URL + "imprimepaquete" + params, myInit);
   // const result = await response.json();
@@ -1512,7 +1610,7 @@ async function imprimirPaqueteReporte(respuesta) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS" && result.respuesta.length > 0) {
-        // ////console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
+        // console.log("REPORTE CREACION DE PAQUETE", result.respuesta);
 
         // Crear PDF (p = portrait / vertical)
         const { jsPDF } = window.jspdf;
@@ -1578,12 +1676,12 @@ async function imprimirPaqueteReporte(respuesta) {
           columnStyles: { 0: { cellWidth: 120 } },
         });
 
-        // ////console.log("Se generó el pdf");
+        // console.log("Se generó el pdf");
 
         // Descargar PDF
         doc.save("Reporte_Paquete_" + pPaquete + ".pdf");
       } else {
-        // ////console.log("El API no devolvió nada");
+        // console.log("El API no devolvió nada");
       }
     });
 }
@@ -1618,21 +1716,21 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
       fetch(env.API_URL + "wmsautorizacioncontenedor")
         .then((response) => response.json())
         .then((resultado) => {
-          //// ////console.log('Autorizacion Resultado: ');
-          //// ////console.log(resultado.respuesta);
+          //// console.log('Autorizacion Resultado: ');
+          //// console.log(resultado.respuesta);
           const respuesta = resultado.respuesta[0];
           if (
             respuesta &&
             respuesta.USUARIO === result.value.usuario &&
             respuesta.PIN === result.value.contraseña
           ) {
-            //// ////console.log("Credenciales válidas");
-            //// ////console.log(respuesta.USUARIO);
+            //// console.log("Credenciales válidas");
+            //// console.log(respuesta.USUARIO);
             localStorage.setItem("UsuarioAutorizacion", respuesta.USUARIO);
             // Realiza la acción deseada, como procesar el contenedor
             devolverArticulo(articulo, contenedor, cantidadPreparada);
           } else {
-            //// ////console.log("Credenciales inválidas");
+            //// console.log("Credenciales inválidas");
             Swal.fire({
               icon: "error",
               title: "Error",
@@ -1661,7 +1759,7 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
 
 function devolverArticulo(articulo, contenedor, cantidadPreparada) {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-  // ////console.log("📦 DataArray:", dataArray);
+  // console.log("📦 DataArray:", dataArray);
 
   // Buscar si el artículo existe dentro del arreglo
   const encontrado = dataArray.find(
@@ -1705,11 +1803,11 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      //// ////console.log(`✅ Artículo: ${articulo}`);
-      //// ////console.log(`📦 Contenedor: ${contenedor}`);
-      //// ////console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
-      //// ////console.log(`📉 Cantidad leída: ${cantidadLeida}`);
-      //// ////console.log(`🔁 Diferencia devuelta: ${diferencia}`);
+      //// console.log(`✅ Artículo: ${articulo}`);
+      //// console.log(`📦 Contenedor: ${contenedor}`);
+      //// console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
+      //// console.log(`📉 Cantidad leída: ${cantidadLeida}`);
+      //// console.log(`🔁 Diferencia devuelta: ${diferencia}`);
 
       let pSistema = "WMS";
       let pUsuario = document.getElementById("hUsuario").value;
@@ -1740,7 +1838,7 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
         pFechaDesde +
         "&pArticulo=" +
         pArticulo;
-      // ////console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+      // console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
       localStorage.setItem("parametrosBusquedaContenedor", params);
       fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
         .then((response) => response.json())
@@ -1748,8 +1846,8 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
           if (result.msg === "SUCCESS") {
             detalleLineasContenedoreses = result.respuesta;
             if (result.respuesta.length != 0) {
-              // ////console.log('REsultados:');
-              // ////console.log(detalleLineasContenedoreses);
+              // console.log('REsultados:');
+              // console.log(detalleLineasContenedoreses);
               mostrarTablaEnSwal(detalleLineasContenedoreses);
             } else {
               Swal.fire({
@@ -1893,12 +1991,12 @@ async function enviarCantidadesDevolucion(parametros) {
   fetch(env.API_URL + "devolverarticulocontenedor" + parametros, myInit)
     .then((response) => response.json())
     .then((result) => {
-      ////console.log("Respuesta del SP");
-      ////console.log(result.respuesta);
-      // ////console.log(result.respuesta[0].Respuesta);
+      console.log("Respuesta del SP");
+      console.log(result.respuesta);
+      // console.log(result.respuesta[0].Respuesta);
 
-      ////console.log("Respuesta Contenedor");
-      ////console.log(result);
+      console.log("Respuesta Contenedor");
+      console.log(result);
 
       if (result.msg === "SUCCESS") {
         if (result.respuesta.length != 0) {
@@ -1985,14 +2083,11 @@ function actualizaTablaVerificacion() {
       pFechaDesde +
       "&pArticulo=" +
       pArticulo;
-    ////console.log("" + parametrosBusqueda);
-    ////console.log("PARAMSET" + paramset);
+    console.log("" + parametrosBusqueda);
+    console.log("PARAMSET" + paramset);
     enviarDatosControlador(paramset);
   }
 }
-
-
-
 
 // function prueba(){
 //  armarTablaLectura(dataContenedores);
@@ -2006,7 +2101,7 @@ function actualizaTablaVerificacion() {
 // function CrearPaqueteContenedores() {
 //         let result = "TRAS81-0000031086";
 //        if (result.toUpperCase().startsWith("TRAS")) {
-//                // ////console.log("Respuesta del API:\n" + result);
+//                // console.log("Respuesta del API:\n" + result);
 //                 Swal.fire({
 //                             icon: "success",
 //                             title: "Se creó el paquete N° " + result+ " con éxito",

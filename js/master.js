@@ -73,7 +73,7 @@ function login() {
     localStorage.username = usuario;
     localStorage.password = pass;
     localStorage.checkbox = rmCheck.value;
-    ////console.log("Esta guardando los datos");
+    console.log("Esta guardando los datos");
   } else {
     localStorage.username = "";
     localStorage.checkbox = "";
@@ -94,7 +94,7 @@ function login() {
   } else {
     //DATA INFORMATION(USER AND PASS)
     const data = { username: usuario, password: pass };
-    ////console.log(data);
+    console.log(data);
     fetch(env.API_URL + "index.php/auth/login", {
       //TRAE MODULOS PARA EL USUARIO
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -111,8 +111,8 @@ function login() {
       .then((response) => response.json())
       .then((result) => {
         if (result.msg === "SUCCESS") {
-          //console.log("Esta pasando por el login");
-          //console.log(result.msg);
+          console.log("Esta pasando por el login");
+          console.log(result.msg);
           localStorage.setItem("username", result.username);
           sessionStorage.setItem("tokens", JSON.stringify(result.access_token));
           sessionStorage.setItem("user", JSON.stringify(result.username));

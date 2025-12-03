@@ -23,8 +23,8 @@ function cargarLineasTraslado(documento) {
       if (result.msg === "SUCCESS") {
         if (result.lineastraslados.length != 0) {
           detalleTrasladoList = result.lineastraslados;
-          //console.log("Detalle del traslado");
-          //console.log(detalleTrasladoList);
+          console.log("Detalle del traslado");
+          console.log(detalleTrasladoList);
           armarTablaVerificacion(detalleTrasladoList);
           // // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleTrasladoList.some(
@@ -90,8 +90,8 @@ function armarTablaLectura(detalleTrasladoList) {
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var TrasladoList = detalleTrasladoList;
-  //console.log("Lineas Traslado");
-  //console.log(TrasladoList);
+  console.log("Lineas Traslado");
+  console.log(TrasladoList);
   const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
 
   const row = input.closest("tr");
@@ -534,7 +534,7 @@ function verificacion() {
 
   if (guardarParcialHabilitado) {
     const btnGuardar = document.getElementById("btnGuardar");
-    ////console.log("activa bonton guardar");
+    console.log("activa bonton guardar");
     btnGuardar.removeAttribute("hidden");
   } else {
     btnGuardar.setAttribute("hidden", "hidden");
@@ -543,7 +543,7 @@ function verificacion() {
   // if(procesarHabilitado && estadoTraslado === 'A'){
   if (procesarHabilitado) {
     const btnProcesar = document.getElementById("btnProcesar");
-    ////console.log("activa btn Procesar");
+    console.log("activa btn Procesar");
     btnProcesar.removeAttribute("hidden");
   } else {
     btnGuardar.removeAttribute("hidden");
@@ -551,7 +551,7 @@ function verificacion() {
   }
   //    }else{
   //         const btnRegresar = document.getElementById('btnRegresar');
-  //         //console.log("activa btn regresar");
+  //         console.log("activa btn regresar");
   //         btnRegresar.removeAttribute('hidden');
   //    }
 } //Fin de verificacion
@@ -727,7 +727,7 @@ function guardaParcialMente() {
   fetch(env.API_URL + "wmsguardadotraslado/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      //console.log(result.message);
+      console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.trasladoguardado.length != 0) {
           // Resto del código de éxito
@@ -836,7 +836,7 @@ function procesar() {
   // fetch(env.API_URL + "wmsguardadopedidos/P" + params, myInit)
   //   .then((response) => response.json())
   //   .then((result) => {
-  //     //console.log(result.message);
+  //     console.log(result.message);
   //     if (result.msg === "SUCCESS") {
   //       if (result.pedidoprocesado.length != 0) {
   //         Swal.fire({

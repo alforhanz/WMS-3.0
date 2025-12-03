@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Código que se ejecuta cuando el DOM se haya cargado
-  //console.log('El DOM se ha cargado completamente.');
+  console.log("El DOM se ha cargado completamente.");
 
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   // Inicializar datepicker de Materialize
@@ -120,8 +120,8 @@ function listadoTraslados(parametros) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        //console.log("TRASLADOS");
-        //console.log(result.traslados);
+        console.log("TRASLADOS");
+        console.log(result.traslados);
         if (result.traslados.length != 0) {
           ArrayData = result.traslados;
           ArrayDataFiltrado = result.traslados;
@@ -161,7 +161,7 @@ function listadoTraslados(parametros) {
           ocultarLoader();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }

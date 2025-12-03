@@ -17,7 +17,7 @@ fetch(env.API_URL + "clasificacionesv", {
         for (let i = 0; i < hasta; i++) {
           if (ArrayData[i]) {
             var descrip = ArrayData[i].DESCRIPCION.replace(/[0-9]/g, "");
-            // //console.log(descrip);
+            // console.log(descrip);
             if (descrip === "SERVICIOS DE INSTAL DE ACCESORIOS") {
               htm += `<a onclick="secciones('1040')" class="collection-item">SERV. INSTAL DE ACCESORIOS
               <i class="icon-chevron-right-circle right"></i></a>`;
@@ -30,11 +30,11 @@ fetch(env.API_URL + "clasificacionesv", {
         //INSERTAR CODIGO HTML A CONTENEDOR
         document.getElementById("menuCategorias").innerHTML = htm;
       } else {
-        //console.log("No hay registros");
+        console.log("No hay registros");
       }
       document.getElementById("carga").innerHTML = "";
     } else {
-      //console.log("Error");
+      console.log("Error");
       document.getElementById("carga").innerHTML = "";
     }
   });

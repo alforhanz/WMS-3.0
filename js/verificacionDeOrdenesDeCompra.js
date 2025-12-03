@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   const busqueda = localStorage.getItem("autoSearchOrdenDeComprasList");
   localStorage.setItem("switchLecturaState", "true");
   //revisar como toma el valor
   if (busqueda === "true") {
-    //console.log("DOM completamente cargado y parseado.");
+    console.log("DOM completamente cargado y parseado.");
 
     const parametrosBusquedaOC = localStorage.getItem(
       "parametrosBusquedaOrdenesDeCompraList"

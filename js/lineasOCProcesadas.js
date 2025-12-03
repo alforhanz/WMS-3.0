@@ -3,7 +3,7 @@ var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   cargarBodegas();
@@ -341,7 +341,7 @@ function cargarBodegas() {
 }
 // Función para manejar el cambio de selección
 function handleBodegaChange(event) {
-  //////console.log('Bodega seleccionada:', event.target.value);
+  console.log("Bodega seleccionada:", event.target.value);
   localStorage.setItem("bodega_Destino_OC", event.target.value);
 }
 // Obtener el elemento <select> y agregar el evento onchange
@@ -400,12 +400,12 @@ function cambiarBodegaDestino(bodDestino, embarque, ordenDeCompra) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        // //console.log('API-Message:');
-        // //console.log(result.message);
-        // //console.log('BD-Respuesta:');
-        // //console.log(result.respuesta[0].mensaje);
-        // //console.log('Respuesta Tamaño: ');
-        // //console.log(result.respuesta.length);
+        // console.log('API-Message:');
+        // console.log(result.message);
+        // console.log('BD-Respuesta:');
+        // console.log(result.respuesta[0].mensaje);
+        // console.log('Respuesta Tamaño: ');
+        // console.log(result.respuesta.length);
 
         if (result.respuesta[0].mensaje === "OK") {
           Swal.fire({

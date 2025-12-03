@@ -8,7 +8,7 @@ var instances = M.Datepicker.init(elems, {
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log('hUsuario:',usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   ocultarColumnaLPrep();
@@ -129,8 +129,8 @@ function listadoPedido(
       if (result.msg === "SUCCESS") {
         if (result.pedidos.length != 0) {
           ArrayData = result.pedidos;
-          //console.log('Pediros');
-          //console.log(ArrayData);
+          console.log("Pediros");
+          console.log(ArrayData);
           ArrayDataFiltrado = result.pedidos;
           let cantReg = result.pedidos.length;
           let nPag = Math.ceil(cantReg / xPag);
@@ -159,7 +159,7 @@ function listadoPedido(
           ocultarLoader();
         }
       } else {
-        //console.log("Error en el SP");
+        console.log("Error en el SP");
       }
     });
 }
@@ -259,7 +259,7 @@ function irDetallePedido(documento, pedido, estado, estado_preparacion) {
   // Extraer solo el número de la bodega
   let bodegaNumero = bodega.match(/\d+/)[0];
 
-  // //console.log(bodegaNumero); // Esto mostrará "52" si el valor original era "B-52"
+  // console.log(bodegaNumero); // Esto mostrará "52" si el valor original era "B-52"
   localStorage.setItem("pedidos_finalizados", checkbox.checked);
   localStorage.setItem("documento", documento);
   localStorage.setItem("pedidoSelect", pedido);

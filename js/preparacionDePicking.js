@@ -3,7 +3,7 @@ var detallePedidoList = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  //console.log("hUsuario:", usuario);
+  console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
 
   //--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ function cargarDetallePedido(documento, pedido, estado) {
       if (result.msg === "SUCCESS") {
         if (result.lineaspedido.length != 0) {
           detallePedidoList = result.lineaspedido;
-          //console.log(detallePedidoList);
+          console.log(detallePedidoList);
           armarTablaVerificacion(detallePedidoList);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detallePedidoList.some(
@@ -810,7 +810,7 @@ function guardaParcialMente() {
   fetch(env.API_URL + "wmsguardadopicking/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      //console.log(result.message);
+      console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.pedidoguardado.length != 0) {
           // Resto del código de éxito
@@ -915,7 +915,7 @@ function procesar() {
   fetch(env.API_URL + "wmsguardadopicking/P" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      //console.log(result.message);
+      console.log(result.message);
       if (result.msg === "SUCCESS") {
         if (result.pedidoprocesado.length != 0) {
           Swal.fire({
