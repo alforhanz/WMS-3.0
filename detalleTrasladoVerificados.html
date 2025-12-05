@@ -238,6 +238,36 @@
               <fieldset class="checkbox-container">
                 <legend>Tipo de Transacción</legend>
                 <div class="row checkbox-row">
+
+                  <div class="input-field col s12 m4">
+                    <label>
+                      <input type="radio" name="tipoTransaccion" id="tTraslado" checked/>
+                      <span>Traslados</span>
+                    </label>
+                  </div>
+
+                  <div class="input-field col s12 m4">
+                    <label>
+                      <input type="radio" name="tipoTransaccion" id="tVenta" />
+                      <span>Pedidos</span>
+                    </label>
+                  </div>
+
+                  <div class="input-field col s12 m4">
+                    <label>
+                      <input type="radio" name="tipoTransaccion" id="tOrdenesDeCompras" />
+                      <span>Ordenes De Compras</span>
+                    </label>
+                  </div>
+
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- <div class="col s12 m6 l6">
+              <fieldset class="checkbox-container">
+                <legend>Tipo de Transacción</legend>
+                <div class="row checkbox-row">
                   <div class="input-field col s12 m4">
                     <label>
                       <input type="checkbox" id="tTraslado" checked />
@@ -258,7 +288,7 @@
                   </div>
                 </div>
               </fieldset>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -361,7 +391,7 @@
         <div class="row col-md-12 s12">
           <div id="trasladoVerifyButton">
             <button id="btnDetalleTrasladosVerif" class="btn waves-effect waves-light" type="submit"
-              onclick="verTrasladosLista()">
+              onclick="validaBusqueda()">
               Buscar
               <i class="material-icons right">send</i>
             </button>

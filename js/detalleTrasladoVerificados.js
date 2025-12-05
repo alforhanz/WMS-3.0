@@ -1,6 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // Variable global para almacenar los totales (puedes ajustarla según tu estructura)
+let cantContadaTotales=0;
+let cantVerificadaTotales =0;
 let totalEntradasGlobal = 0;
 let totalSalidasGlobal = 0;
 /////////////////////////////////////////////////////////////////////////////
@@ -83,6 +85,30 @@ function obtenerValorParametro(parametros, nombreParametro) {
   const urlParams = new URLSearchParams(parametros);
   return urlParams.get(nombreParametro);
 }
+
+function validaBusqueda(){ 
+    // Obtener el estado de los checkboxes
+  const entradaChecked = document.getElementById("tEntrada").checked;
+  const salidaChecked = document.getElementById("tSalida").checked;
+
+  // Evaluar las combinaciones
+  if (entradaChecked && salidaChecked) {
+   verTrasladosLista()
+  } else if (entradaChecked && !salidaChecked) {
+   verTrasladosLista()
+  } else if (!entradaChecked && salidaChecked) {
+  verTrasladosLista()
+  } else {
+    // Ambos desmarcados
+    Swal.fire({
+      icon: "warning",
+      title: "Advertencia",
+      text: "Debe seleccionar al menos uno de los dos traslados (Entrada o Salida).",
+      confirmButtonColor: "#28a745", // Color verde para el botón, consistente con ejemplos previos
+    });    
+  }
+
+}
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 function verTrasladosLista() {
@@ -142,7 +168,7 @@ function verTrasladosLista() {
     pTipoTransaccion;
 
   localStorage.setItem("parametrosBusqueda", params);
-  console.log("Parametros:\n" + params);
+  //console.log("Parametros:\n" + params);
 
   listadoTraslados(params);
 } //Fin de ver traslados lista
@@ -199,14 +225,17 @@ function TrasladosEntradaSalida() {
   } else if (!entradaChecked && salidaChecked) {
     return "S"; // Solo Salida seleccionado
   } else {
-    // Ambos desmarcados
-    Swal.fire({
-      icon: "warning",
-      title: "Advertencia",
-      text: "Debe seleccionar al menos uno de los dos traslados (Entrada o Salida).",
-      confirmButtonColor: "#28a745", // Color verde para el botón, consistente con ejemplos previos
-    });
-    return null; // Opcional: devolver null para indicar que no hay valor válido
+    // // Ambos desmarcados
+    // Swal.fire({
+    //   icon: "warning",
+    //   title: "Advertencia",
+    //   text: "Debe seleccionar al menos uno de los dos traslados (Entrada o Salida).",
+    //   confirmButtonColor: "#28a745", // Color verde para el botón, consistente con ejemplos previos
+    // }).then((result) =>{
+    //       if(result){
+              return null;
+    //       }      
+    //   });    
   }
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -217,9 +246,9 @@ function listadoTraslados(parametros) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        console.log("TRASLADOS");
-        console.log(result.resultado);
-        console.log("Done");
+        //console.log("TRASLADOS");
+        //console.log(result.resultado);
+        //console.log("Done");
 
         if (result.resultado.length != 0) {
           ArrayData = result.resultado;
@@ -242,15 +271,14 @@ function listadoTraslados(parametros) {
           Swal.fire({
             icon: "info",
             title: "Oops...",
-            text: "No tiene traslados pendientes!",
-            footer: '<a href="#">Why do I have this issue?</a>',
+            text: "No se encontraron transacciones pendientes asociadas a los parametros de búsqueda!",           
             confirmButtonColor: "#28a745",
           });
           limpiarResultadoGeneral();
           ocultarLoader();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -269,24 +297,144 @@ function mostrarResultadosVerificacionTraslados(nPag, pag) {
 /////////////////////////////////////////////////////////////////////////////
 // Función para calcular los totales globales (se ejecuta una vez o cuando cambian los datos)
 function calcularTotalesGlobales() {
+  const traslado = document.getElementById("tTraslado");
+  const pedidos = document.getElementById("tVenta");
+  const ordenesDrCompras = document.getElementById("tOrdenesDeCompras");
+
+  console.log('traslado:'+traslado.checked);
+  console.log('pedidos:'+pedidos.checked);
+  console.log('ordenesDrCompras:'+ordenesDrCompras.checked);
+
   if (!ArrayDataFiltrado || ArrayDataFiltrado.length === 0) {
     return;
   }
 
+  cantContadaTotales = 0;
+  cantVerificadaTotales = 0;
   totalEntradasGlobal = 0;
   totalSalidasGlobal = 0;
 
-  ArrayDataFiltrado.forEach((item) => {
-    const value = item["CANT APLICADA"];
-    if (!isNaN(value) && value !== "") {
-      const numValue = Number(value);
-      if (numValue > 0) {
-        totalEntradasGlobal += numValue;
-      } else if (numValue < 0) {
-        totalSalidasGlobal += numValue;
+  //TRASLADOS
+  if (traslado.checked) {
+    console.log("Totales traslados");
+    //Cantidades Contadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT CONTADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        cantContadaTotales += numValue;
       }
-    }
-  });
+    });
+    //Cantidades Verificadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT VERIFICADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        cantVerificadaTotales += numValue;
+      }
+    });
+
+    // Cantidades Aplicadas Traslados Entrada / Salida
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT APLICADA"];
+      if (!isNaN(value) && value !== "") {
+        const numValue = Number(value);
+        if (numValue > 0) {
+          totalEntradasGlobal += numValue;
+        } else if (numValue < 0) {
+          let valor = numValue * -1;
+          totalSalidasGlobal += valor;
+        }
+      }
+    });
+        console.log('Contados: '+cantContadaTotales);
+    console.log('Verificados: '+cantVerificadaTotales);
+    console.log('Entrada: '+totalEntradasGlobal);
+    console.log('Salida: '+totalSalidasGlobal);
+  }
+
+  //PEDIDOS
+  if (pedidos.checked) {
+    console.log("Totales Pedidos");
+
+    //Cantidades Contadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT CONTADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        let valor = numValue * -1;
+        cantContadaTotales += valor;
+      }
+    });
+    //Cantidades Verificadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT VERIFICADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        cantVerificadaTotales += numValue;
+      }
+    });
+
+    // Cantidades Aplicadas Traslados Entrada / Salida
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT APLICADA"];
+      if (!isNaN(value) && value !== "") {
+        const numValue = Number(value);
+        if (numValue > 0) {
+          totalSalidasGlobal += numValue;
+        } else if (numValue < 0) {
+          let valor = numValue;
+          totalEntradasGlobal += valor;
+        }
+      }
+    });
+
+    console.log('Contados: '+cantContadaTotales);
+    console.log('Verificados: '+cantVerificadaTotales);
+    console.log('Entrada: '+totalEntradasGlobal);
+    console.log('Salida: '+totalSalidasGlobal);
+  }
+
+  //ORDENES DE COMPRA
+  if (ordenesDrCompras.checked) {
+    console.log("Totales Ordenes de Compra");
+
+    //Cantidades Contadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT CONTADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        cantContadaTotales += numValue;
+      }
+    });
+    //Cantidades Verificadas
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT VERIFICADA"];
+      if (!isNaN(value) && value !== "" && value > 0) {
+        const numValue = Number(value);
+        cantVerificadaTotales += numValue;
+      }
+    });
+
+    // Cantidades Aplicadas Traslados Entrada / Salida
+    ArrayDataFiltrado.forEach((item) => {
+      const value = item["CANT APLICADA"];
+      if (!isNaN(value) && value !== "") {
+        const numValue = Number(value);
+        if (numValue > 0) {
+          totalEntradasGlobal += numValue;
+        } else if (numValue < 0) {
+          let valor = numValue * -1;
+          totalSalidasGlobal += valor;
+        }
+      }
+    });
+    console.log('Contados: '+cantContadaTotales);
+    console.log('Verificados: '+cantVerificadaTotales);
+    console.log('Entrada: '+totalEntradasGlobal);
+    console.log('Salida: '+totalSalidasGlobal);
+
+  }
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -298,6 +446,14 @@ function mostrarTotalesGlobales() {
   totalesContainer.id = "totalesContainer";
   totalesContainer.innerHTML = `
     <div style="font-size: 20px; text-align: right; margin-top: 20px; padding: 10px;">
+         <p id="totalEntradas" style="margin: 5px 0; font-weight: bold; color: #00796b;">Total cantidades Contadas: ${cantContadaTotales.toLocaleString(
+        "en-US",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+      )}</p>
+           <p id="totalEntradas" style="margin: 5px 0; font-weight: bold; color: #00796b;">Total Cantidad Verificadas: ${cantVerificadaTotales.toLocaleString(
+        "en-US",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+      )}</p>
       <p id="totalEntradas" style="margin: 5px 0; font-weight: bold; color: #00796b;">Total de Entradas: ${totalEntradasGlobal.toLocaleString(
         "en-US",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 }
@@ -671,7 +827,7 @@ async function cargarClasificacionesCLase() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -715,7 +871,7 @@ async function cargarClasificacionesMarca() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -758,7 +914,7 @@ async function cargarClasificacionesTipo() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -803,7 +959,7 @@ async function cargarClasificacionesVenta() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -857,7 +1013,7 @@ async function cargarClasificacionesEnvase() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
@@ -915,7 +1071,7 @@ async function cargarClasificacionesSeis() {
           limpiarResultadoGeneral();
         }
       } else {
-        console.log("Error en el SP");
+        //console.log("Error en el SP");
       }
     });
 }
