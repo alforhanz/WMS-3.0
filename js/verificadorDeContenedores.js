@@ -1707,53 +1707,41 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
       return { usuario: usuario, contraseña: contraseña };
     },
   }).then((result) => {
-    if (
-      !result.isDismissed &&
-      result.value &&
-      result.value.usuario &&
-      result.value.contraseña
-    ) {
-      fetch(env.API_URL + "wmsautorizacioncontenedor")
-        .then((response) => response.json())
-        .then((resultado) => {
-          //// console.log('Autorizacion Resultado: ');
-          //// console.log(resultado.respuesta);
-          const respuesta = resultado.respuesta[0];
-          if (
-            respuesta &&
-            respuesta.USUARIO === result.value.usuario &&
-            respuesta.PIN === result.value.contraseña
-          ) {
-            //// console.log("Credenciales válidas");
-            //// console.log(respuesta.USUARIO);
-            localStorage.setItem("UsuarioAutorizacion", respuesta.USUARIO);
-            // Realiza la acción deseada, como procesar el contenedor
-            devolverArticulo(articulo, contenedor, cantidadPreparada);
-          } else {
-            //// console.log("Credenciales inválidas");
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Credenciales inválidas",
-            });
-          }
-        })
-        .catch((error) => {
-          // console.error('Error al obtener los datos del API:', error);
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: error,
-          });
-        });
-    } else {
-      // console.error('Error: No se pudieron obtener los valores de usuario y contraseña del Swal');
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudieron obtener los valores de usuario y contraseña del Swal",
-      });
-    }
+           if (!result.isDismissed && result.value && result.value.usuario && result.value.contraseña) {
+               const params = "?pSistema=" +
+                              'WMS' +
+                              "&pUsuario=" +
+                              result.value.usuario  +
+                              "&pOpcion=" +
+                              result.value.contraseña;                  
+
+             fetch(env.API_URL + "wmsautorizaciones"+params)
+              .then((response) => response.json())
+              .then((resultado) => {
+                console.log("Autorizacion Resultado: ");
+                console.log(resultado.autorizacion[0].mensaje);
+               
+              if(resultado.autorizacion[0].mensaje === "OK") {
+                  console.log("Credenciales válidas");              
+                  devolverArticulo(articulo, contenedor, cantidadPreparada);
+                } else {
+                  console.log("Credenciales inválidas");
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Credenciales inválidas",
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error("Error al obtener los datos del API:", error);
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "No se pudo obtener los datos del API",
+                });
+              });
+          }  
   });
 }
 
