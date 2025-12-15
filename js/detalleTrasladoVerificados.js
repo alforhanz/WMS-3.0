@@ -756,32 +756,85 @@ function descargarPDF() {
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+// function descargarExcel() {
+//   // Obtener los datos de la tabla generada dinámicamente
+//   const jsonData = ArrayData;
+
+//   // Obtener los encabezados dinámicos (del mismo modo que en generarTabla)
+//   const headers = Object.keys(jsonData[0]);
+//   const encabezado = headers.map((header) => header.replace(/_/g, " ")); // Reemplazar guiones bajos por espacios
+
+//   // Crear las filas con los datos
+//   const rows = jsonData.map(
+//     (item) => headers.map((header) => parseFloat(item[header]) || item[header]) // Asegurar que los valores numéricos sean correctos
+//   );
+
+//   // Crear la hoja de Excel
+//   const worksheetData = [encabezado, ...rows];
+
+//   // Crear la hoja de Excel a partir de los datos
+//   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+//   // Crear un nuevo libro de trabajo y agregar la hoja con los datos
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+
+//   // Escribir y descargar el archivo Excel
+//   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
+// }
+
 function descargarExcel() {
-  // Obtener los datos de la tabla generada dinámicamente
   const jsonData = ArrayData;
 
-  // Obtener los encabezados dinámicos (del mismo modo que en generarTabla)
   const headers = Object.keys(jsonData[0]);
-  const encabezado = headers.map((header) => header.replace(/_/g, " ")); // Reemplazar guiones bajos por espacios
+  const encabezado = headers.map((h) => h.replace(/_/g, " "));
 
-  // Crear las filas con los datos
-  const rows = jsonData.map(
-    (item) => headers.map((header) => parseFloat(item[header]) || item[header]) // Asegurar que los valores numéricos sean correctos
+  const rows = jsonData.map((item) =>
+    headers.map((header) => {
+      const value = item[header];
+
+      // Detectar formato fecha de tipo "2025-12-05 09:11:00.400"
+      if (
+        typeof value === "string" &&
+        /^\d{4}-\d{2}-\d{2}/.test(value)
+      ) {
+        return new Date(value); // Convertir a Date
+      }
+
+      // Detectar numericos
+      if (!isNaN(value) && value !== "" && value !== null) {
+        return Number(value);
+      }
+
+      return value;
+    })
   );
 
-  // Crear la hoja de Excel
   const worksheetData = [encabezado, ...rows];
-
-  // Crear la hoja de Excel a partir de los datos
   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-  // Crear un nuevo libro de trabajo y agregar la hoja con los datos
+  // APLICAR FORMATO A TODAS LAS CELDAS FECHA
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+  for (let R = 1; R <= range.e.r; R++) { // Saltar encabezado
+    for (let C = 0; C <= range.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      const cell = worksheet[cellAddress];
+
+      if (cell && cell.v instanceof Date) {
+        cell.t = 'd'; // Tipo fecha
+        cell.z = "yyyy-mm-dd hh:mm:ss"; // Formato deseado
+      }
+    }
+  }
+
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
 
-  // Escribir y descargar el archivo Excel
   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
 }
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 const fecha_ini = document.getElementById("fecha_ini");

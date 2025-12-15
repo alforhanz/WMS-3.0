@@ -280,13 +280,8 @@ var detalleLineasContenedoreses = [];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  // console.log("Verificador de contenedores DOM cargado...");
-  let usuario = document.getElementById("hUsuario").value;
-  // console.log('hUsuario:',usuario);
-  //localStorage.setItem('UserID',usuario);
-  cargarBodegas();
-
-  //permisoCrearPaquete();
+  cargarBodegas(); 
+  inicializarBotones();
 });
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -614,34 +609,62 @@ function actualizaLectura() {
 function guardarTablaEnArray() {
   var dataArray = [];
 
-  var table = document.getElementById("myTableLectura");
-  var rows = table.getElementsByTagName("tr");
+  let table = document.getElementById("myTableLectura");
+  let rows = table.getElementsByTagName("tr");
+if (table) {
+  if (row) {
+    for (var i = 1; i < rows.length; i++) {
+      // Comenzamos desde 1 para omitir la fila de encabezado
+      var row = rows[i];
+      var cells = row.getElementsByTagName("td");
+      //aqui se seleccionan los elemendos de las columnas de la tabla lectura
 
-  for (var i = 1; i < rows.length; i++) {
-    // Comenzamos desde 1 para omitir la fila de encabezado
-    var row = rows[i];
-    var cells = row.getElementsByTagName("td");
-    //aqui se seleccionan los elemendos de las columnas de la tabla lectura
+      var articulo = cells[0].querySelector("span").textContent.trim();
+      var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
+      var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
 
-    var articulo = cells[0].querySelector("span").textContent.trim();
-    var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
-    var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
+      var codigoBarra = codigoBarraInput.value;
 
-    var codigoBarra = codigoBarraInput.value;
+      var cantidadLeida = parseFloat(cantidadLeidaInput.value);
+      // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
 
-    var cantidadLeida = parseFloat(cantidadLeidaInput.value);
-    // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
+      if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
+        var rowData = {
+          ARTICULO: articulo,
+          CODIGO_BARRA: codigoBarra,
+          CANTIDAD_LEIDA: cantidadLeida,
+        };
 
-    if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
-      var rowData = {
-        ARTICULO: articulo,
-        CODIGO_BARRA: codigoBarra,
-        CANTIDAD_LEIDA: cantidadLeida,
-      };
-
-      dataArray.push(rowData);
+        dataArray.push(rowData);
+      }
     }
   }
+}
+  // for (var i = 1; i < rows.length; i++) {
+  //   // Comenzamos desde 1 para omitir la fila de encabezado
+  //   var row = rows[i];
+  //   var cells = row.getElementsByTagName("td");
+  //   //aqui se seleccionan los elemendos de las columnas de la tabla lectura
+
+  //   var articulo = cells[0].querySelector("span").textContent.trim();
+  //   var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
+  //   var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
+
+  //   var codigoBarra = codigoBarraInput.value;
+
+  //   var cantidadLeida = parseFloat(cantidadLeidaInput.value);
+  //   // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
+
+  //   if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
+  //     var rowData = {
+  //       ARTICULO: articulo,
+  //       CODIGO_BARRA: codigoBarra,
+  //       CANTIDAD_LEIDA: cantidadLeida,
+  //     };
+
+  //     dataArray.push(rowData);
+  //   }
+  // }
 
   localStorage.setItem("dataArray", JSON.stringify(dataArray));
 
@@ -900,24 +923,43 @@ function verificacion() {
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                               Función para inicializar los botones                                      //
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function inicializarBotones() {
   // Crear los botones y el contenedor
   const contenedorTblLectura = document.createElement("div");
   const contenedorBotones = document.createElement("div");
   const botonProcesar = document.createElement("button");
   const botonGuardarParcial = document.createElement("button");
+  const botonGuardarLectura =document.createElement("button");
+
+
 
   // Configurar propiedades de los botones
+
+  botonGuardarLectura.textContent = "Guardar";
+  botonGuardarLectura.id = "btnGuardar";
+  botonGuardarLectura.hidden = false;
+  botonGuardarLectura.onclick = confirmarGuardadoParcial;
+
   botonProcesar.textContent = "Crear Paquete";
   botonProcesar.id = "btnCrearPaqueteContenedor";
-  botonProcesar.hidden = false;
-  //botonProcesar.onclick = ConfirmaCrearPaqueteContenedores; // Agregar onclick
+  botonProcesar.hidden = false; 
   botonProcesar.onclick = guardaPaquete;
 
   botonGuardarParcial.textContent = "Guardar";
   botonGuardarParcial.id = "btnGuardar";
   botonGuardarParcial.hidden = false;
   botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
+
+    // Aplicar estilos al botón de guardado parcial lectura
+  botonGuardarLectura.style.backgroundColor = "#28a745";
+  botonGuardarLectura.style.borderRadius = "5px";
+  botonGuardarLectura.style.color = "white";
+  botonGuardarLectura.style.marginTop = "16px";
+  botonGuardarLectura.style.marginLeft = "16px";
+  botonGuardarLectura.style.marginRight = "16px";
+  botonGuardarLectura.style.height = "36px";
+  botonGuardarLectura.style.width = "100px";
 
   // Aplicar estilos al botón de guardado parcial
   botonGuardarParcial.style.backgroundColor = "#28a745";
@@ -939,8 +981,9 @@ function inicializarBotones() {
   botonProcesar.style.height = "40px";
   botonProcesar.style.marginbottom = "25px";
 
-  contenedorTblLectura.appendChild(botonGuardarParcial);
+ 
   // Agregar botones al contenedor
+  contenedorTblLectura.appendChild(botonGuardarLectura);
   contenedorBotones.appendChild(botonGuardarParcial);
   contenedorBotones.appendChild(botonProcesar);
 
@@ -962,10 +1005,12 @@ function inicializarBotones() {
   const mediaQuery = window.matchMedia("(min-width: 64em)");
   if (mediaQuery.matches) {
     // Aplicar estilos específicos para pantallas grandes
+    botonGuardarLectura.style.marginLeft = "200px";
     botonGuardarParcial.style.marginLeft = "200px";
     botonProcesar.style.marginLeft = "500px";
   }
 }
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
 function mostrarMensajesLocalStorage() {
@@ -1067,8 +1112,8 @@ async function guardaParcialMente() {
   // 🔄 Enviar cada lote secuencialmente recorremos el array detalles[] dividido segun el tamaño de los paquetes
   for (let i = 0; i < chunks.length; i++) {
     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-    const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-    // const jsonPaquete = JSON.stringify(chunks[i]);
+    //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
+    const jsonPaquete = JSON.stringify(chunks[i]);
     const params =
       "?pSistema=" +
       pSistema +
@@ -1193,8 +1238,8 @@ async function guardaPaquete() {
   // 🔄 Enviar cada lote secuencialmente recorremos el array detalles[] dividido segun el tamaño de los paquetes
   for (let i = 0; i < chunks.length; i++) {
     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-    const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
-    // const jsonPaquete = JSON.stringify(chunks[i]);
+    //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
+    const jsonPaquete = JSON.stringify(chunks[i]);
     const params =
       "?pSistema=" +
       pSistema +
@@ -1554,7 +1599,7 @@ function columnaEstaVacia() {
 }
 /////// Llamar a la función para cargar y mostrar los mensajes desde el localStorage al cargar la página
 window.onload = function () {
-  inicializarBotones();
+  // inicializarBotones();
   guardarTablaEnArray();
 };
 function permisoCrearPaquete() {
