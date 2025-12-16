@@ -280,8 +280,13 @@ var detalleLineasContenedoreses = [];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  cargarBodegas(); 
-  inicializarBotones();
+  // console.log("Verificador de contenedores DOM cargado...");
+  let usuario = document.getElementById("hUsuario").value;
+  // console.log('hUsuario:',usuario);
+  //localStorage.setItem('UserID',usuario);
+  cargarBodegas();
+
+  //permisoCrearPaquete();
 });
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -609,62 +614,34 @@ function actualizaLectura() {
 function guardarTablaEnArray() {
   var dataArray = [];
 
-  let table = document.getElementById("myTableLectura");
-  let rows = table.getElementsByTagName("tr");
-if (table) {
-  if (row) {
-    for (var i = 1; i < rows.length; i++) {
-      // Comenzamos desde 1 para omitir la fila de encabezado
-      var row = rows[i];
-      var cells = row.getElementsByTagName("td");
-      //aqui se seleccionan los elemendos de las columnas de la tabla lectura
+  var table = document.getElementById("myTableLectura");
+  var rows = table.getElementsByTagName("tr");
 
-      var articulo = cells[0].querySelector("span").textContent.trim();
-      var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
-      var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
+  for (var i = 1; i < rows.length; i++) {
+    // Comenzamos desde 1 para omitir la fila de encabezado
+    var row = rows[i];
+    var cells = row.getElementsByTagName("td");
+    //aqui se seleccionan los elemendos de las columnas de la tabla lectura
 
-      var codigoBarra = codigoBarraInput.value;
+    var articulo = cells[0].querySelector("span").textContent.trim();
+    var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
+    var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
 
-      var cantidadLeida = parseFloat(cantidadLeidaInput.value);
-      // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
+    var codigoBarra = codigoBarraInput.value;
 
-      if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
-        var rowData = {
-          ARTICULO: articulo,
-          CODIGO_BARRA: codigoBarra,
-          CANTIDAD_LEIDA: cantidadLeida,
-        };
+    var cantidadLeida = parseFloat(cantidadLeidaInput.value);
+    // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
 
-        dataArray.push(rowData);
-      }
+    if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
+      var rowData = {
+        ARTICULO: articulo,
+        CODIGO_BARRA: codigoBarra,
+        CANTIDAD_LEIDA: cantidadLeida,
+      };
+
+      dataArray.push(rowData);
     }
   }
-}
-  // for (var i = 1; i < rows.length; i++) {
-  //   // Comenzamos desde 1 para omitir la fila de encabezado
-  //   var row = rows[i];
-  //   var cells = row.getElementsByTagName("td");
-  //   //aqui se seleccionan los elemendos de las columnas de la tabla lectura
-
-  //   var articulo = cells[0].querySelector("span").textContent.trim();
-  //   var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
-  //   var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
-
-  //   var codigoBarra = codigoBarraInput.value;
-
-  //   var cantidadLeida = parseFloat(cantidadLeidaInput.value);
-  //   // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
-
-  //   if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
-  //     var rowData = {
-  //       ARTICULO: articulo,
-  //       CODIGO_BARRA: codigoBarra,
-  //       CANTIDAD_LEIDA: cantidadLeida,
-  //     };
-
-  //     dataArray.push(rowData);
-  //   }
-  // }
 
   localStorage.setItem("dataArray", JSON.stringify(dataArray));
 
@@ -774,62 +751,151 @@ function limpiarMensajes() {
   // Limpiar la variable 'mensajes' del localStorage
   guardarTablaEnArray();
 }
+
+
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
+
+/**
+ * @function armarTablaVerificacion
+ * @description Arma la tabla de la pestaña Verificación, primero ordenando las líneas por Contenedor.
+ * @param {Array<Object>} detalleLineasContenedores - Array de objetos con el detalle de las líneas.
+ */
 function armarTablaVerificacion(detalleLineasContenedores) {
-  const tbody = document.getElementById("tblbodyLineasContenedor");
-  tbody.innerHTML = "";
+    const tbody = document.getElementById("tblbodyLineasContenedor");
+    tbody.innerHTML = "";
 
-  const cantidadDeRegistrosLabel = document.getElementById(
-    "cantidadDeRegistros"
-  );
-  cantidadDeRegistrosLabel.textContent =
-    "Cantidad de registros: " + detalleLineasContenedores.length;
+    // ====================================================================
+    // 1. ORDENAMIENTO POR CONTENEDOR (Optimización de Datos)
+    // ====================================================================
+    detalleLineasContenedores.sort((a, b) => {
+        const contenedorA = a.Contenedor;
+        const contenedorB = b.Contenedor;
 
-  detalleLineasContenedores.forEach((detalle) => {
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-      <td class="solicitud" hidden>${detalle.Traslado}</td>        
-      <td class="contenedor" style="text-align: left;">
-          <h5>${detalle.Contenedor}</h5>
-          <h6>${detalle.Traslado}</h6>
-      </td>
-      <td class="articulo">
-          <h5 class="verifica-articulo">
-              <span class="blue-text text-darken-2">${detalle.Articulo}</span>
-          </h5>
-          <h6 style="text-align:left;">${detalle.Descripcion}</h6>
-      </td>           
-      <td class="cantidadPedida" style="text-align: left;">
-          ${
-            isNaN(parseFloat(detalle.Cant_Pedida))
-              ? 0
-              : parseFloat(detalle.Cant_Pedida).toFixed(2)
-          }
-      </td>        
-      <td class="cantidadPreparada" style="text-align: left;">
-          ${
-            isNaN(parseFloat(detalle.Cant_Verificada))
-              ? 0
-              : parseFloat(detalle.Cant_Verificada).toFixed(2)
-          }
-      </td>
-      <td class="cantidadLeida" style="text-align: left;"></td>
-      <td class="verificado" style="text-align: left;"></td>      
-      <td class="devolver" style="text-align: left;">
-         <i class="material-icons" 
-           style="color: #FF0000; cursor: pointer;" 
-           onclick="autorizaDevolucion('${detalle.Articulo}', '${
-      detalle.Contenedor
-    }','${
-      isNaN(parseFloat(detalle.Cant_Verificada))
-        ? 0
-        : parseFloat(detalle.Cant_Verificada).toFixed(2)
-    }')">reply</i>
-      </td>        
-    `;
-    tbody.appendChild(newRow);
-  });
+        // Compara las cadenas de texto (alfabético/lexicográfico)
+        // Puedes cambiar a contenedorB.localeCompare(contenedorA) para ordenar Descendente.
+        if (contenedorA < contenedorB) {
+            return -1;
+        }
+        if (contenedorA > contenedorB) {
+            return 1;
+        }
+        return 0; // Los contenedores son iguales
+    });
+    // ====================================================================
+
+    const cantidadDeRegistrosLabel = document.getElementById(
+        "cantidadDeRegistros"
+    );
+    cantidadDeRegistrosLabel.textContent =
+        "Cantidad de registros: " + detalleLineasContenedores.length;
+
+    // 2. Renderizado de la Tabla (Ya ordenada)
+    detalleLineasContenedores.forEach((detalle) => {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td class="solicitud" hidden>${detalle.Traslado}</td>
+            <td class="contenedor" style="text-align: left;">
+                <h5>${detalle.Contenedor}</h5>
+                <h6>${detalle.Traslado}</h6>
+            </td>
+            <td class="articulo">
+                <h5 class="verifica-articulo">
+                    <span class="blue-text text-darken-2">${detalle.Articulo}</span>
+                </h5>
+                <h6 style="text-align:left;">${detalle.Descripcion}</h6>
+            </td>
+            <td class="cantidadPedida" style="text-align: left;">
+                ${
+                    isNaN(parseFloat(detalle.Cant_Pedida))
+                        ? 0
+                        : parseFloat(detalle.Cant_Pedida).toFixed(2)
+                }
+            </td>
+            <td class="cantidadPreparada" style="text-align: left;">
+                ${
+                    isNaN(parseFloat(detalle.Cant_Verificada))
+                        ? 0
+                        : parseFloat(detalle.Cant_Verificada).toFixed(2)
+                }
+            </td>
+            <td class="cantidadLeida" style="text-align: left;"></td>
+            <td class="verificado" style="text-align: left;"></td>
+            <td class="devolver" style="text-align: left;">
+                <i class="material-icons"
+                    style="color: #FF0000; cursor: pointer;"
+                    onclick="autorizaDevolucion('${detalle.Articulo}', '${
+                        detalle.Contenedor
+                    }','${
+                        isNaN(parseFloat(detalle.Cant_Verificada))
+                            ? 0
+                            : parseFloat(detalle.Cant_Verificada).toFixed(2)
+                    }')">reply</i>
+            </td>
+            `;
+        tbody.appendChild(newRow);
+    });
+
+    // Opcional: Si el ordenamiento altera los totales, se debe recalcular aquí:
+    // calcularTotalesVerificacion(); 
 }
+
+// function armarTablaVerificacion(detalleLineasContenedores) {
+//   const tbody = document.getElementById("tblbodyLineasContenedor");
+//   tbody.innerHTML = "";
+
+//   const cantidadDeRegistrosLabel = document.getElementById(
+//     "cantidadDeRegistros"
+//   );
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detalleLineasContenedores.length;
+
+//   detalleLineasContenedores.forEach((detalle) => {
+//     const newRow = document.createElement("tr");
+//     newRow.innerHTML = `
+//       <td class="solicitud" hidden>${detalle.Traslado}</td>        
+//       <td class="contenedor" style="text-align: left;">
+//           <h5>${detalle.Contenedor}</h5>
+//           <h6>${detalle.Traslado}</h6>
+//       </td>
+//       <td class="articulo">
+//           <h5 class="verifica-articulo">
+//               <span class="blue-text text-darken-2">${detalle.Articulo}</span>
+//           </h5>
+//           <h6 style="text-align:left;">${detalle.Descripcion}</h6>
+//       </td>           
+//       <td class="cantidadPedida" style="text-align: left;">
+//           ${
+//             isNaN(parseFloat(detalle.Cant_Pedida))
+//               ? 0
+//               : parseFloat(detalle.Cant_Pedida).toFixed(2)
+//           }
+//       </td>        
+//       <td class="cantidadPreparada" style="text-align: left;">
+//           ${
+//             isNaN(parseFloat(detalle.Cant_Verificada))
+//               ? 0
+//               : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//           }
+//       </td>
+//       <td class="cantidadLeida" style="text-align: left;"></td>
+//       <td class="verificado" style="text-align: left;"></td>      
+//       <td class="devolver" style="text-align: left;">
+//          <i class="material-icons" 
+//            style="color: #FF0000; cursor: pointer;" 
+//            onclick="autorizaDevolucion('${detalle.Articulo}', '${
+//       detalle.Contenedor
+//     }','${
+//       isNaN(parseFloat(detalle.Cant_Verificada))
+//         ? 0
+//         : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//     }')">reply</i>
+//       </td>        
+//     `;
+//     tbody.appendChild(newRow);
+//   });
+// }
+
+
 //VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
 function verificacion() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
@@ -908,7 +974,7 @@ function verificacion() {
       );
     }
   });
-
+      calcularTotalesVerificacion();
   // Guardar mensajes en localStorage y mostrarlos
   localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
   limpiarMensajes();
@@ -923,6 +989,7 @@ function verificacion() {
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                               Función para inicializar los botones                                      //
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function inicializarBotones() {
   // Crear los botones y el contenedor
@@ -1599,7 +1666,7 @@ function columnaEstaVacia() {
 }
 /////// Llamar a la función para cargar y mostrar los mensajes desde el localStorage al cargar la página
 window.onload = function () {
-  // inicializarBotones();
+  inicializarBotones();
   guardarTablaEnArray();
 };
 function permisoCrearPaquete() {
@@ -2120,6 +2187,87 @@ function actualizaTablaVerificacion() {
     console.log("PARAMSET" + paramset);
     enviarDatosControlador(paramset);
   }
+}
+
+
+/**
+ * @function calcularTotalesVerificacion
+ * @description Obtiene los valores de las columnas numéricas de la tabla de verificación 
+ * (ID: tblcontenedores) y agrega una fila de totales al pie (tfoot).
+ */
+function calcularTotalesVerificacion() {
+    const tabla = document.getElementById("tblcontenedores");
+    const tbody = document.getElementById("tblbodyLineasContenedor");
+
+    if (!tabla || !tbody) {
+        console.error("No se encontraron la tabla o el cuerpo de la tabla de verificación.");
+        return;
+    }
+
+    // Definición de las columnas que queremos sumar, basadas en los índices de la tabla:
+    // 0: Conten | 1: Artí. | 2: Cant. Ped. | 3: Cant. Prep. | 4: Cant. Desp. | 5: Verif | 6: Dev. | 7: DEL (Hidden)
+    const INDICES_SUMA = [3, 4, 5, 6]; 
+    const totales = INDICES_SUMA.map(() => 0); // Inicializar un array de totales en 0
+
+    // 1. Iterar sobre las filas del tbody
+    const filas = tbody.querySelectorAll('tr');
+
+    filas.forEach(fila => {
+        const celdas = fila.querySelectorAll('td');
+
+        INDICES_SUMA.forEach((indiceColumna, indiceTotal) => {
+            // Asegurarse de que la celda existe
+            if (celdas[indiceColumna]) {
+                // Obtener el valor de la celda. 
+                // Se asume que el valor es el texto dentro de la celda <td>
+                let valor = celdas[indiceColumna].textContent.trim();
+
+                // Convertir el valor a número (usando parseFloat para manejar decimales si fuera necesario)
+                // Usamos '|| 0' para tratar valores no numéricos como cero.
+                let numero = parseFloat(valor) || 0;
+                
+                totales[indiceTotal] += numero;
+            }
+        });
+    });
+
+    // 2. Limpiar el tfoot existente para evitar duplicados
+    let tfoot = tabla.querySelector('tfoot');
+    if (tfoot) {
+        tfoot.remove();
+    }
+    tfoot = document.createElement('tfoot');
+    
+    // 3. Crear la fila de totales
+    const filaTotal = document.createElement('tr');
+    filaTotal.style.fontWeight = 'bold'; // Estilo para resaltar los totales
+    filaTotal.style.backgroundColor = '#f0f0f0'; // Fondo ligero
+
+    // Crear las celdas de la fila de totales (8 columnas en total)
+    
+    // Primeras dos celdas (Conten, Artí.)
+    let celdaLabel = document.createElement('td');
+    celdaLabel.textContent = 'TOTALES:';
+    celdaLabel.setAttribute('colspan', 2); // Ocupa las dos primeras columnas
+    celdaLabel.style.textAlign = 'center';
+    filaTotal.appendChild(celdaLabel);
+
+    // Iterar sobre los totales calculados
+    INDICES_SUMA.forEach((indiceColumna, indiceTotal) => {
+        let celdaTotal = document.createElement('td');
+        // Formatear el número (puedes ajustar el formato si es necesario)
+        celdaTotal.textContent = totales[indiceTotal].toLocaleString(); // Formato de número local
+        celdaTotal.style.textAlign = 'left'; // Ajuste según tu diseño
+        filaTotal.appendChild(celdaTotal);
+    });
+
+    // Última celda para la columna DEL (DEL está oculta en el thead, pero la columna debe estar presente)
+    let celdaVacia = document.createElement('td');
+    filaTotal.appendChild(celdaVacia);
+    
+    // 4. Insertar la fila de totales en el tfoot y el tfoot en la tabla
+    tfoot.appendChild(filaTotal);
+    tabla.appendChild(tfoot);
 }
 
 // function prueba(){
