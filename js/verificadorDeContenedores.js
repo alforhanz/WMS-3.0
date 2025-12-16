@@ -609,6 +609,7 @@ function crearNuevaFila() {
 /////////////Actualiza el arreglo de las cantidades leídas, si se modifíca ya ue por defecto esta es 1////////
 function actualizaLectura() {
   guardarTablaEnArray();
+
 }
 /////aguarda en un arreglo y en el localstorage la información leida en la tabla lectura
 function guardarTablaEnArray() {
@@ -646,7 +647,7 @@ function guardarTablaEnArray() {
   localStorage.setItem("dataArray", JSON.stringify(dataArray));
 
   agrupar();
-
+  actualizarProgresoLectura();
   return dataArray;
 }
 ///////////////////////FUNCION QUE AGRUPA EL DATA ARRAY CON LAS LECTURAS DEL Contenedor/////////////////////////
@@ -751,6 +752,126 @@ function limpiarMensajes() {
   // Limpiar la variable 'mensajes' del localStorage
   guardarTablaEnArray();
 }
+
+/**
+ * @function calcularTotalUnidadesApreparar
+ * @description Suma los valores de la columna 'Cant. Prep.' (Índice 3) en la tabla de Verificación.
+ * @returns {number} El total de unidades (productos) que deben ser leídas.
+ */
+function calcularTotalUnidadesApreparar() {
+    const tbodyVerificacion = document.getElementById("tblbodyLineasContenedor");
+    let totalUnidades = 0;
+
+    if (tbodyVerificacion) {
+        // La columna Cant. Prep. es la cuarta columna (índice 3) en el <tbody> 
+        // de la tabla tblcontenedores (Conten[0], Artí.[1], Cant. Ped.[2], Cant. Prep.[3], ...)
+        const indiceColumnaPreparada = 4; 
+
+        tbodyVerificacion.querySelectorAll('tr').forEach(fila => {
+            const celdas = fila.querySelectorAll('td');
+            
+            if (celdas[indiceColumnaPreparada]) {
+                const valor = celdas[indiceColumnaPreparada].textContent.trim();
+                // Usamos parseFloat y tratamos NaN como 0
+                totalUnidades += parseFloat(valor) || 0;
+            }
+        });
+    }
+    return totalUnidades;
+}
+
+/**
+ * @function calcularTotalUnidadesLeidas
+ * @description Suma los valores de la columna de cantidad (Índice 2) en la tabla de Lectura.
+ * @returns {number} El total de unidades (productos) registradas como leídas.
+ */
+function calcularTotalUnidadesLeidas() {
+    const tbodyLectura = document.getElementById("tblbodyLectura");
+    let totalLeido = 0;
+
+    if (tbodyLectura) {
+        // La columna de Cantidad en la tabla de Lectura es la tercera columna (índice 2)
+        // (Articulo[0], Cod[1], Cant[2], CL[3])
+        const indiceColumnaCantidad = 2; 
+
+        tbodyLectura.querySelectorAll('tr').forEach(fila => {
+            const celdas = fila.querySelectorAll('td');
+
+            if (celdas[indiceColumnaCantidad]) {
+                // En la pestaña Lectura, la cantidad está dentro de un <input>
+                const input = celdas[indiceColumnaCantidad].querySelector('input');
+                
+                let valor = input ? input.value : celdas[indiceColumnaCantidad].textContent.trim();
+
+                // Usamos parseFloat y tratamos NaN como 0
+                totalLeido += parseFloat(valor) || 0;
+            }
+        });
+    }
+    return totalLeido;
+}
+
+
+/**
+ * @function actualizarProgresoLectura
+ * @description Muestra el resumen de unidades leídas vs. total de unidades a leer.
+ */
+function actualizarProgresoLectura() {
+    // 1. Obtener los totales de unidades
+    const totalUnidadesApreparar = calcularTotalUnidadesApreparar();
+    const totalUnidadesLeidas = calcularTotalUnidadesLeidas();
+    
+    // 2. Obtener el Label
+    const labelProgreso = document.getElementById("progresoLecturaLabel");
+
+    if (labelProgreso) {
+        labelProgreso.textContent = `Leído: ${totalUnidadesLeidas.toFixed(0)} / ${totalUnidadesApreparar.toFixed(0)}`;
+
+        // Opcional: Estilo basado en el progreso
+        if (totalUnidadesLeidas > 0 && totalUnidadesLeidas >= totalUnidadesApreparar) {
+             labelProgreso.style.color = "green";
+        } else {
+             labelProgreso.style.color = "initial"; // o el color por defecto
+        }
+    } else {
+        console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
+    }
+}
+
+
+
+// /**
+//  * @function actualizarProgresoLectura
+//  * @description Muestra el resumen de líneas leídas vs. total de líneas a verificar.
+//  */
+// function actualizarProgresoLectura() {
+//     // 1. Obtener el total de líneas a verificar (desde la tabla de Verificación)
+//     const tbodyVerificacion = document.getElementById("tblbodyLineasContenedor");
+//     // Se excluyen la fila de totales (si existe un tfoot)
+//     const totalLineasVerificacion = tbodyVerificacion ? tbodyVerificacion.children.length : 0;
+    
+//     // 2. Obtener el total de líneas leídas (desde la tabla de Lectura)
+//     const tbodyLectura = document.getElementById("tblbodyLectura");
+//     // Asumimos que cada <tr> en la tabla de Lectura representa una línea leída.
+//     const totalLineasLeidas = tbodyLectura ? tbodyLectura.children.length : 0; 
+    
+//     // 3. Obtener el Label donde se mostrará el progreso
+//     const labelProgreso = document.getElementById("progresoLecturaLabel");
+
+//     if (labelProgreso) {
+//         labelProgreso.textContent = `Leído: ${totalLineasLeidas} / ${totalLineasVerificacion}`;
+
+//         // Opcional: Aplicar estilo si el progreso es completado
+//         if (totalLineasLeidas > 0 && totalLineasLeidas === totalLineasVerificacion) {
+//              labelProgreso.style.color = "green";
+//         } else {
+//              labelProgreso.style.color = "initial"; // o el color por defecto
+//         }
+//     } else {
+//         console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
+//     }
+// }
+
 
 
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
@@ -2269,6 +2390,8 @@ function calcularTotalesVerificacion() {
     tfoot.appendChild(filaTotal);
     tabla.appendChild(tfoot);
 }
+
+
 
 // function prueba(){
 //  armarTablaLectura(dataContenedores);
