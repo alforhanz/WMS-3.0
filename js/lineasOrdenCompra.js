@@ -1,4 +1,3 @@
-//Variable global que contiene el detalle del pedido
 var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {

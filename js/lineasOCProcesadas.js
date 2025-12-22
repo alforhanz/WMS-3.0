@@ -2,11 +2,14 @@
 var detalleLineasOrdenDeCompra = "";
 
 document.addEventListener("DOMContentLoaded", function () {
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
+    cargarBodegas();
+  
+  const observacionesContainer = document.getElementById(
+    "observaciones-container"
+  );
+  observacionesContainer.style.display = "block";
+ 
 
-  cargarBodegas();
   //--------------------------------------------------------------------------
   if (localStorage.getItem("OrdenDeCompra")) {
     let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");

@@ -752,7 +752,7 @@ function limpiarMensajes() {
   // Limpiar la variable 'mensajes' del localStorage
   guardarTablaEnArray();
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @function calcularTotalUnidadesApreparar
  * @description Suma los valores de la columna 'Cant. Prep.' (Índice 3) en la tabla de Verificación.
@@ -779,7 +779,7 @@ function calcularTotalUnidadesApreparar() {
     }
     return totalUnidades;
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @function calcularTotalUnidadesLeidas
  * @description Suma los valores de la columna de cantidad (Índice 2) en la tabla de Lectura.
@@ -811,7 +811,7 @@ function calcularTotalUnidadesLeidas() {
     return totalLeido;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @function actualizarProgresoLectura
  * @description Muestra el resumen de unidades leídas vs. total de unidades a leer.
@@ -837,42 +837,6 @@ function actualizarProgresoLectura() {
         console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
     }
 }
-
-
-
-// /**
-//  * @function actualizarProgresoLectura
-//  * @description Muestra el resumen de líneas leídas vs. total de líneas a verificar.
-//  */
-// function actualizarProgresoLectura() {
-//     // 1. Obtener el total de líneas a verificar (desde la tabla de Verificación)
-//     const tbodyVerificacion = document.getElementById("tblbodyLineasContenedor");
-//     // Se excluyen la fila de totales (si existe un tfoot)
-//     const totalLineasVerificacion = tbodyVerificacion ? tbodyVerificacion.children.length : 0;
-    
-//     // 2. Obtener el total de líneas leídas (desde la tabla de Lectura)
-//     const tbodyLectura = document.getElementById("tblbodyLectura");
-//     // Asumimos que cada <tr> en la tabla de Lectura representa una línea leída.
-//     const totalLineasLeidas = tbodyLectura ? tbodyLectura.children.length : 0; 
-    
-//     // 3. Obtener el Label donde se mostrará el progreso
-//     const labelProgreso = document.getElementById("progresoLecturaLabel");
-
-//     if (labelProgreso) {
-//         labelProgreso.textContent = `Leído: ${totalLineasLeidas} / ${totalLineasVerificacion}`;
-
-//         // Opcional: Aplicar estilo si el progreso es completado
-//         if (totalLineasLeidas > 0 && totalLineasLeidas === totalLineasVerificacion) {
-//              labelProgreso.style.color = "green";
-//         } else {
-//              labelProgreso.style.color = "initial"; // o el color por defecto
-//         }
-//     } else {
-//         console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
-//     }
-// }
-
-
 
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
 
