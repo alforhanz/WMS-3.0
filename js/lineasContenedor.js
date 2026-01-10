@@ -716,7 +716,7 @@ function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
   }
 
   // Calcular diferencia
-  let diferencia = totalPedida - totalLeida;
+  let diferencia =  totalLeida - totalPedida;
 
   // Actualizar el contenido de la fila de totales
   totalRow.innerHTML = `

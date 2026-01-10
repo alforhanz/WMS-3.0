@@ -1,55 +1,36 @@
-// var paquetesCreadosArray = [
-//   { TRASLADO: "TRAS81-0000031055", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031053", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031052", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031051", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031050", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031049", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031048", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031047", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031046", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031045", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031044", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031043", USUARIO: "XJULIDIAZ", FECHA: "14/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031042", USUARIO: "XJULIDIAZ", FECHA: "14/02/2025", BODEGA_DESTINO: "06 BREMEN 24 DE DICIEMBRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031031", USUARIO: "CI/JULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031030", USUARIO: "CI/JULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031029", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031028", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031027", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031026", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031025", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031024", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031023", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031022", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031017", USUARIO: "XJULIDIAZ", FECHA: "18/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031015", USUARIO: "XJULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031014", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031013", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031012", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031011", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031010", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031009", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031008", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031007", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000031006", USUARIO: "CI/JULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "53 NORWING CHITRE", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030985", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030981", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030980", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030979", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030978", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030977", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030976", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030973", USUARIO: "XJULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030972", USUARIO: "XJULIDIAZ", FECHA: "17/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030943", USUARIO: "CI/JULIDIAZ", FECHA: "15/02/2025", BODEGA_DESTINO: "52 NORWING DAVID", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030930", USUARIO: "CI/JULIDIAZ", FECHA: "14/02/2025", BODEGA_DESTINO: "01 BREMEN SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030929", USUARIO: "CI/JULIDIAZ", FECHA: "14/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030928", USUARIO: "CI/JULIDIAZ", FECHA: "14/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" },
-//   { TRASLADO: "TRAS81-0000030570", USUARIO: "CI/JULIDIAZ", FECHA: "03/02/2025", BODEGA_DESTINO: "55 NORWING SANTIAGO", BODEGA: "B-81" }
-// ];
-
 var paquetesCreadosArray = [];
+// var paquetesCreadosArray = [
+//   {
+//     "TRASLADO": "TRAS81-0000031109",
+//     "CANT_PREPARADA": 2,
+//     "CANT_VERIFICADA": 3,
+//     "DIFERENCIA": 1,
+//     "USUARIO": "XJULIDIAZ",
+//     "FECHAHORA": "2026-01-06 14:14:53.410",
+//     "BODEGA_DESTINO": "06 BREMEN 24 DE DICIEMBRE",
+//     "BODEGA": "B-81"
+//   },
+//   {
+//     "TRASLADO": "TRAS81-0000031101",
+//     "CANT_PREPARADA": 8,
+//     "CANT_VERIFICADA": 6,
+//     "DIFERENCIA": -2,
+//     "USUARIO": "PRUEBAPMA",
+//     "FECHAHORA": "2025-12-26 10:24:35.857",
+//     "BODEGA_DESTINO": "51 NORWING PLAZA CAROLINA",
+//     "BODEGA": "B-81"
+//   },
+//   {
+//     "TRASLADO": "TRAS81-0000031105",
+//     "CANT_PREPARADA": 200,
+//     "CANT_VERIFICADA": 200,
+//     "DIFERENCIA": 0,
+//     "USUARIO": "XJULIDIAZ",
+//     "FECHAHORA": "2025-12-27 12:04:27.007",
+//     "BODEGA_DESTINO": "01 BREMEN SANTIAGO",
+//     "BODEGA": "B-81"
+//   }
+// ]
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Consulta de creación de Paquetes DOM cargado...");
@@ -62,28 +43,48 @@ document.addEventListener("DOMContentLoaded", function () {
     const fechaIni = params.get("fechaIni") ?? "";
     const fechaFin = params.get("fechaFin") ?? "";
     const BodegaOrigen = params.get("BodegaOrigen") ?? "";
+    const BodegaDestino = params.get("BodegaDestino") ?? "";
     const Aplicacion = params.get("Aplicacion") ?? "";
 
     const para =
-      "?pSistema=" +
-      pSistema +
-      "&pUsuario=" +
-      pUsuario +
-      "&pOpcion=" +
-      pOpcion +
-      "&fechaIni=" +
-      fechaIni +
-      "&fechaFin=" +
-      fechaFin +
-      "&BodegaOrigen=" +
-      BodegaOrigen +
-      "&Aplicacion=" +
-      Aplicacion;
+                "?pSistema=" +
+                pSistema +
+                "&pUsuario=" +
+                pUsuario +
+                "&pOpcion=" +
+                pOpcion +
+                "&fechaIni=" +
+                fechaIni +
+                "&fechaFin=" +
+                fechaFin +
+                "&BodegaOrigen=" +
+                BodegaOrigen +
+                "&BodegaDestino="+
+                BodegaDestino+
+                "&Aplicacion=" +
+                Aplicacion;
     enviarDatosControlador(para);
   }
 
   cargarBodegas();
 });
+
+
+// function cargarParametros() {
+//   const data = {
+//     pSistema: "WMS",
+//     pUsuario: document.getElementById("hUsuario").value,
+//     pOpcion: "R",
+//     fechaIni: $("#fecha_ini").val(),
+//     fechaFin: $("#fecha_fin").val(),
+//     BodegaOrigen: document.getElementById("bodega").value,
+//     BodegaDestino: document.getElementById("bodegaSelectPack").value,
+//     Aplicacion: $("#Aplicacion").val()?.trim() || ""
+//   };
+
+//   const params = new URLSearchParams(data).toString();
+//   enviarDatosControlador("?" + params);
+// }
 function cargarParametros() {
   mostrarLoader();
   let pSistema = "WMS";
@@ -92,6 +93,7 @@ function cargarParametros() {
   let fechaIni = $("#fecha_ini").val();
   let fechaFin = $("#fecha_fin").val();
   let BodegaOrigen = document.getElementById("bodega").value;
+  let BodegaDestino = document.getElementById("bodegaSelectPack").value;
   let Aplicacion = $("#Aplicacion").val() ? $("#Aplicacion").val().trim() : "";
 
   const params =
@@ -107,17 +109,22 @@ function cargarParametros() {
     fechaFin +
     "&BodegaOrigen=" +
     BodegaOrigen +
+    "&BodegaDestino="+
+    BodegaDestino+
     "&Aplicacion=" +
     Aplicacion;
   enviarDatosControlador(params);
 }
 function enviarDatosControlador(params) {
+   //armarTablaResultados(paquetesCreadosArray);
   console.log("BUSQUEDA Paquete PARAMETROS\n " + params);
   localStorage.setItem("parametrosBusquedaPaquete", params);
 
   fetch(env.API_URL + "busquedadePaquetes" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
+      console.log('API: ');
+      console.log(result);
       if (result.msg === "SUCCESS") {
         // ocultarLoader();
         paquetesCreadosArray = result.respuesta;
@@ -190,7 +197,10 @@ function armarTablaResultados(detallePaquetesEncabezado) {
     });
 
     newRow.innerHTML = `
-      <td class="traslado resultados-Tabla">${detalle.TRASLADO}</td>        
+      <td class="traslado resultados-Tabla">${detalle.TRASLADO}</td>    
+         <td class="traslado resultados-Tabla">${detalle.CANT_PREPARADA}</td> 
+            <td class="traslado resultados-Tabla">${detalle.CANT_VERIFICADA}</td> 
+               <td class="traslado resultados-Tabla">${detalle.DIF}</td>     
       <td class="usertraslado resultados-Tabla">${detalle.USUARIO}</td>
       <td class="fecha resultados-Tabla">${detalle.FECHA}</td>  
       <td class="bodegaDestino resultados-Tabla">${detalle.BODEGA_DESTINO}</td>

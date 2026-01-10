@@ -2549,3 +2549,6 @@ margin-top: 10px;
 margin-bottom: 10px; 
 display: block;
 }
+#bodegaSelect {
+  width: 20%; /* Ocupa todo el espacio disponible dentro de su contenedor */
+}

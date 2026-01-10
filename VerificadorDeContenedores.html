@@ -68,11 +68,11 @@
           </div>
         </div>
         <!-- BODEGA DE DESTINO -->
-        <label id="lbl_bodega_destino" for="bodegaSelectOC">Cambiar bodega de destino</label>
+        <label id="lbl_bodega_destino" for="bodegaSelect">Cambiar bodega de destino</label>
         <!-- <div class="row" style="display: flex; align-items: center;"> -->
         <div class=" bodega-destino-container row">
           <div class="col-md-6">
-            <select id="bodegaSelectOC" class="browser-default">
+            <select id="bodegaSelect" class="browser-default">
               <option value="" disabled selected>Seleccione una bodega</option>
             </select>
           </div><br>
@@ -163,15 +163,21 @@
                 <div id="resultadoPaginador"></div>
               </div>
 
+              <div class="row" id="observacion">
+                <div class="input-field col s12">
+                  <label id="lblObservaciones" for="observaciones">Observaciones</label>
+                  <textarea placeholder="Observaciones" id="observaciones" type="text"></textarea>
+                </div>
+              </div>
+
                 <!--Text area para los mensajes-->
               <div id="mensajes" class="container">
                 <div class="centered col s12">
-                  <label for="mensajeText" ></label>
+                  <label for="mensajeText"></label>
                   <textarea id="mensajeText"></textarea>
                 </div>
               </div>
-            </div>
-           
+              </div>
 
           </div>
           <!-- Cierre de tabla de resultados -->
@@ -194,6 +200,7 @@
   <script type="text/javascript" src="js/main.js?v1.1" defer></script>
   <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
   <script type="text/javascript" src="js/verificadorDeContenedores.js" defer></script>
+    <!-- <script type="text/javascript" src="js/verificadorDeContenedoresPrueba.js" defer></script> -->
   <script type="tex/javascript" src="js/paginacion.js"></script>
   <script type="text/javascript" src="js/loader.js"></script>
   <!--JavaScript local-->

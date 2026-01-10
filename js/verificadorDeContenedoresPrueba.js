@@ -1,83 +1,294 @@
-/**
- * @description //Variable global que contiene el detalle 
- * o las lineas del los contenedores aprobados 
- */
 var detalleLineasContenedoreses = [];
-///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
-/**
- * DOM: 
- * @description función que carga el Document Object Model
- */
+
+// const dataContenedores = [
+//   {
+//     ID: 1,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 ANN",
+//     Descripcion: "LLANTA ANNAITE AN616 96H",
+//     Codigo_Barra: "2072510302352",
+//     codigos_barras: "2072510302352||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 2,
+//     Contenedor: "M81-0000023255|M81-0000023256",
+//     Traslado: "S02-0000014709|S02-0000014710",
+//     Articulo: "215/60R17 FR",
+//     Descripcion: "LLANTA FRONWAY ROADPOWER HT 100H XL",
+//     Codigo_Barra: "6938628248686",
+//     codigos_barras: "6938628248686||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 164,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 16,
+//     Cant_Verificada: 16,
+//     Cant_Leida: 16,
+//     Cant_Dif: 0,
+//     Mas_Linea: "S",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 3,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014710",
+//     Articulo: "215/60R17 FRO",
+//     Descripcion: "LLANTA FRONWAY VANPLUS 09 109/107T 8L",
+//     Codigo_Barra: "6938628226066",
+//     codigos_barras: "6938628226066||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 8,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 8,
+//     Cant_Verificada: 8,
+//     Cant_Leida: 8,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 4,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 KH",
+//     Descripcion: "LLANTA KUMHO TA11 96T",
+//     Codigo_Barra: "8808956155513",
+//     codigos_barras: "8808956155513||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 5,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "215/60R17 KHM",
+//     Descripcion: "LLANTA KUMHO KH32 96H",
+//     Codigo_Barra: "8808956159801",
+//     codigos_barras: "8808956159801||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 6,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014710",
+//     Articulo: "215/60R17 KUMHO",
+//     Descripcion: "LLANTA KUMHO TA51 96T",
+//     Codigo_Barra: "8808956300395",
+//     codigos_barras: "8808956300395||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 7,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014710",
+//     Articulo: "265/70R17 FALK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK HT02 115/121S",
+//     Codigo_Barra: "332848A3002ZA",
+//     codigos_barras: "332848A3002ZA||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 10,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 6,
+//     Cant_Verificada: 6,
+//     Cant_Leida: 6,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 8,
+//     Contenedor: "M81-0000023255",
+//     Traslado: "S02-0000014709",
+//     Articulo: "265/70R17 FK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK AT01 113S",
+//     Codigo_Barra: "296047A3002Ja",
+//     codigos_barras: "296047A3002Ja||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 9,
+//     Contenedor: "M81-0000023255|M81-0000023256",
+//     Traslado: "S02-0000014709|S02-0000014710",
+//     Articulo: "265/70R17 FLK",
+//     Descripcion: "LLANTA FALKEN WILDPEAK AT03 10L (121/118S)",
+//     Codigo_Barra: "323833A3102Za",
+//     codigos_barras: "323833A3102Za|323833A3002Ja|323833A3102SO",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 569,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 6,
+//     Cant_Verificada: 6,
+//     Cant_Leida: 6,
+//     Cant_Dif: 0,
+//     Mas_Linea: "S",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 10,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "265/70R17 ILI",
+//     Descripcion: "LLANTA ILINK PENTERRA RT 115Q",
+//     Codigo_Barra: "6932094132661",
+//     codigos_barras: "||6932094132661",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 1,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 1,
+//     Cant_Verificada: 1,
+//     Cant_Leida: 1,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 11,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014710",
+//     Articulo: "265/70R17 KH",
+//     Descripcion: "LLANTA KUMHO HT55 113T",
+//     Codigo_Barra: "8808956293246",
+//     codigos_barras: "||8808956293246",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 9,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 9,
+//     Cant_Verificada: 9,
+//     Cant_Leida: 9,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 12,
+//     Contenedor: "M81-0000023257",
+//     Traslado: "S02-0000014709",
+//     Articulo: "RIN 17 RE2213 5H 528",
+//     Descripcion: "INFINIT 17X8 5/114.3 ET35 CB73.1 GUNMETAL FAC MACH (GMFM)",
+//     Codigo_Barra: null,
+//     codigos_barras: "||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 4,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 3,
+//     Cant_Verificada: 3,
+//     Cant_Leida: 3,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   },
+//   {
+//     ID: 13,
+//     Contenedor: "M81-0000023256",
+//     Traslado: "S02-0000014709",
+//     Articulo: "RIN 18 188158 6H 643",
+//     Descripcion: "INFINIT 18X9 6/114.3 ET0 CB66.1 (B +MILL SPK)",
+//     Codigo_Barra: null,
+//     codigos_barras: "||",
+//     Bodega_Solicita: "B-02",
+//     Fecha_Aprobacion: "28/10/2025",
+//     total_cedi: 4,
+//     Estado_tm: "C",
+//     Estado_ml: "PW",
+//     Estado_pl: "V",
+//     Cant_Pedida: 4,
+//     Cant_Verificada: 4,
+//     Cant_Leida: 4,
+//     Cant_Dif: 0,
+//     Mas_Linea: "N",
+//     NOMBRE: "Por enviar"
+//   }
+// ];
+
 document.addEventListener("DOMContentLoaded", function () {
-    cargarBodegas();
+  cargarBodegas();
 });
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-/**
- * @function validarBusquedaContenedor
- * @description verifica y valida los parametros y realizar la peticion al 
- * Api para obtener las lineas de los contenedores aprobados. 
- */
+
 function validarBusquedaContenedor() {
-  let bodega = document.getElementById("bodega").value;
-  let pBodegaSolicita = document.getElementById("bodegaSelect").value;
-  let pPlaca = document.getElementById("placa-camion").value;
-
-  if (pPlaca === "" || pBodegaSolicita == "") {
-    Swal.fire({
-      icon: "warning",
-      title: "Advertencia",
-      text: "Faltan parámetros para cargar los datos.\nVerifique que se hayan llenado correctamente los campos de la bodega de destino y la placa del camión.",
-    });
-  } else {
-    mostrarLoader();
-    let pSistema = "WMS";
-    let pUsuario = document.getElementById("hUsuario").value;
-    let pOpcion = "B";
-    let pBodegaEnvia = bodega;
-    let pConsecutivo = $("#pContenedor").val();
-    let pEstado = "";
-    let pFechaDesde = $("#fecha_ini").val();
-    let pArticulo = "";
-
-    const params =
-      "?pSistema=" +
-      pSistema +
-      "&pUsuario=" +
-      pUsuario +
-      "&pOpcion=" +
-      pOpcion +
-      "&pBodegaEnvia=" +
-      pBodegaEnvia +
-      "&pBodegaDestino=" +
-      pBodegaSolicita +
-      "&pContenedor=" +
-      pConsecutivo +
-      "&pEstado=" +
-      pEstado +
-      "&pFechaDesde=" +
-      pFechaDesde +
-      "&pArticulo=" +
-      pArticulo;
-    localStorage.setItem("parametrosBusquedaPaquete", params);
-
-    enviarDatosControlador(params);
+    enviarDatosControlador();
   }
-}
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-//LLama al API para armar las tablas
-function enviarDatosControlador(params) {
-  console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
 
-  fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.msg === "SUCCESS") {
-        ocultarLoader();
-        detalleLineasContenedoreses = result.respuesta;
-        if (result.respuesta.length != 0) {
+
+function enviarDatosControlador() {
+  
+
+        detalleLineasContenedoreses = dataContenedores;
           armarTablaLectura(detalleLineasContenedoreses);
           guardarTablaEnArray();
           armarTablaVerificacion(detalleLineasContenedoreses);
@@ -89,28 +300,10 @@ function enviarDatosControlador(params) {
             title: "Información",
             text: "Registros cargados en la pestaña Verificación",
             confirmButtonColor: "#28a745",
-          });
-        } else {
-          ocultarLoader();
-          Swal.fire({
-            icon: "info",
-            title: "Información",
-            text: "No hay registros asignados para el usuario",
-            confirmButtonColor: "#28a745",
-          });
-        }
-        document.getElementById("carga").innerHTML = "";
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "error",
-          text: "Se registro un error en la aplicación",
-          confirmButtonColor: "#28a745",
-        });
-      }
-    });
-  ocultarLoader();
+          });   
+  
 }
+
 
 function mostrarPestanaLectura() {
   // Cambia la pestaña activa
@@ -118,6 +311,7 @@ function mostrarPestanaLectura() {
     '#tabs-swipe-demo a[href="#tabla-lectura"]'
   );
   tabLectura.click(); // Simula el clic
+
   // Opcional: enfocar el input del código de barras
   document.getElementById("codigo-barras").focus();
 }
@@ -146,9 +340,9 @@ function limpiarResultadoGeneral() {
       tbody.innerHTML = "";
     }
   }
+  // localStorage.removeItem('SearchParameterFlag');
+  // localStorage.removeItem('parametrosBusquedaContenedor');
 }
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
 function limpiarTblLectura() {
   const tabla = document.getElementById("myTableLectura");
 
@@ -159,6 +353,8 @@ function limpiarTblLectura() {
       tbody.innerHTML = "";
     }
   }
+  // localStorage.removeItem('SearchParameterFlag');
+  // localStorage.removeItem('parametrosBusquedaContenedor');
 }
 // Función para cargar las bodegas
 function cargarBodegas() {
@@ -187,12 +383,10 @@ function cargarBodegas() {
     })
     .catch((error) => console.error("Error al cargar las bodegas:", error));
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////                       LECTURA Y VERIFICACION                          ////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////// ARMA LA TABLA LECTURA ///////////////////////////////////////////////////////////
-
 function armarTablaLectura(detalleLineasContenedor) {
   var tbody = document.getElementById("tblbodyLectura");
 
@@ -419,6 +613,7 @@ function agrupar() {
 /////// Funcion que elimina filas en la pestaña lectura  //////////////////////////////////////////////////
 function eliminarFila(icon) {
   var row = icon.closest("tr");
+  //var articuloEliminado = row.querySelector('.sticky-column').innerText.trim();
 
   // Mostrar un SweetAlert antes de eliminar la fila
   Swal.fire({
@@ -434,8 +629,8 @@ function eliminarFila(icon) {
       // Verificar si la fila está vacía
       var isEmptyRow = true;
       var cells = row.querySelectorAll(".codigo-barras-input");
-   
-        cells.forEach(function (cell) {
+      var artic = row.querySelector;
+      cells.forEach(function (cell) {
         if (cell.value.trim() !== "") {
           isEmptyRow = false;
         }
@@ -444,7 +639,7 @@ function eliminarFila(icon) {
       // Elimina la fila solo si no está vacía
       if (isEmptyRow) {
         // Llamar función que guarda artículos en la tabla
-       // var dataFromTable = guardarTablaEnArray();
+        var dataFromTable = guardarTablaEnArray();
 
         Swal.fire({
           icon: "warning",
@@ -651,6 +846,62 @@ function armarTablaVerificacion(detalleLineasContenedores) {
     // Opcional: Si el ordenamiento altera los totales, se debe recalcular aquí:
     // calcularTotalesVerificacion(); 
 }
+
+// function armarTablaVerificacion(detalleLineasContenedores) {
+//   const tbody = document.getElementById("tblbodyLineasContenedor");
+//   tbody.innerHTML = "";
+
+//   const cantidadDeRegistrosLabel = document.getElementById(
+//     "cantidadDeRegistros"
+//   );
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detalleLineasContenedores.length;
+
+//   detalleLineasContenedores.forEach((detalle) => {
+//     const newRow = document.createElement("tr");
+//     newRow.innerHTML = `
+//       <td class="solicitud" hidden>${detalle.Traslado}</td>        
+//       <td class="contenedor" style="text-align: left;">
+//           <h5>${detalle.Contenedor}</h5>
+//           <h6>${detalle.Traslado}</h6>
+//       </td>
+//       <td class="articulo">
+//           <h5 class="verifica-articulo">
+//               <span class="blue-text text-darken-2">${detalle.Articulo}</span>
+//           </h5>
+//           <h6 style="text-align:left;">${detalle.Descripcion}</h6>
+//       </td>           
+//       <td class="cantidadPedida" style="text-align: left;">
+//           ${
+//             isNaN(parseFloat(detalle.Cant_Pedida))
+//               ? 0
+//               : parseFloat(detalle.Cant_Pedida).toFixed(2)
+//           }
+//       </td>        
+//       <td class="cantidadPreparada" style="text-align: left;">
+//           ${
+//             isNaN(parseFloat(detalle.Cant_Verificada))
+//               ? 0
+//               : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//           }
+//       </td>
+//       <td class="cantidadLeida" style="text-align: left;"></td>
+//       <td class="verificado" style="text-align: left;"></td>      
+//       <td class="devolver" style="text-align: left;">
+//          <i class="material-icons" 
+//            style="color: #FF0000; cursor: pointer;" 
+//            onclick="autorizaDevolucion('${detalle.Articulo}', '${
+//       detalle.Contenedor
+//     }','${
+//       isNaN(parseFloat(detalle.Cant_Verificada))
+//         ? 0
+//         : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//     }')">reply</i>
+//       </td>        
+//     `;
+//     tbody.appendChild(newRow);
+//   });
+// }
 
 
 //VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
@@ -882,7 +1133,7 @@ async function guardaParcialMente() {
   let pFecha = new Date().toISOString().split("T")[0];
   let pPlaca = document.getElementById("placa-camion").value;
   let pReferencia = "Ref o null";
-  let pComentario = document.getElementById("observaciones").value;
+  let pComentario = "Comentario o null";
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
@@ -997,14 +1248,6 @@ async function guardaParcialMente() {
   });
 }
 
-///////////////FUNCIONES PARA PROCESAR///////////
-//////////////////////////////////////////////
-
-/**
- * @function guardaPaquete 
- * @description :realiza el guardado previo a la creacion de un paquete, 
- * por si el usuario no guardo la informacion de lo que se ha dado lectura: 
- */
 async function guardaPaquete() {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
@@ -1014,7 +1257,7 @@ async function guardaPaquete() {
   let pFecha = new Date().toISOString().split("T")[0];
   let pPlaca = document.getElementById("placa-camion").value;
   let pReferencia = "Ref o null";
-  let pComentario = document.getElementById("observaciones").value;
+  let pComentario = "Comentario o null";
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
@@ -1123,10 +1366,8 @@ async function guardaPaquete() {
   ConfirmaCrearPaqueteContenedores();
 }
 
-/**
- * @function ConfirmaCrearPaqueteContenedores
- * @description : confirma y valida la creacion del paquete por parte del usuario
- */
+///////////////FUNCION PARA PROCESAR///////////
+//////////////////////////////////////////////
 function ConfirmaCrearPaqueteContenedores() {
   // Obtener todas las celdas de verificación
   //var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
@@ -1214,10 +1455,7 @@ function ConfirmaCrearPaqueteContenedores() {
   });
 }
 
-/**
- * @function CrearPaqueteContenedores
- * @description : se encarga de crear el paquete
- */
+
 function CrearPaqueteContenedores() {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
@@ -1229,9 +1467,7 @@ function CrearPaqueteContenedores() {
   let jsonPaquete = "";
   let pReferencia = document.getElementById('pContenedor').value;
   //"Ref o null";
-  let pComentario = document.getElementById('observaciones').value;
-
-  console.log('observaciones: ',pComentario);
+  let pComentario = "Comentario o null";
   const params =
     "?pSistema=" +
     pSistema +
@@ -1278,9 +1514,9 @@ function CrearPaqueteContenedores() {
               if (resultSwal.isConfirmed) {
               } else if (resultSwal.isDenied) {
                 imprimirPaqueteReporte(respuesta);
-               limpiarResultadoGeneral();
-               limpiarMensajes();
-                location.reload();
+               // limpiarResultadoGeneral();
+               // limpiarMensajes();
+                //location.reload();
               }
             });
           } else {

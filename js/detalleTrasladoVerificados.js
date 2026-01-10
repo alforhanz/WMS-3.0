@@ -168,7 +168,7 @@ function verTrasladosLista() {
     pTipoTransaccion;
 
   localStorage.setItem("parametrosBusqueda", params);
-  //console.log("Parametros:\n" + params);
+  console.log("Parametros:\n" + params);
 
   listadoTraslados(params);
 } //Fin de ver traslados lista

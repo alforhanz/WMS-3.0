@@ -42,13 +42,7 @@
          <div class="row"><label id="documento"></label></div>    
           <div id="menup"></div>
           <div class="row">
-             <label id="cantidadDeRegistros"> Registros:</label>
-            <!-- <div class="imppdf">
-              <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
-                <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-              </button>
-              <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar PDF</label>
-            </div>             -->
+             <label id="cantidadDeRegistros"> Registros:</label>           
           </div>         
         
           <div class="row">
@@ -56,10 +50,12 @@
             <table id="tblResultados" class="display centered">
               <thead>
                 <tr class="themeColor2">
+                  <th class=" lineasocstyle">Consecutivo</th>
+                  <th class=" lineasocstyle">Contenedor</th>
                   <th class=" lineasocstyle">Articulo</th>
-                  <th class=" lineasocstyle">Cantidad<br></th>
-                  <th class=" lineasocstyle">Fecha</th>
-                  <th class=" lineasocstyle">Bodegas<br>Origen/Destino</th>                 
+                  <th class=" lineasocstyle">Cantidad<br>Preparada</th>
+                  <th class=" lineasocstyle">Cantidad<br>Verificada</th>
+                  <th class=" lineasocstyle">dif</th>                 
                 </tr>
               </thead>
               <tbody id="tblbodyResultados"></tbody>
