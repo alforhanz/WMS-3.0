@@ -10,6 +10,15 @@ var detalleLineasContenedoreses = [];
  * @description función que carga el Document Object Model
  */
 document.addEventListener("DOMContentLoaded", function () {
+ const obs = localStorage.getItem('Observaciones');
+    const observacionesElemento = document.getElementById('observaciones');
+
+    // Validación defensiva: Solo actuar si el elemento existe
+    if (observacionesElemento) {
+        observacionesElemento.value = obs ? obs : "";
+    } else {
+        console.warn("No se encontró el elemento con ID 'Observaciones'");
+    }
     cargarBodegas();
 });
 /////////////////////////////////////////////////////////////////////
@@ -883,6 +892,7 @@ async function guardaParcialMente() {
   let pPlaca = document.getElementById("placa-camion").value;
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
+  localStorage.setItem('Observaciones',pComentario);
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
@@ -1015,6 +1025,7 @@ async function guardaPaquete() {
   let pPlaca = document.getElementById("placa-camion").value;
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
+ 
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 

@@ -1370,6 +1370,7 @@ function procesarContenedor() {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
               window.location.href = "BusquedaDeContenedores.html";
+              localStorage.clear();
             }
           });
         }
@@ -1381,6 +1382,7 @@ function procesarContenedor() {
 
 function retornarVistaAnterior() {
   window.location.href = "BusquedaDeContenedores.html";
+  localStorage.removeItem('mensajes');
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
