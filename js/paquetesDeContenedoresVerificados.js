@@ -1,6 +1,7 @@
 let columnaOrdenada = "";
 let ordenAscendente = true;
 var paquetesCreadosArray = [];
+let dataOriginal = [];
 
 
 
@@ -274,6 +275,25 @@ document.addEventListener("DOMContentLoaded", function () {
     enviarDatosControlador(para);
   }
 
+      const buscador = document.getElementById('txtBuscadorTabla');
+    if (buscador) {
+        buscador.addEventListener('keyup', function(e) {
+            const texto = e.target.value.toLowerCase();
+            
+            // Filtramos sobre la data original
+            const dataFiltrada = dataOriginal.filter(fila => {
+                // Convierte todos los valores de la fila a string y busca el texto
+                return Object.values(fila).some(valor => 
+                    String(valor).toLowerCase().includes(texto)
+                );
+            });
+
+            // Re-dibujamos la tabla con los resultados filtrados
+            // Pasamos un segundo parámetro opcional para evitar que las observaciones se limpien o cambien
+            armarTablaResultados(dataFiltrada, true); 
+        });
+    }
+
   cargarBodegas();
 });
 
@@ -389,7 +409,12 @@ function cargarBodegas() {
     .catch((error) => console.error("Error al cargar las bodegas:", error));
 }
 
-function armarTablaResultados(data) {
+function armarTablaResultados(data, esFiltro = false) {
+
+  if (!esFiltro) {
+        dataOriginal = data;
+    }
+
     const tabla = document.getElementById('tblResultados');
     const tbody = document.getElementById("tblbodyResultados");
     const txtObservaciones = document.getElementById("observaciones");
@@ -410,30 +435,39 @@ function armarTablaResultados(data) {
     cantidadLabel.textContent = "Registros: " + data.length;
 
     // --- 1. LÓGICA DE OBSERVACIONES ÚNICAS ---
-    if (txtObservaciones) {
-        // Extraemos todos los valores de la columna REFERENCIA
-        const refsFiltradas = data
-            .map(item => {
-                const val = item.REFERENCIA || item.referencia;
-                return val ? val.toString().trim() : "";
-            })
-            .filter(val => 
-                val !== "" && 
-                val.toLowerCase() !== "comentario" && 
-                val.toLowerCase() !== "null"
-            );
-
-        // Al usar Set() eliminamos automáticamente todos los duplicados
-        const refsUnicas = [...new Set(refsFiltradas)];
-
-        // Unimos con un espacio o coma si hay más de una distinta, 
-        // pero según tu instrucción, si es la misma siempre, solo saldrá una vez.
-        txtObservaciones.value = refsUnicas.join(" | "); 
-        
-        // Refrescar Materialize para que el label no choque
+    if (txtObservaciones && !esFiltro) {
+        const refsUnicas = [...new Set(data
+            .map(item => (item.REFERENCIA || item.referencia || "").toString().trim())
+            .filter(val => val !== "" && val.toLowerCase() !== "comentario" && val.toLowerCase() !== "null")
+        )];
+        txtObservaciones.value = refsUnicas.join(" | ");
         M.textareaAutoResize(txtObservaciones);
         M.updateTextFields();
     }
+    // if (txtObservaciones) {
+    //     // Extraemos todos los valores de la columna REFERENCIA
+    //     const refsFiltradas = data
+    //         .map(item => {
+    //             const val = item.REFERENCIA || item.referencia;
+    //             return val ? val.toString().trim() : "";
+    //         })
+    //         .filter(val => 
+    //             val !== "" && 
+    //             val.toLowerCase() !== "comentario" && 
+    //             val.toLowerCase() !== "null"
+    //         );
+
+    //     // Al usar Set() eliminamos automáticamente todos los duplicados
+    //     const refsUnicas = [...new Set(refsFiltradas)];
+
+    //     // Unimos con un espacio o coma si hay más de una distinta, 
+    //     // pero según tu instrucción, si es la misma siempre, solo saldrá una vez.
+    //     txtObservaciones.value = refsUnicas.join(" | "); 
+        
+    //     // Refrescar Materialize para que el label no choque
+    //     M.textareaAutoResize(txtObservaciones);
+    //     M.updateTextFields();
+    // }
 
     // --- 2. FILTRAR COLUMNAS PARA LA TABLA (Excluir REFERENCIA) ---
     const columnas = Object.keys(data[0]).filter(col => col.toUpperCase() !== "REFERENCIA");
@@ -537,7 +571,7 @@ function limpiarResultadoGeneral() {
 }
 
 /**
- * Calcula y renderiza la fila de totales dinámicamente
+ * Calcula y renderiza la fila de totales dinámicamente para columnas específicas
  * @param {Array} data - El JSON con los datos
  * @param {Array} columnas - Las columnas que se están mostrando (sin REFERENCIA)
  */
@@ -545,39 +579,49 @@ function armaTotales(data, columnas) {
     const tabla = document.getElementById('tblResultados');
     if (!tabla) return;
 
-    // Eliminar tfoot si ya existe para evitar duplicados al ordenar
+    // 1. Eliminar tfoot si ya existe para evitar duplicados
     let tfoot = tabla.querySelector("tfoot");
     if (tfoot) tfoot.remove();
 
     tfoot = document.createElement("tfoot");
     const row = document.createElement("tr");
-    row.style.backgroundColor = "#f2f2f2"; // Color distintivo para totales
+    
+    // Estilo para resaltar la fila de totales
+    row.style.backgroundColor = "#86bfc4ff"; // Un verde muy claro (Materialize teal lighten-5)
     row.style.fontWeight = "bold";
+    row.style.borderTop = "2px solid #26a69a";   
+
+    // 2. Definir las columnas exactas que queremos sumar
+    const columnasASumar = ["CANT_PREPARADA", "CANT_SOLICITADA", "CANT_VERIFICADA", "DIFERENCIA", "DIF"];
 
     columnas.forEach((columna, index) => {
         const td = document.createElement("td");
         td.className = "resultados-Tabla";
+         td.style.fontSize = "16px";
 
-        // Verificamos si la columna es numérica basándonos en el primer registro
-        // Excluimos columnas que suelen ser IDs aunque sean números (opcional)
-        const primerValor = data[0][columna];
-        const esNumerica = !isNaN(primerValor) && typeof primerValor !== 'string' || 
-                          (typeof primerValor === 'string' && !isNaN(parseFloat(primerValor)) && !columna.toUpperCase().includes("ID") && !columna.toUpperCase().includes("TRASLADO"));
+        // Verificamos si la columna actual está en nuestra lista de permitidas
+        const nombreCol = columna.toUpperCase();
+        const debeSumar = columnasASumar.some(c => c.toUpperCase() === nombreCol);
 
-        if (esNumerica) {
+        if (debeSumar) {
             const total = data.reduce((acc, item) => {
                 const val = parseFloat(item[columna]) || 0;
                 return acc + val;
             }, 0);
             
-            td.textContent = total;
+            // Si el total tiene decimales, podrías usar .toFixed(2), si no, dejarlo así
+            td.textContent = Number.isInteger(total) ? total : total.toFixed(2);
         } else {
-            // En la primera columna no numérica, ponemos la etiqueta "TOTALES"
+            // En la primera columna ponemos la etiqueta "TOTALES"
             if (index === 0) {
                 td.textContent = "TOTALES";
+                td.style.textAlign = "left";
+                td.style.paddingLeft = "15px";
+               
             } else {
                 td.textContent = "";
             }
+
         }
         row.appendChild(td);
     });
