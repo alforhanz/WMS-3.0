@@ -201,7 +201,11 @@
 // {"TRASLADO":"TRAS81-0000031051","CONTENEDOR":"M81-0000023199","Articulo":"215/60R17 KUMHO","DESCRIPCION":"LLANTA KUMHO TA51 96T","CANT_PREPARADA":14,"CANT_VERIFICADA":14,"DIFERENCIA":0,"USUARIO":"CI/JULIDIAZ","FECHAHORA":"2025-02-18 17:20:10.115","BODEGA_DESTINO":"52 NORWING DAVID","BODEGA":"B-81"}
 // ]
 
-var paquetesCreadosArray = [];
+let paquetesCreadosArray = []; // Tu data del fetch
+let dataOriginal = [];         // El respaldo para el buscador
+let columnaOrdenada = "";      // Columna activa para el sort
+let ordenAscendente = true;    // Dirección del sort
+
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Consulta de creación de Paquetes DOM cargado...");
@@ -304,10 +308,12 @@ function enviarDatosControlador(params) {
       if (result.msg === "SUCCESS") {
         // ocultarLoader();
         paquetesCreadosArray = result.respuesta;
+        dataOriginal = result.respuesta;
         if (result.respuesta.length != 0) {
+            console.log("REsultados:");
+            console.log(paquetesCreadosArray);
           armarTablaResultados(paquetesCreadosArray);
-          console.log("REsultados:");
-          console.log(paquetesCreadosArray);
+         
         } else {
           // ocultarLoader();
           Swal.fire({
@@ -329,103 +335,734 @@ function enviarDatosControlador(params) {
     });
   ocultarLoader();
 }
-function armarTablaResultados(detallePaquetesEncabezado) {
-  const tbody = document.getElementById("tblbodyResultados");
-  tbody.innerHTML = "";
 
-  const cantidadDeRegistrosLabel = document.getElementById(
-    "cantidadDeRegistros"
-  );
-  cantidadDeRegistrosLabel.textContent =
-    "Cantidad de registros: " + detallePaquetesEncabezado.length;
+function armarTablaResultados(data, esFiltro = false) {
+    if (!esFiltro) dataOriginal = data;
 
-  detallePaquetesEncabezado.forEach((detalle) => {
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-      <td class="resultados-Tabla">${detalle.TRASLADO}</td>  
-      <td class="resultados-Tabla">${detalle.CONTENEDOR}</td>        
-      <td class="traslado resultados-Tabla"><h5>${detalle.Articulo}</h5><br><h6>${detalle.DESCRIPCION}</h6></td>
-      <td class="resultados-Tabla">${detalle.CANT_PREPARADA}</td>
-      <td class="resultados-Tabla">${detalle.CANT_VERIFICADA}</td>  
-      <td class="resultados-Tabla">${detalle.DIFERENCIA}</td>
-    `;
-    tbody.appendChild(newRow);
-  });
+    const tabla = document.getElementById('tblResultados');
+    const tbody = document.getElementById("tblbodyResultados");
+    const txtObservaciones = document.getElementById("observaciones");
+    const cantidadLabel = document.getElementById("cantidadDeRegistros");
+
+    if (!tabla || !tbody) return;
+
+    const tableHeadRow = tabla.querySelector("thead tr");
+    tableHeadRow.innerHTML = "";
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        if (cantidadLabel) cantidadLabel.textContent = "Registros: 0";
+        if (txtObservaciones) txtObservaciones.value = "";
+        return;
+    }
+
+    cantidadLabel.textContent = "Registros: " + data.length;
+
+    // --- 1. LÓGICA DE OBSERVACIONES (Mantenemos tu lógica de unicidad) ---
+    if (txtObservaciones) {
+        const refsFiltradas = data
+            .map(item => (item.REFERENCIA || item.referencia || "").toString().trim())
+            .filter(val => val !== "" && val.toLowerCase() !== "comentario" && val.toLowerCase() !== "null");
+        const refsUnicas = [...new Set(refsFiltradas)];
+        txtObservaciones.value = refsUnicas.join(" | ");
+        M.textareaAutoResize(txtObservaciones);
+        M.updateTextFields();
+    }
+
+    // --- 2. FILTRAR COLUMNAS ---
+    // Excluimos REFERENCIA y DESCRIPCION (porque la descripción irá dentro de ARTICULO)
+    const columnas = Object.keys(data[0]).filter(col => {
+        const c = col.toUpperCase();
+        return c !== "REFERENCIA" && c !== "DESCRIPCION";
+    });
+
+    // --- 3. CONSTRUIR ENCABEZADOS ---
+    columnas.forEach(columna => {
+        const th = document.createElement("th");
+        th.className = "lineasocstyle";
+        th.style.cursor = "pointer";
+        
+        let indicador = (columna === columnaOrdenada) ? (ordenAscendente ? " 🔼" : " 🔽") : "";
+        
+        // Si la columna es ARTICULO, le ponemos un nombre más descriptivo
+        if (columna.toUpperCase() === "ARTICULO") {
+            th.textContent = "ARTÍCULO / DESCRIPCIÓN" + indicador;
+        } else {
+            th.textContent = columna.replace(/_/g, " ").toUpperCase() + indicador;
+        }
+
+        th.onclick = () => {
+            ordenAscendente = (columnaOrdenada === columna) ? !ordenAscendente : true;
+            columnaOrdenada = columna;
+            
+            const dataOrdenada = [...data].sort((a, b) => {
+                let valA = a[columna] ?? "";
+                let valB = b[columna] ?? "";
+                if (!isNaN(valA) && !isNaN(valB) && valA !== "" && valB !== "") {
+                    return ordenAscendente ? valA - valB : valB - valA;
+                }
+                return ordenAscendente ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA));
+            });
+            armarTablaResultados(dataOrdenada, true);
+        };
+        tableHeadRow.appendChild(th);
+    });
+
+    // --- 4. CONSTRUIR CUERPO DE LA TABLA ---
+    data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.onclick = () => {
+            const idRef = item.TRASLADO || item.CONTENEDOR || "";
+            if (idRef) irAlDetalle(idRef);
+        };
+
+        columnas.forEach(columna => {
+            const td = document.createElement("td");
+            td.className = "resultados-Tabla";
+
+            if (columna.toUpperCase() === "ARTICULO") {
+                // --- CONCATENACIÓN ARTÍCULO Y DESCRIPCIÓN ---
+                const codigo = item[columna] ?? "";
+                const descripcion = item["DESCRIPCION"] || item["descripcion"] || "";
+                
+                // Usamos innerHTML para insertar el salto de línea <br>
+                td.innerHTML = `<strong>${codigo}</strong><br><span style="font-size: 0.85em; color: #555;">${descripcion}</span>`;
+                td.style.textAlign = "left"; // Opcional: mejor lectura para descripciones largas
+            } else {
+                let valor = item[columna] ?? "";
+                td.textContent = valor;
+
+                // Resaltar diferencias
+                if (columna.toUpperCase().includes("DIF")) {
+                    const num = parseFloat(valor);
+                    if (num < 0) td.style.color = "red";
+                    else if (num > 0) td.style.color = "green";
+                    if (num !== 0) td.style.fontWeight = "bold";
+                }
+            }
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+    });
+
+    armaTotales(data, columnas);
 }
+
+// function armarTablaResultados(data, esFiltro = false)
+// function armarTablaResultados(data) {
+
+// //   if (!esFiltro) {
+// //         dataOriginal = data;
+// //     }
+
+//     const tabla = document.getElementById('tblResultados');
+//     const tbody = document.getElementById("tblbodyResultados");
+//     const txtObservaciones = document.getElementById("observaciones");
+//     const cantidadLabel = document.getElementById("cantidadDeRegistros");
+
+//     if (!tabla || !tbody) return;
+
+//     const tableHeadRow = tabla.querySelector("thead tr");
+//     tableHeadRow.innerHTML = "";
+//     tbody.innerHTML = "";
+
+//     if (!data || data.length === 0) {
+//         if (cantidadLabel) cantidadLabel.textContent = "Registros: 0";
+//         if (txtObservaciones) txtObservaciones.value = "";
+//         return;
+//     }
+
+//     cantidadLabel.textContent = "Registros: " + data.length;
+
+//     // --- 1. LÓGICA DE OBSERVACIONES ÚNICAS ---
+//     // if (txtObservaciones && !esFiltro) {
+//     //     const refsUnicas = [...new Set(data
+//     //         .map(item => (item.REFERENCIA || item.referencia || "").toString().trim())
+//     //         .filter(val => val !== "" && val.toLowerCase() !== "comentario" && val.toLowerCase() !== "null")
+//     //     )];
+//     //     txtObservaciones.value = refsUnicas.join(" | ");
+//     //     M.textareaAutoResize(txtObservaciones);
+//     //     M.updateTextFields();
+//     // }
+//     if (txtObservaciones) {
+//         // Extraemos todos los valores de la columna REFERENCIA
+//         const refsFiltradas = data
+//             .map(item => {
+//                 const val = item.REFERENCIA || item.referencia;
+//                 return val ? val.toString().trim() : "";
+//             })
+//             .filter(val => 
+//                 val !== "" && 
+//                 val.toLowerCase() !== "comentario" && 
+//                 val.toLowerCase() !== "null"
+//             );
+
+//         // Al usar Set() eliminamos automáticamente todos los duplicados
+//         const refsUnicas = [...new Set(refsFiltradas)];
+
+//         // Unimos con un espacio o coma si hay más de una distinta, 
+//         // pero según tu instrucción, si es la misma siempre, solo saldrá una vez.
+//         txtObservaciones.value = refsUnicas.join(" | "); 
+        
+//         // Refrescar Materialize para que el label no choque
+//         M.textareaAutoResize(txtObservaciones);
+//         M.updateTextFields();
+//     }
+
+//     // --- 2. FILTRAR COLUMNAS PARA LA TABLA (Excluir REFERENCIA) ---
+//     const columnas = Object.keys(data[0]).filter(col => col.toUpperCase() !== "REFERENCIA");
+
+//     // --- 3. CONSTRUIR ENCABEZADOS CON CLIC PARA ORDENAR ---
+//     columnas.forEach(columna => {
+//         const th = document.createElement("th");
+//         th.className = "lineasocstyle";
+//         th.style.cursor = "pointer";
+        
+//         let indicador = (columna === columnaOrdenada) ? (ordenAscendente ? " 🔼" : " 🔽") : "";
+//         th.textContent = columna.replace(/_/g, " ").toUpperCase() + indicador;
+
+//         th.onclick = () => {
+//             if (columnaOrdenada === columna) {
+//                 ordenAscendente = !ordenAscendente;
+//             } else {
+//                 columnaOrdenada = columna;
+//                 ordenAscendente = true;
+//             }
+            
+//             // Ordenamiento lógico
+//             const dataOrdenada = [...data].sort((a, b) => {
+//                 let valA = a[columna] ?? "";
+//                 let valB = b[columna] ?? "";
+
+//                 if (!isNaN(valA) && !isNaN(valB) && valA !== "" && valB !== "") {
+//                     return ordenAscendente ? valA - valB : valB - valA;
+//                 }
+//                 return ordenAscendente 
+//                     ? String(valA).localeCompare(String(valB))
+//                     : String(valB).localeCompare(String(valA));
+//             });
+
+//             armarTablaResultados(dataOrdenada);
+//         };
+//         tableHeadRow.appendChild(th);
+//     });
+
+//     // --- 4. CONSTRUIR CUERPO DE LA TABLA ---
+//     data.forEach((item) => {
+//         const row = document.createElement("tr");
+        
+//         row.onclick = () => {
+//             const idRef = item.TRASLADO || item.CONTENEDOR || "";
+//             if (idRef) irAlDetalle(idRef);
+//         };
+
+//         columnas.forEach(columna => {
+//             const td = document.createElement("td");
+//             td.className = "resultados-Tabla";
+//             let valor = item[columna] ?? "";
+//             td.textContent = valor;
+
+//             // Resaltar diferencias
+//             if (columna.toUpperCase().includes("DIF")) {
+//                 const num = parseFloat(valor);
+//                 if (num < 0) td.style.color = "red";
+//                 else if (num > 0) td.style.color = "green";
+//                 if (num !== 0) td.style.fontWeight = "bold";
+//             }
+//             row.appendChild(td);
+//         });
+//         tbody.appendChild(row);
+//     });
+//     armaTotales(data, columnas);
+// }
+
+
+
+/**
+ * Calcula y renderiza la fila de totales dinámicamente para columnas específicas
+ * @param {Array} data - El JSON con los datos
+ * @param {Array} columnas - Las columnas que se están mostrando (sin REFERENCIA)
+ */
+function armaTotales(data, columnas) {
+    const tabla = document.getElementById('tblResultados');
+    if (!tabla) return;
+
+    // 1. Eliminar tfoot si ya existe para evitar duplicados
+    let tfoot = tabla.querySelector("tfoot");
+    if (tfoot) tfoot.remove();
+
+    tfoot = document.createElement("tfoot");
+    const row = document.createElement("tr");
+    
+    // Estilo para resaltar la fila de totales
+    row.style.backgroundColor = "#86bfc4ff"; // Un verde muy claro (Materialize teal lighten-5)
+    row.style.fontWeight = "bold";
+    row.style.borderTop = "2px solid #26a69a";   
+
+    // 2. Definir las columnas exactas que queremos sumar
+    const columnasASumar = ["CANT_PREPARADA", "CANT_SOLICITADA", "CANT_VERIFICADA", "DIFERENCIA", "DIF"];
+
+    columnas.forEach((columna, index) => {
+        const td = document.createElement("td");
+        td.className = "resultados-Tabla";
+         td.style.fontSize = "16px";
+
+        // Verificamos si la columna actual está en nuestra lista de permitidas
+        const nombreCol = columna.toUpperCase();
+        const debeSumar = columnasASumar.some(c => c.toUpperCase() === nombreCol);
+
+        if (debeSumar) {
+            const total = data.reduce((acc, item) => {
+                const val = parseFloat(item[columna]) || 0;
+                return acc + val;
+            }, 0);
+            
+            // Si el total tiene decimales, podrías usar .toFixed(2), si no, dejarlo así
+            td.textContent = Number.isInteger(total) ? total : total.toFixed(2);
+        } else {
+            // En la primera columna ponemos la etiqueta "TOTALES"
+            if (index === 0) {
+                td.textContent = "TOTALES";
+                td.style.textAlign = "left";
+                td.style.paddingLeft = "15px";
+               
+            } else {
+                td.textContent = "";
+            }
+
+        }
+        row.appendChild(td);
+    });
+
+    tfoot.appendChild(row);
+    tabla.appendChild(tfoot);
+}
+
+
+// function armarTablaResultados(detallePaquetesEncabezado) {
+//   const tbody = document.getElementById("tblbodyResultados");
+//   tbody.innerHTML = "";
+
+//   const cantidadDeRegistrosLabel = document.getElementById(
+//     "cantidadDeRegistros"
+//   );
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detallePaquetesEncabezado.length;
+
+//   detallePaquetesEncabezado.forEach((detalle) => {
+//     const newRow = document.createElement("tr");
+//     newRow.innerHTML = `
+//       <td class="resultados-Tabla">${detalle.TRASLADO}</td>  
+//       <td class="resultados-Tabla">${detalle.CONTENEDOR}</td>        
+//       <td class="traslado resultados-Tabla"><h5>${detalle.Articulo}</h5><br><h6>${detalle.DESCRIPCION}</h6></td>
+//       <td class="resultados-Tabla">${detalle.CANT_PREPARADA}</td>
+//       <td class="resultados-Tabla">${detalle.CANT_VERIFICADA}</td>  
+//       <td class="resultados-Tabla">${detalle.DIFERENCIA}</td>
+//     `;
+//     tbody.appendChild(newRow);
+//   });
+// }
+
+
 async function imprimirPaqueteReporte() {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF("p", "pt"); // Portrait, puntos
+  const doc = new jsPDF("p", "pt");
 
   const marginX = 40;
-  const marginY = 40;
+  let currentY = 40;
 
-  // 🧾 Obtener número de traslado desde localStorage
   const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
-
-  // 📅 Obtener fecha y hora actual
   const fecha = new Date();
-  const fechaStr = fecha.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const horaStr = fecha.toLocaleTimeString("es-ES", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const fechaStr = fecha.toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
+  const horaStr = fecha.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
   const fechaCompleta = `Fecha: ${fechaStr}  ${horaStr}`;
-
-  // 📄 Ancho de página (para centrar texto)
   const pageWidth = doc.internal.pageSize.width;
 
-  // 📅 Fecha en esquina superior derecha (arriba del título)
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
+  // --- ENCABEZADOS DEL DOCUMENTO ---
+  doc.setFont("helvetica", "normal").setFontSize(9);
   const fechaWidth = doc.getTextWidth(fechaCompleta);
-  doc.text(fechaCompleta, pageWidth - fechaWidth - marginX, marginY - 10);
+  doc.text(fechaCompleta, pageWidth - fechaWidth - marginX, currentY);
 
-  // 🏢 Nombre de la empresa (centrado)
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  const empresa = "CENTRAL DE LUBRICANTES";
-  const empresaWidth = doc.getTextWidth(empresa);
-  doc.text(empresa, (pageWidth - empresaWidth) / 2, marginY + 10);
+  currentY += 25;
+  doc.setFont("helvetica", "bold").setFontSize(16);
+  doc.text("CENTRAL DE LUBRICANTES", pageWidth / 2, currentY, { align: "center" });
 
-  // 📘 Título principal (centrado)
+  currentY += 25;
   doc.setFontSize(14);
-  const titulo = "REPORTE DE PAQUETES DE TRASLADO";
-  const tituloWidth = doc.getTextWidth(titulo);
-  doc.text(titulo, (pageWidth - tituloWidth) / 2, marginY + 35);
+  doc.text("REPORTE DE DETALLE DE PAQUETE", pageWidth / 2, currentY, { align: "center" });
 
-  // 🔢 Subtítulo: número de traslado (centrado)
+  currentY += 20;
   doc.setFontSize(12);
-  const subtitulo = `N° de Traslado: ${pPaquete}`;
-  const subtituloWidth = doc.getTextWidth(subtitulo);
-  doc.text(subtitulo, (pageWidth - subtituloWidth) / 2, marginY + 55);
+  doc.text(`N° de Traslado: ${pPaquete}`, pageWidth / 2, currentY, { align: "center" });
 
-  // 📊 Generar tabla desde HTML
-  doc.autoTable({
-    html: "#tblResultados",
-    startY: marginY + 75,
-    styles: { fontSize: 9, halign: "center" },
-    headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255] },
-    alternateRowStyles: { fillColor: [245, 245, 245] },
-    margin: { left: marginX, right: marginX },
+  // --- PREPARACIÓN DE DATOS Y CÁLCULO DE TOTALES ---
+  const dataParaReporte = packagesDataForPDF();
+  
+  // Variables para acumular totales
+  let totalSol = 0, totalPrep = 0, totalVer = 0, totalDif = 0;
+
+  const rows = dataParaReporte.map(item => {
+    const sol = parseFloat(item.CANT_SOLICITADA) || 0;
+    const prep = parseFloat(item.CANT_PREPARADA) || 0;
+    const ver = parseFloat(item.CANT_VERIFICADA) || 0;
+    const dif = parseFloat(item.DIFERENCIA) || 0;
+
+    totalSol += sol;
+    totalPrep += prep;
+    totalVer += ver;
+    totalDif += dif;
+
+    return [
+      `${item.ARTICULO}\n${item.DESCRIPCION || ""}`,
+      sol,
+      prep,
+      ver,
+      dif
+    ];
   });
 
-  // 🖋️ Pie de página
-  const footerText = "Documento generado automáticamente por el sistema WMS";
-  doc.setFontSize(9);
-  doc.setTextColor(100);
-  doc.text(footerText, marginX, doc.internal.pageSize.height - 20);
+  // --- CONFIGURACIÓN DE LA TABLA ---
+  doc.autoTable({
+    head: [["ARTÍCULO / DESCRIPCIÓN", "SOLICITADA", "PREPARADA", "VERIFICADA", "DIFERENCIA"]],
+    body: rows,
+    // AGREGAMOS EL PIE DE TABLA (FOOTER)
+    foot: [[
+      "TOTALES", 
+      totalSol.toFixed(totalSol % 1 === 0 ? 0 : 2), 
+      totalPrep.toFixed(totalPrep % 1 === 0 ? 0 : 2), 
+      totalVer.toFixed(totalVer % 1 === 0 ? 0 : 2), 
+      totalDif.toFixed(totalDif % 1 === 0 ? 0 : 2)
+    ]],
+    startY: currentY + 30,
+    theme: 'grid',
+    styles: { fontSize: 8, halign: "center", valign: "middle" },
+    headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255], fontStyle: 'bold' },
+    // Estilo para la fila de totales
+    footStyles: { fillColor: [224, 242, 241], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 9 },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 220 } 
+    }
+  });
 
-  // 💾 Guardar con nombre dinámico (fecha incluida)
-  const nombreArchivo = `Reporte_Paquete_${pPaquete}_${fechaStr.replace(
-    /\//g,
-    "-"
-  )}.pdf`;
+  // --- OBSERVACIONES ---
+  const finalY = doc.lastAutoTable.finalY + 30;
+  const obsText = document.getElementById("observaciones")?.value || "Sin observaciones";
+  
+  doc.setFontSize(10).setFont("helvetica", "bold");
+  doc.text("Observaciones:", marginX, finalY);
+  
+  doc.setFont("helvetica", "normal").setFontSize(9);
+  const splitObs = doc.splitTextToSize(obsText, pageWidth - (marginX * 2));
+  doc.text(splitObs, marginX, finalY + 15);
+
+  // --- PIE DE PÁGINA ---
+  doc.setTextColor(100);
+  doc.text("Documento generado automáticamente por el sistema WMS", marginX, doc.internal.pageSize.height - 20);
+
+  const nombreArchivo = `Reporte_Detalle_${pPaquete}_${fechaStr.replace(/\//g, "-")}.pdf`;
   doc.save(nombreArchivo);
 }
+
+function exportarExcelPaquete() {
+    const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
+    // Usamos dataOriginal para asegurar que tenemos todas las propiedades (incluso REFERENCIA)
+    const dataParaExcel = (typeof dataOriginal !== 'undefined' && dataOriginal.length > 0) ? dataOriginal : [];
+
+    if (dataParaExcel.length === 0) {
+        Swal.fire("Error", "No hay datos para exportar", "error");
+        return;
+    }
+
+    // 1. Obtener todas las llaves (columnas) presentes en el primer objeto
+    const todasLasColumnas = Object.keys(dataParaExcel[0]);
+
+    // 2. Preparar los datos y calcular totales dinámicamente
+    // Solo sumaremos las columnas que definimos previamente como numéricas
+    const columnasASumar = ["CANT_PREPARADA", "CANT_SOLICITADA", "CANT_VERIFICADA", "DIFERENCIA", "DIF"];
+    let totales = {};
+
+    // Inicializar el objeto de totales con vacíos
+    todasLasColumnas.forEach(col => totales[col] = "");
+
+    const filas = dataParaExcel.map(item => {
+        let filaModificada = { ...item }; // Copia el objeto original
+        
+        columnasASumar.forEach(col => {
+            // Buscamos la columna (ignorando mayúsculas/minúsculas)
+            const nombreReal = todasLasColumnas.find(c => c.toUpperCase() === col);
+            if (nombreReal) {
+                const valor = parseFloat(item[nombreReal]) || 0;
+                totales[nombreReal] = (parseFloat(totales[nombreReal]) || 0) + valor;
+            }
+        });
+        return filaModificada;
+    });
+
+    // 3. Formatear la fila de totales
+    const primeraColumna = todasLasColumnas[0];
+    totales[primeraColumna] = "TOTALES";
+
+    // 4. Agregar la fila de totales al final del array
+    filas.push(totales);
+
+    // 5. Crear el libro de Excel
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(filas);
+
+    // 6. Formatear encabezados (opcional: poner en mayúsculas y quitar guiones bajos)
+    // Esto es automático con json_to_sheet, pero podrías personalizarlo.
+
+    // 7. Auto-ajustar el ancho de las columnas basado en el contenido
+    const wscols = todasLasColumnas.map(col => ({
+        wch: Math.max(col.length, 12) // Mínimo 12 caracteres de ancho
+    }));
+    ws['!cols'] = wscols;
+
+    // 8. Añadir la hoja y descargar
+    XLSX.utils.book_append_sheet(wb, ws, "Datos Completos");
+    
+    const fecha = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `Detalle_Completo_Paquete_${pPaquete}_${fecha}.xlsx`);
+}
+
+
+// function exportarExcelPaquete() {
+//     const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
+//     const dataParaExcel = packagesDataForPDF(); // Reutilizamos la data actual
+
+//     if (dataParaExcel.length === 0) {
+//         Swal.fire("Error", "No hay datos para exportar", "error");
+//         return;
+//     }
+
+//     // 1. Preparar los datos (Mapeo de columnas)
+//     let totalSol = 0, totalPrep = 0, totalVer = 0, totalDif = 0;
+
+//     const filas = dataParaExcel.map(item => {
+//         const sol = parseFloat(item.CANT_SOLICITADA) || 0;
+//         const prep = parseFloat(item.CANT_PREPARADA) || 0;
+//         const ver = parseFloat(item.CANT_VERIFICADA) || 0;
+//         const dif = parseFloat(item.DIFERENCIA) || 0;
+
+//         totalSol += sol;
+//         totalPrep += prep;
+//         totalVer += ver;
+//         totalDif += dif;
+
+//         return {
+//             "ARTÍCULO": item.ARTICULO,
+//             "DESCRIPCIÓN": item.DESCRIPCION || "",
+//             "SOLICITADA": sol,
+//             "PREPARADA": prep,
+//             "VERIFICADA": ver,
+//             "DIFERENCIA": dif
+//         };
+//     });
+
+//     // 2. Agregar fila de totales al final
+//     filas.push({
+//         "ARTÍCULO": "TOTALES",
+//         "DESCRIPCIÓN": "",
+//         "SOLICITADA": totalSol,
+//         "PREPARADA": totalPrep,
+//         "VERIFICADA": totalVer,
+//         "DIFERENCIA": totalDif
+//     });
+
+//     // 3. Crear el libro y la hoja de trabajo
+//     const wb = XLSX.utils.book_new();
+//     const ws = XLSX.utils.json_to_sheet(filas);
+
+//     // 4. Ajustar el ancho de las columnas (opcional pero recomendado)
+//     const wscols = [
+//         { wch: 20 }, // Artículo
+//         { wch: 40 }, // Descripción
+//         { wch: 12 }, // Solicitada
+//         { wch: 12 }, // Preparada
+//         { wch: 12 }, // Verificada
+//         { wch: 12 }  // Diferencia
+//     ];
+//     ws['!cols'] = wscols;
+
+//     // 5. Añadir la hoja al libro
+//     XLSX.utils.book_append_sheet(wb, ws, "Reporte Paquetes");
+
+//     // 6. Descargar el archivo
+//     const fecha = new Date().toISOString().slice(0, 10);
+//     XLSX.writeFile(wb, `Reporte_Paquete_${pPaquete}_${fecha}.xlsx`);
+// }
+
+// async function imprimirPaqueteReporte() {
+//   const { jsPDF } = window.jspdf;
+//   const doc = new jsPDF("p", "pt");
+
+//   const marginX = 40;
+//   let currentY = 40;
+
+//   // 1. Datos de cabecera
+//   const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
+//   const fecha = new Date();
+//   const fechaStr = fecha.toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
+//   const horaStr = fecha.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+//   const fechaCompleta = `Fecha: ${fechaStr}  ${horaStr}`;
+//   const pageWidth = doc.internal.pageSize.width;
+
+//   // 2. Renderizar Encabezados del Documento
+//   doc.setFont("helvetica", "normal").setFontSize(9);
+//   const fechaWidth = doc.getTextWidth(fechaCompleta);
+//   doc.text(fechaCompleta, pageWidth - fechaWidth - marginX, currentY);
+
+//   currentY += 25;
+//   doc.setFont("helvetica", "bold").setFontSize(16);
+//   doc.text("CENTRAL DE LUBRICANTES", pageWidth / 2, currentY, { align: "center" });
+
+//   currentY += 25;
+//   doc.setFontSize(14);
+//   doc.text("REPORTE DE DETALLE DE PAQUETE", pageWidth / 2, currentY, { align: "center" });
+
+//   currentY += 20;
+//   doc.setFontSize(12);
+//   doc.text(`N° de Traslado: ${pPaquete}`, pageWidth / 2, currentY, { align: "center" });
+
+//   // 3. Preparar los datos para AutoTable (Transformación Manual)
+//   // Usamos la data que está actualmente cargada (paquetesCreadosArray o dataOriginal)
+//   // IMPORTANTE: Si usas buscador, asegúrate de pasar la data filtrada
+//   const rows = packagesDataForPDF().map(item => [
+//     // Concatenamos Código y Descripción con un salto de línea para el PDF
+//     `${item.ARTICULO}\n${item.DESCRIPCION || ""}`,
+//     item.CANT_SOLICITADA || 0,
+//     item.CANT_PREPARADA || 0,
+//     item.CANT_VERIFICADA || 0,
+//     item.DIFERENCIA || 0
+//   ]);
+
+//   const headers = [["ARTÍCULO / DESCRIPCIÓN", "SOLICITADA", "PREPARADA", "VERIFICADA", "DIFERENCIA"]];
+
+//   // 4. Generar la Tabla
+//   doc.autoTable({
+//     head: headers,
+//     body: rows,
+//     startY: currentY + 30,
+//     theme: 'grid',
+//     styles: { fontSize: 8, halign: "center", valign: "middle" },
+//     headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255], fontStyle: 'bold' },
+//     columnStyles: {
+//       0: { halign: 'left', cellWidth: 220 } // Columna de artículo más ancha y alineada a la izquierda
+//     },
+//     // Lógica para el pie de la tabla (Totales)
+//     didParseCell: function (data) {
+//         // Podrías agregar colores a la columna de diferencia aquí si quisieras
+//     }
+//   });
+
+//   // 5. Agregar Observaciones al final de la tabla
+//   const finalY = doc.lastAutoTable.finalY + 30;
+//   const obsText = document.getElementById("observaciones")?.value || "Sin observaciones";
+  
+//   doc.setFontSize(10).setFont("helvetica", "bold");
+//   doc.text("Observaciones:", marginX, finalY);
+  
+//   doc.setFont("helvetica", "normal").setFontSize(9);
+//   // splitTextToSize ayuda a que el texto no se salga de la hoja
+//   const splitObs = doc.splitTextToSize(obsText, pageWidth - (marginX * 2));
+//   doc.text(splitObs, marginX, finalY + 15);
+
+//   // 6. Pie de página fijo
+//   doc.setFontSize(9);
+//   doc.setTextColor(100);
+//   doc.text("Documento generado automáticamente por el sistema WMS", marginX, doc.internal.pageSize.height - 20);
+
+//   // 7. Guardar
+//   const nombreArchivo = `Reporte_Detalle_${pPaquete}_${fechaStr.replace(/\//g, "-")}.pdf`;
+//   doc.save(nombreArchivo);
+// }
+
+/**
+ * Función auxiliar para obtener la data actual (filtrada o no)
+ */
+function packagesDataForPDF() {
+    // Si tienes un buscador, aquí deberías retornar la data que el usuario está viendo.
+    // Si no, retornamos el array global.
+    return typeof dataOriginal !== 'undefined' && dataOriginal.length > 0 ? dataOriginal : [];
+}
+
+
+// async function imprimirPaqueteReporte() {
+//   const { jsPDF } = window.jspdf;
+//   const doc = new jsPDF("p", "pt"); // Portrait, puntos
+
+//   const marginX = 40;
+//   const marginY = 40;
+
+//   // 🧾 Obtener número de traslado desde localStorage
+//   const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
+
+//   // 📅 Obtener fecha y hora actual
+//   const fecha = new Date();
+//   const fechaStr = fecha.toLocaleDateString("es-ES", {
+//     year: "numeric",
+//     month: "2-digit",
+//     day: "2-digit",
+//   });
+//   const horaStr = fecha.toLocaleTimeString("es-ES", {
+//     hour: "2-digit",
+//     minute: "2-digit",
+//   });
+//   const fechaCompleta = `Fecha: ${fechaStr}  ${horaStr}`;
+
+//   // 📄 Ancho de página (para centrar texto)
+//   const pageWidth = doc.internal.pageSize.width;
+
+//   // 📅 Fecha en esquina superior derecha (arriba del título)
+//   doc.setFont("helvetica", "normal");
+//   doc.setFontSize(9);
+//   const fechaWidth = doc.getTextWidth(fechaCompleta);
+//   doc.text(fechaCompleta, pageWidth - fechaWidth - marginX, marginY - 10);
+
+//   // 🏢 Nombre de la empresa (centrado)
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(16);
+//   const empresa = "CENTRAL DE LUBRICANTES";
+//   const empresaWidth = doc.getTextWidth(empresa);
+//   doc.text(empresa, (pageWidth - empresaWidth) / 2, marginY + 10);
+
+//   // 📘 Título principal (centrado)
+//   doc.setFontSize(14);
+//   const titulo = "REPORTE DE PAQUETES DE TRASLADO";
+//   const tituloWidth = doc.getTextWidth(titulo);
+//   doc.text(titulo, (pageWidth - tituloWidth) / 2, marginY + 35);
+
+//   // 🔢 Subtítulo: número de traslado (centrado)
+//   doc.setFontSize(12);
+//   const subtitulo = `N° de Traslado: ${pPaquete}`;
+//   const subtituloWidth = doc.getTextWidth(subtitulo);
+//   doc.text(subtitulo, (pageWidth - subtituloWidth) / 2, marginY + 55);
+
+//   // 📊 Generar tabla desde HTML
+//   doc.autoTable({
+//     html: "#tblResultados",
+//     startY: marginY + 75,
+//     styles: { fontSize: 9, halign: "center" },
+//     headStyles: { fillColor: [63, 81, 181], textColor: [255, 255, 255] },
+//     alternateRowStyles: { fillColor: [245, 245, 245] },
+//     margin: { left: marginX, right: marginX },
+//   });
+
+//   // 🖋️ Pie de página
+//   const footerText = "Documento generado automáticamente por el sistema WMS";
+//   doc.setFontSize(9);
+//   doc.setTextColor(100);
+//   doc.text(footerText, marginX, doc.internal.pageSize.height - 20);
+
+//   // 💾 Guardar con nombre dinámico (fecha incluida)
+//   const nombreArchivo = `Reporte_Paquete_${pPaquete}_${fechaStr.replace(
+//     /\//g,
+//     "-"
+//   )}.pdf`;
+//   doc.save(nombreArchivo);
+// }
+
+
 // async function imprimirPaqueteReporte() {
 //     let pSistema = "WMS";
 //     let pUsuario = document.getElementById('hUsuario').value;
@@ -532,3 +1169,4 @@ function limpiarResultadoGeneral() {
   localStorage.removeItem("SearchParameterFlag");
   localStorage.removeItem("parametrosBusquedaPaquete");
 }
+

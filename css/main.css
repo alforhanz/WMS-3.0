@@ -2562,3 +2562,7 @@ display: block;
 #tblResultados tfoot {
     background-color: #eeeeee;
 }
+
+.rptPaquetes{
+  margin-top: 25px;
+}
