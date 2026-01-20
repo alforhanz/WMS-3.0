@@ -56,25 +56,25 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
     pConsecutivo +
     "&pEstado=" +
     pEstado;
-  console.log("Parametros Detalle contenedor\n" + params);
+  //console.log("Parametros Detalle contenedor\n" + params);
 
   fetch(env.API_URL + "contenedor" + params, myInit) //obtierne las lineas del contenedor
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        console.log(
-          "Respuesta del API:\n" +
-            "Contenedor-Array:" +
-            result.contenedor.length +
-            "\nmsg: " +
-            result.msg +
-            "\nmessage: " +
-            result.message
-        );
+        //console.log(
+        //   "Respuesta del API:\n" +
+        //     "Contenedor-Array:" +
+        //     result.contenedor.length +
+        //     "\nmsg: " +
+        //     result.msg +
+        //     "\nmessage: " +
+        //     result.message
+        // );
         if (result.contenedor.length != 0) {
           detalleLineasContenedor = result.contenedor;
-          console.log("Lineas de Contenedor:");
-          console.log(detalleLineasContenedor);
+          //console.log("Lineas de Contenedor:");
+          //console.log(detalleLineasContenedor);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleLineasContenedor.some(
             (detalle) =>
@@ -85,7 +85,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
             // Llamar a armarTablaLectura después de armar la tabla de verificación
             armarTablaLectura(detalleLineasContenedor);
             guardarTablaEnArray();
-            console.log("guardado parcial");
+            //console.log("guardado parcial");
           }
           armarTablaVerificacion(detalleLineasContenedor);
         } else {
@@ -993,7 +993,7 @@ function guardaParcialMente() {
   }
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = encodeURIComponent(JSON.stringify(detalles));
-  console.log("JSONDetalles:\n\t:" + jsonDetalles);
+  console.log("JSONDetalles:\n\t:" + decodeURIComponent(jsonDetalles) );
   const params =
     "?pSistema=" +
     pSistema +
@@ -1015,16 +1015,16 @@ function guardaParcialMente() {
     pBodegaDestino +
     "&pUsuarioAutorizacion=" +
     pUsuarioAutorizacion;
-  console.log("Parametros: \n" + params);
+  ////console.log("Parametros: \n" + params);
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log("Respuesta del SP");
-      console.log(result.contenedor);
-      console.log("mensaje " + result.message);
+      //console.log("Respuesta del SP");
+      //console.log(result.contenedor);
+      //console.log("mensaje " + result.message);
 
-      // console.log("Respuesta Contenedor");
-      // console.log(result);
+      // //console.log("Respuesta Contenedor");
+      // //console.log(result);
 
       if (result.msg === "SUCCESS") {
         if (result.contenedor.length != 0) {
@@ -1044,7 +1044,7 @@ function guardaParcialMente() {
           });
         }
       } else {
-        console.log(result.message);
+        //console.log(result.message);
       }
     });
 } //fin fn
@@ -1101,18 +1101,18 @@ function guardaParcialMente() {
 //              fetch(env.API_URL + "wmsautorizaciones"+params)
 //               .then((response) => response.json())
 //               .then((resultado) => {
-//                 console.log("Autorizacion Resultado: ");
-//                 console.log(resultado.autorizacion);
+//                 //console.log("Autorizacion Resultado: ");
+//                 //console.log(resultado.autorizacion);
 //                 const respuesta = resultado.autorizacion[1];
 //                 // if (respuesta &&respuesta.USUARIO === result.value.usuario && respuesta.PIN === result.value.contraseña) {
 //               if(respuesta === "OK") {
-//                   console.log("Credenciales válidas");
-//                   console.log(respuesta.USUARIO);
+//                   //console.log("Credenciales válidas");
+//                   //console.log(respuesta.USUARIO);
 //                   localStorage.setItem("UsuarioAutorizacion",respuesta.USUARIO);
 //                   // Realiza la acción deseada, como procesar el contenedor
 //                   procesarContenedor();
 //                 } else {
-//                   console.log("Credenciales inválidas");
+//                   //console.log("Credenciales inválidas");
 //                   Swal.fire({
 //                     icon: "error",
 //                     title: "Error",
@@ -1323,7 +1323,7 @@ function procesarContenedor() {
   }
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = encodeURIComponent(JSON.stringify(detalles));
-  console.log("JSONDetalles:\n\t:" + jsonDetalles);
+  console.log("JSONDetalles:\n\t:" + decodeURIComponent(jsonDetalles));
   const params =
     "?pSistema=" +
     pSistema +
@@ -1349,9 +1349,9 @@ function procesarContenedor() {
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      // console.log("Respuesta del SP");
-      // console.log(result.contenedor);
-      // console.log('mensaje '+result.message);
+      console.log("Respuesta del SP");
+      console.log(result.contenedor);
+      console.log('mensaje '+result.message);
 
       console.log("Respuesta Contenedor");
       console.log(result);
@@ -1370,7 +1370,7 @@ function procesarContenedor() {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
               window.location.href = "BusquedaDeContenedores.html";
-              localStorage.clear();
+              //localStorage.clear();
             }
           });
         }
