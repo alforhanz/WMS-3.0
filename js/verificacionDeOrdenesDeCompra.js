@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
+  // let usuario = document.getElementById("hUsuario").value;
+  // console.log("hUsuario:", usuario);
+  // //localStorage.setItem('UserID',usuario);
 
   const busqueda = localStorage.getItem("autoSearchOrdenDeComprasList");
   localStorage.setItem("switchLecturaState", "true");
@@ -26,6 +26,35 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         $("#toggleSwitch").prop("checked", true);
       }
+
+      // Establecer los valores de los campos de fecha
+      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
+
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
 
       enviarDatosControlador(
         pBodega,
@@ -130,7 +159,7 @@ function enviarDatosControlador(
     pFechaHasta;
 
   localStorage.setItem("parametrosBusquedaOrdenesDeCompraList", params);
-  localStorage.setItem("autoSearchOrdenDeComprasList", "false");
+  localStorage.setItem("autoSearchOrdenDeComprasList", "true");
 
   fetch(env.API_URL + "wmsordenesdecompras/L" + params, myInit)
     .then((response) => response.json())

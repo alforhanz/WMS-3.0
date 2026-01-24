@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <!--Import Materialize Icons-->
@@ -19,9 +20,9 @@
   <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
   <!-- FONTS -->
-  <style>  
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-  </style>  
+  </style>
   <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/encabezado.js" type="text/javascript"></script>
@@ -38,39 +39,57 @@
     <div id="resultadoBusqueda">
       <div id="carga" class="carga-style"></div>
       <div class="container">
-        <h2 class="titulo-vista">Detalles de Paquetes Creados</h2>   
-         <div class="row"><label id="documento"></label></div>    
-          <div id="menup"></div>
-          <div class="row">
-             <label id="cantidadDeRegistros"> Registros:</label>           
-          </div>         
+
+        <div class="row">
+          <button id="btnRegresar" class="btn-descarga" onclick="regresar()">
+            <img src="img/icon/return-up.svg" alt="" class="retorno">
+            <label for="btnRegresar" id="lblRegresar">Regresar</label>        
+          </button>
+        </div>
         
-          <div class="row">
-            <div id="resultadoGeneral"></div>
-            <table id="tblResultados" class="display centered">
-              <thead>
-                <tr class="themeColor2">
-                  <th class=" lineasocstyle">Consecutivo</th>
-                  <th class=" lineasocstyle">Contenedor</th>
-                  <th class=" lineasocstyle">Articulo</th>
-                  <th class=" lineasocstyle">Cantidad<br>Preparada</th>
-                  <th class=" lineasocstyle">Cantidad<br>Verificada</th>
-                  <th class=" lineasocstyle">dif</th>                 
-                </tr>
-              </thead>
-              <tbody id="tblbodyResultados"></tbody>
-            </table>
-            <div id="resultadoPaginador"></div>
+        <h2 class="titulo-vista">Detalles de Paquetes Creados</h2>
+        <div class="row"><label id="documento"></label></div>
+        <div id="menup"></div>
+        <div class="row">
+          <label id="cantidadDeRegistros"> Registros:</label>
+        </div>
+        <div class="imppdf">
+          <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
+            <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
+          </button>
+          <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar reporte en PDF</label>
+        </div>
+        <div class="impexcel">
+          <button id="btnDescargarExcel" class="btn-descarga" onclick="exportarExcelPaquete()">
+            <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
+          </button>
+          <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel">Descargar Excel</label>
+        </div>
+
+
+
+        <div class="row rptPaquetes">
+          <div id="resultadoGeneral"></div>
+          <table id="tblResultados" class="display centered highlight responsive-table">
+            <thead>
+              <tr class="themeColor2"></tr>
+            </thead>
+            <tbody id="tblbodyResultados"></tbody>
+            <tfoot id="tblfootResultados"></tfoot>
+          </table>
+          <div id="resultadoPaginador"></div>
+        </div>
+        <div class="row" id="observacion">
+          <div class="input-field col s12">
+            <label id="lblObservaciones" for="observaciones">Observaciones</label>
+            <textarea placeholder="Observaciones" id="observaciones" type="text" readonly></textarea>
           </div>
-          <div class="imppdf">
-            <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
-              <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-            </button>
-            <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar reporte en PDF</label>
-          </div>
-    </div>
+        </div>
+
+      </div>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <!-- Incluir la biblioteca de jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>

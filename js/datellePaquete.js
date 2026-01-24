@@ -1170,3 +1170,6 @@ function limpiarResultadoGeneral() {
   localStorage.removeItem("parametrosBusquedaPaquete");
 }
 
+function regresar(){
+  window.location.href = "paqueteDeContenedoresVerificados.html";
+}

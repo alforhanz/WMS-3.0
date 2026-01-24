@@ -2,15 +2,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // Código que se ejecuta cuando el DOM se haya cargado
   console.log("El DOM se ha cargado completamente.");
 
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
+  // let usuario = document.getElementById("hUsuario").value;
+  // console.log("hUsuario:", usuario);
+  // //localStorage.setItem('UserID',usuario);
 
-  // Inicializar datepicker de Materialize
-  var elems = document.querySelectorAll(".datepicker");
-  var instances = M.Datepicker.init(elems, {
-    format: "yyyy-mm-dd", // Formato de fecha
-  });
+  // // Inicializar datepicker de Materialize
+  // var elems = document.querySelectorAll(".datepicker");
+  // var instances = M.Datepicker.init(elems, {
+  //   format: "yyyy-mm-dd", // Formato de fecha
+  // });
 
   // Verificar si existe una búsqueda previa
   let busquedaFlag = localStorage.getItem("autoSearchTraslados") === "true";
@@ -32,14 +32,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const fechaFin = obtenerValorParametro(parametrosBusqueda, "fechaFin");
 
     // Asignar los valores a los campos de fecha en el HTML
-    document.getElementById("fecha_ini").value = fechaIni;
-    document.getElementById("fecha_fin").value = fechaFin;
+    if(fechaIni) document.getElementById("fecha_ini").value = fechaIni;
+    if(fechaFin)document.getElementById("fecha_fin").value = fechaFin;
+     // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
 
-    // Actualizar el datepicker con los valores asignados
-    instances.forEach(function (instance) {
-      instance.setDate(new Date(fechaIni)); // Asignar la fecha inicial
-      instance.setDate(new Date(fechaFin)); // Asignar la fecha final
-    });
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? fechaIni : fechaFin;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
 
     // Llamar a la función que realiza la búsqueda con los parámetros guardados
     listadoTraslados(parametrosBusqueda);
@@ -85,7 +104,7 @@ function verTrasladosLista() {
   } else {
     var pFechaHasta = $("#fecha_fin").val();
     var pFechaDesde = $("#fecha_ini").val();
-    localStorage.setItem("autoSearchTraslados", "false"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
+    localStorage.setItem("autoSearchTraslados", "true"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
     let pModulo = "WMS_PK";
     let pOpcion = "S";
     let typeRpt = "R";

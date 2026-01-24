@@ -285,7 +285,10 @@
 .material-icons {   
     font-size: 18px!important;
 }
-
+#bodegaSelect {
+    width: 95%;
+    margin-bottom: 15px;;
+}
 }
 
 /* Medium and up (min-width: 40em = 640px) */

@@ -1,20 +1,21 @@
 const checkbox = document.getElementById("toggleSwitch");
 
-// Inicializar datepicker de Materialize
-var elems = document.querySelectorAll(".datepicker");
-var instances = M.Datepicker.init(elems, {
-  format: "yyyy-mm-dd", // Formato de fecha
-});
+// // Inicializar datepicker de Materialize
+// var elems = document.querySelectorAll(".datepicker");
+// var instances = M.Datepicker.init(elems, {
+//   format: "yyyy-mm-dd", // Formato de fecha
+// });
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM completamente cargado y parseado.");
 
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
+  // let usuario = document.getElementById("hUsuario").value;
+  // console.log("hUsuario:", usuario);
   //localStorage.setItem('UserID',usuario);
   const busqueda = localStorage.getItem("autoSearchPedidos");
 
   //revisar como toma el valor
   if (busqueda === "true") {
+  
     // Obtener los parámetros de búsqueda del localStorage
     const parametrosBusqueda = localStorage.getItem("parametrosBusqueda");
     if (parametrosBusqueda) {
@@ -30,18 +31,32 @@ document.addEventListener("DOMContentLoaded", function () {
       const pOpcion = params.get("pOpcion");
 
       // Establecer los valores de los campos de fecha
-      document.getElementById("fecha_ini").value = pFechaDesde;
-      document.getElementById("fecha_fin").value = pFechaHasta;
+      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
 
-      // Actualizar los datepickers de Materialize
-      var fechaIniElem = document.getElementById("fecha_ini");
-      var fechaFinElem = document.getElementById("fecha_fin");
-      var fechaIniInstance = M.Datepicker.getInstance(fechaIniElem);
-      var fechaFinInstance = M.Datepicker.getInstance(fechaFinElem);
-      fechaIniInstance.setDate(new Date(pFechaDesde));
-      fechaFinInstance.setDate(new Date(pFechaHasta));
-      fechaIniInstance.gotoDate(new Date(pFechaDesde));
-      fechaFinInstance.gotoDate(new Date(pFechaHasta));
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
 
       if (pOpcion === "FPK") {
         $("#toggleSwitch").prop("checked", false);
@@ -58,7 +73,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pUsuario,
         pOpcion
       );
+
     }
+      mostrarLoader();
   }
 });
 
@@ -95,6 +112,7 @@ function validarFormulario() {
       pUsuario,
       pOpcion
     );
+
   }
 }
 
@@ -106,8 +124,8 @@ function listadoPedido(
   pUsuario,
   pOpcion
 ) {
-  localStorage.setItem("autoSearchPedidos", "false"); // Aquí se establece el valor 'false' para la búsqueda de las órdenes de compra
-
+  localStorage.setItem("autoSearchPedidos", "true"); // Aquí se establece el valor 'false' para la búsqueda de las órdenes de compra
+mostrarLoader();
   const params =
     "?pBodega=" +
     pBodega +
@@ -123,7 +141,7 @@ function listadoPedido(
     pOpcion;
   localStorage.setItem("BodegaUsuario", pBodega);
   localStorage.setItem("parametrosBusqueda", params);
-  mostrarLoader();
+  //mostrarLoader();
 
   fetch(env.API_URL + "wmsverificacionpedidos/P" + params, myInit)
     .then((response) => response.json())

@@ -1,13 +1,47 @@
 document.addEventListener("DOMContentLoaded", function () {
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
+  // let usuario = document.getElementById("hUsuario").value;
+  // console.log("hUsuario:", usuario);
+  // //localStorage.setItem('UserID',usuario);
 
   const busqueda = localStorage.getItem("busquedaPrevia");
 
   //revisar como toma el valor
   if (busqueda) {
     const parametosBusquedaOC = localStorage.getItem("parametrosBusquedaOC");
+    
+    // Extraer los valores de 'fechaIni' y 'fechaFin' de la cadena de parámetros
+    const pFechaDesde = obtenerValorParametro(parametosBusquedaOC, "pFechaDesde");
+    const pFechaHasta = obtenerValorParametro(parametosBusquedaOC, "pFechaHasta");
+
+     // Establecer los valores de los campos de fecha
+      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
+
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
+
     parametosBusquedaOC != null
       ? enviarDatosControlador(parametosBusquedaOC)
       : null;
@@ -228,3 +262,11 @@ const fecha_fin = document.getElementById("fecha_fin");
 fecha_fin.addEventListener("change", function () {
   limpiarResultadoGeneral();
 });
+// Función para extraer el valor de un parámetro específico de la cadena de búsqueda
+function obtenerValorParametro(parametros, nombreParametro) {
+  // Crear un objeto URLSearchParams para manejar la cadena de parámetros
+  const urlParams = new URLSearchParams(parametros);
+
+  // Retornar el valor del parámetro solicitado
+  return urlParams.get(nombreParametro);
+}

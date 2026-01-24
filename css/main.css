@@ -2566,3 +2566,10 @@ display: block;
 .rptPaquetes{
   margin-top: 25px;
 }
+.retorno{
+  width: 72px; 
+}
+#lblRegresar{
+  font-size: 14px;
+  color: #218838;
+}

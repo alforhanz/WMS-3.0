@@ -8,10 +8,10 @@ let totalSalidasGlobal = 0;
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  var elems = document.querySelectorAll(".datepicker");
-  var instances = M.Datepicker.init(elems, {
-    format: "yyyy-mm-dd",
-  });
+  // var elems = document.querySelectorAll(".datepicker");
+  // var instances = M.Datepicker.init(elems, {
+  //   format: "yyyy-mm-dd",
+  // });
 
   // Verificar si existe una búsqueda previa
   let busquedaFlag = localStorage.getItem("autoSearchTraslados") === "true";
@@ -19,16 +19,45 @@ document.addEventListener("DOMContentLoaded", function () {
   if (busquedaFlag) {
     let parametrosBusqueda = localStorage.getItem("parametrosBusqueda");
 
-    const fechaIni = obtenerValorParametro(parametrosBusqueda, "fechaIni");
-    const fechaFin = obtenerValorParametro(parametrosBusqueda, "fechaFin");
+    const pFechaDesde = obtenerValorParametro(parametrosBusqueda, "fechaIni");
+    const pFechaHasta = obtenerValorParametro(parametrosBusqueda, "fechaFin");
 
-    $("#fecha_ini").val(fechaIni);
-    $("#fecha_fin").val(fechaFin);
+    
+      // Establecer los valores de los campos de fecha
+      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
 
-    instances.forEach(function (instance) {
-      instance.setDate(new Date(fechaIni));
-      instance.setDate(new Date(fechaFin));
-    });
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
+    // $("#fecha_ini").val(fechaIni);
+    // $("#fecha_fin").val(fechaFin);
+
+    // instances.forEach(function (instance) {
+    //   instance.setDate(new Date(fechaIni));
+    //   instance.setDate(new Date(fechaFin));
+    // });
 
     listadoTraslados(parametrosBusqueda);
   } else {
@@ -832,8 +861,6 @@ function descargarExcel() {
 
   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

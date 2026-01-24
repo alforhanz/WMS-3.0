@@ -1,10 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  ////console.log("BUSQUEDA DE CONTENEDORES DOM cargado...");
-  let usuario = document.getElementById("hUsuario").value;
-  ////console.log(usuario);
-  localStorage.setItem("UserID", usuario);
   const busqueda = localStorage.getItem("SearchParameterFlag");
   localStorage.setItem("switch_procesados", "false");
   if (busqueda === "true") {
@@ -22,6 +18,36 @@ document.addEventListener("DOMContentLoaded", function () {
       const pBodegaDestino = params.get("pBodegaDestino") ?? "";
       const pFechaDesde = params.get("pFechaDesde") ?? "";
       const pFechaHasta = params.get("pFechaHasta") ?? "";
+
+      
+      // Establecer los valores de los campos de fecha
+      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
+
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
 
       enviarDatosControlador(
         pSistema,
@@ -80,7 +106,6 @@ function validarBusquedaContenedor() {
 
   let switchContenedor = localStorage.getItem("contenedorSwitch");
   let pSistema = "WMS";
-  // let pUsuario = document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
   let pUsuario = document.getElementById("hUsuario").value;
   let pOpcion = switchContenedor === "false" ? "A" : "E";
   let pBodegaEnvia = document.getElementById("bodega").value;
@@ -264,9 +289,6 @@ function resultadosVerificacionContenedores(desde, hasta) {
     htm += `<td>${key.Contenedor || ""}</td>`;
     //CANT SOLICITADA
     htm += `<td>${Number(key.LineaConsecutivo || 0).toFixed(2)}</td>`;
-    // //informacion de columna CANT LEIDAquemada, en espera de LineaAprobada Vitalio agregar al SP
-    //  htm += `<td>${Number(key.LineaContada || 0).toFixed(2)}</td>`;
-    //CANT PREPADADA //informacion quemada, en espera de LineaAprobada Vitalio agregar al SP
     htm += `<td>${
       pOpcion === "A"
         ? Number(key.LineaPreparada || 0).toFixed(2)

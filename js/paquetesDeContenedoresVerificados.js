@@ -254,6 +254,41 @@ document.addEventListener("DOMContentLoaded", function () {
     const BodegaOrigen = params.get("BodegaOrigen") ?? "";
     const BodegaDestino = params.get("BodegaDestino") ?? "";
     const Aplicacion = params.get("Aplicacion") ?? "";
+    
+    
+    //logica para el calendario:
+    // 1. Asignación inmediata al valor del input
+    if (fechaIni) document.getElementById("fecha_ini").value = fechaIni;
+    if (fechaFin) document.getElementById("fecha_fin").value = fechaFin;
+
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
+
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? fechaIni : fechaFin;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
+
+
+
+
 
     const para =
                 "?pSistema=" +
@@ -274,6 +309,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 Aplicacion;
     enviarDatosControlador(para);
   }
+
+
 
       const buscador = document.getElementById('txtBuscadorTabla');
     if (buscador) {

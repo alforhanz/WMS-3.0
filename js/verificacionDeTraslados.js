@@ -1,18 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Código que se ejecuta cuando el DOM se haya cargado
-  console.log(
-    "El DOM se ha cargado completamente. \nVerificacion de Traslados..."
-  );
-  let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
-
-  // Inicializar datepicker de Materialize
-  var elems = document.querySelectorAll(".datepicker");
-  var instances = M.Datepicker.init(elems, {
-    format: "yyyy-mm-dd", // Formato de fecha
-  });
-
+  console.log("El DOM se ha cargado completamente. \nVerificacion de Traslados...");
   // Verificar si existe una búsqueda previa
   let busquedaFlag = localStorage.getItem("autoSearchTraslados") === "true";
 
@@ -28,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       $("#toggleSwitch").prop("checked", false);
     }
-
     if (entradasalida) {
       $("#trasladosSwitch").prop("checked", true);
     } else {
@@ -37,26 +24,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Extraer los valores de 'fechaIni' y 'fechaFin' de la cadena de parámetros
     const fechaIni = obtenerValorParametro(parametrosBusqueda, "fechaIni");
-    const fechaFin = obtenerValorParametro(parametrosBusqueda, "fechaFin");
+    const fechaFin = obtenerValorParametro(parametrosBusqueda, "fechaFin");   
+      // Establecer los valores de los campos de fecha
+      if(fechaIni) document.getElementById("fecha_ini").value = fechaIni;
+      if(fechaFin) document.getElementById("fecha_fin").value = fechaFin;
+      // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+          setTimeout(() => {
+              // Forzar a los labels a subir
+              M.updateTextFields();
 
-    // // Asignar los valores a los campos de fecha en el HTML
-    // document.getElementById('fecha_ini').value = fechaIni;
-    // document.getElementById('fecha_fin').value = fechaFin;
+              // Reinicializar los datepickers específicamente con la fecha guardada
+              const inputs = document.querySelectorAll('.datepicker');
+              inputs.forEach(input => {
+                  const fechaGuardada = input.id === 'fecha_ini' ? fechaIni : fechaFin;
+                  
+                  if (fechaGuardada) {
+                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
 
-    // Asignar los valores a los campos de fecha en el HTML usando jQuery
-    $("#fecha_ini").val(fechaIni);
-    $("#fecha_fin").val(fechaFin);
-
-    // Actualizar el datepicker con los valores asignados
-    instances.forEach(function (instance) {
-      instance.setDate(new Date(fechaIni)); // Asignar la fecha inicial
-      instance.setDate(new Date(fechaFin)); // Asignar la fecha final
-    });
-
+                      M.Datepicker.init(input, {
+                          format: 'yyyy-mm-dd',
+                          defaultDate: d,
+                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+                          autoClose: true
+                      });
+                  }
+              });
+          }, 100);
     // Llamar a la función que realiza la búsqueda con los parámetros guardados
     listadoTraslados(parametrosBusqueda);
   } else {
-    // Si no hay búsqueda previa, limpiar el localStorage
     localStorage.clear();
   }
 
@@ -68,10 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
   localStorage.setItem("username", user.value);
   localStorage.setItem("bodegaUser", bodega);
   localStorage.setItem("trasladosprocesados", estadoSwitchTrasPrep.checked);
-  localStorage.setItem(
-    "entrada_Salida_Traslado_switch",
-    trasladocheckbox.checked
-  );
+  localStorage.setItem("entrada_Salida_Traslado_switch", trasladocheckbox.checked);
 });
 
 function obtenerValorParametro(parametros, nombreParametro) {
@@ -93,7 +88,7 @@ function verTrasladosLista() {
   } else {
     var pFechaHasta = $("#fecha_fin").val();
     var pFechaDesde = $("#fecha_ini").val();
-    localStorage.setItem("autoSearchTraslados", "false"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
+    localStorage.setItem("autoSearchTraslados", "true"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
     let pModulo = "WMS_VT";
     let typeRpt = "R";
     const trasladosProcesados = localStorage.getItem("trasladosprocesados");
@@ -344,7 +339,6 @@ function entradaSalida() {
 
 /////////////// Agregar un evento de cambio al checkbox/////////////
 const mostrar_procesados_checkbox = document.getElementById("toggleSwitch");
-
 mostrar_procesados_checkbox.addEventListener("change", function () {
   localStorage.setItem(
     "trasladosprocesados",

@@ -10,7 +10,7 @@ var detalleLineasContenedoreses = [];
  * @description función que carga el Document Object Model
  */
 document.addEventListener("DOMContentLoaded", function () {
- const obs = localStorage.getItem('Observaciones');
+    const obs = localStorage.getItem('Observaciones');
     const observacionesElemento = document.getElementById('observaciones');
 
     // Validación defensiva: Solo actuar si el elemento existe
@@ -1889,6 +1889,7 @@ function calcularTotalesVerificacion() {
     const filaTotal = document.createElement('tr');
     filaTotal.style.fontWeight = 'bold'; // Estilo para resaltar los totales
     filaTotal.style.backgroundColor = '#f0f0f0'; // Fondo ligero
+    filaTotal.style.fontSize = '14px';
 
     // Crear las celdas de la fila de totales (8 columnas en total)
     
