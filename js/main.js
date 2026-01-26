@@ -94,20 +94,34 @@ $(document).ready(function () {
 /////////////////////////////////////// LOGOUT //////////////////////////-------------
 //------------------------------------------------------------------------------------
 function logout() {
-  // Eliminar todas las variables de sessionStorage
-  Object.keys(sessionStorage).forEach(function (key) {
-    sessionStorage.removeItem(key);
-  });
+    // 1. Limpiar Storage
+    localStorage.clear();
+    sessionStorage.clear();
 
-  // Eliminar todas las variables de localStorage
-  Object.keys(localStorage).forEach(function (key) {
-    localStorage.removeItem(key);
-  });
+    // 2. Limpiar cookies (Opcional pero recomendado para seguridad)
+    document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
 
-  // Redirigir al usuario a la página de inicio
-  window.location.href = "index.html";
-  // window.location.href = 'http://200.124.12.146:8108/session/close.php';
+    // 3. Redirigir al Login agregando un "Timestamp" para evitar que cargue el index desde caché
+    window.location.href = "index.html?nocache=" + (new Date()).getTime();
 }
+
+// function logout() {
+//   // Eliminar todas las variables de sessionStorage
+//   Object.keys(sessionStorage).forEach(function (key) {
+//     sessionStorage.removeItem(key);
+//   });
+
+//   // Eliminar todas las variables de localStorage
+//   Object.keys(localStorage).forEach(function (key) {
+//     localStorage.removeItem(key);
+//   });
+
+//   // Redirigir al usuario a la página de inicio
+//   window.location.href = "index.html";
+  
+// }
 //-----------------------------------------------------------------------------------
 function enlace(link) {
   window.location.href = link;

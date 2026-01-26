@@ -28,17 +28,38 @@ if (localStorage.checkbox && localStorage.checkbox !== "") {
   emailInput.value = "";
 }
 
-window.onload = function () {
-  Object.keys(localStorage).forEach(function (key) {
-    localStorage.removeItem(key);
-  });
-};
+// window.onload = function () {
+//   Object.keys(localStorage).forEach(function (key) {
+//     localStorage.removeItem(key);
+//   });
+// };
+// window.onload = function () {
+//     // Solo borramos si NO queremos recordar al usuario
+//     // O mejor aún, borramos solo los datos operativos, no los de acceso.
+//     const keysParaConservar = ["username", "password", "checkbox"];
+    
+//     Object.keys(localStorage).forEach(function (key) {
+//         if (!keysParaConservar.includes(key)) {
+//             localStorage.removeItem(key);
+//         }
+//     });
+// };
 
 ///////////acciona el login con el boton enter
 document.addEventListener("DOMContentLoaded", function () {
   const bodyMaster = document.getElementById("login");
   const passwordInput = document.getElementById("password");
   const usernameInput = document.getElementById("username");
+
+
+    const keysParaConservar = ["username", "password", "checkbox"];
+    
+    Object.keys(localStorage).forEach(function (key) {
+        if (!keysParaConservar.includes(key)) {
+            localStorage.removeItem(key);
+        }
+    });
+
 
   // Controlador de eventos para el body del login
   bodyMaster.addEventListener("keypress", function (event) {

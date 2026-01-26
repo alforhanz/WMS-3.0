@@ -1,16 +1,6 @@
+//variabla global
 const checkbox = document.getElementById("toggleSwitch");
-// let bodega =  bodega = document.getElementById("bodega-sucursal").value;
-// Inicializar datepicker de Materialize
-//var elems = document.querySelectorAll(".datepicker");
-// var instances = M.Datepicker.init(elems, {
-//   format: "yyyy-mm-dd", // Formato de fecha
-// });
-
 document.addEventListener("DOMContentLoaded", function () {
-  // let usuario = document.getElementById("hUsuario").value;
-  // console.log("hUsuario:", usuario);
-  // //localStorage.setItem('UserID',usuario);
-
   ocultarColumnaLPrep();
   const busqueda = localStorage.getItem("autoSearchPedidos");
   if (busqueda === "true") {
@@ -71,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pUsuario,
         pOpcion
       );
+    }
+    else{
+      localStorage.clear();
     }
   }
 });

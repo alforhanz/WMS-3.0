@@ -1,16 +1,8 @@
 const checkbox = document.getElementById("toggleSwitch");
 
-// // Inicializar datepicker de Materialize
-// var elems = document.querySelectorAll(".datepicker");
-// var instances = M.Datepicker.init(elems, {
-//   format: "yyyy-mm-dd", // Formato de fecha
-// });
+
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM completamente cargado y parseado.");
-
-  // let usuario = document.getElementById("hUsuario").value;
-  // console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
   const busqueda = localStorage.getItem("autoSearchPedidos");
 
   //revisar como toma el valor
@@ -76,6 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
       mostrarLoader();
+  }else{
+    localStorage.clear();
   }
 });
 
