@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const busqueda = localStorage.getItem("SearchParameterFlag");
   localStorage.setItem("switch_procesados", "false");
   if (busqueda === "true") {
-    const parametrosBusqueda = localStorage.getItem(
-      "parametrosBusquedaContenedor"
-    );
+    const parametrosBusqueda = localStorage.getItem("parametrosBusquedaContenedor");
     localStorage.setItem("contenedorSwitch", true);
 
     if (parametrosBusqueda) {

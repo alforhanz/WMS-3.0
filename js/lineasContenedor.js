@@ -62,18 +62,22 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        //console.log(
+     
+            console.log(result.contenedor)
+ 
+        // console.log(
         //   "Respuesta del API:\n" +
         //     "Contenedor-Array:" +
         //     result.contenedor.length +
         //     "\nmsg: " +
         //     result.msg +
         //     "\nmessage: " +
-        //     result.message
+        //     result.message+
+        //     result.contenedor
         // );
         if (result.contenedor.length != 0) {
           detalleLineasContenedor = result.contenedor;
-          //console.log("Lineas de Contenedor:");
+          //console.log("Lineas de Contenedor:" +result[0].contenedor);
           //console.log(detalleLineasContenedor);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleLineasContenedor.some(
@@ -435,6 +439,11 @@ function armarTablaVerificacion(detalleLineasContenedor) {
               detalle.Articulo
             }</span></h5><h6>${detalle.Descripcion}</h6></td>
             <td id="codigoDeBarras">${detalle.Codigo_Barra || ""}</td>
+                  <td id="cantidadPedida">${
+              isNaN(parseFloat(detalle.total_cedi))
+                ? 0
+                : parseFloat(detalle.total_cedi).toFixed(2)
+            }</td>
             <td id="cantidadPedida">${
               isNaN(parseFloat(detalle.LineaConsecutivo))
                 ? 0
