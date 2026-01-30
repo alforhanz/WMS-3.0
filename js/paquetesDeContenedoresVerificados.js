@@ -424,6 +424,7 @@ function cargarBodegas() {
     .then((response) => response.json())
     .then((data) => {
       const bodegasSelect = document.getElementById("bodegaSelectPack");
+      console.log(data.respuesta)
       if (data.respuesta && Array.isArray(data.respuesta)) {
         // Limpiar las opciones existentes
         bodegasSelect.innerHTML =

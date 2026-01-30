@@ -1,5 +1,5 @@
 //Variable global que contiene el detalle del pedido
-var detalleLineasContenedor = "";
+var detalleLineasContenedor = [];
 
 document.addEventListener("DOMContentLoaded", function () {
   //--------------------------------------------------------------------------
@@ -64,6 +64,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
       if (result.msg === "SUCCESS") {
      
             console.log(result.contenedor)
+            actualizarProgresoLectura()
  
         // console.log(
         //   "Respuesta del API:\n" +
@@ -91,6 +92,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
             guardarTablaEnArray();
             //console.log("guardado parcial");
           }
+
           armarTablaVerificacion(detalleLineasContenedor);
         } else {
           Swal.fire({
@@ -318,6 +320,7 @@ function guardarTablaEnArray() {
   localStorage.setItem("dataArray", JSON.stringify(dataArray));
 
   agrupar();
+  actualizarProgresoLectura();
 
   return dataArray;
 }
@@ -439,17 +442,18 @@ function armarTablaVerificacion(detalleLineasContenedor) {
               detalle.Articulo
             }</span></h5><h6>${detalle.Descripcion}</h6></td>
             <td id="codigoDeBarras">${detalle.Codigo_Barra || ""}</td>
-                  <td id="cantidadPedida">${
-              isNaN(parseFloat(detalle.total_cedi))
-                ? 0
-                : parseFloat(detalle.total_cedi).toFixed(2)
-            }</td>
+           
             <td id="cantidadPedida">${
               isNaN(parseFloat(detalle.LineaConsecutivo))
                 ? 0
                 : parseFloat(detalle.LineaConsecutivo).toFixed(2)
             }</td>
             <td id="cantidadLeida"></td> <!-- Cantidad leída, inicialmente en blanco -->
+             <td id="totalCedi">${
+              isNaN(parseFloat(detalle.total_cedi))
+                ? 0
+                : parseFloat(detalle.total_cedi).toFixed(2)
+            }</td>
             <td id="verificado"></td> 
             <td id="articulosEliminado" hidden>${
               detalle.ARTICULO_ELIMINADO
@@ -463,8 +467,8 @@ function armarTablaVerificacion(detalleLineasContenedor) {
                 <td id="articulo" contenteditable="false"><h5 id="verifica-articulo"><span class="red-text text-darken-4 centered">${
                   detalle.Articulo
                 }</span></h5><h6 class="red-text text-darken-4">${
-        detalle.Descripcion
-      }</h6></td>
+                  detalle.Descripcion
+                }</h6></td>
                 <td id="codigoDeBarras" contenteditable="false" class="red-text text-darken-4">${
                   detalle.Codigo_Barra || ""
                 }</td>
@@ -474,6 +478,7 @@ function armarTablaVerificacion(detalleLineasContenedor) {
                     : parseFloat(detalle.LineaConsecutivo).toFixed(2)
                 }</td>
                 <td id="cantidadLeida" contenteditable="false" class="red-text text-darken-4"></td> <!-- Cantidad leída, inicialmente en blanco -->
+                 <td id="totalCedi">${0.0}</td>
                 <td id="verificado" contenteditable="false"></td> 
                 <td id="articulosEliminado" hidden>${
                   detalle.ARTICULO_ELIMINADO
@@ -639,10 +644,7 @@ function verificacion() {
           const celdaARTICULO = fila.querySelector("h5");
 
           // Verificar si la celda contiene el mismo valor que resultado.ARTICULO en la fila correspondiente
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
+          if ( celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
             // Encontrar la celda con el id "verificado"
             const celdaVerificado = fila.querySelector("#verificado");
 
@@ -650,27 +652,14 @@ function verificacion() {
             const cantPedida = fila.querySelector("#cantidadPedida");
             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
 
-            if (
-              parseFloat(resultado.CANTIDAD_LEIDA) >
-              parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion =
-                "+" +
-                (
-                  resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-                ).toString();
-
+            if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
+              var resultadoOperacion ="+" +(resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
               celdaVerificado.textContent = resultadoOperacion;
               // Agregar el mensaje directamente al textarea
               const mensaje = `*La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
               mensajesArray.push(mensaje);
-            } else if (
-              resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion = (
-                resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-              ).toString();
-
+            } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
+              var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
               celdaVerificado.textContent = resultadoOperacion;
               // Agregar el mensaje directamente al textarea
               const mensaje = `>La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
@@ -689,7 +678,7 @@ function verificacion() {
   actualizarTotalesTablaVerificacion(detalleLineasContenedor);
 } //FIN DE VERIFICACION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
+function actualizarTotalesTablaVerificacion() {
   // Obtener la referencia del cuerpo de la tabla
   var tbody = document.getElementById("tblbodyLineasContenedor");
 
@@ -704,6 +693,12 @@ function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
   detalleLineasContenedor.forEach(function (detalle) {
     let cantidadPedida = parseFloat(detalle.LineaConsecutivo) || 0;
     totalPedida += isNaN(cantidadPedida) ? 0 : cantidadPedida;
+  });
+
+  let totales_cedi=0;
+    detalleLineasContenedor.forEach(function (detalle) {
+    let cantidadcedi = parseFloat(detalle.total_cedi) || 0;
+    totales_cedi += isNaN(cantidadcedi) ? 0 : cantidadcedi;
   });
 
   // Calcular total de cantidadLeida desde las celdas del DOM
@@ -729,9 +724,10 @@ function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
 
   // Actualizar el contenido de la fila de totales
   totalRow.innerHTML = `
-        <td colspan="2" class="totales-label"><em>Totales</em></td>
+        <td colspan="2" class="totales-label"><em>Totales</em></td>       
         <td><em>${totalPedida.toFixed(2)}</em></td>
         <td><em>${totalLeida.toFixed(2)}</em></td>
+         <td><em></em>${totales_cedi.toFixed(2)}</td>
         
         <td><em>${
           diferencia !== 0 ? diferencia.toFixed(2) : ""
@@ -1466,4 +1462,78 @@ function devolverArticulo(articulo) {
           });
       }
     });
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /**
+ * @function actualizarProgresoLectura
+ * @description Muestra el resumen de unidades leídas vs. total de unidades a leer.
+ */
+function actualizarProgresoLectura() {
+    // 1. Obtener los totales de unidades
+    const totalUnidadesApreparar = calcularTotalUnidadesApreparar(detalleLineasContenedor);
+    const totalUnidadesLeidas = calcularTotalUnidadesLeidas();
+    
+    // 2. Obtener el Label
+    const labelProgreso = document.getElementById("progresoLecturaLabel");
+
+    if (labelProgreso) {
+        labelProgreso.textContent = `Leído: ${totalUnidadesLeidas.toFixed(0)} / ${totalUnidadesApreparar.toFixed(0)}`;
+           // console.log('Total Leido: '+totalUnidadesLeidas+'/'+totalUnidadesApreparar)
+        // Opcional: Estilo basado en el progreso
+        if (totalUnidadesLeidas > 0 && totalUnidadesLeidas >= totalUnidadesApreparar) {
+             labelProgreso.style.color = "green";
+        } else {
+             labelProgreso.style.color = "initial"; // o el color por defecto
+        }
+    } else {
+        console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @function calcularTotalUnidadesApreparar
+ * @description Suma los valores de la columna 'Cant. Prep.' (Índice 3) en la tabla de Verificación.
+ * @returns {number} El total de unidades (productos) que deben ser leídas.
+ */
+function calcularTotalUnidadesApreparar(detalleLineasContenedor) {
+
+   // Calcular total de cantidadPedida desde detalleLineasContenedor
+  let totalPedida = 0;
+  detalleLineasContenedor.forEach(function (detalle) {
+    let cantidadPedida = parseFloat(detalle.LineaConsecutivo) || 0;
+    totalPedida += isNaN(cantidadPedida) ? 0 : cantidadPedida;
+  });
+    //console.log(' Total a leeer: ' +totalPedida)
+    return totalPedida;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @function calcularTotalUnidadesLeidas
+ * @description Suma los valores de la columna de cantidad (Índice 2) en la tabla de Lectura.
+ * @returns {number} El total de unidades (productos) registradas como leídas.
+ */
+function calcularTotalUnidadesLeidas() {
+     const tbodyLectura = document.getElementById("tblbodyLectura");
+    let totalLeido = 0;
+
+    if (tbodyLectura) {
+        // La columna de Cantidad en la tabla de Lectura es la tercera columna (índice 2)
+        // (Articulo[0], Cod[1], Cant[2], CL[3])
+        const indiceColumnaCantidad = 2; 
+
+        tbodyLectura.querySelectorAll('tr').forEach(fila => {
+            const celdas = fila.querySelectorAll('td');
+
+            if (celdas[indiceColumnaCantidad]) {
+                // En la pestaña Lectura, la cantidad está dentro de un <input>
+                const input = celdas[indiceColumnaCantidad].querySelector('input');
+                
+                let valor = input ? input.value : celdas[indiceColumnaCantidad].textContent.trim();
+
+                // Usamos parseFloat y tratamos NaN como 0
+                totalLeido += parseFloat(valor) || 0;
+            }
+        });
+    }
+    return totalLeido;
 }

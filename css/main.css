@@ -992,7 +992,7 @@ header {
   left: 0;
   right: 0;
   width: 100%;
-  position: absolute;
+  position: relative;
   z-index: 1000;
 }
 #notas {
@@ -1533,6 +1533,9 @@ th {
   color: #fff !important;
 }
 #inicio{
+  color: #fff !important;
+}
+#dash{
   color: #fff !important;
 }
 
@@ -2419,10 +2422,6 @@ font-size: 20px !important;
 .row {   
     margin-bottom: 20px;
 }
-/* .validate{
-  margin-left: 27px!important;
-  width: 50%!important;
-} */
 /*css del modal de las bodegas que se despliega en el header*/
 #bodega_sucursales {
   height: 100%;
@@ -2458,6 +2457,7 @@ font-size: 20px !important;
 }
 #bodega_sucursales .description-sucursal {
   padding: 10px;
+  color: #000;
 }
 #bodega_sucursales strong {
   font-weight: bold;
@@ -2573,3 +2573,136 @@ display: block;
   font-size: 14px;
   color: #218838;
 }
+.dashcards {
+    width: 16%!important;
+    margin-left: 113px!important; 
+}
+.bodegasDash {
+    width: 19%!important;
+    left: 112px!important;
+}
+#chartStatus{
+   height: 247px!important;
+    width: 634.5px;
+}
+#chartZonas{
+ height: 247px!important;
+    width: 634.5px;
+}
+#chartProductividad {  
+    height: 247px!important;
+    width: 634.5px;
+}
+.graficasDash{
+  margin-left: 113px!important;
+}
+.chart-container {
+    background-color: var(--card-bg);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    height: 316px;
+}
+
+/* Título del Dashboard */
+        .header-title {
+            padding: 20px;
+            text-align: center;
+            color: var(--accent-teal);
+            font-weight: bold;
+            text-transform: uppercase;
+             left: 112px!important;
+        }
+
+        /* Contenedor de Filtros (Slicers) */
+        .filter-bar {
+            background: #1f242c;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        /* Tarjetas de KPI (Scorecards) */
+        .kpi-card {
+            background-color: var(--accent-teal) !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: scale(1.02);
+        }
+
+        .kpi-card i {
+            font-size: 2.5rem;
+            opacity: 0.3;
+            position: relative;
+            left: 10px;
+        }
+
+        .kpi-title {
+            font-size: 0.9rem;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* Contenedores de Gráficas */
+        .chart-container {
+          background-color: var(--card-bg);
+          border: 1px solid #30363d;
+          border-radius: 8px;
+          padding: 15px;
+          margin-bottom: 20px;
+          height: 300px;
+        }        
+      .chart-title {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-bottom: 10px;
+        border-bottom: 1px solid #30363d;
+        padding-bottom: 5px;
+      }
+
+      .dashBody {
+        padding: 0 20px;
+      }
+
+      .mapaSucursales {
+        height: 409px !important;
+        width: 82%;
+      }
+
+      #mapPanama {
+        height: 90%;
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      .avance-pedidos {
+        height: 394px !important;
+        width: 85%;
+      }
+
+      .avance-contenedores {
+        height: 394px !important;
+        width: 85%;
+      }
+
+      .graphContenedores {
+        display: block !important;
+        box-sizing: border-box !important;
+        height: 327.8px !important;
+        width: 381.5px !important;
+      }

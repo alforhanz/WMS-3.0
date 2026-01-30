@@ -275,8 +275,8 @@ function listadoTraslados(parametros) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        //console.log("TRASLADOS");
-        //console.log(result.resultado);
+        console.log("TRASLADOS");
+        console.log(result.resultado);
         //console.log("Done");
 
         if (result.resultado.length != 0) {
@@ -811,7 +811,6 @@ function descargarPDF() {
 //   // Escribir y descargar el archivo Excel
 //   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
 // }
-
 function descargarExcel() {
   const jsonData = ArrayData;
 
@@ -861,7 +860,6 @@ function descargarExcel() {
 
   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
 }
-
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 const fecha_ini = document.getElementById("fecha_ini");

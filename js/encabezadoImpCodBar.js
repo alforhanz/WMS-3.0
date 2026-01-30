@@ -11,7 +11,7 @@ class MyHeader extends HTMLElement {
           <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         </div>
         <div class="s8 col center-align">
-          <a href="home.html" class="brand-logo"></a>
+          <a href="dash1.html" class="brand-logo"></a>
         </div>
       </div>
     </nav>
@@ -59,7 +59,7 @@ class MyHeader extends HTMLElement {
     <div class="sidenav" id="mobile-demo">
       <div class="row bordered">
         <div class="col s6 m6" style="display: flex; align-items: center;">
-          <a href="home.html">
+          <a href="dash1.html">
           <img src="img/Logo2.png" class="img-circle profile_img" style="max-width: 74%; height: auto;margin-right: 10px;">
           </a>
           <span id="usuario" class="hide-on-med-and-downx" style="color: #000;">Contenido del span</span>
