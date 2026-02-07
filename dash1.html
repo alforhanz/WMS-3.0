@@ -21,7 +21,7 @@
 
     <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
+    <!-- <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> -->
     <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
     <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
     <!-- FONTS -->
@@ -39,7 +39,6 @@
             --text-main: #ffffff;
             --text-dim: #b4d0f0;
         }
-
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
@@ -50,22 +49,7 @@
 
 <body>
     <my-header></my-header>
-    <main class="container-fluid dashBody">
-
-        <div class="row">
-            <div class="col s12 header-title">
-                <h5>Analytical Dashboard</h5>
-            </div>
-        </div>
-        <div class="row ">
-            <div class="input-field col s12 m6 l6 bodegasDash">
-                <i class="material-icons prefix cyan-text">warehouse</i>
-                <select id="select_bodegas">
-                    <option value="" disabled selected>Seleccione una bodega</option>
-                </select>
-                <label for="select_bodegas" class="black-text">Bodega / Sucursal</label>
-            </div>
-        </div>
+    <main class="container-fluid dashBody">   
 
         <div class="row">
             <div class="col s12 m3 dashcards">
@@ -110,17 +94,23 @@
                     <canvas id="chartZonas"></canvas>
                 </div>
             </div>
-            <div class="col s12 m4">
+            <div class="col s12 m3">
                 <div class="chart-container">
                     <div class="chart-title">Traslados</div>
                     <canvas id="chartProductividad" class="graphProductividad "></canvas>
+                </div>
+            </div>
+              <div class="col s12 m3">
+                <div class="chart-container">
+                    <div class="chart-title">Despachos</div>
+                    <canvas id="tuCanvasID" class="graphProductividad "></canvas>
                 </div>
             </div>
         </div>
         <div class="row graficasDash">
             <div class="col s12 m3">
                 <div class="chart-container avance-pedidos">
-                    <div class="chart-title">Avance de pedidos</div>
+                    <div class="chart-title">Transacciones</div>
                     <canvas id="chartArticulos" class="graphArticulos "></canvas>
                 </div>
             </div>

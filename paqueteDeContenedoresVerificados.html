@@ -44,27 +44,28 @@
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input placeholder="Ingrese el consecutivo del paquete" id="Aplicacion" type="text" class="validate">  
+              <input placeholder="Ingrese el consecutivo del paquete" id="Aplicacion" type="text" class="validate">
               <label for="Aplicacion"></label>
             </div>
           </div>
           <div class="input-field col s6">
-            <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker" >
+            <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
             <label for="fecha_ini">Fecha Desde</label>
           </div>
           <div class="input-field col s6">
-            <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker" >
+            <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker">
             <label for="fecha_fin">Fecha Final</label>
           </div>
         </div>
         <div class="row valign-wrapper" style="margin-bottom: 5px;">
           <div class="col s12 m4">
-            <label id="lbl_bodega_destino" for="bodegaSelectPack" style="font-size: 0.8rem;">Cambiar bodega de destino</label>
+            <label id="lbl_bodega_destino" for="bodegaSelectPack" style="font-size: 0.8rem;">Cambiar bodega de
+              destino</label>
             <select id="bodegaSelectPack" class="browser-default" style="height: 40px; margin-top: 5px;">
               <option value="" disabled selected>Seleccione una bodega</option>
             </select>
           </div>
-        
+  
           <div class="col s12 m8" style="padding-top: 20px;">
             <label>
               <input name="grupoVista" type="checkbox" id="vistaResumida" />
@@ -72,79 +73,32 @@
             </label>
           </div>
         </div>
-
-<div class="row" style="margin-top: 20px;">
-  <div class="col s12">
-    <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit" onclick="cargarParametros()">
-      Mostrar <i class="material-icons right">send</i>
-    </button>
-  </div>
-</div>
-
-<div class="row valign-wrapper" style="margin-bottom: 0px; background: #f9f9f9; border-radius: 4px;">
-  <div class="col s12 m4" style="display: flex; align-items: center; padding-left: 15px;">
-    <i class="material-icons" style="margin-right: 8px; color: #757575; font-size: 1.2rem;">format_list_bulleted</i>
-    <label id="cantidadDeRegistros" style="font-size: 1rem; font-weight: bold; color: #424242; margin: 0;">Registros: 0</label>
-  </div>
   
-  <div class="input-field col s12 m8" style="margin: 0 !important; padding-right: 15px;">
-    <i class="material-icons prefix" style="font-size: 1.5rem; top: 0.5rem;">search</i>
-    <input id="txtBuscadorTabla" type="text" placeholder="Filtrar resultados..." style="width: 50%; margin-bottom: 0 !important; height: 2.5rem !important;">
-  </div>
-</div>
-
-<div class="row rptPaquetes" >
-  <div id="resultadoGeneral"></div>
-  <table id="tblResultados" class="display centered highlight responsive-table">
-    <thead>
-      <tr class="themeColor2"></tr>
-    </thead>
-    <tbody id="tblbodyResultados"></tbody>
-    <tfoot id="tblfootResultados"></tfoot>
-  </table>
-  <div id="resultadoPaginador"></div>
-</div>
-
-
-<!--        
-        <div class="row">
+        <div class="row" style="margin-top: 20px;">
           <div class="col s12">
-            <label id="lbl_bodega_destino" for="bodegaSelectPack">Cambiar bodega de destino</label>
+            <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit"
+              onclick="cargarParametros()">
+              Mostrar <i class="material-icons right">send</i>
+            </button>
           </div>
         </div>
-        
-        <div class="row valign-wrapper">
-          <div class="col s12 m6">
-            <select id="bodegaSelectPack" class="browser-default">
-              <option value="" disabled selected>Seleccione una bodega</option>
-            </select>
+  
+        <div class="row valign-wrapper" style="margin-bottom: 0px; background: #f9f9f9; border-radius: 4px;">
+          <div class="col s12 m4" style="display: flex; align-items: center; padding-left: 15px;">
+            <i class="material-icons"
+              style="margin-right: 8px; color: #757575; font-size: 1.2rem;">format_list_bulleted</i>
+            <label id="cantidadDeRegistros"
+              style="font-size: 1rem; font-weight: bold; color: #424242; margin: 0;">Registros: 0</label>
           </div>
-        
-          <div class="col s12 m6">
-            <p>
-              <label>
-                <input name="grupoVista" type="checkbox" id="vistaResumida"  />
-                <span>Vista Resumida</span>
-              </label>
-            </p>
-          </div>
-        </div>      
-        <div class="row col-md-12 S12">
-          <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit" onclick="cargarParametros()">Mostrar
-            <i class="material-icons right">send</i>
-          </button>
-        </div>
-        <div class="row valign-wrapper" style="margin-bottom: 0px;">
-          <div class="col s6">
-            <label id="cantidadDeRegistros" style="font-size: 1.1rem; font-weight: bold; color: #444;"> Registros: 0</label>
-          </div>
-          <div class="input-field col s6">
-            <i class="material-icons prefix">search</i>
-            <input id="txtBuscadorTabla" type="text" placeholder="Filtrar resultados...">
+  
+          <div class="input-field col s12 m8" style="margin: 0 !important; padding-right: 15px;">
+            <i class="material-icons prefix" style="font-size: 1.5rem; top: 0.5rem;">search</i>
+            <input id="txtBuscadorTabla" type="text" placeholder="Filtrar resultados..."
+              style="width: 50%; margin-bottom: 0 !important; height: 2.5rem !important;">
           </div>
         </div>
-        
-        <div class="row">
+  
+        <div class="row rptPaquetes">
           <div id="resultadoGeneral"></div>
           <table id="tblResultados" class="display centered highlight responsive-table">
             <thead>
@@ -154,13 +108,15 @@
             <tfoot id="tblfootResultados"></tfoot>
           </table>
           <div id="resultadoPaginador"></div>
-        </div> -->
-           <div class="row" id="observacion">
-                <div class="input-field col s12">
-                  <label id="lblObservaciones" for="observaciones">Observaciones</label>
-                  <textarea placeholder="Observaciones" id="observaciones" type="text" readonly></textarea>
-                </div>
-            </div>     
+        </div>
+  
+  
+        <div class="row" id="observacion">
+          <div class="input-field col s12">
+            <label id="lblObservaciones" for="observaciones">Observaciones</label>
+            <textarea placeholder="Observaciones" id="observaciones" type="text" readonly></textarea>
+          </div>
+        </div>
       </div>
     </div>
   </main>

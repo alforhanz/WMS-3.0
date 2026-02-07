@@ -1,57 +1,456 @@
+var dataPedidos = [
+    {
+        "ITEM": "1",
+        "DOCUMENTO": "T06-00018348",
+        "PEDIDO": "P06-10105684",
+        "DESCRIPCION": "/ ECONORED DE PANAMA, S.A. .... 01/23/26  2:06:46 PM ",
+        "CLIENTE": "ECONORED DE PANAMA, S.A.",
+        "TOTAL_UNIDADES": "7.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-28 15:54:50.000",
+        "FECHA_PEDIDO": "2026-01-23 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-28 15:54:50.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "2",
+        "DOCUMENTO": "T06-00018340",
+        "PEDIDO": "P06-10105454",
+        "DESCRIPCION": "SUPREME SERVICES , (PANAMA)N*3,SA  .... 01/17/26  8:23:58 AM ",
+        "CLIENTE": "SUPREME SERVICES , (PANAMA)N*3,SA ",
+        "TOTAL_UNIDADES": "8.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-28 12:55:52.000",
+        "FECHA_PEDIDO": "2026-01-17 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-28 12:55:52.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "3",
+        "DOCUMENTO": "F06-00080477",
+        "PEDIDO": "P06-10105516",
+        "DESCRIPCION": "MAURO SERVI .... 01/19/26  2:33:11 PM ",
+        "CLIENTE": "MAURO SERVI",
+        "TOTAL_UNIDADES": "2.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-23 13:06:12.000",
+        "FECHA_PEDIDO": "2026-01-19 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-23 13:06:12.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "4",
+        "DOCUMENTO": "T06-00018197",
+        "PEDIDO": "P06-10105573",
+        "DESCRIPCION": "/ / / TRANSPORTES SPIEGEL, S.A. .... 01/21/26 11:44:07 AM ",
+        "CLIENTE": "TRANSPORTES SPIEGEL, S.A.",
+        "TOTAL_UNIDADES": "2.00000000",
+        "LINEAS_VERIFICADAS": "2.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-22 13:38:33.000",
+        "FECHA_PEDIDO": "2026-01-21 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": "S",
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-22 13:38:33.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "5",
+        "DOCUMENTO": "F06-00080435",
+        "PEDIDO": "P06-10105446",
+        "DESCRIPCION": "/ DIAZ , GUSTAVO  .... 01/16/26  3:31:22 PM ",
+        "CLIENTE": "DIAZ , GUSTAVO ",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-22 13:20:20.000",
+        "FECHA_PEDIDO": "2026-01-16 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-22 13:20:20.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "6",
+        "DOCUMENTO": "T06-00018208",
+        "PEDIDO": "P06-10105439",
+        "DESCRIPCION": "/ CARDENAS , JOSE  .... 01/16/26  2:32:44 PM ",
+        "CLIENTE": "CARDENAS , JOSE ",
+        "TOTAL_UNIDADES": "8.00000000",
+        "LINEAS_VERIFICADAS": "8.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-21 17:00:57.000",
+        "FECHA_PEDIDO": "2026-01-16 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-21 17:00:57.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "7",
+        "DOCUMENTO": "T06-00018141",
+        "PEDIDO": "P06-10105364",
+        "DESCRIPCION": "/ AGUILAR  , YAJAIRA  .... 01/13/26  4:23:17 PM ",
+        "CLIENTE": "AGUILAR  , YAJAIRA ",
+        "TOTAL_UNIDADES": "9.00000000",
+        "LINEAS_VERIFICADAS": "8.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "NATAGOME",
+        "FECHA_FACTURA": "2026-01-17 15:14:05.000",
+        "FECHA_PEDIDO": "2026-01-13 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": "CB0514",
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Natalie S. Gomez",
+        "FECHA": "2026-01-17 15:14:05.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "8",
+        "DOCUMENTO": "T06-00018139",
+        "PEDIDO": "P06-10105478",
+        "DESCRIPCION": "/ BELKIS .... 01/17/26 12:11:07 PM ",
+        "CLIENTE": "BELKIS",
+        "TOTAL_UNIDADES": "2.00000000",
+        "LINEAS_VERIFICADAS": "2.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-17 13:04:43.000",
+        "FECHA_PEDIDO": "2026-01-17 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-17 13:04:43.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "9",
+        "DOCUMENTO": "T06-00018138",
+        "PEDIDO": "P06-10105477",
+        "DESCRIPCION": "/ / LA SANTÉ .... 01/17/26 12:03:49 PM ",
+        "CLIENTE": "LA SANTÉ",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": "4.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-17 13:04:11.000",
+        "FECHA_PEDIDO": "2026-01-17 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-17 13:04:11.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "10",
+        "DOCUMENTO": "T06-00017990",
+        "PEDIDO": "P06-10105194",
+        "DESCRIPCION": "/ / / / CENTRAL DE LUBRICANTES, S.A. .... 01/07/26  2:03:26 PM ",
+        "CLIENTE": "CENTRAL DE LUBRICANTES, S.A.",
+        "TOTAL_UNIDADES": "16.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "NATAGOME",
+        "FECHA_FACTURA": "2026-01-16 11:49:16.000",
+        "FECHA_PEDIDO": "2026-01-07 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": "BS4339",
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Natalie S. Gomez",
+        "FECHA": "2026-01-16 11:49:16.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "11",
+        "DOCUMENTO": "F06-00080284",
+        "PEDIDO": "P06-10105238",
+        "DESCRIPCION": "/ JUNTA COMUNAL DE LAS GARZAS .... 01/08/26  1:11:24 PM ",
+        "CLIENTE": "JUNTA COMUNAL DE LAS GARZAS",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-16 11:45:36.000",
+        "FECHA_PEDIDO": "2026-01-08 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-16 11:45:36.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "12",
+        "DOCUMENTO": "T06-00018023",
+        "PEDIDO": "P06-10105268",
+        "DESCRIPCION": "/ / SANCHEZPE , PEDRO WILIAN .... 01/10/26  9:38:32 AM ",
+        "CLIENTE": "SANCHEZPE , PEDRO WILIAN",
+        "TOTAL_UNIDADES": "6.00000000",
+        "LINEAS_VERIFICADAS": "3.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-16 08:17:58.000",
+        "FECHA_PEDIDO": "2026-01-10 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-16 08:17:58.000",
+        "ESTADO_PREPARACION": "G"
+    },
+    {
+        "ITEM": "13",
+        "DOCUMENTO": "F06-00080229",
+        "PEDIDO": "P06-10105201",
+        "DESCRIPCION": "/ / PANAMCO, INC .... 01/07/26  3:35:24 PM ",
+        "CLIENTE": "PANAMCO, INC",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-13 15:39:01.000",
+        "FECHA_PEDIDO": "2026-01-07 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-13 15:39:01.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "14",
+        "DOCUMENTO": "T06-00018005",
+        "PEDIDO": "P06-10105225",
+        "DESCRIPCION": "/ CHAVEZ , VENACIO /APARTADO .... 01/08/26 10:48:21 AM ",
+        "CLIENTE": "CHAVEZ , VENACIO /APARTADO",
+        "TOTAL_UNIDADES": "8.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-08 10:49:24.000",
+        "FECHA_PEDIDO": "2026-01-08 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": "EK9415",
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-08 10:49:24.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "15",
+        "DOCUMENTO": "T06-00017974",
+        "PEDIDO": "P06-10105153",
+        "DESCRIPCION": "/ GONZALEZ , DENIA  .... 01/06/26  2:06:13 PM ",
+        "CLIENTE": "GONZALEZ , DENIA ",
+        "TOTAL_UNIDADES": "8.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-06 15:06:07.000",
+        "FECHA_PEDIDO": "2026-01-06 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-06 15:06:07.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "16",
+        "DOCUMENTO": "F06-00080072",
+        "PEDIDO": "P06-10105147",
+        "DESCRIPCION": "/ SOLIS, JOSE .... 01/06/26 12:05:41 PM ",
+        "CLIENTE": "SOLIS, JOSE",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-06 12:06:39.000",
+        "FECHA_PEDIDO": "2026-01-06 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "N",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-06 12:06:39.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "17",
+        "DOCUMENTO": "T06-00017951",
+        "PEDIDO": "P06-10105095",
+        "DESCRIPCION": "PRONTO ASEO, S.A. .... 01/05/26 11:29:52 AM ",
+        "CLIENTE": "PRONTO ASEO, S.A.",
+        "TOTAL_UNIDADES": "4.00000000",
+        "LINEAS_VERIFICADAS": ".00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-05 15:10:15.000",
+        "FECHA_PEDIDO": "2026-01-05 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": null,
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-05 15:10:15.000",
+        "ESTADO_PREPARACION": "0"
+    },
+    {
+        "ITEM": "18",
+        "DOCUMENTO": "T06-00017901",
+        "PEDIDO": "P06-10105019",
+        "DESCRIPCION": "/ CENTRAL DE LUBRICANTES, S.A. .... 01/02/26  3:04:45 PM ",
+        "CLIENTE": "CENTRAL DE LUBRICANTES, S.A.",
+        "TOTAL_UNIDADES": "10.00000000",
+        "LINEAS_VERIFICADAS": "10.00",
+        "LINEAS_PREPARADAS": 0,
+        "ESTADO_PEDIDO": "F",
+        "USUARIO": "KEVIMOJI",
+        "FECHA_FACTURA": "2026-01-05 13:26:38.000",
+        "FECHA_PEDIDO": "2026-01-02 00:00:00.000",
+        "MODULO": "P",
+        "CIA": "B",
+        "placa": "639393",
+        "tiene_servicio": "S",
+        "SOLICITA": null,
+        "ATENDIDO_POR": "Kevin Mojica",
+        "FECHA": "2026-01-05 13:26:38.000",
+        "ESTADO_PREPARACION": "G"
+    }
+];
+
+
 // Configuración Global para estilo DARK en Chart.js
 Chart.defaults.color = '#8b949e'; // Color de texto
 Chart.defaults.borderColor = '#30363d'; // Color de líneas de división
-
 document.addEventListener("DOMContentLoaded", function () {
     localStorage.clear();
     $(".dropdown-trigger").dropdown();
     //getDataDash();
-    cargarBodegas();
+    //cargarBodegas();
+     renderizarDashboardWMS();
+ actualizarKpisConDatosReales(dataPedidos) 
+
 });
+// function cargarBodegas() {
+//   fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
+//     .then((response) => response.json())
+//     .then((data) => {
+//       const bodegasSelect = document.getElementById("select_bodegas");
+//       if (data.respuesta && Array.isArray(data.respuesta)) {
+//         // Limpiar las opciones existentes
+//         bodegasSelect.innerHTML =
+//           '<option value="" disabled selected>Seleccione una bodega</option>';
 
-function cargarBodegas() {
-  fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
-    .then((response) => response.json())
-    .then((data) => {
-      const bodegasSelect = document.getElementById("select_bodegas");
-      if (data.respuesta && Array.isArray(data.respuesta)) {
-        // Limpiar las opciones existentes
-        bodegasSelect.innerHTML =
-          '<option value="" disabled selected>Seleccione una bodega</option>';
+//         // Agregar opciones nuevas
+//         data.respuesta.forEach((bodega) => {
+//           const option = document.createElement("option");
+//           option.value = bodega.BODEGA;
+//           option.textContent = bodega.NOMBRE;
+//           bodegasSelect.appendChild(option);
+//         });
 
-        // Agregar opciones nuevas
-        data.respuesta.forEach((bodega) => {
-          const option = document.createElement("option");
-          option.value = bodega.BODEGA;
-          option.textContent = bodega.NOMBRE;
-          bodegasSelect.appendChild(option);
-        });
-
-        // Re-inicializar el select para aplicar los cambios
-        M.FormSelect.init(bodegasSelect);
-      } else {
-        console.error("No se encontraron bodegas.");
-      }
-    })
-    .catch((error) => console.error("Error al cargar las bodegas:", error));
-}
+//         // Re-inicializar el select para aplicar los cambios
+//         M.FormSelect.init(bodegasSelect);
+//       } else {
+//         console.error("No se encontraron bodegas.");
+//       }
+//     })
+//     .catch((error) => console.error("Error al cargar las bodegas:", error));
+// }
 // Escuchar el cambio de bodega para filtrar el Dashboard
-document.getElementById("select_bodegas").addEventListener('change', function() {
+document.getElementById("bodega").addEventListener('change', function() {
     const bodegaSeleccionada = this.value;
     console.log("Filtrando datos para: " + bodegaSeleccionada);
     // Aquí llamarías a tu función de actualización de datos: 
     actualizarDashboard(bodegaSeleccionada);
 });
 // ... Mantener funciones similares para OC llamando a mostrarGraficas con títulos personalizados
-
 Chart.defaults.color = '#8b949e';
 Chart.defaults.borderColor = '#30363d';
 document.addEventListener("DOMContentLoaded", function () {
                 M.AutoInit();
-                cargarBodegas();
+               // cargarBodegas();
                 renderizarDashboardWMS();
                 });
-
 /**
  * @function renderizarDashboardWMS
  * @description Renderiza cada segmento del dashboard y las graficas. 
@@ -123,80 +522,190 @@ function renderizarDashboardWMS() {
         plugins: { legend: { position: "bottom" } },
       },
     });
+// --- NUEVO 4. GRÁFICO DE TRANSACCIONES (DINÁMICO) ---
+const transacciones = [
+    { "CONSECUTIVO DESTINO": "FAC#F01-00789543", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "1.00", "TIPO_TRANSACCION": "Pedidos" },
+    { "CONSECUTIVO DESTINO": "FAC#F01-00789544", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "1.00", "TIPO_TRANSACCION": "Pedidos" },
+    { "CONSECUTIVO DESTINO": "FAC#F01-00789545", "CANT CONTADA": "1.00", "CANT VERIFICADA": null, "CANT APLICADA": "1.00", "TIPO_TRANSACCION": "Pedidos" },
+    { "CONSECUTIVO DESTINO": "FAC#F01-00789545", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "1.00", "TIPO_TRANSACCION": "Pedidos" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063634", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "16.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "FAC#F01-00790169", "CANT CONTADA": "1.00", "CANT VERIFICADA": null, "CANT APLICADA": "1.00", "TIPO_TRANSACCION": "Pedidos" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063668", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "4.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063668", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "12.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063668", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "8.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063668", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "4.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063668", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "4.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063659", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "4.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "TRAS01-00063659", "CANT CONTADA": null, "CANT VERIFICADA": null, "CANT APLICADA": "24.00", "TIPO_TRANSACCION": "Traslados" },
+    { "CONSECUTIVO DESTINO": "Embarque EM00036454", "CANT CONTADA": null, "CANT VERIFICADA": 0, "CANT APLICADA": "2.00", "TIPO_TRANSACCION": "Compras" },
+    { "CONSECUTIVO DESTINO": "Embarque EM00036454", "CANT CONTADA": null, "CANT VERIFICADA": 0, "CANT APLICADA": "2.00", "TIPO_TRANSACCION": "Compras" },
+    { "CONSECUTIVO DESTINO": "Embarque EM00036454", "CANT CONTADA": null, "CANT VERIFICADA": 0, "CANT APLICADA": "2.00", "TIPO_TRANSACCION": "Compras" },
+    { "CONSECUTIVO DESTINO": "Embarque EM00036454", "CANT CONTADA": null, "CANT VERIFICADA": 0, "CANT APLICADA": "2.00", "TIPO_TRANSACCION": "Compras" },
+    { "CONSECUTIVO DESTINO": "Embarque EM00036454", "CANT CONTADA": null, "CANT VERIFICADA": 0, "CANT APLICADA": "2.00", "TIPO_TRANSACCION": "Compras" }
+];
 
+// 1. Definimos los labels exactos que queremos ver en el eje Y
+const tipos = ["Pedidos", "Traslados", "Ordenes de Compras"];
+let finalizados = [0, 0, 0]; 
+let pendientes = [0, 0, 0];
+
+transacciones.forEach(item => {
+    // Mapeo: "Compras" en el JSON -> "Ordenes de Compras" en el gráfico
+    let tipoJson = item.TIPO_TRANSACCION;
+    if (tipoJson === "Compras") tipoJson = "Ordenes de Compras";
+
+    const index = tipos.indexOf(tipoJson);
+    
+    if (index !== -1) {
+        const cant = parseFloat(item["CANT APLICADA"]) || 0;
+        // Lógica de estado
+        if (item["CANT CONTADA"] > 0 || item["CANT VERIFICADA"] > 0) {
+            finalizados[index] += cant;
+        } else {
+            pendientes[index] += cant;
+        }
+    }
+});
+
+new Chart(document.getElementById("chartArticulos"), {
+    type: "bar",
+    data: {
+        labels: tipos, // Aquí aparecerán Pedidos, Traslados, etc.
+        datasets: [
+            {
+                label: "Finalizados",
+                data: finalizados,
+                backgroundColor: "#00ced1", // Teal
+                borderRadius: 5,
+            },
+            {
+                label: "Pendientes",
+                data: pendientes,
+                backgroundColor: "#f07167", // Coral
+                borderRadius: 5,
+            },
+        ],
+    },
+    options: {
+        indexAxis: 'y', // <--- BARRA ACOSTADA
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: { 
+                stacked: true, // <--- COMPARATIVO EN LA MISMA BARRA
+                grid: { color: "#30363d" },
+                ticks: { color: "#fff" } 
+            },
+            y: { 
+                stacked: true, // <--- COMPARATIVO EN LA MISMA BARRA
+                grid: { display: false }, 
+                ticks: { color: "#fff", font: { size: 12 } } 
+            },
+        },
+        plugins: {
+            legend: { 
+                position: 'top', 
+                labels: { color: "#fff", usePointStyle: true } 
+            },
+        },
+    },
+});
+// --- FIN NUEVO 4 ----
 
     // 4. Avance de pedidos (Horizontal)
-new Chart(document.getElementById("chartArticulos"), {
-  type: "bar",
-  data: {
-    labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
-    datasets: [
-      {
-        label: "Finalizados",
-        data: [120, 150, 180, 90, 200],
-        backgroundColor: "#00ced1", // Teal
-      },
-      {
-        label: "Pendientes",
-        data: [30, 40, 10, 50, 20],
-        backgroundColor: "#f07167", // Rojo/Naranja
-      },
-    ],
-  },
-  options: {
-    indexAxis: 'y', // <--- ESTA ES LA CLAVE PARA EL MODO HORIZONTAL
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { 
-        stacked: true, 
-        grid: { color: "#30363d" }, 
-        ticks: { color: "#fff" } 
-      },
-      y: { 
-        stacked: true, 
-        grid: { display: false }, // Quitamos la rejilla vertical para que se vea más limpio
-        ticks: { color: "#fff" } 
-      },
+// new Chart(document.getElementById("chartArticulos"), {
+//   type: "bar",
+//   data: {
+//     labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
+//     datasets: [
+//       {
+//         label: "Finalizados",
+//         data: [120, 150, 180, 90, 200],
+//         backgroundColor: "#00ced1", // Teal
+//       },
+//       {
+//         label: "Pendientes",
+//         data: [30, 40, 10, 50, 20],
+//         backgroundColor: "#f07167", // Rojo/Naranja
+//       },
+//     ],
+//   },
+//   options: {
+//     indexAxis: 'y', // <--- ESTA ES LA CLAVE PARA EL MODO HORIZONTAL
+//     responsive: true,
+//     maintainAspectRatio: false,
+//     scales: {
+//       x: { 
+//         stacked: true, 
+//         grid: { color: "#30363d" }, 
+//         ticks: { color: "#fff" } 
+//       },
+//       y: { 
+//         stacked: true, 
+//         grid: { display: false }, // Quitamos la rejilla vertical para que se vea más limpio
+//         ticks: { color: "#fff" } 
+//       },
+//     },
+//     plugins: {
+//       legend: { 
+//         position: 'top', 
+//         labels: { color: "#fff" } 
+//       },
+//     },
+//   },
+// });
+
+//5. Radar Chart (o gráfico de araña).
+new Chart(document.getElementById('tuCanvasID'), {
+    type: 'radar',
+    data: {
+        labels: [
+            'Velocidad Picking', 
+            'Precisión Inventario', 
+            'Tiempo Packing', 
+            'Capacidad Despacho', 
+            'Seguridad'
+        ],
+        datasets: [{
+            label: 'CEDI Pueblo Nuevo',
+            data: [95, 90, 85, 92, 98], // Valores de 0 a 100
+            fill: true,
+            backgroundColor: 'rgba(0, 206, 209, 0.2)', // Teal transparente
+            borderColor: '#00ced1',
+            pointBackgroundColor: '#00ced1',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#00ced1'
+        }, {
+            label: 'Sucursal David',
+            data: [70, 85, 60, 75, 90],
+            fill: true,
+            backgroundColor: 'rgba(240, 113, 103, 0.2)', // Rojo transparente
+            borderColor: '#f07167',
+            pointBackgroundColor: '#f07167',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#f07167'
+        }]
     },
-    plugins: {
-      legend: { 
-        position: 'top', 
-        labels: { color: "#fff" } 
-      },
-    },
-  },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            r: {
+                angleLines: { color: '#30363d' }, // Líneas radiales
+                grid: { color: '#30363d' },      // Círculos de fondo
+                pointLabels: { color: '#fff', font: { size: 12 } }, // Etiquetas externas
+                ticks: { display: false, backdropColor: 'transparent' } // Números internos
+            }
+        },
+        plugins: {
+            legend: {
+                labels: { color: '#fff' }
+            }
+        }
+    }
 });
-    // //4. Avance de pedidos
-    // new Chart(document.getElementById("chartArticulos"), {
-    //   type: "bar",
-    //   data: {
-    //     labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
-    //     datasets: [
-    //       {
-    //         label: "Finalizados",
-    //         data: [120, 150, 180, 90, 200],
-    //         backgroundColor: "#00ced1", // Teal
-    //       },
-    //       {
-    //         label: "Pendientes",
-    //         data: [30, 40, 10, 50, 20],
-    //         backgroundColor: "#f07167", // Rojo/Naranja
-    //       },
-    //     ],
-    //   },
-    //   options: {
-    //     responsive: true,
-    //     maintainAspectRatio: false,
-    //     scales: {
-    //       x: { stacked: true, ticks: { color: "#fff" } },
-    //       y: { stacked: true, grid: { color: "#30363d" } },
-    //     },
-    //     plugins: {
-    //       legend: { labels: { color: "#fff" } },
-    //     },
-    //   },
-    // });
 
     // 5. Gráfica Lineal: Articulos más vendidos
     new Chart(document.getElementById("chartContenedores"), {
@@ -234,27 +743,27 @@ new Chart(document.getElementById("chartArticulos"), {
     });
 }
 // Escuchar cambios en el select de bodegas
-document.getElementById("select_bodegas").addEventListener('change', function() {
+// document.getElementById("select_bodegas").addEventListener('change', function() {
+document.getElementById("bodega").addEventListener('change', function() {
     console.log("Cambiando datos para bodega: " + this.value);
     // Aquí podrías disparar un fetch a tu API enviando el ID de la bodega
     // updateDashWithRealData(this.value);
 });
-
-function cargarBodegas() {
-    const bodegasSelect = document.getElementById("select_bodegas");
-    fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
-        .then(res => res.json())
-        .then(data => {
-            if (data.respuesta) {
-                bodegasSelect.innerHTML = '<option value="" disabled selected>Seleccione una bodega</option>';
-                data.respuesta.forEach(b => {
-                    const opt = new Option(b.NOMBRE, b.BODEGA);
-                    bodegasSelect.add(opt);
-                });
-                M.FormSelect.init(bodegasSelect);
-            }
-        }).catch(err => console.error("Error al cargar bodegas:", err));
-}
+// function cargarBodegas() {
+//     const bodegasSelect = document.getElementById("select_bodegas");
+//     fetch(env.API_URL + "wmsmostarbodegasconsultaordencompra")
+//         .then(res => res.json())
+//         .then(data => {
+//             if (data.respuesta) {
+//                 bodegasSelect.innerHTML = '<option value="" disabled selected>Seleccione una bodega</option>';
+//                 data.respuesta.forEach(b => {
+//                     const opt = new Option(b.NOMBRE, b.BODEGA);
+//                     bodegasSelect.add(opt);
+//                 });
+//                 M.FormSelect.init(bodegasSelect);
+//             }
+//         }).catch(err => console.error("Error al cargar bodegas:", err));
+// }
 function initMapaPanama() {
     const mapContainer = document.getElementById('mapPanama');
     if (!mapContainer) return;
@@ -328,7 +837,6 @@ function initMapaPanama() {
 $(document).ready(function() {
     initMapaPanama();
 });
-
 /**
  * Actualiza todos los componentes del dashboard basándose en la bodega elegida
  * @param {string} idBodega - El ID de la bodega (ej: 'CEDI-01', 'BR-DAV')
@@ -394,4 +902,37 @@ function actualizarDashboard(idBodega) {
     }
 
     M.toast({html: `Datos de ${infoBodega ? infoBodega.nombre : idBodega} actualizados`, classes: 'rounded'});
+}
+
+function actualizarKpisConDatosReales(data) {
+    // 1. Total de Pedidos
+    const totalPedidos = data.length;
+
+    // 2. Suma de Artículos (Unidades totales)
+    const totalUnidades = data.reduce((acc, curr) => acc + parseFloat(curr.TOTAL_UNIDADES), 0);
+
+    // 3. Eficiencia de Picking (Verificados vs Solicitados)
+    const unidadesVerificadas = data.reduce((acc, curr) => acc + parseFloat(curr.LINEAS_VERIFICADAS), 0);
+    const eficiencia = totalUnidades > 0 ? (unidadesVerificadas / totalUnidades) * 100 : 0;
+
+    // 4. Pendientes Críticos 
+    // (Ejemplo: Tienen servicio especial "S" pero estado de preparación es "0")
+    const criticos = data.filter(p => p.tiene_servicio === "S" && p.ESTADO_PREPARACION === "0").length;
+
+    // --- ACTUALIZAR EL HTML ---
+    
+    // Pedidos (Formato 18)
+    document.getElementById('kpi_pedidos').innerText = totalPedidos;
+
+    // Artículos (Formato 102.0 - Solo unidades enteras si prefieres)
+    document.getElementById('kpi_items').innerText = totalUnidades.toFixed(0);
+
+    // Eficiencia (Formato 85.5%)
+    document.getElementById('kpi_eficiencia').innerText = eficiencia.toFixed(1) + "%";
+
+    // Pendientes
+    document.getElementById('kpi_pendientes').innerText = criticos;
+
+    // Animación visual rápida para indicar cambio
+    $('.kpi-value').fadeOut(100).fadeIn(100);
 }

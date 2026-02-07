@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Import Materialize Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
+    <!-- <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> -->
+    <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
+    <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+    <!-- FONTS -->
+    <script src="js/encabezado.js" type="text/javascript"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+
+        /* CSS PERSONALIZADO PARA LOOK POWER BI */
+        :root {
+            /* --bg-dark: #d7e1eb; */
+            /* --card-bg: #2a3f54; */
+            --bg-dark: #eaeef3;
+            --card-bg: #2a3f54;
+            --accent-teal: #008080;
+            --text-main: #ffffff;
+            --text-dim: #b4d0f0;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <my-header></my-header>
+    
+    <main class="container-fluidx dashBody">
+        <div class="row">
+            <div class="col s12 m4">
+                <div class="chart-container">
+                    <div class="chart-title">Precisión de Verificación</div>
+                    <canvas id="chartPrecision"></canvas>
+                </div>
+            </div>
+            <div class="col s12 m8">
+                <div class="card card-bg ">
+                    <div class="card-content black-text">
+                        <span class="card-title"><i class="material-icons left">analytics</i>Resumen de Movimientos
+                            Totales</span>
+                        <table class="highlight centered">
+                            <thead>
+                                <tr style="color: black;">
+                                    <th>Concepto Operativo</th>
+                                    <th>Total Acumulado</th>
+                                    <th>Estado de Flujo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaTotalesOperativos">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="s12 m8 l8 col black-text">
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        <div class="chart-container">
+                            <div class="chart-title">Productividad por Hora</div>
+                            <canvas id="chartProductividadReal"></canvas>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <div class="chart-container">
+                            <div class="chart-title">Top 5 Artículos</div>
+                            <canvas id="chartTopArticulos"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="s12 m4 l4 col black-text">
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        <div class="kpi-card teal white-text">
+                            <i class="material-icons">local_shipping</i>
+                            <div class="kpi-title">Pedidos</div>
+                            <div class="kpi-value" id="kpi_pedidos">0</div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <div class="kpi-card blue-grey darken-1 white-text">
+                            <i class="material-icons">compare_arrows</i>
+                            <div class="kpi-title">Traslados</div>
+                            <div class="kpi-value" id="kpi_traslados">0</div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <div class="kpi-card orange darken-2 white-text">
+                            <i class="material-icons">shopping_cart</i>
+                            <div class="kpi-title">O. Compras</div>
+                            <div class="kpi-value" id="kpi_compras">0</div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <div class="kpi-card gradient-45deg-green-teal white-text">
+                            <i class="material-icons">task_alt</i>
+                            <div class="kpi-title">% Finalizadas</div>
+                            <div class="kpi-value" id="kpi_eficiencia">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="text/javascript" src="js/dash3.js?v2.1"></script>
+    <script type="text/javascript" src="js/main.js?v2.1" defer></script>
+    <script type="text/javascript" src="js/menu.js?v2.1" defer></script>
+    <script type="text/javascript" src="js/loader.js"></script>
+</body>
+
+</html>

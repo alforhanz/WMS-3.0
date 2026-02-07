@@ -48,7 +48,7 @@ if ($result['msg'] == 'SUCCESS') {
     sessionStorage.setItem('bodega', '" . json_encode($result['bodega']) . "');
     sessionStorage.setItem('_priv', '" . json_encode($result['priv']) . "');    
 
-   window.location.href = 'http://200.124.12.146:8107/home.html';
+   window.location.href = 'http://200.124.12.146:8107/dash1.html';
    </script>";
 
 }else{

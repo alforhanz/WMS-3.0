@@ -168,7 +168,7 @@ function enviarDatosControlador(
         if (result.ordenCompra.length != 0) {
           ArrayData = result.ordenCompra;
           ArrayDataFiltrado = result.ordenCompra;
-
+          console.log(ArrayDataFiltrado);
           let cantReg = result.ordenCompra.length;
           let nPag = Math.ceil(cantReg / xPag);
           const tabla = document.getElementById("tblordendecompra");

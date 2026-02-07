@@ -171,9 +171,9 @@ var buildUL = function (items) {
 
   htm += `<li>
     <div class="collapsible-header" id="expand_morefather">
-        <a href="dash1.html">
+        <a href="home.html">
             <span class="margen-pedido" style="color:black;">
-                <span id="dash" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">home</span>
+                <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">home</span>
                 INICIO
             </span>
         </a>
@@ -183,6 +183,30 @@ var buildUL = function (items) {
             <span class="margen-pedido" style="color:black;">
                 <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">account_balance</span>
                 DALBOS
+            </span>
+        </a>
+    </div>
+    <div class="collapsible-header" id="expand_morefather">
+        <a href="dash1.html">
+            <span class="margen-pedido" style="">
+                <span id="dash1" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">bar_chart</span>
+                Dashboard 1
+            </span>
+        </a>
+    </div>
+     <div class="collapsible-header" id="expand_morefather">
+        <a href="dash2.html">
+            <span class="margen-pedido" style="">
+                <span id="dash2" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
+                Dashboard 2
+            </span>
+        </a>
+    </div>
+    <div class="collapsible-header" id="expand_morefather">
+        <a href="dash3.html">
+            <span class="margen-pedido" style="">
+                <span id="dash3" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
+                Dashboard 3
             </span>
         </a>
     </div>

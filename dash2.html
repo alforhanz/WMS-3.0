@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Import Materialize Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- ESTRUCTURA DE LAS PAGINAS -->
+
+    <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
+
+    <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
+    <!-- <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> -->
+    <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
+    <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+    <!-- FONTS -->
+    <script src="js/encabezado.js" type="text/javascript"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+
+        /* CSS PERSONALIZADO PARA LOOK POWER BI */
+        :root {
+            /* --bg-dark: #d7e1eb; */
+            /* --card-bg: #2a3f54; */
+            --bg-dark: #eaeef3;
+            --card-bg: #2a3f54;
+            --accent-teal: #008080;
+            --text-main: #ffffff;
+            --text-dim: #b4d0f0;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <my-header></my-header>
+    <main class="container-fluid dashBody"> 
+
+        
+    <div class="row col s12 graficasDash dash2Style">
+
+        <div class="col s12 m6">
+            <div class="col s12 m6">
+                <div class="chart-container">
+                    <div class="chart-title">Estado de Pedidos (Flujo)</div>
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </div>
+            <div class="col s12 m6">
+                <div class="chart-container">
+                    <div class="chart-title">Ocupación de Bodega por Zona</div>
+                    <canvas id="chartZonas"></canvas>
+                </div>
+            </div>      
+        </div>
+
+       <div class="col s12 m6">           
+            <div class="row">
+                <div class="col s12 m3 ">
+                    <div class="kpi-card">
+                        <i class="material-icons">assignment</i>
+                        <div class="kpi-title">Pedidos del Día</div>
+                        <div class="kpi-value" id="kpi_pedidos">1.2K</div>
+                    </div>
+                </div>
+                <div class="col s12 m3 ">
+                    <div class="kpi-card">
+                        <i class="material-icons">inventory_2</i>
+                        <div class="kpi-title">Articulos Solicitados</div>
+                        <div class="kpi-value" id="kpi_items">45.8K</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3 ">
+                    <div class="kpi-card">
+                        <i class="material-icons">speed</i>
+                        <div class="kpi-title">% Eficiencia Picking</div>
+                        <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
+                    </div>
+                </div>
+                <div class="col s12 m3 ">
+                    <div class="kpi-card">
+                        <i class="material-icons">priority_high</i>
+                        <div class="kpi-title">Pendientes Críticos</div>
+                        <div class="kpi-value" id="kpi_pendientes">128</div>
+                    </div>
+                </div>
+            </div>
+       </div>
+     
+    </div>    
+        
+
+    <div class="card">
+    <div class="card-content">
+        <span class="card-title">Listado de Pedidos</span>        
+        <div class="row" style="display: flex; align-items: center; margin-bottom: 20px;">
+            <div class="input-field" style="margin: 0; flex-grow: 1; max-width: 400px;">
+                <i class="material-icons prefix">search</i>
+                <input id="txtBuscadorTabla" type="text" placeholder="Buscar cliente o pedido...">
+            </div>
+        </div>
+
+        <table class="highlight responsive-table" id="tablaPedidos">
+            <thead id="thPedidos">
+                <tr>
+                    <th>Item</th>
+                    <th>Documento</th>
+                    <th>Pedido</th>
+                    <th>Cliente</th>
+                    <th>Cant.</th>
+                    <th>Atendido Por</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyPedidos">
+                </tbody>
+        </table>
+    </div>
+</div>
+        
+       
+   
+       
+        
+        <!-- <div class="row graficasDash">
+            <div class="col s12 m6">
+                <div class="chart-container avance-pedidos">
+                    <div class="chart-title">Transacciones</div>
+                    <canvas id="chartArticulos" class="graphArticulos "></canvas>
+                </div>
+            </div>         
+            <div class="col s12 m6">
+                <div class="chart-container mapaSucursales ">
+                    <div class="chart-title">Ubicación de Bodegas y Cobertura Nacional</div>
+                    <div id="mapPanama"></div>
+                </div>
+            </div>
+        </div> -->
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="text/javascript" src="js/dash2.js?v2.1"></script>
+    <script type="text/javascript" src="js/main.js?v2.1" defer></script>
+    <script type="text/javascript" src="js/menu.js?v2.1" defer></script>
+    <script type="text/javascript" src="js/loader.js"></script>
+</body>
+
+</html>

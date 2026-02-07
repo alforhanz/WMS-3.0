@@ -329,6 +329,7 @@ table {
 }
 .sidenav {
   padding-top: 10px;
+  width: 18%;
 }
 
 .sidenav .collapsible-header,
