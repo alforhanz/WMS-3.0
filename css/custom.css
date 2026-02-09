@@ -217,7 +217,8 @@ nav a.sidenav-trigger {
   display: block;
 }
 #home main {
-  padding-top: 227px;
+  /* padding-top: 227px; */
+  padding-top: 22px;
 }
 .margen-pedido {
   padding-top: 5px;

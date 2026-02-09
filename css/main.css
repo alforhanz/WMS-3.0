@@ -2997,8 +2997,8 @@ th {
 #chartProductividadReal {
     display: block;
     box-sizing: border-box;
-    height: 228.8px!important;
-    width: 426.9px!important;
+    height: 228px!important;
+    width: 382.9px;
 }
 .ui-btn {
     font-size: 16px !important;
