@@ -293,6 +293,11 @@
     padding-top: 10px;
     width: 100%;
 }
+#bodega_sucursales{
+    left: 0%!important;
+    margin-left: 0 !important;
+}
+
 
 }
 

@@ -660,8 +660,6 @@ function armarTablaVerificacion(detalleLineasContenedores) {
     // Opcional: Si el ordenamiento altera los totales, se debe recalcular aquí:
     // calcularTotalesVerificacion(); 
 }
-
-
 //VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
 function verificacion() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
@@ -1538,34 +1536,49 @@ function autorizaDevolucion(articulo, contenedor, cantidadPreparada) {
           }  
   });
 }
+
 function devolverArticulo(articulo, contenedor, cantidadPreparada) {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-  // console.log("📦 DataArray:", dataArray);
 
   // Buscar si el artículo existe dentro del arreglo
   const encontrado = dataArray.find(
-    (item) =>
-      item.ARTICULO.trim().toUpperCase() === articulo.trim().toUpperCase()
+    (item) => item.ARTICULO.trim().toUpperCase() === articulo.trim().toUpperCase()
   );
 
-  // Si no se encuentra, mostramos advertencia y detenemos la ejecución
+  // Si no se encuentra, preguntamos si desea continuar de todas formas
   if (!encontrado) {
     Swal.fire({
-      title: "Artículo no encontrado",
-      text: `El artículo ${articulo} no tiene registros de lectura.`,
+      title: "Artículo sin lecturas",
+      text: `El artículo ${articulo} no tiene registros de lectura previa. ¿Deseas procesar la devolución de todas formas?`,
       icon: "warning",
-      confirmButtonText: "Aceptar",
-      confirmButtonColor: "#6e7881",
+      showCancelButton: true,
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "No, cancelar",
+      confirmButtonColor: "#28a745",
+      cancelButtonColor: "#6e7881"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Si acepta, ejecutamos la lógica de devolución pasando 0 como lectura
+        ejecutarLogicaDevolucion(articulo, contenedor, cantidadPreparada, 0);
+      } else {
+        // Si cancela, el return ocurre implícitamente aquí al no hacer nada
+        return;
+      }
     });
-    return;
+  } else {
+    // Si SI se encuentra, procedemos con la cantidad encontrada originalmente
+    const cantidadLeida = parseFloat(encontrado.CANTIDAD_LEIDA) || 0;
+    ejecutarLogicaDevolucion(articulo, contenedor, cantidadPreparada, cantidadLeida);
   }
+}
 
-  // Obtener la cantidad leída
-  const cantidadLeida = parseFloat(encontrado.CANTIDAD_LEIDA) || 0;
+/**
+ * Función auxiliar para no repetir el código del Swal de confirmación y el Fetch
+ */
+function ejecutarLogicaDevolucion(articulo, contenedor, cantidadPreparada, cantidadLeida) {
   const cantidadPreparadaNum = parseFloat(cantidadPreparada) || 0;
   const diferencia = cantidadPreparadaNum - cantidadLeida;
 
-  // Mostrar confirmación
   Swal.fire({
     title: "Devolver Artículo",
     html: `
@@ -1584,12 +1597,6 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      //// console.log(`✅ Artículo: ${articulo}`);
-      //// console.log(`📦 Contenedor: ${contenedor}`);
-      //// console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
-      //// console.log(`📉 Cantidad leída: ${cantidadLeida}`);
-      //// console.log(`🔁 Diferencia devuelta: ${diferencia}`);
-
       let pSistema = "WMS";
       let pUsuario = document.getElementById("hUsuario").value;
       let pOpcion = "c";
@@ -1600,57 +1607,159 @@ function devolverArticulo(articulo, contenedor, cantidadPreparada) {
       let pFechaDesde = $("#fecha_ini").val();
       let pArticulo = articulo;
 
-      const params =
-        "?pSistema=" +
-        pSistema +
-        "&pUsuario=" +
-        pUsuario +
-        "&pOpcion=" +
-        pOpcion +
-        "&pBodegaEnvia=" +
-        pBodegaEnvia +
-        "&pBodegaDestino=" +
-        pBodegaDestino +
-        "&pContenedor=" +
-        pConsecutivo +
-        "&pEstado=" +
-        pEstado +
-        "&pFechaDesde=" +
-        pFechaDesde +
-        "&pArticulo=" +
-        pArticulo;
-      // console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+      const params = `?pSistema=${pSistema}&pUsuario=${pUsuario}&pOpcion=${pOpcion}&pBodegaEnvia=${pBodegaEnvia}&pBodegaDestino=${pBodegaDestino}&pContenedor=${pConsecutivo}&pEstado=${pEstado}&pFechaDesde=${pFechaDesde}&pArticulo=${pArticulo}`;
+
       localStorage.setItem("parametrosBusquedaContenedor", params);
+      
+      // Mostrar loader antes del fetch
+      if(document.getElementById("carga")) document.getElementById("carga").innerHTML = "Cargando...";
+
       fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
         .then((response) => response.json())
         .then((result) => {
           if (result.msg === "SUCCESS") {
-            detalleLineasContenedoreses = result.respuesta;
             if (result.respuesta.length != 0) {
-              // console.log('REsultados:');
-              // console.log(detalleLineasContenedoreses);
-              mostrarTablaEnSwal(detalleLineasContenedoreses);
+              mostrarTablaEnSwal(result.respuesta);
             } else {
               Swal.fire({
                 icon: "info",
                 title: "Información",
-                text: "Ocurrio un error al cargar las lineas para devolución",
+                text: "Ocurrió un error al cargar las líneas para devolución",
                 confirmButtonColor: "#28a745",
               });
             }
-            document.getElementById("carga").innerHTML = "";
           } else {
             Swal.fire({
               icon: "error",
-              title: "error",
-              text: "Se registro un error en la llamada al API",
+              title: "Error",
+              text: "Se registró un error en la llamada al API",
               confirmButtonColor: "#28a745",
             });
           }
+        })
+        .finally(() => {
+           if(document.getElementById("carga")) document.getElementById("carga").innerHTML = "";
         });
     }
   });
 }
+
+// function devolverArticulo(articulo, contenedor, cantidadPreparada) {
+//   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   // console.log("📦 DataArray:", dataArray);
+
+//   // Buscar si el artículo existe dentro del arreglo
+//   const encontrado = dataArray.find(
+//     (item) =>
+//       item.ARTICULO.trim().toUpperCase() === articulo.trim().toUpperCase()
+//   );
+
+//   // Si no se encuentra, mostramos advertencia y detenemos la ejecución
+//   if (!encontrado) {
+//     Swal.fire({
+//       title: "Artículo no encontrado",
+//       text: `El artículo ${articulo} no tiene registros de lectura.`,
+//       icon: "warning",
+//       confirmButtonText: "Aceptar",
+//       cancelButtonText: "Cancelar",
+//       confirmButtonColor: "#28a745",
+//       cancelButtonColor: "#6e7881"     
+//     });
+//     return;
+//   }
+
+//   // Obtener la cantidad leída
+//   const cantidadLeida = parseFloat(encontrado.CANTIDAD_LEIDA) || 0;
+//   const cantidadPreparadaNum = parseFloat(cantidadPreparada) || 0;
+//   const diferencia = cantidadPreparadaNum - cantidadLeida;
+
+//   // Mostrar confirmación
+//   Swal.fire({
+//     title: "Devolver Artículo",
+//     html: `
+//       <p>¿Estás seguro de devolver el artículo <b>${articulo}</b>?</p>
+//       <p>Contenedor: <b>${contenedor}</b></p>
+//       <p>Cantidad preparada: <b>${cantidadPreparadaNum.toFixed(2)}</b></p>
+//       <p>Cantidad leída: <b>${cantidadLeida.toFixed(2)}</b></p>
+//       <hr>
+//       <p><b>Diferencia a devolver:</b> ${diferencia.toFixed(2)}</p>
+//     `,
+//     icon: "question",
+//     showCancelButton: true,
+//     confirmButtonText: "Sí, devolver",
+//     cancelButtonText: "Cancelar",
+//     confirmButtonColor: "#28a745",
+//     cancelButtonColor: "#6e7881",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       //// console.log(`✅ Artículo: ${articulo}`);
+//       //// console.log(`📦 Contenedor: ${contenedor}`);
+//       //// console.log(`🔢 Cantidad preparada: ${cantidadPreparadaNum}`);
+//       //// console.log(`📉 Cantidad leída: ${cantidadLeida}`);
+//       //// console.log(`🔁 Diferencia devuelta: ${diferencia}`);
+
+//       let pSistema = "WMS";
+//       let pUsuario = document.getElementById("hUsuario").value;
+//       let pOpcion = "c";
+//       let pBodegaEnvia = document.getElementById("bodega").value;
+//       let pBodegaDestino = document.getElementById("bodegaSelect").value;
+//       let pConsecutivo = $("#pContenedor").val();
+//       let pEstado = "";
+//       let pFechaDesde = $("#fecha_ini").val();
+//       let pArticulo = articulo;
+
+//       const params =
+//         "?pSistema=" +
+//         pSistema +
+//         "&pUsuario=" +
+//         pUsuario +
+//         "&pOpcion=" +
+//         pOpcion +
+//         "&pBodegaEnvia=" +
+//         pBodegaEnvia +
+//         "&pBodegaDestino=" +
+//         pBodegaDestino +
+//         "&pContenedor=" +
+//         pConsecutivo +
+//         "&pEstado=" +
+//         pEstado +
+//         "&pFechaDesde=" +
+//         pFechaDesde +
+//         "&pArticulo=" +
+//         pArticulo;
+//       // console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+//       localStorage.setItem("parametrosBusquedaContenedor", params);
+//       fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
+//         .then((response) => response.json())
+//         .then((result) => {
+//           if (result.msg === "SUCCESS") {
+//             detalleLineasContenedoreses = result.respuesta;
+//             if (result.respuesta.length != 0) {
+//               // console.log('REsultados:');
+//               // console.log(detalleLineasContenedoreses);
+//               mostrarTablaEnSwal(detalleLineasContenedoreses);
+//             } else {
+//               Swal.fire({
+//                 icon: "info",
+//                 title: "Información",
+//                 text: "Ocurrio un error al cargar las lineas para devolución",
+//                 confirmButtonColor: "#28a745",
+//               });
+//             }
+//             document.getElementById("carga").innerHTML = "";
+//           } else {
+//             Swal.fire({
+//               icon: "error",
+//               title: "error",
+//               text: "Se registro un error en la llamada al API",
+//               confirmButtonColor: "#28a745",
+//             });
+//           }
+//         });
+//     }
+//   });
+// }
+
 async function mostrarTablaEnSwal(data) {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;

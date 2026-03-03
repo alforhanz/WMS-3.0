@@ -158,7 +158,7 @@ function login() {
             icon: "success",
             title: "Iniciando Bremen.security configuración",
           }).then(function () {
-            window.location = "dash1.html";
+            window.location = "home.html";
             // window.location = "home.html";
           });
         } else {

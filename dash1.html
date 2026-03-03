@@ -21,7 +21,7 @@
 
     <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
-    <!-- <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> -->
+    <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
     <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
     <!-- FONTS -->
@@ -44,44 +44,71 @@
             color: var(--text-main);
             font-family: 'Roboto', sans-serif;
         }
+        /* Small only */
+        @media screen and (max-width: 39.9375em) {
+            #bodega_sucursales {
+                        width: 80%;
+                        top: 20px !important;
+                        left: 38px !important;
+                        max-height: 100% !important;
+                        margin-left: 3px !important;
+                    }
+        }
+
+        /* Medium and up */
+        @media screen and (min-width: 40em) {}
+
+        /* Medium only */
+        @media screen and (min-width: 40em) and (max-width: 63.9375em) {}
+
+        /* Large and up */
+        @media screen and (min-width: 64em) {}
+
+        /* Large only */
+        @media screen and (min-width: 64em) and (max-width: 74.9375em) {}
     </style>
+    <title>Dash1</title>
 </head>
 
 <body>
     <my-header></my-header>
     <main class="container-fluid dashBody">   
-
+ <div id="contenedorLoader"></div>
+  <div id="resultadoBusqueda">
         <div class="row">
-            <div class="col s12 m3 dashcards">
+            <div class="col s12 m3 l3">
                 <div class="kpi-card">
                     <i class="material-icons">assignment</i>
                     <div class="kpi-title">Pedidos del Día</div>
                     <div class="kpi-value" id="kpi_pedidos">1.2K</div>
                 </div>
             </div>
-            <div class="col s12 m3 dashcards">
+            <div class="col s12 m3 l3">
                 <div class="kpi-card">
-                    <i class="material-icons">inventory_2</i>
-                    <div class="kpi-title">Articulos Solicitados</div>
-                    <div class="kpi-value" id="kpi_items">45.8K</div>
-                </div>
+                    <i class="material-icons">assignment</i>
+                    <div class="kpi-title">Pedidos del Día</div>
+                    <div class="kpi-value" id="kpi_pedidos">1.2K</div>
+                </div>                
             </div>
-            <div class="col s12 m3 dashcards">
+            <div class="col s12 m3 l3">
                 <div class="kpi-card">
                     <i class="material-icons">speed</i>
                     <div class="kpi-title">% Eficiencia Picking</div>
                     <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
-                </div>
+                </div>                
             </div>
-            <div class="col s12 m3 dashcards">
+            <div class="col s12 m3 l3">
                 <div class="kpi-card">
                     <i class="material-icons">priority_high</i>
                     <div class="kpi-title">Pendientes Críticos</div>
                     <div class="kpi-value" id="kpi_pendientes">128</div>
-                </div>
+                </div>                
             </div>
         </div>
-        <div class="row graficasDash">
+
+
+
+        <div class="row ">
             <div class="col s12 m3">
                 <div class="chart-container">
                     <div class="chart-title">Estado de Pedidos (Flujo)</div>
@@ -103,11 +130,14 @@
               <div class="col s12 m3">
                 <div class="chart-container">
                     <div class="chart-title">Despachos</div>
-                    <canvas id="tuCanvasID" class="graphProductividad "></canvas>
+                    <canvas id="eficienciaPicking" class="graphProductividad "></canvas>
                 </div>
             </div>
         </div>
-        <div class="row graficasDash">
+
+
+
+        <div class="row ">
             <div class="col s12 m3">
                 <div class="chart-container avance-pedidos">
                     <div class="chart-title">Transacciones</div>
@@ -127,8 +157,12 @@
                 </div>
             </div>
         </div>
+        </div>
     </main>
 
+
+     <!-- IMprimir Código de barra -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

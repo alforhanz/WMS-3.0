@@ -42,6 +42,49 @@
             color: var(--text-main);
             font-family: 'Roboto', sans-serif;
         }
+
+       .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px; /* Ajusta según tu diseño */
+            margin: 0 auto;
+        }
+
+        canvas#chartPrecision {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: #f5f8fa;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+           /* Small only */
+        @media screen and (max-width: 39.9375em) {
+            #bodega_sucursales {
+                        width: 80%;
+                        top: 20px !important;
+                        left: 38px !important;
+                        max-height: 100% !important;
+                        margin-left: 3px !important;
+                    }
+        }
+
+        /* Medium and up */
+        @media screen and (min-width: 40em) {}
+
+        /* Medium only */
+        @media screen and (min-width: 40em) and (max-width: 63.9375em) {}
+
+        /* Large and up */
+        @media screen and (min-width: 64em) {}
+
+        /* Large only */
+        @media screen and (min-width: 64em) and (max-width: 74.9375em) {}
     </style>
 </head>
 
@@ -49,6 +92,9 @@
     <my-header></my-header>
     
     <main class="container-fluidx dashBody">
+         <div id="contenedorLoader"></div>
+             <div id="resultadoBusqueda">
+
         <div class="row">
             <div class="col s12 m4">
                 <div class="chart-container">
@@ -126,6 +172,8 @@
                 </div>
             </div>
         </div>
+                </div>
+
     </main>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
