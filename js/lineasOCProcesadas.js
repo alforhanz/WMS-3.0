@@ -1,59 +1,146 @@
 //Variable global que contiene el detalle del pedido
 var detalleLineasOrdenDeCompra = "";
 
-document.addEventListener("DOMContentLoaded", function () {
-    cargarBodegas();
+// document.addEventListener("DOMContentLoaded", function () {
+//     cargarBodegas();
   
+//   const observacionesContainer = document.getElementById(
+//     "observaciones-container"
+//   );
+//   observacionesContainer.style.display = "block";
+ 
+
+//   //--------------------------------------------------------------------------
+//   if (localStorage.getItem("OrdenDeCompra")) {
+//     let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");
+//     // let pBodega = localStorage.getItem("bodegaOC");
+//     // let pBodega = document.getElementById("bodega-sucursal").value;
+//     let pBodega = document.getElementById("bodega").value;
+//     let pUsuario = document.getElementById("hUsuario").value; //localStorage.getItem("username");
+//     //---------------------------------------------------------------------------
+//     cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario);
+//     //localStorage.removeItem("dataArray");//borra los elementos leidos del localstorage.
+//   } else {
+//     Swal.fire({
+//       icon: "info",
+//       title: "No hay OrdenDeCompraes",
+//       text: "Lo sentimos, no hay OrdenDeCompraes disponibles en este momento.",
+//     });
+//   }
+// });
+
+// function cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario) {
+//   let embarque = localStorage.getItem("embarque");
+//   // Concatena la variable con texto y asigna el valor al label documento y pedido
+//   document.getElementById("OrdenDeCompra").innerHTML =
+//     "#Orden: " + OrdenDeCompra;
+//   document.getElementById("bodega_solicita").innerHTML =
+//     "#Embarque: " + embarque;
+
+//   const pOrden = OrdenDeCompra; //Se asigna el número del peddido a una variable constante para pasarlo como parametro
+//   const params =
+//     "?pBodega=" + pBodega + "&pUsuario=" + pUsuario + "&pOrden=" + pOrden;
+
+//   fetch(env.API_URL + "wmsordenesdecompraslist" + params, myInit) //obtierne las lineas del OrdenDeCompra
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") {
+//         if (result.detalleOC.length != 0) {
+//           detalleLineasOrdenDeCompra = result.detalleOC;
+//           armarTablaVerificacion(detalleLineasOrdenDeCompra);
+//         }
+//       }
+//     });
+// }
+
+///FUNCION QUE ARMA LA TABLA DE  VERIFICACION
+document.addEventListener("DOMContentLoaded", function () {
+  cargarBodegas();
+  let usuario = document.getElementById("hUsuario").value;
+  console.log("hUsuario:", usuario);
+  //localStorage.setItem('UserID',usuario);
+
+  const verificacionTab = document.querySelector(
+    'a[href="#tabla-verificacion"]'
+  );
   const observacionesContainer = document.getElementById(
     "observaciones-container"
   );
-  observacionesContainer.style.display = "block";
- 
+
+  // // Escuchar clic en la pestaña de Verificación
+  // verificacionTab.addEventListener("click", function () {
+    observacionesContainer.style.display = "block"; // Mostrar textarea
+  // });
+
+  // // Escuchar clic en la pestaña de Lectura
+  // const lecturaTab = document.querySelector('a[href="#tabla-lectura"]');
+  // lecturaTab.addEventListener("click", function () {
+    observacionesContainer.style.display = "none"; // Ocultar textarea
+  // });
 
   //--------------------------------------------------------------------------
   if (localStorage.getItem("OrdenDeCompra")) {
-    let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");
-    // let pBodega = localStorage.getItem("bodegaOC");
-    // let pBodega = document.getElementById("bodega-sucursal").value;
+   
+    let pSistema = "WMS"; 
+    let pUsuario = document.getElementById("hUsuario").value;
+    let pOpcion = "D";
     let pBodega = document.getElementById("bodega").value;
-    let pUsuario = document.getElementById("hUsuario").value; //localStorage.getItem("username");
+    let pEstado = "";
+    let pOrden = localStorage.getItem("OrdenDeCompra");
+    // let pFechaDesde = document.getElementById("fecha_ini").value;
+    // let pFechaHasta = document.getElementById("fecha_fin").value;
+    let pFechaDesde = "";
+    let pFechaHasta = "";
+
+    //loadSwitchState();
     //---------------------------------------------------------------------------
-    cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario);
-    //localStorage.removeItem("dataArray");//borra los elementos leidos del localstorage.
+    cargarDetalleOrdenDeCompra(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   } else {
     Swal.fire({
       icon: "info",
-      title: "No hay OrdenDeCompraes",
+      title: "No hay OrdenDeCompra",
       text: "Lo sentimos, no hay OrdenDeCompraes disponibles en este momento.",
     });
   }
 });
 
-function cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario) {
-  let embarque = localStorage.getItem("embarque");
+////////////// CARGA LOS DETALLES DE LA ORDEN DE COMPRAS //////////////////////////////////////////////////////////
+
+function cargarDetalleOrdenDeCompra(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
   // Concatena la variable con texto y asigna el valor al label documento y pedido
-  document.getElementById("OrdenDeCompra").innerHTML =
-    "#Orden: " + OrdenDeCompra;
-  document.getElementById("bodega_solicita").innerHTML =
-    "#Embarque: " + embarque;
+  document.getElementById("OrdenDeCompra").innerHTML ="#Orden: " + pOrden;   
+   const params =
+    "?pSistema=" +
+    pSistema +
+    "&pBodega=" +
+    pBodega +
+    "&pUsuario=" +
+    pUsuario +
+    "&pOrden=" +
+    pOrden +
+    "&pOpcion=" +
+    pOpcion +
+    "&pFechaDesde=" +
+    pFechaDesde +
+    "&pFechaHasta=" +
+    pFechaHasta;
 
-  const pOrden = OrdenDeCompra; //Se asigna el número del peddido a una variable constante para pasarlo como parametro
-  const params =
-    "?pBodega=" + pBodega + "&pUsuario=" + pUsuario + "&pOrden=" + pOrden;
-
-  fetch(env.API_URL + "wmsordenesdecompraslist" + params, myInit) //obtierne las lineas del OrdenDeCompra
+  fetch(env.API_URL + "wmsordenesdecompras" + params, myInit) //obtierne las lineas del OrdenDeCompra
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        if (result.detalleOC.length != 0) {
-          detalleLineasOrdenDeCompra = result.detalleOC;
-          armarTablaVerificacion(detalleLineasOrdenDeCompra);
-        }
+        if (result.respuesta.length != 0) {
+          detalleLineasOrdenDeCompra = result.respuesta;
+          let lineas = JSON.stringify(detalleLineasOrdenDeCompra);
+          localStorage.setItem("lineasOC", lineas);
+          console.log("listadoOC1");
+          console.log(detalleLineasOrdenDeCompra);
+           armarTablaVerificacion(detalleLineasOrdenDeCompra);        
+        }       
       }
     });
 }
 
-///FUNCION QUE ARMA LA TABLA DE  VERIFICACION
 function armarTablaVerificacion(detalleLineasOrdenDeCompra) {
   // Obtener la referencia del cuerpo de la tabla
   var tbody = document.getElementById("tblbodyLineasOrdenDeCompra");

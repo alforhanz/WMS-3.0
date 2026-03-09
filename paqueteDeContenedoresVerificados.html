@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <!--Import Materialize Icons-->
@@ -19,9 +20,9 @@
   <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
   <!-- FONTS -->
-  <style>  
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-  </style>  
+  </style>
   <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/encabezado.js" type="text/javascript"></script>
@@ -65,7 +66,7 @@
               <option value="" disabled selected>Seleccione una bodega</option>
             </select>
           </div>
-  
+
           <div class="col s12 m8" style="padding-top: 20px;">
             <label>
               <input name="grupoVista" type="checkbox" id="vistaResumida" />
@@ -73,7 +74,7 @@
             </label>
           </div>
         </div>
-  
+
         <div class="row" style="margin-top: 20px;">
           <div class="col s12">
             <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit"
@@ -82,7 +83,7 @@
             </button>
           </div>
         </div>
-  
+
         <div class="row valign-wrapper" style="margin-bottom: 0px; background: #f9f9f9; border-radius: 4px;">
           <div class="col s12 m4" style="display: flex; align-items: center; padding-left: 15px;">
             <i class="material-icons"
@@ -90,14 +91,14 @@
             <label id="cantidadDeRegistros"
               style="font-size: 1rem; font-weight: bold; color: #424242; margin: 0;">Registros: 0</label>
           </div>
-  
+
           <div class="input-field col s12 m8" style="margin: 0 !important; padding-right: 15px;">
             <i class="material-icons prefix" style="font-size: 1.5rem; top: 0.5rem;">search</i>
             <input id="txtBuscadorTabla" type="text" placeholder="Filtrar resultados..."
               style="width: 50%; margin-bottom: 0 !important; height: 2.5rem !important;">
           </div>
         </div>
-  
+
         <div class="row rptPaquetes">
           <div id="resultadoGeneral"></div>
           <table id="tblResultados" class="display centered highlight responsive-table">
@@ -109,8 +110,8 @@
           </table>
           <div id="resultadoPaginador"></div>
         </div>
-  
-  
+
+
         <div class="row" id="observacion">
           <div class="input-field col s12">
             <label id="lblObservaciones" for="observaciones">Observaciones</label>
@@ -125,7 +126,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <!-- IMprimir Código de barra -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
   <!--JavaScript at end of body for optimized loading-->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

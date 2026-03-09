@@ -1,19 +1,77 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // let usuario = document.getElementById("hUsuario").value;
-  // console.log("hUsuario:", usuario);
-  // //localStorage.setItem('UserID',usuario);
+// document.addEventListener("DOMContentLoaded", function () {
 
-  const busqueda = localStorage.getItem("busquedaPrevia");
 
-  //revisar como toma el valor
-  if (busqueda) {
-    const parametosBusquedaOC = localStorage.getItem("parametrosBusquedaOC");
+//   const busqueda = localStorage.getItem("busquedaPrevia");
+
+//   //revisar como toma el valor
+//   if (busqueda) {
+//     const parametosBusquedaOC = localStorage.getItem("parametrosBusquedaOC");
     
-    // Extraer los valores de 'fechaIni' y 'fechaFin' de la cadena de parámetros
-    const pFechaDesde = obtenerValorParametro(parametosBusquedaOC, "pFechaDesde");
-    const pFechaHasta = obtenerValorParametro(parametosBusquedaOC, "pFechaHasta");
+//     // Extraer los valores de 'fechaIni' y 'fechaFin' de la cadena de parámetros
+//     const pFechaDesde = obtenerValorParametro(parametosBusquedaOC, "pFechaDesde");
+//     const pFechaHasta = obtenerValorParametro(parametosBusquedaOC, "pFechaHasta");
 
-     // Establecer los valores de los campos de fecha
+//      // Establecer los valores de los campos de fecha
+//       if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+//       if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+//       // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
+//           setTimeout(() => {
+//               // Forzar a los labels a subir
+//               M.updateTextFields();
+
+//               // Reinicializar los datepickers específicamente con la fecha guardada
+//               const inputs = document.querySelectorAll('.datepicker');
+//               inputs.forEach(input => {
+//                   const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
+                  
+//                   if (fechaGuardada) {
+//                       // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+//                       const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
+//                       const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+//                       M.Datepicker.init(input, {
+//                           format: 'yyyy-mm-dd',
+//                           defaultDate: d,
+//                           setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+//                           autoClose: true
+//                       });
+//                   }
+//               });
+//           }, 100);
+
+
+//     parametosBusquedaOC != null
+//       ? enviarDatosControlador(parametosBusquedaOC)
+//       : null;
+//   }
+// });
+
+//Verificacion de Ordenes de compra functions
+document.addEventListener("DOMContentLoaded", function () {
+
+
+  const busqueda = localStorage.getItem("autoSearchOrdenDeComprasList");
+  localStorage.setItem("switchLecturaState", "true");
+  //revisar como toma el valor
+  if (busqueda === "true") {
+    console.log("DOM completamente cargado y parseado.");
+
+    const parametrosBusquedaOC = localStorage.getItem(
+      "parametrosBusquedaOrdenesDeCompraList"
+    );
+    if (parametrosBusquedaOC) {
+      const params = new URLSearchParams(parametrosBusquedaOC);
+      const pSistema = params.get("pSistema");
+      const pUsuario = params.get("pUsuario");
+      const pOpcion = params.get("pOpcion");   
+      const pBodega = params.get("pBodega");
+      const pFechaDesde = params.get("pFechaDesde");
+      const pFechaHasta = params.get("pFechaHasta");
+      const pEstado = "";
+      const pOrden = params.get("pOrden");
+     
+
+      // Establecer los valores de los campos de fecha
       if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
       if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
       // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
@@ -42,71 +100,145 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 100);
 
 
-    parametosBusquedaOC != null
-      ? enviarDatosControlador(parametosBusquedaOC)
-      : null;
+     enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
+    }
   }
 });
 
-//Verificacion de Ordenes de compra functions
-function ValidaOrdenesDeCompra() {
-  let bodega = document.getElementById("bodega").value;
-  //revisar como toma el valor
-  if (bodega == "") {
-    Swal.fire({
-      icon: "warning",
-      title: "Advertencia",
-      text: "Por favor, seleccione una bodega.",
-    });
-    return false; // Evita que se envíe el formulario
-  } else {
-    let pBodega = document.getElementById("bodega").value;
-    let pOrden = $("#pOrden").val();
-    let pOpcion = "P";
-    let pUsuario = document.getElementById("hUsuario").value;
-    //  document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
-    let pFechaDesde = document.getElementById("fecha_ini").value;
-    let pFechaHasta = document.getElementById("fecha_fin").value;
-    const params =
-      "?pBodega=" +
-      pBodega +
-      "&pUsuario=" +
-      pUsuario +
-      "&pOrden=" +
-      pOrden +
-      "&pOpcion=" +
-      pOpcion +
-      "&pFechaDesde=" +
-      pFechaDesde +
-      "&pFechaHasta=" +
-      pFechaHasta;
+// function ValidaOrdenesDeCompra() {
+//   let bodega = document.getElementById("bodega").value;
+//   //revisar como toma el valor
+//   if (bodega == "") {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "Advertencia",
+//       text: "Por favor, seleccione una bodega.",
+//     });
+//     return false; // Evita que se envíe el formulario
+//   } else {
+//     let pBodega = document.getElementById("bodega").value;
+//     let pOrden = $("#pOrden").val();
+//     let pOpcion = "P";
+//     let pUsuario = document.getElementById("hUsuario").value;
+//     //  document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
+//     let pFechaDesde = document.getElementById("fecha_ini").value;
+//     let pFechaHasta = document.getElementById("fecha_fin").value;
+//     const params =
+//       "?pBodega=" +
+//       pBodega +
+//       "&pUsuario=" +
+//       pUsuario +
+//       "&pOrden=" +
+//       pOrden +
+//       "&pOpcion=" +
+//       pOpcion +
+//       "&pFechaDesde=" +
+//       pFechaDesde +
+//       "&pFechaHasta=" +
+//       pFechaHasta;
 
-    localStorage.setItem("parametrosBusquedaOC", params);
-    enviarDatosControlador(params);
-  }
-}
+//     localStorage.setItem("parametrosBusquedaOC", params);
+//     enviarDatosControlador(params);
+//   }
+// }
 
 //////////////////FUNCION PARA MOSTRAR EL DETALLE DE las ORDENES DE COMPRAS///////////
 
-function enviarDatosControlador(params) {
-  mostrarLoader();
-  localStorage.setItem("busquedaPrevia", true);
+function ValidaOrdenesDeCompra() {
 
-  fetch(env.API_URL + "wmsordenesdecompras/L" + params, myInit)
+    let pSistema = "WMS"; 
+    let pUsuario = document.getElementById("hUsuario").value;
+    let pOpcion = "P";
+    let pBodega = document.getElementById("bodega").value;
+    let pEstado = "";
+    let pOrden = $("#pOrden").val();
+    // let pFechaDesde = document.getElementById("fecha_ini").value;
+    // let pFechaHasta = document.getElementById("fecha_fin").value;
+     let pFechaDesde = "";
+    let pFechaHasta = "";
+
+    enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
+  }
+
+// function enviarDatosControlador(params) {
+//   mostrarLoader();
+//   localStorage.setItem("busquedaPrevia", true);
+
+//   fetch(env.API_URL + "wmsordenesdecompras/L" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") {
+//         if (result.ordenCompra.length != 0) {
+//           ArrayData = result.ordenCompra;
+//           ArrayDataFiltrado = result.ordenCompra;
+
+//           let cantReg = result.ordenCompra.length;
+//           let nPag = Math.ceil(cantReg / xPag);
+//           const tabla = document.getElementById("tblordendecompra");
+//           $("#tblordendecompra tbody").remove();
+
+//           let htm = `<div class="row" id="totalregistros">
+//               <div class="col s12"><span>Total de Registros: </span><span>${result.ordenCompra.length}</span></div>
+//             </div>`;
+
+//           document.getElementById("resultadoGeneral").innerHTML = htm;
+//           mostrarResultadosVerificacionOrdenes(nPag, 1);
+//           document.getElementById("carga").innerHTML = "";
+//           ocultarLoader();
+//         } else {
+//           Swal.fire({
+//             icon: "info",
+//             title: "Información",
+//             text: "No hay registros asignados en este momento",
+//             confirmButtonColor: "#28a745",
+//           });
+//           document.getElementById("carga").innerHTML = "";
+//           limpiarResultadoGeneral();
+//           ocultarLoader();
+//         }
+//       }
+//     });
+// }
+
+function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
+  mostrarLoader();
+  const params =
+    "?pSistema=" +
+    pSistema +
+    "&pUsuario=" +
+    pUsuario +
+    "&pBodega=" +
+    pBodega +
+    "&pEstado=" +
+    pEstado +
+    "&pOrden=" +
+    pOrden +
+    "&pOpcion=" +
+    pOpcion +
+    "&pFechaDesde=" +
+    pFechaDesde +
+    "&pFechaHasta=" +
+    pFechaHasta;
+
+  localStorage.setItem("parametrosBusquedaOrdenesDeCompraList", params);
+  localStorage.setItem("autoSearchOrdenDeComprasList", "true");
+
+  fetch(env.API_URL + "wmsordenesdecompras" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
+      console.log("Respuesta del servidor:", result);
       if (result.msg === "SUCCESS") {
-        if (result.ordenCompra.length != 0) {
-          ArrayData = result.ordenCompra;
-          ArrayDataFiltrado = result.ordenCompra;
-
-          let cantReg = result.ordenCompra.length;
+        if (result.respuesta.length != 0) {
+          ArrayData = result.respuesta;
+          ArrayDataFiltrado = result.respuesta;
+          console.log(ArrayDataFiltrado);
+          let cantReg = result.respuesta.length;
           let nPag = Math.ceil(cantReg / xPag);
           const tabla = document.getElementById("tblordendecompra");
           $("#tblordendecompra tbody").remove();
 
           let htm = `<div class="row" id="totalregistros">
-              <div class="col s12"><span>Total de Registros: </span><span>${result.ordenCompra.length}</span></div>
+              <div class="col s12"><span>Total de Registros: </span><span>${result.respuesta.length}</span></div>
             </div>`;
 
           document.getElementById("resultadoGeneral").innerHTML = htm;
@@ -117,7 +249,7 @@ function enviarDatosControlador(params) {
           Swal.fire({
             icon: "info",
             title: "Información",
-            text: "No hay registros asignados en este momento",
+            text: "No hay registros asignados para el usuario: " + pUsuario,
             confirmButtonColor: "#28a745",
           });
           document.getElementById("carga").innerHTML = "";
@@ -127,7 +259,6 @@ function enviarDatosControlador(params) {
       }
     });
 }
-
 function mostrarResultadosVerificacionOrdenes(nPag, pag) {
   let desde = (pag - 1) * xPag;
   let hasta = pag * xPag;

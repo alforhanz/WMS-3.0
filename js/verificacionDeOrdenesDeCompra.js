@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // let usuario = document.getElementById("hUsuario").value;
-  // console.log("hUsuario:", usuario);
-  // //localStorage.setItem('UserID',usuario);
+
 
   const busqueda = localStorage.getItem("autoSearchOrdenDeComprasList");
   localStorage.setItem("switchLecturaState", "true");
@@ -14,18 +12,22 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     if (parametrosBusquedaOC) {
       const params = new URLSearchParams(parametrosBusquedaOC);
-      const pBodega = params.get("pBodega");
-      const pFechaDesde = params.get("pFechaDesde");
-      const pFechaHasta = params.get("pFechaHasta");
+      const pSistema = params.get("pSistema");
       const pUsuario = params.get("pUsuario");
-      const pOrden = params.get("pOrden");
-      const pOpcion = params.get("pOpcion");
+       const pOpcion = params.get("pOpcion");
 
       if (pOpcion === "P") {
         $("#toggleSwitch").prop("checked", false);
       } else {
         $("#toggleSwitch").prop("checked", true);
       }
+
+      const pBodega = params.get("pBodega");
+      const pFechaDesde = params.get("pFechaDesde");
+      const pFechaHasta = params.get("pFechaHasta");
+      const pEstado = "";
+      const pOrden = params.get("pOrden");
+     
 
       // Establecer los valores de los campos de fecha
       if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
@@ -56,14 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 100);
 
 
-      enviarDatosControlador(
-        pBodega,
-        pOrden,
-        pOpcion,
-        pUsuario,
-        pFechaDesde,
-        pFechaHasta
-      );
+     enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
     }
   }
 });
@@ -100,55 +95,41 @@ function ordenesDeComprasProcesadas() {
 
 //Verificacion de Ordenes de compra functions
 function ValidaOrdenesDeCompra() {
-  var bodega = document.getElementById("bodega").value;
-  //revisar como toma el valor
-  if (bodega == "") {
-    Swal.fire({
-      icon: "warning",
-      title: "Advertencia",
-      text: "Por favor, seleccione una bodega.",
-    });
-    return false; // Evita que se envíe el formulario
-  } else {
-    var pBodega = document.getElementById("bodega").value;
-    var pOrden = $("#pOrden").val();
-    let pOpcion = $("#toggleSwitch").prop("checked");
-    var pUsuario = document.getElementById("hUsuario").value; //document.getElementById("usuario").innerText || document.getElementById("usuario").innerHTML;
-    let pFechaDesde = document.getElementById("fecha_ini").value;
-    let pFechaHasta = document.getElementById("fecha_fin").value;
 
-    if (pOpcion) {
-      pOpcion = "E";
-    } else {
-      pOpcion = "P";
-    }
-    enviarDatosControlador(
-      pBodega,
-      pOrden,
-      pOpcion,
-      pUsuario,
-      pFechaDesde,
-      pFechaHasta
-    );
+    let pSistema = "WMS"; 
+    let pUsuario = document.getElementById("hUsuario").value;
+    let pOpcion = $("#toggleSwitch").prop("checked");
+        if (pOpcion) {
+          pOpcion = "E";
+        } else {
+          pOpcion = "P";
+        }
+
+    let pBodega = document.getElementById("bodega").value;
+    let pEstado = "";
+    let pOrden = $("#pOrden").val();
+    // let pFechaDesde = document.getElementById("fecha_ini").value;
+    // let pFechaHasta = document.getElementById("fecha_fin").value;
+     let pFechaDesde = "";
+    let pFechaHasta = "";
+
+    enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   }
-}
+
 
 //////////////////FUNCION PARA MOSTRAR EL DETALLE DE las ORDENES DE COMPRAS///////////
 
-function enviarDatosControlador(
-  pBodega,
-  pOrden,
-  pOpcion,
-  pUsuario,
-  pFechaDesde,
-  pFechaHasta
-) {
+function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
   mostrarLoader();
   const params =
-    "?pBodega=" +
-    pBodega +
+    "?pSistema=" +
+    pSistema +
     "&pUsuario=" +
     pUsuario +
+    "&pBodega=" +
+    pBodega +
+    "&pEstado=" +
+    pEstado +
     "&pOrden=" +
     pOrden +
     "&pOpcion=" +
@@ -161,21 +142,22 @@ function enviarDatosControlador(
   localStorage.setItem("parametrosBusquedaOrdenesDeCompraList", params);
   localStorage.setItem("autoSearchOrdenDeComprasList", "true");
 
-  fetch(env.API_URL + "wmsordenesdecompras/L" + params, myInit)
+  fetch(env.API_URL + "wmsordenesdecompras" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
+      console.log("Respuesta del servidor:", result);
       if (result.msg === "SUCCESS") {
-        if (result.ordenCompra.length != 0) {
-          ArrayData = result.ordenCompra;
-          ArrayDataFiltrado = result.ordenCompra;
+        if (result.respuesta.length != 0) {
+          ArrayData = result.respuesta;
+          ArrayDataFiltrado = result.respuesta;
           console.log(ArrayDataFiltrado);
-          let cantReg = result.ordenCompra.length;
+          let cantReg = result.respuesta.length;
           let nPag = Math.ceil(cantReg / xPag);
           const tabla = document.getElementById("tblordendecompra");
           $("#tblordendecompra tbody").remove();
 
           let htm = `<div class="row" id="totalregistros">
-              <div class="col s12"><span>Total de Registros: </span><span>${result.ordenCompra.length}</span></div>
+              <div class="col s12"><span>Total de Registros: </span><span>${result.respuesta.length}</span></div>
             </div>`;
 
           document.getElementById("resultadoGeneral").innerHTML = htm;

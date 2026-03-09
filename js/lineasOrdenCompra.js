@@ -25,16 +25,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //--------------------------------------------------------------------------
   if (localStorage.getItem("OrdenDeCompra")) {
-    let OrdenDeCompra = localStorage.getItem("OrdenDeCompra");
+   
+    let pSistema = "WMS"; 
+    let pUsuario = document.getElementById("hUsuario").value;
+    let pOpcion = "D";
     let pBodega = document.getElementById("bodega").value;
-    let pUsuario = document.getElementById("hUsuario").value; //localStorage.getItem("username");
+    let pEstado = "";
+    let pOrden = localStorage.getItem("OrdenDeCompra");
+    // let pFechaDesde = document.getElementById("fecha_ini").value;
+    // let pFechaHasta = document.getElementById("fecha_fin").value;
+    let pFechaDesde = "";
+    let pFechaHasta = "";
+
     loadSwitchState();
     //---------------------------------------------------------------------------
-    cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario);
+    cargarDetalleOrdenDeCompra(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   } else {
     Swal.fire({
       icon: "info",
-      title: "No hay OrdenDeCompraes",
+      title: "No hay OrdenDeCompra",
       text: "Lo sentimos, no hay OrdenDeCompraes disponibles en este momento.",
     });
   }
@@ -42,22 +51,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 ////////////// CARGA LOS DETALLES DE LA ORDEN DE COMPRAS //////////////////////////////////////////////////////////
 
-function cargarDetalleOrdenDeCompra(OrdenDeCompra, pBodega, pUsuario) {
+function cargarDetalleOrdenDeCompra(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
   // Concatena la variable con texto y asigna el valor al label documento y pedido
-  document.getElementById("OrdenDeCompra").innerHTML =
-    "#Orden: " + OrdenDeCompra;
-  //document.getElementById("bodegaOC").innerHTML = "Bodega destino: " + pBodega;
+  document.getElementById("OrdenDeCompra").innerHTML ="#Orden: " + pOrden;   
+   const params =
+    "?pSistema=" +
+    pSistema +
+    "&pBodega=" +
+    pBodega +
+    "&pUsuario=" +
+    pUsuario +
+    "&pOrden=" +
+    pOrden +
+    "&pOpcion=" +
+    pOpcion +
+    "&pFechaDesde=" +
+    pFechaDesde +
+    "&pFechaHasta=" +
+    pFechaHasta;
 
-  const pOrden = OrdenDeCompra; //Se asigna el número del peddido a una variable constante para pasarlo como parametro
-  const params =
-    "?pBodega=" + pBodega + "&pUsuario=" + pUsuario + "&pOrden=" + pOrden;
-
-  fetch(env.API_URL + "wmsordenesdecompraslist" + params, myInit) //obtierne las lineas del OrdenDeCompra
+  fetch(env.API_URL + "wmsordenesdecompras" + params, myInit) //obtierne las lineas del OrdenDeCompra
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        if (result.detalleOC.length != 0) {
-          detalleLineasOrdenDeCompra = result.detalleOC;
+        if (result.respuesta.length != 0) {
+          detalleLineasOrdenDeCompra = result.respuesta;
           let lineas = JSON.stringify(detalleLineasOrdenDeCompra);
           localStorage.setItem("lineasOC", lineas);
           console.log("listadoOC1");
@@ -890,14 +908,14 @@ window.onload = function () {
   guardarTablaEnArray();
 };
 
-function mostrarProcesoEnConstruccion() {
-  Swal.fire({
-    title: "Proceso en Construcción",
-    text: "Esta funcionalidad está en construcción.",
-    icon: "info",
-    confirmButtonText: "Salir",
-  });
-}
+// function mostrarProcesoEnConstruccion() {
+//   Swal.fire({
+//     title: "Proceso en Construcción",
+//     text: "Esta funcionalidad está en construcción.",
+//     icon: "info",
+//     confirmButtonText: "Salir",
+//   });
+// }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Funcion de confirmación del guardado parcial en la pestaña lectura
 function confirmarGuardadoParcialLectura() {

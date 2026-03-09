@@ -39,20 +39,22 @@
             --text-main: #ffffff;
             --text-dim: #b4d0f0;
         }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: 'Roboto', sans-serif;
         }
+
         /* Small only */
         @media screen and (max-width: 39.9375em) {
             #bodega_sucursales {
-                        width: 80%;
-                        top: 20px !important;
-                        left: 38px !important;
-                        max-height: 100% !important;
-                        margin-left: 3px !important;
-                    }
+                width: 80%;
+                top: 20px !important;
+                left: 38px !important;
+                max-height: 100% !important;
+                margin-left: 3px !important;
+            }
         }
 
         /* Medium and up */
@@ -72,100 +74,101 @@
 
 <body>
     <my-header></my-header>
-    <main class="container-fluid dashBody">   
- <div id="contenedorLoader"></div>
-  <div id="resultadoBusqueda">
-        <div class="row">
-            <div class="col s12 m3 l3">
-                <div class="kpi-card">
-                    <i class="material-icons">assignment</i>
-                    <div class="kpi-title">Pedidos del Día</div>
-                    <div class="kpi-value" id="kpi_pedidos">1.2K</div>
+    <main class="container-fluid dashBody">
+        <div id="contenedorLoader"></div>
+        <div id="resultadoBusqueda">
+            <div class="row">
+                <div class="col s12 m3 l3">
+                    <div class="kpi-card">
+                        <i class="material-icons">assignment</i>
+                        <div class="kpi-title">Pedidos del Día</div>
+                        <div class="kpi-value" id="kpi_pedidos">1.2K</div>
+                    </div>
+                </div>
+                <div class="col s12 m3 l3">
+                    <div class="kpi-card">
+                        <i class="material-icons">assignment</i>
+                        <div class="kpi-title">Pedidos del Día</div>
+                        <div class="kpi-value" id="kpi_pedidos">1.2K</div>
+                    </div>
+                </div>
+                <div class="col s12 m3 l3">
+                    <div class="kpi-card">
+                        <i class="material-icons">speed</i>
+                        <div class="kpi-title">% Eficiencia Picking</div>
+                        <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
+                    </div>
+                </div>
+                <div class="col s12 m3 l3">
+                    <div class="kpi-card">
+                        <i class="material-icons">priority_high</i>
+                        <div class="kpi-title">Pendientes Críticos</div>
+                        <div class="kpi-value" id="kpi_pendientes">128</div>
+                    </div>
                 </div>
             </div>
-            <div class="col s12 m3 l3">
-                <div class="kpi-card">
-                    <i class="material-icons">assignment</i>
-                    <div class="kpi-title">Pedidos del Día</div>
-                    <div class="kpi-value" id="kpi_pedidos">1.2K</div>
-                </div>                
-            </div>
-            <div class="col s12 m3 l3">
-                <div class="kpi-card">
-                    <i class="material-icons">speed</i>
-                    <div class="kpi-title">% Eficiencia Picking</div>
-                    <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
-                </div>                
-            </div>
-            <div class="col s12 m3 l3">
-                <div class="kpi-card">
-                    <i class="material-icons">priority_high</i>
-                    <div class="kpi-title">Pendientes Críticos</div>
-                    <div class="kpi-value" id="kpi_pendientes">128</div>
-                </div>                
-            </div>
-        </div>
 
 
 
-        <div class="row ">
-            <div class="col s12 m3">
-                <div class="chart-container">
-                    <div class="chart-title">Estado de Pedidos (Flujo)</div>
-                    <canvas id="chartStatus"></canvas>
+            <div class="row ">
+                <div class="col s12 m3">
+                    <div class="chart-container">
+                        <div class="chart-title">Estado de Pedidos (Flujo)</div>
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                </div>
+                <div class="col s12 m3">
+                    <div class="chart-container">
+                        <div class="chart-title">Ocupación de Bodega por Zona</div>
+                        <canvas id="chartZonas"></canvas>
+                    </div>
+                </div>
+                <div class="col s12 m3">
+                    <div class="chart-container">
+                        <div class="chart-title">Traslados</div>
+                        <canvas id="chartProductividad" class="graphProductividad "></canvas>
+                    </div>
+                </div>
+                <div class="col s12 m3">
+                    <div class="chart-container">
+                        <div class="chart-title">Despachos</div>
+                        <canvas id="eficienciaPicking" class="graphProductividad "></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="col s12 m3">
-                <div class="chart-container">
-                    <div class="chart-title">Ocupación de Bodega por Zona</div>
-                    <canvas id="chartZonas"></canvas>
-                </div>
-            </div>
-            <div class="col s12 m3">
-                <div class="chart-container">
-                    <div class="chart-title">Traslados</div>
-                    <canvas id="chartProductividad" class="graphProductividad "></canvas>
-                </div>
-            </div>
-              <div class="col s12 m3">
-                <div class="chart-container">
-                    <div class="chart-title">Despachos</div>
-                    <canvas id="eficienciaPicking" class="graphProductividad "></canvas>
-                </div>
-            </div>
-        </div>
 
 
 
-        <div class="row ">
-            <div class="col s12 m3">
-                <div class="chart-container avance-pedidos">
-                    <div class="chart-title">Transacciones</div>
-                    <canvas id="chartArticulos" class="graphArticulos "></canvas>
+            <div class="row ">
+                <div class="col s12 m3">
+                    <div class="chart-container avance-pedidos">
+                        <div class="chart-title">Transacciones</div>
+                        <canvas id="chartArticulos" class="graphArticulos "></canvas>
+                    </div>
+                </div>
+                <div class="col s12 m3">
+                    <div class="chart-container avance-contenedores">
+                        <div class="chart-title">Avance de Contenedores</div>
+                        <canvas id="chartContenedores" class="graphContenedores "></canvas>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="chart-container mapaSucursales ">
+                        <div class="chart-title">Ubicación de Bodegas y Cobertura Nacional</div>
+                        <div id="mapPanama"></div>
+                    </div>
                 </div>
             </div>
-            <div class="col s12 m3">
-                <div class="chart-container avance-contenedores">
-                    <div class="chart-title">Avance de Contenedores</div>
-                    <canvas id="chartContenedores" class="graphContenedores "></canvas>
-                </div>
-            </div>
-            <div class="col s12 m6">
-                <div class="chart-container mapaSucursales ">
-                    <div class="chart-title">Ubicación de Bodegas y Cobertura Nacional</div>
-                    <div id="mapPanama"></div>
-                </div>
-            </div>
-        </div>
         </div>
     </main>
 
 
-     <!-- IMprimir Código de barra -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <!-- IMprimir Código de barra -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />

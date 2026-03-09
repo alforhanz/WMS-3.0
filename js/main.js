@@ -14,6 +14,8 @@ let acumToDelete = JSON.parse(sessionStorage.getItem("itemsToDelete"));
 //-----------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM cargado...");
+  // Cargar JsBarcode dinámicamente
+  cargarJsBarcode();
   //--------------------------------------------------
   validate_login();
   existeBodega();
@@ -29,6 +31,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+//-----------------------------------------------------------------------------------
+// Función para inyectar el CDN
+function cargarJsBarcode() {
+  // Verificamos si ya existe para no duplicarlo
+  if (!document.getElementById("jsbarcode-cdn")) {
+    const script = document.createElement("script");
+    script.id = "jsbarcode-cdn";
+    script.src =
+      "https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js";
+    script.async = true; // No detiene la carga de la página
+
+    script.onload = function () {
+      console.log("✅ JsBarcode cargado y listo para usar.");
+    };
+
+    document.head.appendChild(script);
+  }
+}
+
 //-----------------------------------------------------------------------------------
 function validate_login() {
   const user = sessionStorage.getItem("user");
@@ -94,17 +115,19 @@ $(document).ready(function () {
 /////////////////////////////////////// LOGOUT //////////////////////////-------------
 //------------------------------------------------------------------------------------
 function logout() {
-    // 1. Limpiar Storage
-    localStorage.clear();
-    sessionStorage.clear();
+  // 1. Limpiar Storage
+  localStorage.clear();
+  sessionStorage.clear();
 
-    // 2. Limpiar cookies (Opcional pero recomendado para seguridad)
-    document.cookie.split(";").forEach(function(c) {
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
+  // 2. Limpiar cookies (Opcional pero recomendado para seguridad)
+  document.cookie.split(";").forEach(function (c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
 
-    // 3. Redirigir al Login agregando un "Timestamp" para evitar que cargue el index desde caché
-    window.location.href = "index.html?nocache=" + (new Date()).getTime();
+  // 3. Redirigir al Login agregando un "Timestamp" para evitar que cargue el index desde caché
+  window.location.href = "index.html?nocache=" + new Date().getTime();
 }
 
 // function logout() {
@@ -120,7 +143,7 @@ function logout() {
 
 //   // Redirigir al usuario a la página de inicio
 //   window.location.href = "index.html";
-  
+
 // }
 //-----------------------------------------------------------------------------------
 function enlace(link) {
@@ -616,7 +639,7 @@ function mostrarResultadosBusqueda(nPag, pag) {
     {
       scrollTop: $("#resultadoBusqueda").offset().top - 140,
     },
-    1000
+    1000,
   );
   $("select").formSelect();
   $(".dropdown-trigger").dropdown();
@@ -716,22 +739,22 @@ function mostrarResultados(desde, hasta) {
                <div class="flotante-acciones ${colorReorden}">
                   <div class="link-flotante-acciones-forklift " >
                    <a id="dropbtn${i}" class="dropbtn2x" onclick="mostrarExistencias('${
-        ArrayDataFiltrado[i].ARTICULO
-      }')">
+                     ArrayDataFiltrado[i].ARTICULO
+                   }')">
                      <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" tabindex="1">
                    </a>             
                  </div>
                   <div class="link-flotante-acciones-bar-code ">
                    <a id="dropbtn${i}" class="dropbtn2x" onclick="impCodBar('${
-        ArrayDataFiltrado[i].ARTICULO
-      }','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                     ArrayDataFiltrado[i].ARTICULO
+                   }','${ArrayDataFiltrado[i].DESCRIPCION}')">
                    <img src="./img/icon/bar-code.svg"  width="22" height="22">
                    </a>             
                  </div>
                     <div class="link-flotante-acciones-information " >
                    <a id="dropbtn${i}" class="dropbtn2x" onclick="information('${
-        ArrayDataFiltrado[i].ARTICULO
-      }','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                     ArrayDataFiltrado[i].ARTICULO
+                   }','${ArrayDataFiltrado[i].DESCRIPCION}')">
                    <img src="./img/icon/information.svg"  width="22" height="22">
                    </a>             
                  </div>
@@ -1235,8 +1258,8 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
-              key.VALOR
-            }');">
+                    key.VALOR
+                  }');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1248,8 +1271,8 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1262,10 +1285,10 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1279,10 +1302,10 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1296,10 +1319,10 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1309,8 +1332,8 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="guardarEnvaseSelect(${key.VALOR});">
+                    id + i
+                  }"  onchange="guardarEnvaseSelect(${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1320,8 +1343,8 @@ function mostrarFiltro(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltro('${id}','${id + i}');">
+                    id + i
+                  }"  onchange="getFiltro('${id}','${id + i}');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -1697,7 +1720,8 @@ function getFiltrarResultado(filtradoPor) {
   ) {
     //ESTABA AQUI
     resultados = ArrayData.filter(
-      (item) => item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4
+      (item) =>
+        item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4,
     );
   } else {
     resultados = ArrayData.filter(function (o) {
@@ -1939,12 +1963,12 @@ function cambiarVistaLista() {
               <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
               <td>
                 <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO
+                  ArrayDataFiltrado[i].ARTICULO,
                 )}', '${
-        ArrayDataFiltrado[i].DESCRIPCION
-      }')">visibility</i>              
+                  ArrayDataFiltrado[i].DESCRIPCION
+                }')">visibility</i>              
                 <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO
+                  ArrayDataFiltrado[i].ARTICULO,
                 )}')" tabindex="1">                
                <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${
                  ArrayDataFiltrado[i].ARTICULO
@@ -1971,7 +1995,7 @@ function cambiarVistaLista() {
     {
       scrollTop: $("#resultadoBusqueda").offset().top - 140,
     },
-    1000
+    1000,
   );
 }
 //-----------------------------------------------------------------------------------
@@ -2050,10 +2074,10 @@ function resultadosVistaLista(desde, hasta) {
               <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
               <td>
                 <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO
+                  ArrayDataFiltrado[i].ARTICULO,
                 )}', '${
-        ArrayDataFiltrado[i].DESCRIPCION
-      }')">visibility</i>              
+                  ArrayDataFiltrado[i].DESCRIPCION
+                }')">visibility</i>              
                 <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${
                   ArrayDataFiltrado[i].ARTICULO
                 }')" tabindex="1">
@@ -2080,7 +2104,7 @@ function resultadosVistaLista(desde, hasta) {
     {
       scrollTop: $("#resultadoBusqueda").offset().top - 140,
     },
-    1000
+    1000,
   );
 }
 //------------------------------------------------------------------------------------
@@ -2159,9 +2183,9 @@ function mostrarImagen(codigo, descripcion) {
       <div>
         <h3>${code}</h3>
         <img src="${env.API_IMAGE}/${code.replace(
-      "/",
-      "-"
-    )}" alt="Imagen" width="200" height="200">
+          "/",
+          "-",
+        )}" alt="Imagen" width="200" height="200">
         <p>${descripcion}</p>
       </div>
     `,
@@ -2624,7 +2648,7 @@ function toggleMostrarEnBodega() {
   if (isChecked) {
     // Filtrar artículos con existencia en bodega > 0
     articulosConExistencia = ArrayData2.filter(
-      (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
+      (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0,
     );
     let nPag = Math.ceil(articulosConExistencia.length / xPag);
     let pag = 1;
@@ -2661,7 +2685,7 @@ function mostrarResultadosBusquedaEnBodega(nPag, pag) {
   document.getElementById("resultadoBusqueda").innerHTML = htm;
   $("html, body").animate(
     { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000
+    1000,
   );
   $("select").formSelect();
   $(".dropdown-trigger").dropdown();
@@ -2732,8 +2756,8 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
               <div id="envoltorio">
                 <a href="#">                
                   <img src="${env.API_IMAGE}/${DArticulo}" width="100%" alt="${
-        data[i].ARTICULO
-      }">
+                    data[i].ARTICULO
+                  }">
                   ${bodegaLabel}
                 </a>
                 <div class="flotante-acciones ${colorReorden}">
@@ -2744,15 +2768,15 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
                   </div>
                   <div class="link-flotante-acciones-bar-code">
                     <a onclick="impCodBar('${data[i].ARTICULO}','${
-        data[i].DESCRIPCION
-      }')">
+                      data[i].DESCRIPCION
+                    }')">
                       <img src="./img/icon/bar-code.svg" width="22" height="22">
                     </a>             
                   </div>
                   <div class="link-flotante-acciones-information">
                     <a onclick="information('${data[i].ARTICULO}','${
-        data[i].DESCRIPCION
-      }')">
+                      data[i].DESCRIPCION
+                    }')">
                       <img src="./img/icon/information.svg" width="22" height="22">
                     </a>             
                   </div>
@@ -2843,7 +2867,7 @@ function cambiarVistaListaEnBodega() {
 
   // Filtrar solo artículos con existencia en bodega
   const articulosConExistencia = ArrayDataFiltrado.filter(
-    (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
+    (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0,
   );
 
   let totalRegistros = articulosConExistencia.length;
@@ -2911,10 +2935,10 @@ function cambiarVistaListaEnBodega() {
         <td>${Math.floor(articulosConExistencia[i].TOTAL_CANTIDAD_BODEGA)}</td>
         <td>
           <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-            articulosConExistencia[i].ARTICULO
+            articulosConExistencia[i].ARTICULO,
           )}', '${articulosConExistencia[i].DESCRIPCION}')">visibility</i>
           <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-            articulosConExistencia[i].ARTICULO
+            articulosConExistencia[i].ARTICULO,
           )}')" tabindex="1">
           <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
             articulosConExistencia[i].ARTICULO
@@ -2932,14 +2956,14 @@ function cambiarVistaListaEnBodega() {
   htm += paginadorTablasEnBodega(
     nPag,
     pag,
-    "mostrarResultadosVistaListaEnBodega"
+    "mostrarResultadosVistaListaEnBodega",
   );
   htm += `</div></div>`;
 
   document.getElementById("resultadoBusqueda").innerHTML = htm;
   $("html, body").animate(
     { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000
+    1000,
   );
 
   const estado = localStorage.getItem("mostrarEnBodega");
@@ -2972,7 +2996,7 @@ function mostrarResultadosVistaListaEnBodega(nPag, pag) {
   const paginadorHtml = paginadorTablasEnBodega(
     nPag,
     pag,
-    "mostrarResultadosVistaListaEnBodega"
+    "mostrarResultadosVistaListaEnBodega",
   );
   const paginadorElement = document.getElementById("resultadoPaginador");
   if (paginadorElement) {
@@ -2988,7 +3012,7 @@ function mostrarResultadosVistaListaEnBodega(nPag, pag) {
 
   $("html, body").animate(
     { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000
+    1000,
   );
 }
 
@@ -3012,10 +3036,10 @@ function resultadosVistaListaEnBodega(desde, hasta) {
         <td>${Math.floor(data[i].TOTAL_CANTIDAD_BODEGA)}</td>
         <td>
           <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-            data[i].ARTICULO
+            data[i].ARTICULO,
           )}', '${data[i].DESCRIPCION}')">visibility</i>
           <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-            data[i].ARTICULO
+            data[i].ARTICULO,
           )}')" tabindex="1">
           <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
             data[i].ARTICULO
@@ -3425,7 +3449,8 @@ function getFiltrarResultadoEnBodega(filtradoPor) {
   ) {
     //ESTABA AQUI
     resultados = articulosConExistencia.filter(
-      (item) => item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4
+      (item) =>
+        item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4,
     );
   } else {
     resultados = articulosConExistencia.filter(function (o) {
@@ -3641,8 +3666,8 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
-              key.VALOR
-            }');">
+                    key.VALOR
+                  }');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3654,8 +3679,8 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3668,10 +3693,10 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3685,10 +3710,10 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3702,10 +3727,10 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
-              key.VALOR
-            });">
+                    id + i
+                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
+                    key.VALOR
+                  });">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3715,8 +3740,8 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="guardarEnvaseSelect(${key.VALOR});">
+                    id + i
+                  }"  onchange="guardarEnvaseSelect(${key.VALOR});">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
@@ -3726,8 +3751,8 @@ function mostrarFiltroEnBodega(data, id, opt) {
                   <input type="checkbox" value="${
                     key.VALOR
                   }" name="${id}[]" id="${
-              id + i
-            }"  onchange="getFiltro('${id}','${id + i}');">
+                    id + i
+                  }"  onchange="getFiltro('${id}','${id + i}');">
                   <span>${key.DESCRIPCION}</span>
                 </label>
                 <br>`;
