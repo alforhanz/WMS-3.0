@@ -152,10 +152,10 @@ function ValidaOrdenesDeCompra() {
     let pBodega = document.getElementById("bodega").value;
     let pEstado = "";
     let pOrden = $("#pOrden").val();
-    // let pFechaDesde = document.getElementById("fecha_ini").value;
-    // let pFechaHasta = document.getElementById("fecha_fin").value;
-     let pFechaDesde = "";
-    let pFechaHasta = "";
+    let pFechaDesde = document.getElementById("fecha_ini").value;
+    let pFechaHasta = document.getElementById("fecha_fin").value;
+    //  let pFechaDesde = "";
+    // let pFechaHasta = "";
 
     enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   }
