@@ -44,26 +44,46 @@
       <div id="carga"></div>
       <div class="container">
         <h2 id="titulo-oc">Ordenes de compras procesadas</h2>
-        <div class="row">
-          <div id="menup">
+        <!-- <div class="row"> -->
+          <div id="menup"></div>
 
-          </div>
           <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s12 m8 l4">
               <input placeholder="Ingrese el número de orden de compra / Nombre del proveedor" id="pOrden" type="text"
                 class="validate">
               <label for="first_name"></label>
             </div>
+            <div class="col s12 m4 l4">
+              <p>
+                <label>
+                  <input type="checkbox" id="chkHabilitarFechas" />
+                  <span>Habilitar filtro por fechas</span>
+                </label>
+              </p>
+              </div>            
           </div>
-          <div class="input-field col s6">
+          <div class="row">
+          
+            <div class="input-field col s12 m3 l4 ">
+              <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker " disabled>
+              <label for="fecha_ini">Fecha Inicial</label>
+            </div>          
+            <div class="input-field col s12 m3 l4">
+              <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker" disabled>
+              <label for="fecha_fin">Fecha Final</label>
+            </div>          
+          </div>
+
+
+          <!-- <div class="input-field col s6">
             <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
             <label for="fecha_ini">Fecha Inicial</label>
           </div>
           <div class="input-field col s6">
             <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker">
             <label for="fecha_fin">Fecha Final</label>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
         <!-- Boton Buscar oc-->
         <div class="row col-md-12 S12">
           <button id="btnOCProcesadas" class="btn waves-effect waves-light" type="submit"

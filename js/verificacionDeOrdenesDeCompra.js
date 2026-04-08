@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", function () {
      enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
     }
   }
+
+  inicializarFiltroFechas();
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +97,7 @@ function ordenesDeComprasProcesadas() {
 
 //Verificacion de Ordenes de compra functions
 function ValidaOrdenesDeCompra() {
+    let fechasHabilitadas = document.getElementById('chkHabilitarFechas').checked;
 
     let pSistema = "WMS"; 
     let pUsuario = document.getElementById("hUsuario").value;
@@ -108,10 +111,16 @@ function ValidaOrdenesDeCompra() {
     let pBodega = document.getElementById("bodega").value;
     let pEstado = "";
     let pOrden = $("#pOrden").val();
-    let pFechaDesde = document.getElementById("fecha_ini").value;
-    let pFechaHasta = document.getElementById("fecha_fin").value;
-    //  let pFechaDesde = "";
-    // let pFechaHasta = "";
+
+    if(fechasHabilitadas){
+        var pFechaDesde = document.getElementById("fecha_ini").value;
+        var pFechaHasta = document.getElementById("fecha_fin").value;
+    }else{
+        var pFechaDesde = "";
+        var pFechaHasta = "";
+    }
+    
+  
 
     enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   }
@@ -310,3 +319,39 @@ const fecha_fin = document.getElementById("fecha_fin");
 fecha_fin.addEventListener("change", function () {
   limpiarResultadoGeneral();
 });
+
+
+/**
+ * Habilita / deshabilita los campos de fecha según el checkbox
+ * Se ejecuta al cargar la página y cada vez que cambie el checkbox
+ */
+function inicializarFiltroFechas() {
+  const chkHabilitarFechas = document.getElementById('chkHabilitarFechas');
+  const fechaIni = document.getElementById('fecha_ini');
+  const fechaFin = document.getElementById('fecha_fin');
+
+  if (!chkHabilitarFechas || !fechaIni || !fechaFin) return;
+
+  const toggleFechas = () => {
+    const habilitado = chkHabilitarFechas.checked;
+
+    fechaIni.disabled = !habilitado;
+    fechaFin.disabled = !habilitado;
+
+    // Opcional: limpiar los campos cuando se deshabilitan
+    if (!habilitado) {
+      fechaIni.value = '';
+      fechaFin.value = '';
+      
+      // Si usas Materialize Datepicker, puedes reiniciarlo también:
+      // M.Datepicker.getInstance(fechaIni)?.setDate(null);
+      // M.Datepicker.getInstance(fechaFin)?.setDate(null);
+    }
+  };
+
+  // Evento del checkbox
+  chkHabilitarFechas.addEventListener('change', toggleFechas);
+
+  // Estado inicial (fechas deshabilitadas)
+  toggleFechas();
+}

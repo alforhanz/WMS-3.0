@@ -16,14 +16,12 @@
   <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
   <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.02" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
   <!-- FONTS -->
   <style>
-    /* @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap'); */
     @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
   </style>
   <!-- FONTS -->
@@ -44,29 +42,67 @@
       <div id="carga"></div>
       <div class="container">
         <h2 class="titulo-vista">Verificación de Ordenes de compras</h2>
-        <div class="row">
-          <div id="menup">
-            <!-- <label>Busqueda de contenedores</label> -->
+
+
+        <!-- Menú superior (si lo usas dinámicamente) -->
+          <div id="menup" class="col s12"></div>
+
+
+          <div class="row">            
+              <div class="input-field col s12 m6 l6">
+                <input placeholder="Ingrese el número de orden de compra / Nombre del proveedor" id="pOrden" type="text"  class="validate">             
+                <label for="first_name"></label>
+              </div>            
+            <div class="col s12 m6 l6">
+              <div class="switch">
+                <label>
+                  <input type="checkbox" id="toggleSwitch">
+                  <span class="lever"></span>
+                  Orden de compra procesadas
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12 m3 l4">
+              <p>
+                <label>
+                  <input type="checkbox" id="chkHabilitarFechas" />
+                  <span>Filtrar por rango de fechas</span>
+                </label>
+              </p>
+            </div>
+            <div class="input-field col s12 m3 l4 ">
+              <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker " disabled>
+              <label for="fecha_ini">Fecha Inicial</label>
+            </div>          
+            <div class="input-field col s12 m3 l4">
+              <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker" disabled>
+              <label for="fecha_fin">Fecha Final</label>
+            </div>          
+          </div>
+          
+
+        
+        <!-- <div class="row">
+          <div id="menup">           
           </div>
           <div class="row">
             <div class="input-field col s12">
               <input placeholder="Ingrese el número de orden de compra / Nombre del proveedor" id="pOrden" type="text"
-                class="validate">
-              <!-- <label for="first_name">Número de Contenedor</label> -->
+                class="validate">             
               <label for="first_name"></label>
             </div>
           </div>
-
           <div class="input-field col s6">
             <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
             <label for="fecha_ini">Fecha Inicial</label>
           </div>
-
           <div class="input-field col s6">
             <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker">
             <label for="fecha_fin">Fecha Final</label>
-          </div>
-          <!-- Switch Pedidos acturados y finalizados-->
+          </div>          
           <div class="row col s12 switch-button">
             <div class="switch">
               <label class="label-button-switch">
@@ -76,7 +112,8 @@
               </label>
             </div>
           </div>
-        </div>
+        </div> -->
+
 
         <!-- Boton Buscar oc-->
         <div class="row col-md-12 S12">
@@ -84,7 +121,6 @@
             <i class="material-icons right">send</i>
           </button>
         </div>
-
         <!-- Tabla de resultados para listado de pedidos -->
         <div class="row tblcontenedor">
           <div id="resultadoGeneral"></div>
@@ -96,7 +132,6 @@
                 <th>Proveedor</th>
                 <th>Cant Soli</th>
                 <th>Cant Verif</th>
-                <!-- <th>FECHA</th> -->
               </tr>
             </thead>
           </table>
@@ -106,10 +141,6 @@
       </div>
     </div>
   </main>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!-- <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script> -->
-  <!--JavaScript at end of body for optimized loading-->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -121,5 +152,4 @@
   <script type="tex/javascript" src="js/paginacion.js"></script>
   <!--JavaScript local-->
 </body>
-
 </html>

@@ -210,6 +210,14 @@ var buildUL = function (items) {
             </span>
         </a>
     </div>
+        <div class="collapsible-header" id="expand_morefather">
+        <a href="dash4.html">
+            <span class="margen-pedido" style="">
+                <span id="dash3" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
+                Dashboard 4
+            </span>
+        </a>
+    </div>
 </li>`;
 //   htm += `<li>
 //     <div class="collapsible-header" id="expand_morefather">

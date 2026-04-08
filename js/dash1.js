@@ -541,3 +541,4 @@ function actualizarKpisConDatosReales(data) {
     // Animación visual rápida para indicar cambio
     $('.kpi-value').fadeOut(100).fadeIn(100);
 }
+
