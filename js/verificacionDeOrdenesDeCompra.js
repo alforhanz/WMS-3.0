@@ -119,9 +119,6 @@ function ValidaOrdenesDeCompra() {
         var pFechaDesde = "";
         var pFechaHasta = "";
     }
-    
-  
-
     enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta);
   }
 
