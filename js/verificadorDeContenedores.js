@@ -31,13 +31,15 @@ document.addEventListener("DOMContentLoaded", function () {
 function validarBusquedaContenedor() {
   let bodega = document.getElementById("bodega").value;
   let pBodegaSolicita = document.getElementById("bodegaSelect").value;
-  let pPlaca = document.getElementById("placa-camion").value;
+  //let pPlaca = document.getElementById("placa-camion").value;
 
-  if (pPlaca === "" || pBodegaSolicita == "") {
+  // if (pPlaca === "" || pBodegaSolicita == "") {
+    if (pBodegaSolicita == "") {
+
     Swal.fire({
       icon: "warning",
       title: "Advertencia",
-      text: "Faltan parámetros para cargar los datos.\nVerifique que se hayan llenado correctamente los campos de la bodega de destino y la placa del camión.",
+      text: "Faltan parámetros para cargar los datos.\nVerifique que se hayan llenado correctamente los campos de la bodega de destino y la placa del camión.",      
     });
   } else {
     mostrarLoader();
@@ -101,12 +103,16 @@ function enviarDatosControlador(params) {
           });
         } else {
           ocultarLoader();
+          limpiarResultadoGeneral();
+          limpiarTblLectura();
+          mostrarPestanaLectura();
           Swal.fire({
             icon: "info",
             title: "Información",
             text: "No hay registros asignados para el usuario",
             confirmButtonColor: "#28a745",
           });
+
         }
         document.getElementById("carga").innerHTML = "";
       } else {
@@ -1024,7 +1030,7 @@ async function guardaPaquete() {
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
  
-  const table = document.getElementById("tblcontenedores");
+  const table = document.getElementById("tblc ontenedores");
   const detalles = [];
 
   for (let i = 1; i < table.rows.length; i++) {
@@ -1239,8 +1245,15 @@ function CrearPaqueteContenedores() {
   let pReferencia = document.getElementById('pContenedor').value;
   //"Ref o null";
   let pComentario = document.getElementById('observaciones').value;
-
-  console.log('observaciones: ',pComentario);
+  //let pPlaca = document.getElementById("placa-camion").value;
+  if (pPlaca == "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Advertencia",
+      text: "Faltan parámetros para cargar los datos.\nVerifique que se hayan llenado correctamente los campos de la bodega de destino y la placa del camión.",
+    });
+  } else{
+    console.log('observaciones: ',pComentario);
   const params =
     "?pSistema=" +
     pSistema +
@@ -1306,6 +1319,7 @@ function CrearPaqueteContenedores() {
       } else {
       }
     });
+  }  
 }
 // FUNCION PARA VERIFICAR EL CHECK EN LA COLUNA DE VERIFICACO
 /**

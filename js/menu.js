@@ -3,73 +3,103 @@
 /////////////////////////////////////////////////////////////////////
 var ArrayMenu = [];
 let menuEnlaces = [
-  //CONSULTA
-  { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing", LINK: "" }, //PROCESOS
-  { MODULO: 10, SUBMODULO: 1, ICON: "", LINK: "verificacionDePedidos.html" }, //VERIFICACION DE PEDIDOS
-  { MODULO: 10, SUBMODULO: 2, ICON: "", LINK: "verificacionDePicking.html" }, // ORDENES DE COMPRAS
-  { MODULO: 10, SUBMODULO: 3, ICON: "", LINK: "BusquedaDeContenedores.html" }, //
-  {
-    MODULO: 10,
-    SUBMODULO: 4,
-    ICON: "",
-    LINK: "VerificadorDeContenedores.html",
-  },
-  { MODULO: 10, SUBMODULO: 5, ICON: "", LINK: "verificacionDeTraslados.html" },
-  {
-    MODULO: 10,
-    SUBMODULO: 6,
-    ICON: "",
-    LINK: "verificacionDePickingDetraslados.html",
-  },
-  { MODULO: 10, SUBMODULO: 7, ICON: "", LINK: "conteoDeInventario.html" },
-  { MODULO: 10, SUBMODULO: 8, ICON: "", LINK: "boletaDeInventario.html" },
-  {
-    MODULO: 10,
-    SUBMODULO: 9,
-    ICON: "",
-    LINK: "verificacionDeOrdenesDeCompra.html",
-  },
+                    //CONSULTA
+                    { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing",  LINK: ""                                      }, // PROCESOS
+                    { MODULO: 10, SUBMODULO: 1, ICON: "",               LINK: "verificacionDePedidos.html"             }, // VERIFICACION DE PEDIDOS
+                    { MODULO: 10, SUBMODULO: 2, ICON: "",               LINK: "verificacionDePicking.html"             }, // ORDENES DE COMPRAS
+                    { MODULO: 10, SUBMODULO: 3, ICON: "",               LINK: "BusquedaDeContenedores.html"            }, //
+                    { MODULO: 10, SUBMODULO: 4, ICON: "",               LINK: "VerificadorDeContenedores.html"         }, //
+                    { MODULO: 10, SUBMODULO: 5, ICON: "",               LINK: "verificacionDeTraslados.html"           }, //
+                    { MODULO: 10, SUBMODULO: 6, ICON: "",               LINK: "verificacionDePickingDetraslados.html"  }, //
+                    { MODULO: 10, SUBMODULO: 7, ICON: "",               LINK: "conteoDeInventario.html"                }, //
+                    { MODULO: 10, SUBMODULO: 8, ICON: "",               LINK: "boletaDeInventario.html"                }, //
+                    { MODULO: 10, SUBMODULO: 9, ICON: "",               LINK: "verificacionDeOrdenesDeCompra.html"     }, //
 
-  { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: "" }, //CONSULTAS
-  {
-    MODULO: 12,
-    SUBMODULO: 1,
-    ICON: "",
-    LINK: "verificacionDeOrdenesDeCompraProcesadas.html",
-  },
-  {
-    MODULO: 12,
-    SUBMODULO: 2,
-    ICON: "",
-    LINK: "detalleTrasladoVerificados.html",
-  },
-  {
-    MODULO: 12,
-    SUBMODULO: 3,
-    ICON: "",
-    LINK: "paqueteDeContenedoresVerificados.html",
-  },
+                    { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: ""                                      }, // CONSULTAS
+                    { MODULO: 12, SUBMODULO: 1, ICON: "",               LINK: "verificacionDeOrdenesDeCompraProcesadas.html" }, //
+                    { MODULO: 12, SUBMODULO: 2, ICON: "",               LINK: "detalleTrasladoVerificados.html"        }, //
+                    { MODULO: 12, SUBMODULO: 3, ICON: "",               LINK: "paqueteDeContenedoresVerificados.html"  }, //
 
-  { MODULO: 13, SUBMODULO: 0, ICON: "rocket", LINK: "" }, //Operacion
-  { MODULO: 13, SUBMODULO: 1, ICON: "", LINK: "ingresaCodigoBarra.html" }, //ingresa cod barras
+                    { MODULO: 13, SUBMODULO: 0, ICON: "rocket",         LINK: ""                                      }, // Operacion
+                    { MODULO: 13, SUBMODULO: 1, ICON: "",               LINK: "ingresaCodigoBarra.html"               }, // ingresa cod barras
 
-  { MODULO: 3, SUBMODULO: 0, ICON: "monitoring", LINK: "" }, //REPORTES
-  {
-    MODULO: 3,
-    SUBMODULO: 23,
-    ICON: "",
-    LINK: "resumenConteoDeInventario.html",
-  }, //REPORTES
-  {
-    MODULO: 3,
-    SUBMODULO: 24,
-    ICON: "",
-    LINK: "reportedeInventarioGeneral.html",
-  }, //Resumen de Conteo de Inventario General
+                    { MODULO: 3,  SUBMODULO: 0,  ICON: "monitoring",    LINK: ""                                      }, // REPORTES
+                    { MODULO: 3,  SUBMODULO: 23, ICON: "",              LINK: "resumenConteoDeInventario.html"         }, // Resumen de Conteo de Inventario
+                    { MODULO: 3,  SUBMODULO: 24, ICON: "",              LINK: "reportedeInventarioGeneral.html"        }, // Resumen de Conteo de Inventario General
+                    { MODULO: 3,  SUBMODULO: 25, ICON: "",              LINK: "reporteDeExistenciaEnInventario.html"        }, // Reporte de Existencias de Inventario
 
-  { MODULO: 4, SUBMODULO: 0, ICON: "manage_accounts", LINK: "" }, //ADMINISTRACION
-  { MODULO: 4, SUBMODULO: 7, ICON: "", LINK: "#" },
-];
+                    { MODULO: 4,  SUBMODULO: 0,  ICON: "manage_accounts", LINK: ""                                    }, // ADMINISTRACION
+                    { MODULO: 4,  SUBMODULO: 7,  ICON: "",               LINK: "#"                                    }, //
+                  ];
+
+// let menuEnlaces = [
+//   //CONSULTA
+//   { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing", LINK: "" }, //PROCESOS
+//   { MODULO: 10, SUBMODULO: 1, ICON: "", LINK: "verificacionDePedidos.html" }, //VERIFICACION DE PEDIDOS
+//   { MODULO: 10, SUBMODULO: 2, ICON: "", LINK: "verificacionDePicking.html" }, // ORDENES DE COMPRAS
+//   { MODULO: 10, SUBMODULO: 3, ICON: "", LINK: "BusquedaDeContenedores.html" }, //
+//   {
+//     MODULO: 10,
+//     SUBMODULO: 4,
+//     ICON: "",
+//     LINK: "VerificadorDeContenedores.html",
+//   },
+//   { MODULO: 10, SUBMODULO: 5, ICON: "", LINK: "verificacionDeTraslados.html" },
+//   {
+//     MODULO: 10,
+//     SUBMODULO: 6,
+//     ICON: "",
+//     LINK: "verificacionDePickingDetraslados.html",
+//   },
+//   { MODULO: 10, SUBMODULO: 7, ICON: "", LINK: "conteoDeInventario.html" },
+//   { MODULO: 10, SUBMODULO: 8, ICON: "", LINK: "boletaDeInventario.html" },
+//   {
+//     MODULO: 10,
+//     SUBMODULO: 9,
+//     ICON: "",
+//     LINK: "verificacionDeOrdenesDeCompra.html",
+//   },
+
+//   { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: "" }, //CONSULTAS
+//   {
+//     MODULO: 12,
+//     SUBMODULO: 1,
+//     ICON: "",
+//     LINK: "verificacionDeOrdenesDeCompraProcesadas.html",
+//   },
+//   {
+//     MODULO: 12,
+//     SUBMODULO: 2,
+//     ICON: "",
+//     LINK: "detalleTrasladoVerificados.html",
+//   },
+//   {
+//     MODULO: 12,
+//     SUBMODULO: 3,
+//     ICON: "",
+//     LINK: "paqueteDeContenedoresVerificados.html",
+//   },
+
+//   { MODULO: 13, SUBMODULO: 0, ICON: "rocket", LINK: "" }, //Operacion
+//   { MODULO: 13, SUBMODULO: 1, ICON: "", LINK: "ingresaCodigoBarra.html" }, //ingresa cod barras
+
+//   { MODULO: 3, SUBMODULO: 0, ICON: "monitoring", LINK: "" }, //REPORTES
+//   {
+//     MODULO: 3,
+//     SUBMODULO: 23,
+//     ICON: "",
+//     LINK: "resumenConteoDeInventario.html",
+//   }, //REPORTES
+//   {
+//     MODULO: 3,
+//     SUBMODULO: 24,
+//     ICON: "",
+//     LINK: "reportedeInventarioGeneral.html",
+//   }, //Resumen de Conteo de Inventario General
+
+//   { MODULO: 4, SUBMODULO: 0, ICON: "manage_accounts", LINK: "" }, //ADMINISTRACION
+//   { MODULO: 4, SUBMODULO: 7, ICON: "", LINK: "#" },
+// ];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 $(document).ready(function () {

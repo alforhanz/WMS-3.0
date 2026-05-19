@@ -216,6 +216,7 @@ function validarCodigoBarras(input) {
         // Llamar función que guarda artículos en la tabla
         guardarTablaEnArray();
         codigoValido = true;
+        verificacion();
         break;
       } else {
         Swal.fire({
@@ -675,6 +676,7 @@ function verificacion() {
       }
     }
   });
+  guardaAutomaticante();
   actualizarTotalesTablaVerificacion(detalleLineasContenedor);
 } //FIN DE VERIFICACION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -924,6 +926,109 @@ function mostrarProcesoEnConstruccion() {
   });
 }
 
+
+
+//FUNCION DE GUARDADO PARCIAL
+function guardaAutomaticante() {
+  let pSistema = "WMS";
+  let pUsuario = document.getElementById("hUsuario").value;
+  let pOpcion = "G";
+  let pModulo = "WMS_BC";
+  var pConsecutivo = localStorage.getItem("contenedor");
+  // Array para almacenar todas las cantidades y artículos
+  let detalles = [];
+  let pEstado = null;
+  let pBodegaEnvia = document.getElementById("bodega").value;
+  let pBodegaDestino = localStorage.getItem("bodega_solicita");
+  let pUsuarioAutorizacion =
+    localStorage.getItem("UsuarioAutorizacion") || null;
+  // Obtener la tabla
+  let table = document.getElementById("myTableVerificacion");
+
+  // Iterar sobre las filas de la tabla (excluyendo el encabezado)
+  for (let i = 1; i < table.rows.length - 1; i++) {
+    let row = table.rows[i];
+
+    // Obtener lasolicitud
+    let solicitud = row.querySelector("#solicitud").textContent.trim();
+
+    // Obtener el valor del artículo
+    let articulo = row
+      .querySelector("#verifica-articulo span")
+      .textContent.trim();
+
+    // Obtener la cantidad pedida
+    let cantidadPedida = row
+      .querySelector("#cantidadPedida")
+      .textContent.trim();
+
+    // Obtener la cantidad leída
+    let cantidadLeida =
+      row.querySelector("#cantidadLeida").textContent.trim() || 0;
+
+    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
+    var detalle = {
+      SOLICITUD: solicitud,
+      ARTICULO: articulo,
+      CANT_CONSEC: cantidadPedida,
+      CANT_LEIDA: cantidadLeida,
+    };
+
+    // Agregar el objeto al array
+    detalles.push(detalle);
+  }
+  // Convertir el array de objetos a formato JSON
+  var jsonDetalles = encodeURIComponent(JSON.stringify(detalles));
+  console.log("JSONDetalles:\n\t:" + decodeURIComponent(jsonDetalles) );
+  const params =
+    "?pSistema=" +
+    pSistema +
+    "&pUsuario=" +
+    pUsuario +
+    "&pOpcion=" +
+    pOpcion +
+    "&pModulo=" +
+    pModulo +
+    "&pConsecutivo=" +
+    pConsecutivo +
+    "&jsonDetalles=" +
+    jsonDetalles +
+    "&pEstado=" +
+    pEstado +
+    "&pBodegaEnvia=" +
+    pBodegaEnvia +
+    "&pBodegaDestino=" +
+    pBodegaDestino +
+    "&pUsuarioAutorizacion=" +
+    pUsuarioAutorizacion;
+  ////console.log("Parametros: \n" + params);
+  fetch(env.API_URL + "contenedor" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      //console.log("Respuesta del SP");
+      //console.log(result.contenedor);
+      //console.log("mensaje " + result.message);
+
+      // //console.log("Respuesta Contenedor");
+      // //console.log(result);
+
+      if (result.msg === "SUCCESS") {
+        if (result.contenedor.length != 0) {
+          // Resto del código de éxito
+           let contenedor = localStorage.getItem("contenedor");
+              let bodegaSolicita = localStorage.getItem("bodega_solicita");
+              let estado_Pdt = localStorage.getItem("estado_Pdt");
+              //---------------------------------------------------------------------------
+              //cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt);    
+        }
+      } else {
+        //console.log(result.message);
+      }
+    });
+} //fin fn
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Funcion de confirmación del guardado parcial
 function confirmarGuardadoParcial() {
@@ -946,6 +1051,7 @@ function confirmarGuardadoParcial() {
     }
   });
 }
+
 
 //FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
