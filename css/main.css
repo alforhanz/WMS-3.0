@@ -3010,6 +3010,250 @@ th {
     box-sizing: border-box!important;
     height: 291.8px !important;
     width: 411px !important;
+}
 
 
+.reporteExInv{
+  height: 50px;
+}
+/* ═══════════════════════════════════════════
+   TABLA GENERAL — Rpt Existencias Inventario
+═══════════════════════════════════════════ */
+#tblRptExist {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  margin-bottom: 40px;
+}
+
+/* ── THEAD — sticky ── */
+#tblRptExist thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#tblRptExist thead th {
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #7e8180;
+  color: #ffffff;
+  border: 1px solid #e3e4ee;
+  padding: 6px 4px;
+  text-align: center;
+  vertical-align: bottom;
+  overflow: hidden;
+}
+
+/* ── Artículo / Descripción — header ── */
+#tblRptExist thead th:first-child { 
+  width: 25px;
+  text-align: center;
+  padding: 6px 8px;
+}
+
+#tblRptExist thead th h4,
+#tblRptExist thead th h5 {
+   text-align: center;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#tblRptExist thead th h4 { font-size: 14px; font-weight: bold;   color: #ffffff; }
+#tblRptExist thead th h5 { font-size: 12px; font-weight: normal; color: #ffffff; }
+
+/* ── Cód Barra — header ── */
+#tblRptExist thead th:nth-child(2) {
+  width: 100px;
+  text-align: center;
+}
+
+/* ── Headers rotados ── */
+#tblRptExist thead th.th-rotated {
+  width: 36px;
+  min-width: 36px;
+  height: 110px;
+  padding: 0;
+  overflow: visible;
+  position: relative;
+}
+
+#tblRptExist thead th.th-rotated span {
+  display: block;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  white-space: nowrap;
+  transform: rotate(-90deg);
+  transform-origin: left center;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+/* ── TBODY — filas ── */
+#tblRptExist tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.15s ease;
+}
+
+#tblRptExist tbody tr:nth-child(even) { background-color: #f5f5f5; }
+#tblRptExist tbody tr:hover           { background-color: #e3f2fd; }
+
+/* ── Artículo / Descripción — body ── */
+#tblRptExist tbody td.td-articulo {
+  vertical-align: middle;
+  padding: 5px 8px;
+  word-break: break-word;
+  text-align: left;
+}
+
+#tblRptExist tbody td.td-articulo h4,
+#tblRptExist tbody td.td-articulo h5 {
+  display: block !important;
+  margin: 0      !important;
+  padding: 0     !important;
+  line-height: 1.3;
+}
+
+#tblRptExist tbody td.td-articulo h4 { font-size: 12px; font-weight: bold;   color: #1a237e; }
+#tblRptExist tbody td.td-articulo h5 { font-size: 10px; font-weight: normal; color: #555;    }
+
+/* ── Cód Barra — body ── */
+#tblRptExist tbody td.td-codbarra {
+  font-size: 11px;
+  color: #444;
+  white-space: nowrap;
+  padding: 5px 6px;
+  vertical-align: middle;
+  width: 90px;
+}
+
+/* ── Numéricas — body ── */
+#tblRptExist tbody td.td-numero {
+  text-align: center;
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 5px 6px;
+  vertical-align: middle;
+  width: 36px;
+  color: #333;
+}
+
+/* ── Diferencia negativa — body y tfoot ── */
+#tblRptExist tbody td.td-negativo,
+#tblRptExist tfoot td.td-negativo {
+  color: #c62828 !important;
+  font-weight: bold;
+  background-color: #ffebee;
+}
+
+/* ── TFOOT — totales ── */
+#tblRptExist tfoot tr.tr-totales {
+  background-color: #9b9ca0;
+  color: #ffffff;
+  font-weight: bold;
+  border-top: 2px solid #b9bcd1;
+}
+
+#tblRptExist tfoot td.td-totales-label {
+  padding: 6px 8px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+#tblRptExist tfoot td.td-total {
+  font-size: 12px;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   PAGINACIÓN
+═══════════════════════════════════════════ */
+#contenedorPaginacion {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0 60px;
+  flex-wrap: wrap;
+}
+
+.paginacion-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #7e8180;
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.paginacion-btn:hover:not(:disabled) { background-color: #218838; color: #ffffff; }
+.paginacion-btn:disabled             { opacity: 0.35; cursor: not-allowed;        }
+
+.paginacion-activa {
+  background-color: #1a237e !important;
+  color: #ffffff             !important;
+  font-weight: bold;
+}
+
+.paginacion-ellipsis { padding: 0 6px;    color: #888; font-size: 14px; line-height: 34px; }
+.paginacion-info     { margin-left: 10px; color: #555; font-size: 12px;                    }
+
+/* ═══════════════════════════════════════════
+   CONTADOR DE REGISTROS
+═══════════════════════════════════════════ */
+#cantidadDeRegistros {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+/* ── Barra inferior: paginación + descargas ── */
+#barraInferior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* paginación izquierda, botones derecha */
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+#botonesDescarga {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#botonesDescarga .btn-descarga {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #7e8180;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#botonesDescarga .btn-descarga:hover {
+  background-color: #218838;
+  color: #ffffff;
+  border-color: #218838;
+}
+
+#botonesDescarga .btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
