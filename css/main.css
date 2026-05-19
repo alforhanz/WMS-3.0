@@ -3257,3 +3257,23 @@ th {
   height: 20px;
   object-fit: contain;
 }
+
+/* ── Card sin bordes ni sombra — filtros ── */
+#filtrosCard {
+  border: none      !important;
+  box-shadow: none  !important;
+}
+
+#resultadoBusqueda .card {
+  border: none      !important;
+  box-shadow: none  !important;
+}
+.card-tab{
+    width: 88%;
+    margin-left: auto;
+    left: auto;
+    right: auto;
+}
+.tab-title{
+  font-size: 18px !important;
+}
