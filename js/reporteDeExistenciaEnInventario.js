@@ -2,11 +2,509 @@ var ArrayData = [];
 var ArrayDataFiltrado = [];
 
 // ─────────────────────────────────────────────
-// INIT
+// INIT DOM
 // ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM Loaded...");
+
+        const checkClase = document.getElementById("clase-todas");
+        localStorage.setItem("check_Clase", checkClase.checked);
+        const checkMarca = document.getElementById("marca-todas");
+        localStorage.setItem("ckeck_Marca", checkMarca.checked);
+        const checkTipo = document.getElementById("tipo-todas");
+        localStorage.setItem("ckeck_Tipo", checkTipo.checked);
+        const checkVentas = document.getElementById("ventas-todas");
+        localStorage.setItem("ckeck_Ventas", checkVentas.checked);
+        const checkEnvase = document.getElementById("envase-todas");
+        localStorage.setItem("ckeck_Envase", checkEnvase.checked);
+        // const checkSeis = document.getElementById("seis-todas");
+        // localStorage.setItem("ckeck_Seis", checkSeis.checked);
+
+        cargarClasificacionesCLase();
+        cargarClasificacionesMarca();
+        cargarClasificacionesTipo();
+        cargarClasificacionesVenta();
+        cargarClasificacionesEnvase();
+        // cargarClasificacionesSeis();
+
+         // Inicializar tabs de Materialize
+        const tabs = document.querySelectorAll('.tabs');
+        M.Tabs.init(tabs);
+
+        // Inicializar los selects de Materialize
+        var elems = document.querySelectorAll("select");
+        M.FormSelect.init(elems);
+
+        // Agregar un evento para detectar cambios en el checkbox
+        checkClase.addEventListener("change", habilitaclase);
+        checkMarca.addEventListener("change", habilitamarca);
+        checkTipo.addEventListener("change", habilitatipo);
+        checkVentas.addEventListener("change", habilitaVenta);
+        checkEnvase.addEventListener("change", habilitaEnvase);
+        // checkSeis.addEventListener("change", habilitaSeis);
+
+        habilitaclase();
+        habilitamarca();
+        habilitatipo();
+        habilitaVenta();
+        habilitaEnvase();
+        // habilitaSeis();
 });
+
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+async function cargarClasificacionesCLase() {
+  const checkClase = document.getElementById("clase-todas");
+  const selectClase = document.getElementById("claseReporte");
+  const isChecked = localStorage.getItem("check_Clase") === "true";
+  const isDisabled = localStorage.getItem("Selector_de_Clase") === "true";
+  checkClase.checked = isChecked;
+  selectClase.disabled = isDisabled;
+
+  fetch(env.API_URL + "filtroswms", myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.filtros.length != 0) {
+          // Limpiar el select antes de agregar opciones
+          selectClase.innerHTML =
+            '<option value="" disabled selected>Seleccionar Clase</option>';
+
+          // Agregar opciones al select
+          result.filtros.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.CLASIFICACION_1;
+            option.textContent = item.DESCRIPCION;
+            selectClase.appendChild(option);
+          });
+
+          // Inicializar el select (si usas Materialize)
+          M.FormSelect.init(selectClase);
+          habilitaclase();
+          
+        }
+      } else {
+        console.log("Error en el SP");
+      }
+    });
+}
+async function cargarClasificacionesMarca() {
+  const clase = document.getElementById("claseReporte").value;
+  const checkMarca = document.getElementById("marca-todas");
+  const selectMArca = document.getElementById("marcaReporte");
+
+  const isChecked = localStorage.getItem("ckeck_Marca") === "true";
+  const isDisabled = localStorage.getItem("Selector_de_Marca") === "true";
+  checkMarca.checked = isChecked;
+  selectMArca.disabled = isDisabled;
+
+  const params = "?clase=" + clase;
+
+  try {
+  } catch (error) {
+    console.error("Error al cargar clasificaciones:", error.message);
+  }
+
+  return fetch(env.API_URL + "filtroswms" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.filtros.length != 0) {
+          // Limpiar el select antes de agregar opciones
+          selectMArca.innerHTML =
+            '<option value="" disabled selected>Seleccionar Clase</option>';
+
+          // Agregar opciones al select
+          result.filtros.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.CLASIFICACION_2;
+            option.textContent = item.DESCRIPCION;
+            selectMArca.appendChild(option);
+          });
+
+          // Inicializar el select (si usas Materialize)
+          M.FormSelect.init(selectMArca);
+          habilitamarca();
+          
+        }
+      } else {
+        console.log("Error en el SP");
+      }
+    });
+}
+async function cargarClasificacionesTipo() {
+  const clase = document.getElementById("claseReporte").value;
+  const marca = document.getElementById("marcaReporte").value;
+  const checkTipo = document.getElementById("tipo-todas");
+  const selectTipo = document.getElementById("tipoReporte");
+  const isChecked = localStorage.getItem("ckeck_Tipo") === "true";
+  const isDisabled = localStorage.getItem("Selector_de_Tipo") === "true";
+  checkTipo.checked = isChecked;
+  selectTipo.disabled = isDisabled;
+  const params = "?clase=" + clase + "&marca=" + marca;
+
+  try {
+  } catch (error) {
+    console.error("Error al cargar clasificaciones:", error.message);
+  }
+
+  fetch(env.API_URL + "filtroswms" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.filtros.length != 0) {
+          // Limpiar el select antes de agregar opciones
+          selectTipo.innerHTML =
+            '<option value="" disabled selected>Seleccionar Clase</option>';
+
+          // Agregar opciones al select
+          result.filtros.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.CLASIFICACION_3;
+            option.textContent = item.DESCRIPCION;
+            selectTipo.appendChild(option);
+          });
+
+          // Inicializar el select (si usas Materialize)
+          M.FormSelect.init(selectTipo);
+          habilitatipo();
+          
+        }
+      } else {
+        console.log("Error en el SP");
+      }
+    });
+}
+async function cargarClasificacionesVenta() {
+  const clase = document.getElementById("claseReporte").value;
+  const marca = document.getElementById("marcaReporte").value;
+  const tipo = document.getElementById("tipoReporte").value;
+  const selectVenta = document.getElementById("ventasReporte");
+  const checkVentas = document.getElementById("ventas-todas");
+  const isChecked = localStorage.getItem("ckeck_Ventas") === "true";
+  const isDisabled = localStorage.getItem("Selector_de_Ventas") === "true";
+  checkVentas.checked = isChecked;
+  selectVenta.disabled = isDisabled;
+
+  const params = "?clase=" + clase + "&marca=" + marca + "&tipo=" + tipo;
+
+  try {
+  } catch (error) {
+    console.error("Error al cargar clasificaciones:", error.message);
+  }
+
+  fetch(env.API_URL + "filtroswms" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.filtros.length != 0) {
+          // Limpiar el select antes de agregar opciones
+          selectVenta.innerHTML =
+            '<option value="" disabled selected>Seleccionar Clase</option>';
+
+          // Agregar opciones al select
+          result.filtros.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.CLASIFICACION_4;
+            option.textContent = item.DESCRIPCION;
+            selectVenta.appendChild(option);
+          });
+
+          // Inicializar el select (si usas Materialize)
+          M.FormSelect.init(selectVenta);
+          habilitaVenta();
+          
+        }
+      } else {
+        console.log("Error en el SP");
+      }
+    });
+}
+async function cargarClasificacionesEnvase() {
+  const clase = document.getElementById("claseReporte").value;
+  const marca = document.getElementById("marcaReporte").value;
+  const tipo = document.getElementById("tipoReporte").value;
+  const subtipo = document.getElementById("ventasReporte").value;
+  const selectEnvase = document.getElementById("envaseReporte");
+  const checkEnvase = document.getElementById("envase-todas");
+  const isChecked = localStorage.getItem("ckeck_Envase") === "true";
+  const isDisabled = localStorage.getItem("Selector_de_Envase") === "true";
+  checkEnvase.checked = isChecked;
+  selectEnvase.disabled = isDisabled;
+
+  const params =
+    "?clase=" +
+    clase +
+    "&marca=" +
+    marca +
+    "&tipo=" +
+    tipo +
+    "&subtipo=" +
+    subtipo;
+
+  try {
+  } catch (error) {
+    console.error("Error al cargar clasificaciones:", error.message);
+  }
+
+  fetch(env.API_URL + "filtroswms" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.filtros.length != 0) {
+          // Limpiar el select antes de agregar opciones
+          selectEnvase.innerHTML =
+            '<option value="" disabled selected>Seleccionar Clase</option>';
+
+          // Agregar opciones al select
+          result.filtros.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.CLASIFICACION_5;
+            option.textContent = item.DESCRIPCION;
+            selectEnvase.appendChild(option);
+          });
+
+          // Inicializar el select (si usas Materialize)
+          M.FormSelect.init(selectEnvase);
+          habilitaEnvase();
+          
+        }
+      } else {
+        console.log("Error en el SP");
+      }
+    });
+}
+// async function cargarClasificacionesSeis() {
+//   const clase = document.getElementById("claseReporte").value;
+//   const marca = document.getElementById("marcaReporte").value;
+//   const tipo = document.getElementById("tipoReporte").value;
+//   const subtipo = document.getElementById("ventasReporte").value;
+//   const subtipo2 = document.getElementById("envaseReporte").value;
+
+//   const selectSeis = document.getElementById("seisReporte");
+//   const checkSeis = document.getElementById("envase-todas");
+//   const isChecked = localStorage.getItem("ckeck_Seis") === "true";
+//   const isDisabled = localStorage.getItem("Selector_de_Seis") === "true";
+//   checkSeis.checked = isChecked;
+//   selectSeis.disabled = isDisabled;
+
+//   const params =
+//     "?clase=" +
+//     clase +
+//     "&marca=" +
+//     marca +
+//     "&tipo=" +
+//     tipo +
+//     "&subtipo=" +
+//     subtipo +
+//     "&subtipo2=" +
+//     subtipo2;
+
+//   try {
+//   } catch (error) {
+//     console.error("Error al cargar clasificaciones:", error.message);
+//   }
+
+//   fetch(env.API_URL + "filtroswms" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") {
+//         if (result.filtros.length != 0) {
+//           // Limpiar el select antes de agregar opciones
+//           selectSeis.innerHTML =
+//             '<option value="" disabled selected>Seleccionar Clase</option>';
+
+//           // Agregar opciones al select
+//           result.filtros.forEach((item) => {
+//             const option = document.createElement("option");
+//             option.value = item.CLASIFICACION;
+//             option.textContent = item.DESCRIPCION;
+//             selectSeis.appendChild(option);
+//           });
+
+//           // Inicializar el select (si usas Materialize)
+//           M.FormSelect.init(selectSeis);
+//           habilitaSeis();
+          
+//         }
+//       } else {
+//         console.log("Error en el SP");
+//       }
+//     });
+// }
+
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+// Función para habilitar o deshabilitar el select de clasificaciones según el estado del checkbox
+function habilitaclase() {
+  const selectClase = document.getElementById("claseReporte"); // Select
+  const checkClase = document.getElementById("clase-todas");
+
+  if (checkClase.checked) {
+    // Si el checkbox está marcado, deshabilitar el select
+    selectClase.disabled = true;
+
+    // Establecer el valor del select a null
+    selectClase.value = null;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("check_Clase", checkClase.checked);
+    localStorage.setItem("Selector_de_Clase", "true");
+  } else {
+    // Si el checkbox no está marcado, habilitar el select
+    selectClase.disabled = false;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("check_Clase", checkClase.checked);
+    localStorage.setItem("Selector_de_Clase", "false");
+  }
+
+  // Reiniciar el select de Materialize después de cambiar el estado
+  var elems = document.querySelectorAll("select");
+  M.FormSelect.init(elems);
+}
+function habilitamarca() {
+  const checkMArca = document.getElementById("marca-todas");
+  const selectMarca = document.getElementById("marcaReporte");
+
+  if (checkMArca.checked) {
+    // Si el checkbox está marcado, deshabilitar el select
+    selectMarca.disabled = true;
+
+    // Establecer el valor del select a null
+    selectMarca.value = null;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Marca", checkMArca.checked);
+    localStorage.setItem("Selector_de_Marca", "true");
+  } else {
+    // Si el checkbox no está marcado, habilitar el select
+    selectMarca.disabled = false;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Marca", checkMArca.checked);
+    localStorage.setItem("Selector_de_Marca", "false");
+  }
+
+  // Reiniciar el select de Materialize después de cambiar el estado
+  var elems = document.querySelectorAll("select");
+  M.FormSelect.init(elems);
+}
+function habilitatipo() {
+  const checkTipo = document.getElementById("tipo-todas");
+  const selectTipo = document.getElementById("tipoReporte");
+
+  if (checkTipo.checked) {
+    // Si el checkbox está Tipodo, deshabilitar el select
+    selectTipo.disabled = true;
+
+    // Establecer el valor del select a null
+    selectTipo.value = null;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Tipo", checkTipo.checked);
+    localStorage.setItem("Selector_de_Tipo", "true");
+  } else {
+    // Si el checkbox no está Tipodo, habilitar el select
+    selectTipo.disabled = false;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Tipo", checkTipo.checked);
+    localStorage.setItem("Selector_de_Tipo", "false");
+  }
+
+  // Reiniciar el select de Materialize después de cambiar el estado
+  var elems = document.querySelectorAll("select");
+  M.FormSelect.init(elems);
+}
+function habilitaVenta() {
+  const checkVentas = document.getElementById("ventas-todas");
+  const selectVentas = document.getElementById("ventasReporte");
+
+  if (checkVentas.checked) {
+    // Si el checkbox está Tipodo, deshabilitar el select
+    selectVentas.disabled = true;
+
+    // Establecer el valor del select a null
+    selectVentas.value = null;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Ventas", checkVentas.checked);
+    localStorage.setItem("Selector_de_Ventas", "true");
+  } else {
+    // Si el checkbox no está Tipodo, habilitar el select
+    selectVentas.disabled = false;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Ventas", checkVentas.checked);
+    localStorage.setItem("Selector_de_Ventas", "false");
+  }
+
+  // Reiniciar el select de Materialize después de cambiar el estado
+  var elems = document.querySelectorAll("select");
+  M.FormSelect.init(elems);
+}
+function habilitaEnvase() {
+  const checkEnvase = document.getElementById("envase-todas");
+  const selectEnvase = document.getElementById("envaseReporte");
+
+  if (checkEnvase.checked) {
+    // Si el checkbox está Tipodo, deshabilitar el select
+    selectEnvase.disabled = true;
+
+    // Establecer el valor del select a null
+    selectEnvase.value = null;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Envase", checkEnvase.checked);
+    localStorage.setItem("Selector_de_Envase", "true");
+  } else {
+    // Si el checkbox no está Tipodo, habilitar el select
+    selectEnvase.disabled = false;
+
+    // Guardar el estado del checkbox y del select en localStorage
+    localStorage.setItem("ckeck_Envase", checkEnvase.checked);
+    localStorage.setItem("Selector_de_Envase", "false");
+  }
+
+  // Reiniciar el select de Materialize después de cambiar el estado
+  var elems = document.querySelectorAll("select");
+  M.FormSelect.init(elems);
+}
+// function habilitaSeis() {
+//   const checkSeis = document.getElementById("seis-todas");
+//   const selectSeis = document.getElementById("seisReporte");
+
+//   if (checkSeis.checked) {
+//     // Si el checkbox está Tipodo, deshabilitar el select
+//     selectSeis.disabled = true;
+
+//     // Establecer el valor del select a null
+//     selectSeis.value = null;
+
+//     // Guardar el estado del checkbox y del select en localStorage
+//     localStorage.setItem("ckeck_Seis", checkSeis.checked);
+//     localStorage.setItem("Selector_de_Seis", "true");
+//   } else {
+//     // Si el checkbox no está Tipodo, habilitar el select
+//     selectSeis.disabled = false;
+
+//     // Guardar el estado del checkbox y del select en localStorage
+//     localStorage.setItem("ckeck_Seis", checkSeis.checked);
+//     localStorage.setItem("Selector_de_Seis", "false");
+//   }
+
+//   // Reiniciar el select de Materialize después de cambiar el estado
+//   var elems = document.querySelectorAll("select");
+//   M.FormSelect.init(elems);
+// }
+
+
+
+
+
 
 // ─────────────────────────────────────────────
 // 1. VALIDAR Y ARMAR PARÁMETROS
@@ -16,24 +514,34 @@ function validarParametros() {
     const pOpcion = "M";
     const pUsuario = document.getElementById("hUsuario").value.trim();
     const pArticulo = document.getElementById("pArticulo").value.trim();
-    const pBodega = document.getElementById("bodega").value.trim();
-    const pSoloExistencia = "";
-    const pTodasBodega = "";
+    let pBodega ="";
+    const pSoloExistencia = document.getElementById("solo-existencias").checked ? "S" : "N";
+    const pTodasBodega    = document.getElementById("todas-las-bodegas").checked    ? "S" : "N";
+    if(pTodasBodega==="N"){
+        pBodega = document.getElementById("bodega").value.trim();
+    } 
+       
 
-    if (!pUsuario) {
-        alertInfo("Usuario no identificado.");
-        return;
-    }
-    if (!pBodega) {
-        alertInfo("Debe seleccionar una bodega.");
-        return;
-    }
+        const pClase =document.getElementById("claseReporte").value;
+
+        const pMarca =document.getElementById("marcaReporte").value;
+
+        const pTipo =document.getElementById("tipoReporte").value;
+        
+        const pSuptipo2 =document.getElementById("ventasReporte").value;
+
+        const pEnvase =document.getElementById("envaseReporte").value;
 
     const params = new URLSearchParams({
         pSistema,
         pUsuario,
         pOpcion,
         pArticulo,
+        pClase,
+        pMarca,
+        pTipo,
+        pSuptipo2,
+        pEnvase,        
         pBodega,
         pSoloExistencia,
         pTodasBodega,
@@ -354,7 +862,7 @@ function _agruparPorMarca(data) {
     }, {});
 }
 
-const LINEA = "_________________";   // línea para celdas manuales
+const LINEA = "______";   // línea para celdas manuales
 
 // ─────────────────────────────────────────────
 // DESCARGAR EXCEL
@@ -437,9 +945,11 @@ function descargarExcel() {
     XLSX.writeFile(wb, `Existencias_${bodega}_${fecha.replace(/\//g, "-")}.xlsx`);
 }
 
+
 // ─────────────────────────────────────────────
 // DESCARGAR PDF
 // ─────────────────────────────────────────────
+
 function descargarPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "letter" });
@@ -646,4 +1156,15 @@ function descargarPDF() {
     }
 
     doc.save(`Existencias_${bodega}_${fecha.replace(/\//g, "-")}.pdf`);
+}
+
+
+
+
+// __________________________________________
+// Función para borrar la tabla
+// __________________________________________
+
+function limpiarValores() {
+ 
 }
