@@ -1718,11 +1718,6 @@ th {
   border-spacing: 0;
   margin-top: 15px;
 }
-
-#cantidadDeRegistros {
-  font-size: 1em;
-}
-
 .mensajeText {
   height: 200px;
   overflow-y: scroll;
@@ -3013,8 +3008,13 @@ th {
 }
 
 
+/* ═══════════════════════════════════════════
+Rpt Existencias Inventario
+═══════════════════════════════════════════ */
+
 .reporteExInv{
-  height: 50px;
+  height: auto;
+  margin-bottom: 60px;
 }
 /* ═══════════════════════════════════════════
    TABLA GENERAL — Rpt Existencias Inventario
@@ -3131,7 +3131,7 @@ th {
 
 /* ── Numéricas — body ── */
 #tblRptExist tbody td.td-numero {
-  text-align: center;
+  text-align: right;
   font-size: 12px;
   white-space: nowrap;
   padding: 5px 6px;
@@ -3176,7 +3176,7 @@ th {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 12px 0 60px;
+  margin: 0;
   flex-wrap: wrap;
 }
 
@@ -3209,11 +3209,13 @@ th {
    CONTADOR DE REGISTROS
 ═══════════════════════════════════════════ */
 #cantidadDeRegistros {
-  display: inline-block;
-  font-size: 15px;
-  font-weight: bold;
-  color: #333333;
-  margin-bottom: 8px;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333333;
+    margin-top: 25px;
+    margin-bottom: 25px;
+
 }
 
 /* ── Barra inferior: paginación + descargas ── */
@@ -3223,7 +3225,7 @@ th {
   justify-content: space-between;  /* paginación izquierda, botones derecha */
   flex-wrap: wrap;
   gap: 8px;
-  margin: 12px 0 16px;
+  margin: 16px 0 40px;
 }
 
 #botonesDescarga {
@@ -3276,4 +3278,29 @@ th {
 }
 .tab-title{
   font-size: 18px !important;
+}
+
+.btn-iniciar-despacho {
+    width: 11%;
+    height: 43px;
+    color: white;
+    background-color: #28a745;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-guardar-existencias{
+          background-color: #218838;
+          border-radius: 5px;
+          color: white;
+          height: 36px;
+          border: none;
+          font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.3s ease-in-out;
+          width: 40%;
+          height: 42px;
+          margin-right: 52px;
+          margin-top: 3rem !important;
 }
