@@ -45,162 +45,173 @@
       <div id="carga" class="carga-style"></div>
 
       <div class="container">
-        
-      <!-- ── CARD DE FILTROS ── -->
-<div class="row">
-  <div class="card-tab col s12 m10 l10 ">
-    <div class="card z-depth-2" id="filtrosCard">
-      <div class="card-content">
-        <span class="card-title">Filtros de búsqueda</span>
 
-        <!-- Tabs dentro del card -->
-        <ul class="tabs tabs-fixed-width" id="filtrosTabs">
-          <li class="tab col s6"><a class="active tab-title" href="#tab-basico" >Búsqueda</a></li>
-          <li class="tab col s6"><a class="active tab-title"  href="#tab-clasificacion">Clasificación</a></li>
-        </ul>
+        <!-- ── CARD DE FILTROS ── -->
+        <div class="row">
+          <div class="card-tab col s12 m10 l10 ">
+            <div class="card z-depth-2" id="filtrosCard">
+              <div class="card-content">
+                <span class="card-title">Filtros de búsqueda</span>
 
-        <!-- ── TAB 1: Búsqueda básica ── -->
-        <div id="tab-basico" class="col s12" style="padding: 16px 0;">
+                <!-- Tabs dentro del card -->
+                <ul class="tabs tabs-fixed-width" id="filtrosTabs">
+                  <li class="tab col s6"><a class="active tab-title" href="#tab-basico">Búsqueda</a></li>
+                  <li class="tab col s6"><a class="active tab-title" href="#tab-clasificacion">Clasificación</a></li>
+                </ul>
 
-          <!-- Input artículo -->
-          <div class="input-field">
-            <i class="material-icons prefix">search</i>
-            <input id="pArticulo" type="text" class="validate"
-                   placeholder="Todos los artículos">
-            <label for="pArticulo">Artículo</label>
-          </div>
+                <!-- ── TAB 1: Búsqueda básica ── -->
+                <div id="tab-basico" class="col s12" style="padding: 16px 0;">
 
-          <!-- Checkboxes -->
-          <div class="row" style="margin-top: 8px; margin-bottom: 0;">
-            <div class="col s12 m6">
-              <label>
-                <input type="checkbox" id="solo-existencias" checked />
-                <span>Solo Existencias</span>
-              </label>
-            </div>
-            <div class="col s12 m6">
-              <label>
-                <input type="checkbox" id="todas-las-bodegas" />
-                <span>Todas las Bodegas</span>
-              </label>
-            </div>
+                  <!-- Input artículo -->
+                  <div class="input-field">
+                    <i class="material-icons prefix">search</i>
+                    <input id="pArticulo" type="text" class="validate" placeholder="Todos los artículos">
+                    <label for="pArticulo">Artículo</label>
+                  </div>
+
+                  <!-- Checkboxes -->
+                  <div class="row" style="margin-top: 8px; margin-bottom: 0;">
+                    <div class="col s12 m6">
+                      <label>
+                        <input type="checkbox" id="solo-existencias" checked />
+                        <span>Solo Existencias</span>
+                      </label>
+                    </div>
+                    <div class="col s12 m6">
+                      <label>
+                        <input type="checkbox" id="todas-las-bodegas" />
+                        <span>Todas las Bodegas</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ── TAB 2: Clasificaciones ── -->
+                <div id="tab-clasificacion" class="col s12" style="padding: 16px 0;">
+
+                  <!-- Fila 1 -->
+                  <div class="row" style="margin-bottom: 0;">
+
+                    <div class="input-field col s1">
+                      <label><input type="checkbox" id="clase-todas" checked /><span>Todas</span></label>
+                    </div>
+                    <div class="input-field col s3">
+                      <select id="claseReporte" onchange="cargarClasificacionesMarca()">
+                        <option value="null" disabled selected>Seleccionar</option>
+                      </select>
+                      <label>Clase</label>
+                    </div>
+
+                    <div class="input-field col s1">
+                      <label><input type="checkbox" id="marca-todas" checked /><span>Todas</span></label>
+                    </div>
+                    <div class="input-field col s3">
+                      <select id="marcaReporte" onchange="cargarClasificacionesTipo()">
+                        <option value="" disabled selected>Seleccionar</option>
+                      </select>
+                      <label>Marca</label>
+                    </div>
+
+                    <div class="input-field col s1">
+                      <label><input type="checkbox" id="tipo-todas" checked /><span>Todas</span></label>
+                    </div>
+                    <div class="input-field col s3">
+                      <select id="tipoReporte" onchange="cargarClasificacionesVenta()">
+                        <option value="" disabled selected>Seleccionar</option>
+                      </select>
+                      <label>Tipo</label>
+                    </div>
+
+                  </div>
+
+                  <!-- Fila 2 -->
+                  <div class="row" style="margin-bottom: 0;">
+
+                    <div class="input-field col s1">
+                      <label><input type="checkbox" id="ventas-todas" checked /><span>Todas</span></label>
+                    </div>
+                    <div class="input-field col s3">
+                      <select id="ventasReporte" onchange="cargarClasificacionesEnvase()">
+                        <option value="" disabled selected>Seleccionar</option>
+                      </select>
+                      <label>Subtipo 2</label>
+                    </div>
+
+                    <div class="input-field col s1">
+                      <label><input type="checkbox" id="envase-todas" checked /><span>Todas</span></label>
+                    </div>
+                    <div class="input-field col s3">
+                      <select id="envaseReporte">
+                        <option value="" disabled selected>Seleccionar</option>
+                      </select>
+                      <label>Envase</label>
+                    </div>
+
+                  </div>
+                </div>
+                <!-- ── FIN TABS ── -->
+
+              </div><!-- /card-content -->
+
+              <div class="card-action" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <button type="button" id="btnRptExistencias" class="btn-guardar-existencias"
+                  onclick="validarParametros()">
+                  Mostrar Reporte
+                  <i class="material-icons right">send</i>
+                </button>
+              </div>
+
+            </div><!-- /card -->
           </div>
         </div>
+        <!-- ── FIN CARD ── -->
 
-        <!-- ── TAB 2: Clasificaciones ── -->
-        <div id="tab-clasificacion" class="col s12" style="padding: 16px 0;">
-
-          <!-- Fila 1 -->
-          <div class="row" style="margin-bottom: 0;">
-
-            <div class="input-field col s1">
-              <label><input type="checkbox" id="clase-todas" checked /><span>Todas</span></label>
-            </div>
-            <div class="input-field col s3">
-              <select id="claseReporte" onchange="cargarClasificacionesMarca()">
-                <option value="null" disabled selected>Seleccionar</option>
-              </select>
-              <label>Clase</label>
-            </div>
-
-            <div class="input-field col s1">
-              <label><input type="checkbox" id="marca-todas" checked /><span>Todas</span></label>
-            </div>
-            <div class="input-field col s3">
-              <select id="marcaReporte" onchange="cargarClasificacionesTipo()">
-                <option value="" disabled selected>Seleccionar</option>
-              </select>
-              <label>Marca</label>
-            </div>
-
-            <div class="input-field col s1">
-              <label><input type="checkbox" id="tipo-todas" checked /><span>Todas</span></label>
-            </div>
-            <div class="input-field col s3">
-              <select id="tipoReporte" onchange="cargarClasificacionesVenta()">
-                <option value="" disabled selected>Seleccionar</option>
-              </select>
-              <label>Tipo</label>
-            </div>
-
-          </div>
-
-          <!-- Fila 2 -->
-          <div class="row" style="margin-bottom: 0;">
-
-            <div class="input-field col s1">
-              <label><input type="checkbox" id="ventas-todas" checked /><span>Todas</span></label>
-            </div>
-            <div class="input-field col s3">
-              <select id="ventasReporte" onchange="cargarClasificacionesEnvase()">
-                <option value="" disabled selected>Seleccionar</option>
-              </select>
-              <label>Subtipo 2</label>
-            </div>
-
-            <div class="input-field col s1">
-              <label><input type="checkbox" id="envase-todas" checked /><span>Todas</span></label>
-            </div>
-            <div class="input-field col s3">
-              <select id="envaseReporte">
-                <option value="" disabled selected>Seleccionar</option>
-              </select>
-              <label>Envase</label>
-            </div>
-
-          </div>
-        </div>
-        <!-- ── FIN TABS ── -->
-
-      </div><!-- /card-content -->
-
-      <div class="card-action" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <button type="button" id="btnRptExistencias"
-                class="btn-guardar-conteo" onclick="validarParametros()">
-          Mostrar Reporte
-          <i class="material-icons right">send</i>
-        </button>
-      </div>
-
-    </div><!-- /card -->
-  </div>
-</div>
-<!-- ── FIN CARD ── -->
-
-        
-
+        <!-- ── TABLA ── -->
         <!-- ── TABLA ── -->
         <div class="row reporteExInv">
           <div class="col s12">
 
             <label id="cantidadDeRegistros"></label>
 
-            <!-- Paginación + Botones de descarga en la misma línea -->
-            <div id="barraInferior">
-              <div id="contenedorPaginacion"></div>
+            <!-- Botones de descarga -->
+            <div class="btn-container-conteo">
+              <!-- Botón de Excel (ícono en formato PNG) -->
+              <div class="impexcel">
+                <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
+                  <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
+                </button>
+                <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar Excel</label>
+              </div>
 
-              <div id="botonesDescarga" hidden>
-                <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()">
-                  <img src="img/excel.png" alt="Excel" class="btn-icon">
-                  <span>Excel</span>
+              <!-- Botón de PDF (ícono en formato PNG) -->
+              <div class="imppdf">
+                <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
+                  <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
                 </button>
-                <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()">
-                  <img src="img/pdf.png" alt="PDF" class="btn-icon">
-                  <span>PDF</span>
-                </button>
+                <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
               </div>
             </div>
-
             <table id="tblRptExist">
               <thead id="htblRptExist"></thead>
               <tbody id="tblbodyRptExist"></tbody>
             </table>
 
+            <!-- Paginación — DEBAJO de la tabla ← -->
+            <div id="barraInferior">
+              <div id="contenedorPaginacion"></div>
+            </div>
+
           </div>
         </div>
         <!-- ── FIN TABLA ── -->
+        <!-- ── FIN TABLA ── -->
 
       </div><!-- /container -->
+      <!-- Paginación + Botones de descarga en la misma línea -->
+      <div id="barraInferior">
+        <div id="contenedorPaginacion"></div>
+      </div>
+
 
     </div><!-- /resultadoBusqueda -->
   </main>

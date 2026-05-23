@@ -573,7 +573,8 @@ function fetchRptExistencias(params) {
             ArrayDataFiltrado = result.resultado;
             renderTablaReporte(ArrayData);
             // Mostrar botones de descarga
-            document.getElementById("botonesDescarga").removeAttribute("hidden");
+            //document.getElementById("botonesDescarga").removeAttribute("hidden");
+            inicializarBotonesDescarga();
         })
         .catch(() => {
             ocultarLoader();
@@ -627,9 +628,9 @@ function _renderHeader() {
     const headers = [
         { label: ["Artículo", "Descripción"], rotated: false },
         { label: ["Cód Barra"], rotated: false },
-        { label: ["Disponible"], rotated: true },
-        { label: ["Remitida"], rotated: true },
-        { label: ["Reservada"], rotated: true },
+        { label: ["Disponible"], rotated: false },
+        { label: ["Remitida"], rotated: false },
+        { label: ["Reservada"], rotated: false },
         //{ label: ["Diferencia"],              rotated: true  },
     ];
 
@@ -1126,11 +1127,11 @@ function descargarPDF() {
         columnStyles: {
             0: { cellWidth: 45, halign: "left" }, // Artículo + Descripción
             1: { cellWidth: 38, halign: "center" }, // Cód Barra
-            2: { cellWidth: 14, halign: "center" }, // Conteo
-            3: { cellWidth: 14, halign: "center" }, // Total
-            4: { cellWidth: 14, halign: "center" }, // Disponible
-            5: { cellWidth: 14, halign: "center" }, // Remitida
-            6: { cellWidth: 14, halign: "center" }, // Reservada
+            2: { cellWidth: 15, halign: "center" }, // Conteo
+            3: { cellWidth: 15, halign: "center" }, // Total
+            4: { cellWidth: 20, halign: "center" }, // Disponible
+            5: { cellWidth: 20, halign: "center" }, // Remitida
+            6: { cellWidth: 20, halign: "center" }, // Reservada
             7: { cellWidth: 0, halign: "center" }, // Diferencia — auto
         }, // TOTAL: ~175mm ✓
 
@@ -1158,7 +1159,22 @@ function descargarPDF() {
     doc.save(`Existencias_${bodega}_${fecha.replace(/\//g, "-")}.pdf`);
 }
 
-
+//___________________________________________
+//      Activa btn descarga
+//___________________________________________
+function inicializarBotonesDescarga() {
+  const btnDescargarExcel = document.getElementById("btnDescargarExcel"); // Obtener el botón de Excel
+  const btnDescargarPDF = document.getElementById("btnDescargarPDF"); // Crear el botón de PDF
+  const lblExcel = (document.getElementById("lblExcel").style.display =
+    "block");
+  const lblPDF = (document.getElementById("lblPDF").style.display = "block");
+  btnDescargarExcel
+    ? (btnDescargarExcel.hidden = false)
+    : (btnDescargarExcel.hidden = true);
+  btnDescargarPDF
+    ? (btnDescargarPDF.hidden = false)
+    : (btnDescargarPDF.hidden = true);
+}
 
 
 // __________________________________________

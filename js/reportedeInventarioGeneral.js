@@ -412,7 +412,7 @@ async function cargarClasificacionesSeis() {
 }
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-// Función para habilitar o deshabilitar el select según el estado del checkbox
+// Función para habilitar o deshabilitar el select de clasificaciones según el estado del checkbox
 function habilitaclase() {
   const selectClase = document.getElementById("claseReporte"); // Select
   const checkClase = document.getElementById("clase-todas");
