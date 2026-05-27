@@ -1642,6 +1642,14 @@ th {
 
 /*//////REGLAS PARA EL ENCABEZADO DE L OS CONTENEDORES./////*/
 
+/* Contenedor de botones Iniciar Despacho y Regresar */
+#indespacho-conten-btn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 #tblcontenedores tbody tr:nth-child(even) {
   background-color: #f2f2f2;
 }
@@ -1789,7 +1797,7 @@ th {
 }
 
 .switch-button {
-  margin-bottom: 10px;
+  margin-bottom: 10px!important;
 }
 
 .label-button-switch {
@@ -2385,7 +2393,7 @@ th {
 }
 
 #btnOCProcesadas {
-  margin: 0 auto;
+  /* margin: 0 auto; */
   display: block;
   width: 30%;
   border-radius: 5px;
@@ -2530,8 +2538,15 @@ th {
   padding-bottom: 5px;
   font-size: 14px;
   font-weight: bold;
-  margin-left: 476px;
+  /* margin-left: 476px; */
   margin-top: 17px;
+}
+#totalregistrosBusqueda {
+    padding-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 476px;
+    margin-top: 17px;
 }
 
 #totalregistros,
@@ -2649,7 +2664,7 @@ th {
 }
 
 .row {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 /*css del modal de las bodegas que se despliega en el header*/
@@ -3213,7 +3228,7 @@ Rpt Existencias Inventario
     font-size: 12px;
     font-weight: bold;
     color: #333333;
-    margin-top: 25px;
+    /* margin-top: 25px; */
     margin-bottom: 25px;
 
 }
@@ -3280,13 +3295,21 @@ Rpt Existencias Inventario
   font-size: 18px !important;
 }
 
-.btn-iniciar-despacho {
-    width: 11%;
-    height: 43px;
-    color: white;
-    background-color: #28a745;
-    border-radius: 5px;
-    font-size: 14px;
+.btn-iniciar-despacho,
+.btn-regresar {
+  flex: 1;
+  min-width: 120px;
+  height: 43px;
+  color: white;
+  background-color: #28a745;
+  border-radius: 5px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-regresar:hover {
+  background-color: #555f66;
 }
 
 .btn-guardar-existencias{

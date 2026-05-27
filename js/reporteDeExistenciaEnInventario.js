@@ -509,6 +509,52 @@ function habilitaEnvase() {
 // ─────────────────────────────────────────────
 // 1. VALIDAR Y ARMAR PARÁMETROS
 // ─────────────────────────────────────────────
+// function validarParametros() {
+//     const pSistema = "WMS";
+//     const pOpcion = "M";
+//     const pUsuario = document.getElementById("hUsuario").value.trim();
+//     const pArticulo = document.getElementById("pArticulo").value.trim();
+//     let pBodega ="";
+//     const pSoloExistencia = document.getElementById("solo-existencias").checked ? "S" : "N";
+//     const pTodasBodega    = document.getElementById("todas-las-bodegas").checked    ? "S" : "N";
+//     if(pTodasBodega==="N"){
+//         pBodega = document.getElementById("bodega").value.trim();
+//     } 
+       
+
+//         const pClase =document.getElementById("claseReporte").value;
+
+//         const pMarca =document.getElementById("marcaReporte").value;
+
+//         const pTipo =document.getElementById("tipoReporte").value;
+        
+//         const pSuptipo2 =document.getElementById("ventasReporte").value;
+
+//         const pEnvase =document.getElementById("envaseReporte").value;
+
+//     const params = new URLSearchParams({
+//         pSistema,
+//         pUsuario,
+//         pOpcion,
+//         pArticulo,
+//         pClase,
+//         pMarca,
+//         pTipo,
+//         pSuptipo2,
+//         pEnvase,        
+//         pBodega,
+//         pSoloExistencia,
+//         pTodasBodega,
+//     }).toString();
+
+//     console.log("Parámetros:", params);
+//     mostrarLoader();
+//     fetchRptExistencias(params);
+// }
+
+// ─────────────────────────────────────────────
+// 2. FETCH AL API
+// ─────────────────────────────────────────────
 function validarParametros() {
     const pSistema = "WMS";
     const pOpcion = "M";
@@ -517,22 +563,19 @@ function validarParametros() {
     let pBodega ="";
     const pSoloExistencia = document.getElementById("solo-existencias").checked ? "S" : "N";
     const pTodasBodega    = document.getElementById("todas-las-bodegas").checked    ? "S" : "N";
+    
     if(pTodasBodega==="N"){
         pBodega = document.getElementById("bodega").value.trim();
     } 
-       
 
-        const pClase =document.getElementById("claseReporte").value;
+    const pClase = document.getElementById("claseReporte").value;
+    const pMarca = document.getElementById("marcaReporte").value;
+    const pTipo = document.getElementById("tipoReporte").value;
+    const pSuptipo2 = document.getElementById("ventasReporte").value;
+    const pEnvase = document.getElementById("envaseReporte").value;
 
-        const pMarca =document.getElementById("marcaReporte").value;
-
-        const pTipo =document.getElementById("tipoReporte").value;
-        
-        const pSuptipo2 =document.getElementById("ventasReporte").value;
-
-        const pEnvase =document.getElementById("envaseReporte").value;
-
-    const params = new URLSearchParams({
+    // 1. Creamos un objeto con todos los parámetros
+    const materiasPrimas = {
         pSistema,
         pUsuario,
         pOpcion,
@@ -545,16 +588,26 @@ function validarParametros() {
         pBodega,
         pSoloExistencia,
         pTodasBodega,
-    }).toString();
+    };
 
-    console.log("Parámetros:", params);
+    // 2. Limpiamos el objeto: si el valor es null, undefined o el string "null", lo dejamos vacío ""
+    Object.keys(materiasPrimas).forEach(key => {
+        const valor = materiasPrimas[key];
+        if (valor === null || valor === undefined || valor === "null") {
+            materiasPrimas[key] = ""; 
+            // NOTA: Si prefieres que el parámetro ni siquiera se envíe en la URL, 
+            // puedes usar: delete materiasPrimas[key];
+        }
+    });
+
+    // 3. Ahora sí, se lo pasamos seguro a URLSearchParams
+    const params = new URLSearchParams(materiasPrimas).toString();
+
+    console.log("Parámetros limpios:", params);
     mostrarLoader();
     fetchRptExistencias(params);
 }
 
-// ─────────────────────────────────────────────
-// 2. FETCH AL API
-// ─────────────────────────────────────────────
 function fetchRptExistencias(params) {
     fetch(`${env.API_URL}wmsrptexistencias?${params}`, myInit)
         .then((res) => res.json())
