@@ -667,7 +667,7 @@ function mostrarResultados(desde, hasta) {
           
           `;
 
-  htm += `<div class="row" id="totalregistros">        
+  htm += `<div class="row" id="totalregistrosBusqueda">        
           <div class="col s6 valign-wrapper">
             <label>
               <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -1910,7 +1910,7 @@ function cambiarVistaLista() {
           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
 
-  htm += `<div class="row" id="totalregistros">          
+  htm += `<div class="row" id="totalregistrosBusqueda">          
             <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -2022,7 +2022,7 @@ function resultadosVistaLista(desde, hasta) {
           <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
 
-  htm += `<div class="row" id="totalregistros">           
+  htm += `<div class="row" id="totalregistrosBusqueda">           
              <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -2709,7 +2709,7 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
                          
             `;
 
-  htm += `<div class="row" id="totalregistros">              
+  htm += `<div class="row" id="totalregistrosBusqueda">              
               <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
@@ -2882,7 +2882,7 @@ function cambiarVistaListaEnBodega() {
           <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
           </div>`;
 
-  htm += `<div class="row" id="totalregistros">           
+  htm += `<div class="row" id="totalregistrosBusqueda">           
             <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">

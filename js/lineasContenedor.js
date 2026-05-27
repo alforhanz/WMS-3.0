@@ -1,16 +1,40 @@
-//Variable global que contiene el detalle del pedido
+//_____________________________________________________________________________
+//                        CARGA DEL //DOM
+//_____________________________________________________________________________
 var detalleLineasContenedor = [];
+var desprachoIniciado = false;
+// document.addEventListener("DOMContentLoaded", function () { 
+//   if (localStorage.getItem("contenedor")) {
+//         let contenedor = localStorage.getItem("contenedor");
+//         let bodegaSolicita = localStorage.getItem("bodega_solicita");
+//         let estado_Pdt = localStorage.getItem("estado_Pdt");
+//         cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt);
+//   } else {
+//     Swal.fire({
+//       icon: "info",
+//       title: "No hay contenedores",
+//       text: "Lo sentimos, no hay contenedores disponibles en este momento.",
+//     });
+//   }
+// });
 
 document.addEventListener("DOMContentLoaded", function () {
-  //--------------------------------------------------------------------------
+
+  // Verificar si el despacho ya fue iniciado o hay lectura previa
+  desprachoIniciado = localStorage.getItem("desprachoIniciado") === "true";
+
+  if (desprachoIniciado) {
+    const btn = document.getElementById("btniniciardespacho");
+    btn.disabled = true;
+    btn.style.backgroundColor = "#6e7881";
+    btn.style.cursor = "not-allowed";
+  }
 
   if (localStorage.getItem("contenedor")) {
     let contenedor = localStorage.getItem("contenedor");
     let bodegaSolicita = localStorage.getItem("bodega_solicita");
     let estado_Pdt = localStorage.getItem("estado_Pdt");
-    //---------------------------------------------------------------------------
     cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt);
-    //localStorage.removeItem("dataArray");//borra los elementos leidos del localstorage.
   } else {
     Swal.fire({
       icon: "info",
@@ -19,6 +43,121 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
+function validaInicioConteo() {
+  Swal.fire({
+    icon: "warning",
+    title: "¿Está seguro?",
+    text: "¿Está seguro de iniciar la lectura del conteo?",
+    showCancelButton: true,
+    cancelButtonColor: "#6e7881",
+    confirmButtonColor: "#28a745",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const btn = document.getElementById("btniniciardespacho");
+      btn.disabled = true;
+      btn.style.backgroundColor = "#6e7881";
+      btn.style.cursor = "not-allowed";
+      fniniciardespacho();
+    }
+  });
+}
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
+function fniniciardespacho() {
+  let pSistema = "WMS";
+  let pOpcion = "I";
+  let pUsuario = document.getElementById("usuario").innerHTML;
+  let pContenedor = localStorage.getItem("contenedor");
+
+  const params =
+    "?pSistema=" + pSistema +
+    "&pUsuario=" + pUsuario +
+    "&pOpcion=" + pOpcion +
+    "&pContenedor=" + pContenedor;
+
+  fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+        if (result.rerspuesta.length != 0) {
+
+          // Guardar bandera en localStorage
+          desprachoIniciado = true;
+          localStorage.setItem("desprachoIniciado", "true");
+
+          // Bloquear el botón y cambiar color
+          const btn = document.getElementById("btniniciardespacho");
+          btn.disabled = true;
+          btn.style.backgroundColor = "#6e7881";
+          btn.style.cursor = "not-allowed";
+
+          // Habilitar inputs
+          document.getElementById("codigo-barras").disabled = false;
+          document.getElementById("cant-pedida").disabled = false;
+          document.getElementById("codigo-barras").focus();
+
+          console.log('RESPUESTA: ' + result.rerspuesta[0].Respuesta);
+
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: "¡Opss!",
+            text: "Problemas para iniciar el conteo...",
+            confirmButtonColor: "#28a745",
+          });
+        }
+      }
+    });
+}
+// function fniniciardespacho() {
+//     let pSistema = "WMS";
+//     let pOpcion = "I";
+//     let pUsuario = document.getElementById("usuario").innerHTML;
+//     let pContenedor = localStorage.getItem("contenedor");
+
+//           const params =
+//                   "?pSistema=" +
+//                   pSistema +
+//                   "&pUsuario=" +
+//                   pUsuario +
+//                   "&pOpcion=" +
+//                   pOpcion +
+//                   "&pContenedor=" +
+//                   pContenedor;
+
+
+// fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit) //obtierne las lineas del contenedor
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") { 
+//         if (result.rerspuesta.length != 0) {
+//             desprachoIniciado = true;
+//             localStorage.setItem("desprachoIniciado", "true");
+//             document.getElementById("codigo-barras").disabled = false;
+//             document.getElementById("cant-pedida").disabled = false;
+//             document.getElementById("codigo-barras").focus();
+//             console.log('RESPUESTA: '+ result.rerspuesta[0].Respuesta);
+         
+//         } else {
+//           Swal.fire({
+//             icon: "warning",
+//             title: "¡Opss!",
+//             text:" Problemas para iniciar el conteo...",
+//             confirmButtonColor: "#28a745",
+//           });
+//         }
+
+//       }
+//     });
+// }
+
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
   let pSistema = "WMS";
   let pUsuario =
@@ -56,7 +195,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
     pConsecutivo +
     "&pEstado=" +
     pEstado;
-  //console.log("Parametros Detalle contenedor\n" + params);
+
 
   fetch(env.API_URL + "contenedor" + params, myInit) //obtierne las lineas del contenedor
     .then((response) => response.json())
@@ -64,53 +203,51 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
       if (result.msg === "SUCCESS") {
      
             console.log(result.contenedor)
-            actualizarProgresoLectura()
- 
-        // console.log(
-        //   "Respuesta del API:\n" +
-        //     "Contenedor-Array:" +
-        //     result.contenedor.length +
-        //     "\nmsg: " +
-        //     result.msg +
-        //     "\nmessage: " +
-        //     result.message+
-        //     result.contenedor
-        // );
+            actualizarProgresoLectura()       
         if (result.contenedor.length != 0) {
           detalleLineasContenedor = result.contenedor;
-          //console.log("Lineas de Contenedor:" +result[0].contenedor);
-          //console.log(detalleLineasContenedor);
-          // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detalleLineasContenedor.some(
             (detalle) =>
-              detalle.LineaContada != null && detalle.LineaContada !== ""
-          );
+              detalle.LineaContada != null && detalle.LineaContada !== "" && detalle.LineaContada !=0,
+          );                     
+               if (siGuardadoParcial) {
+                      // Hay lectura previa: bloquear el botón igual que si ya inició
+                      desprachoIniciado = true;
+                      localStorage.setItem("desprachoIniciado", "true");
 
-          if (siGuardadoParcial) {
-            // Llamar a armarTablaLectura después de armar la tabla de verificación
-            armarTablaLectura(detalleLineasContenedor);
-            guardarTablaEnArray();
-            //console.log("guardado parcial");
-          }
+                      const btn = document.getElementById("btniniciardespacho");
+                      btn.disabled = true;
+                      btn.style.backgroundColor = "#6e7881";
+                      btn.style.cursor = "not-allowed";                              
+                      armarTablaLectura(detalleLineasContenedor);
+                      armarTablaVerificacion(detalleLineasContenedor); 
+                      guardarTablaEnArray();
+                      verificacioniciardespacho();
+                     
+                    }else{
+                                               
+                        armarTablaVerificacion(detalleLineasContenedor);  
+                    }         
 
-          armarTablaVerificacion(detalleLineasContenedor);
-        } else {
-          Swal.fire({
-            icon: "warning",
-            title: "¡Contenedor sin lineas!",
-            text:
-              "El contenedor " +
-              contenedor +
-              " no cuenta con lineas para verificar",
-            confirmButtonColor: "#28a745",
-          });
-        }
+            } else {
+              Swal.fire({
+                icon: "warning",
+                title: "¡Contenedor sin lineas!",
+                text:
+                  "El contenedor " +
+                  contenedor +
+                  " no cuenta con lineas para verificar",
+                confirmButtonColor: "#28a745",
+              });
+            }
 
-        //document.getElementById("carga").innerHTML = "";
+        
       }
     });
 }
-//////////////// ARMA LA TABLA LECTURA //////////////////////////////////////////////////////////////////////////
+//_____________________________________________________________________________
+////////////////// ARMA LA TABLA LECTURA //////////////////////////////////////
+//_____________________________________________________________________________
 function armarTablaLectura(detalleLineasContenedor) {
   var tbody = document.getElementById("tblbodyLectura");
   const contenDetalleOPC = localStorage.getItem("contenDetalleOPC");
@@ -123,7 +260,7 @@ function armarTablaLectura(detalleLineasContenedor) {
   detalleLineasContenedor.forEach(function (detalle) {
     if (detalle.LineaContada != null && detalle.LineaContada !== "") {
       // Verificar si CANTIDAD_VERIFICADA tiene un valor
-      if (detalle.LineaContada != 0) {
+      if (detalle.LineaContada != 0) {       
         if (contenDetalleOPC === "A") {
           var newRow = document.createElement("tr");
           newRow.innerHTML = `
@@ -148,36 +285,101 @@ function armarTablaLectura(detalleLineasContenedor) {
                     `;
           tbody.appendChild(newRow);
         } else {
+          desprachoIniciado = "true";
           var newRow = document.createElement("tr");
-          newRow.innerHTML = `
-                        <td>
-                            <span style="display: block; text-align: center;">${
-                              detalle.Articulo
-                            }</span>
-                        </td>
-                        <td class="codigo-barras-cell" style="text-align: center;">
-                            <input id="codigo-barras" type="text" class="codigo-barras-input" value="${
-                              detalle.codigoBarra || ""
-                            }" onchange="validarCodigoBarras(this)" autofocus>
-                        </td>
-                        <td class="codigo-barras-cell2" style="text-align: center;">
-                            <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="${
-                              detalle.LineaContada || ""
-                            }" onchange="guardarTablaEnArray(this)">
-                        </td>
-                        <td class="codigo-barras-cell2" style="text-align: center;">
+              newRow.innerHTML = `
+                    <td>
+                        <span style="display: block; text-align: center;">${detalle.Articulo}</span>
+                    </td>
+                    <td class="codigo-barras-cell" style="text-align: center;">
+                        <input id="codigo-barras" type="text" class="codigo-barras-input" 
+                        value="${detalle.codigoBarra || ""}" onchange="validarCodigoBarras(this)" 
+                        autofocus ${!desprachoIniciado ? 'disabled' : ''}>
+                    </td>
+                    <td class="codigo-barras-cell2" style="text-align: center;">
+                        <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" 
+                        value="${detalle.LineaContada || ""}" onchange="guardarTablaEnArray(this)" 
+                        ${!desprachoIniciado ? 'disabled' : ''}>
+                    </td>
+                    <td class="codigo-barras-cell2" style="text-align: center;">
                         <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
-                        </td>
-                    `;
-          tbody.appendChild(newRow);
+                    </td>
+                `;
+            tbody.appendChild(newRow);
         }
+      }else{
+        //  desprachoIniciado = false;
+        //                           Swal.fire({
+        //                             icon: "info",
+        //                             title: "Iniciar Conteo",
+        //                             text: "Presione Iniciar Despacho y proceda a realizar el picking...",
+        //                             confirmButtonColor: "#28a745",
+        //                             confirmButtonText: "ok",
+        //                             showCancelButton: true,
+        //                           cancelButtonColor: "#6e7881",
+        //                           }).then((result) => {
+        //                             if (result.isConfirmed) {
+        //                               fniniciardespacho();
+        //                             }
+        //                           });
       }
     }
   });
   guardarTablaEnArray();
   crearNuevaFila();
 }
-///////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
+function verificacioniciardespacho() {
+    let pSistema = "WMS";
+    let pOpcion = "I";
+    let pUsuario = document.getElementById("usuario").innerHTML;
+    let pContenedor = localStorage.getItem("contenedor");
+
+          const params =
+                  "?pSistema=" +
+                  pSistema +
+                  "&pUsuario=" +
+                  pUsuario +
+                  "&pOpcion=" +
+                  pOpcion +
+                  "&pContenedor=" +
+                  pContenedor;
+
+
+fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit) //obtierne las lineas del contenedor
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") { 
+        if (result.rerspuesta.length != 0) {            
+            console.log('RESPUESTA: '+ result.rerspuesta[0].Respuesta);
+            if(result.rerspuesta[0].Respuesta==="CI"){
+                Swal.fire({
+                                    icon: "info",
+                                    title: "Conteo iniciado",
+                                    text: "Proceda a realizar el picking...",
+                                    confirmButtonColor: "#28a745",
+                                    confirmButtonText: "ok",                                    
+                                  });
+            }
+         
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: "¡Opss!",
+            text:" Problemas para iniciar el conteo...",
+            confirmButtonColor: "#28a745",
+          });
+        }
+
+      }
+    });
+}
+//_____________________________________________________________________________
+//_____________________________________________________________________________
+/////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
+//_____________________________________________________________________________
 function validarCodigoBarras(input) {
   var LineasContenedor = detalleLineasContenedor;
 
@@ -255,6 +457,9 @@ function validarCodigoBarras(input) {
     });
   }
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///// Funcion que crea la nueva fila en la pestaña lectura ////////////
 function crearNuevaFila() {
   const tableBody = document.querySelector("#tblbodyLectura");
@@ -263,12 +468,19 @@ function crearNuevaFila() {
   tableBody.classList.add("display", "centered");
 
   const nuevaFilaHTML = `<tr>
-            <td class="sticky-column" style="text-align: center;" style="user-select: none;"><span display: inline-block;"></span></td>
-            <td class="codigo-barras-cell" style="text-align: center;"><input type="text" style="text-align: center;" id="codigo-barras" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus></td>
-            <td class="codigo-barras-cell2" style="text-align: center;"><input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)"></td>
-            <td class="codigo-barras-cell2" style="text-align: center;"><i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i></td>
-        </tr>`;
-
+    <td class="sticky-column" style="text-align: center;"><span style="display: inline-block;"></span></td>
+    <td class="codigo-barras-cell" style="text-align: center;">
+        <input type="text" style="text-align: center;" id="codigo-barras" class="codigo-barras-input" 
+        value="" onchange="validarCodigoBarras(this)" autofocus ${!desprachoIniciado ? 'disabled' : ''}>
+    </td>
+    <td class="codigo-barras-cell2" style="text-align: center;">
+        <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" 
+        value="" onchange="validarCantidadPedida(this)" ${!desprachoIniciado ? 'disabled' : ''}>
+    </td>
+    <td class="codigo-barras-cell2" style="text-align: center;">
+        <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
+    </td>
+</tr>`;
   tableBody.insertAdjacentHTML("beforeend", nuevaFilaHTML);
 
   // Obtén el último campo de entrada en la columna COD de la nueva fila
@@ -281,11 +493,17 @@ function crearNuevaFila() {
     nuevoCodigoBarrasInput.focus();
   }
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///////////vALIDA LO QUE SE LEE CONTRA EL PEDIDO./////////
 function validarCantidadPedida() {
   //Llamado a guardar datos en la variable arrray en el LS
   guardarTablaEnArray();
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function guardarTablaEnArray() {
   var dataArray = [];
 
@@ -325,6 +543,9 @@ function guardarTablaEnArray() {
 
   return dataArray;
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///////////////////////FUNCION QUE AGRUPA EL DATA ARRAY CON LAS LECTURAS DEL PEDIDO////////////////////
 function agrupar() {
   // Obtener el arreglo almacenado en localStorage
@@ -362,6 +583,9 @@ function agrupar() {
   // Actualizar el arreglo en localStorage con los resultados consolidados
   localStorage.setItem("dataArray", JSON.stringify(newArray));
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 // Funcion que elimina filas en la pestaña lectura
 function eliminarFila(icon) {
   var row = icon.closest("tr");
@@ -417,6 +641,9 @@ function eliminarFila(icon) {
     }
   });
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
 function armarTablaVerificacion(detalleLineasContenedor) {
   // Obtener la referencia del cuerpo de la tabla
@@ -490,6 +717,9 @@ function armarTablaVerificacion(detalleLineasContenedor) {
     }
   });
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //Funcion que limpia el area de mensajes de error
 function limpiarMensajes() {
   localStorage.removeItem("mensajes");
@@ -498,10 +728,11 @@ function limpiarMensajes() {
   // Limpiar la variable 'mensajes' del localStorage
   guardarTablaEnArray();
 }
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //FUNCION QUE VERIFICA LAS COINCIDENCIAS,TOMA LOS VALORES DE LAS CANTIDADES
 // POR ARTICULO, COMPARA LO QUE TIENE EL ARRAY DEL LS Y VERIFICA LAS COINCIDENCIAS, PARA MOSTRARLO EN LA PESTAÑA VERIFICACION
-
 function verificacion() {
   var dataArray = JSON.parse(localStorage.getItem("dataArray"));
 
@@ -678,7 +909,10 @@ function verificacion() {
   });
   guardaAutomaticante();
   actualizarTotalesTablaVerificacion(detalleLineasContenedor);
-} //FIN DE VERIFICACION
+} 
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function actualizarTotalesTablaVerificacion() {
   // Obtener la referencia del cuerpo de la tabla
@@ -738,53 +972,9 @@ function actualizarTotalesTablaVerificacion() {
         <td hidden></td> <!-- Celda oculta para solicitud -->
     `;
 }
-
-// function actualizarTotalesTablaVerificacion(detalleLineasContenedor) {
-//     // Obtener la referencia del cuerpo de la tabla
-//     var tbody = document.getElementById('tblbodyLineasContenedor');
-
-//     // Verificar que el tbody exista
-//     if (!tbody) {
-//         console.error("Elemento 'tblbodyLineasContenedor' no encontrado en el DOM");
-//         return;
-//     }
-
-//     // Calcular total de cantidadPedida desde detalleLineasContenedor
-//     let totalPedida = 0;
-//     detalleLineasContenedor.forEach(function (detalle) {
-//         let cantidadPedida = parseFloat(detalle.LineaConsecutivo) || 0;
-//         totalPedida += isNaN(cantidadPedida) ? 0 : cantidadPedida;
-//     });
-
-//     // Calcular total de cantidadLeida desde las celdas del DOM
-//     let totalLeida = 0;
-//     const celdasCantidadLeida = tbody.querySelectorAll('td[id="cantidadLeida"]');
-//     celdasCantidadLeida.forEach(celda => {
-//         let valor = parseFloat(celda.textContent) || 0;
-//         totalLeida += isNaN(valor) ? 0 : valor;
-//     });
-
-//     // Buscar si ya existe una fila de totales
-//     let totalRow = tbody.querySelector('.total-row');
-
-//     // Si no existe, crear una nueva fila
-//     if (!totalRow) {
-//         totalRow = document.createElement('tr');
-//         totalRow.className = 'total-row';
-//         tbody.appendChild(totalRow);
-//     }
-
-//     // Actualizar el contenido de la fila de totales
-//     totalRow.innerHTML = `
-//         <td colspan="2" class="totales-label"><em>Totales</em></td>
-//         <td><em>${totalPedida.toFixed(2)}</em></td>
-//         <td><em>${totalLeida.toFixed(2)}</em></td>
-
-//         <td></td> <!-- Celda vacía para Verificado -->
-//         <td hidden></td> <!-- Celda oculta para articulosEliminado -->
-//         <td hidden></td> <!-- Celda oculta para solicitud -->
-//     `;
-// }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
@@ -810,6 +1000,9 @@ function activaGuardadoParcial() {
   // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
   return false;
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
 function mostrarMensajesLocalStorage() {
@@ -825,11 +1018,16 @@ function mostrarMensajesLocalStorage() {
     }
   }
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //Llama a la función mostrarMensajesLocalStorage cuando se hace clic en la pestaña "Verificación"
 document
   .querySelector('a[href="#tabla-verificacion"]')
   .addEventListener("click", mostrarMensajesLocalStorage);
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function inicializarBotones() {
   const contenDetalleOPC = localStorage.getItem("contenDetalleOPC");
 
@@ -910,13 +1108,17 @@ function inicializarBotones() {
     botonProcesar.style.marginLeft = "500px";
   }
 }
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 // Llamar a la función para cargar y mostrar los mensajes desde el localStorage al cargar la página
 window.onload = function () {
   inicializarBotones();
   guardarTablaEnArray();
 };
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function mostrarProcesoEnConstruccion() {
   Swal.fire({
     title: "Proceso en Construcción",
@@ -925,7 +1127,9 @@ function mostrarProcesoEnConstruccion() {
     confirmButtonText: "Salir",
   });
 }
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 
 
 //FUNCION DE GUARDADO PARCIAL
@@ -1026,7 +1230,9 @@ function guardaAutomaticante() {
       }
     });
 } //fin fn
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1051,7 +1257,9 @@ function confirmarGuardadoParcial() {
     }
   });
 }
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 
 //FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
@@ -1150,7 +1358,8 @@ function guardaParcialMente() {
           }).then((result) => {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
-              window.location.href = "BusquedaDeContenedores.html";
+              //localStorage.removeItem("desprachoIniciado"); 
+              //window.location.href = "BusquedaDeContenedores.html";
             }
           });
         }
@@ -1159,7 +1368,9 @@ function guardaParcialMente() {
       }
     });
 } //fin fn
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///////FUNCION PARA PROCESAR//////
 // function confirmaProcesar() {
 //   // Obtener todas las celdas de verificación
@@ -1342,7 +1553,9 @@ function confirmaProcesar() {
     }
   });
 }
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 
 ///// FUNCION PARA VERIFICAR EL CHECK EN LA COLUNA DE VERIFICACO
 function validarVerificacion() {
@@ -1366,6 +1579,9 @@ function validarVerificacion() {
   // Si todas las celdas están verificadas, retorna true
   return true;
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 function columnaEstaVacia() {
   // Selecciona todas las celdas con id "cantidadLeida" dentro del cuerpo de la tabla
@@ -1382,8 +1598,13 @@ function columnaEstaVacia() {
 
   return true; // Todas las celdas están vacías
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //FUNCION DE PROCESAR EL CONTENEDOR
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function procesarContenedor() {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
@@ -1479,9 +1700,8 @@ function procesarContenedor() {
             cancelButtonColor: "#6e7881",
           }).then((result) => {
             if (result.isConfirmed) {
-              // Redirecciona a tu otra vista aquí
+              localStorage.removeItem("desprachoIniciado");
               window.location.href = "BusquedaDeContenedores.html";
-              //localStorage.clear();
             }
           });
         }
@@ -1490,12 +1710,22 @@ function procesarContenedor() {
       }
     });
 } //fin fn
-
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 function retornarVistaAnterior() {
+  localStorage.removeItem("desprachoIniciado");
+  localStorage.removeItem("mensajes");
   window.location.href = "BusquedaDeContenedores.html";
-  localStorage.removeItem('mensajes');
 }
-
+// function retornarVistaAnterior() {
+//  // localStorage.removeItem("desprachoIniciado"); 
+//   window.location.href = "BusquedaDeContenedores.html";
+//   localStorage.removeItem('mensajes');
+// }
+//_____________________________________________________________________________
+//devolverArticulo(
+//_____________________________________________________________________________
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para devolver un artículo eliminado del pedido
 function devolverArticulo(articulo) {
@@ -1569,6 +1799,9 @@ function devolverArticulo(articulo) {
       }
     });
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
   /**
  * @function actualizarProgresoLectura
@@ -1595,6 +1828,9 @@ function actualizarProgresoLectura() {
         console.warn("Elemento 'progresoLecturaLabel' no encontrado. Asegúrate de agregarlo al HTML.");
     }
 }
+//_____________________________________________________________________________
+//calcularTotalUnidadesApreparar
+//_____________________________________________________________________________
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @function calcularTotalUnidadesApreparar
@@ -1612,6 +1848,9 @@ function calcularTotalUnidadesApreparar(detalleLineasContenedor) {
     //console.log(' Total a leeer: ' +totalPedida)
     return totalPedida;
 }
+//_____________________________________________________________________________
+//calcularTotalUnidadesLeidas
+//_____________________________________________________________________________
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @function calcularTotalUnidadesLeidas
