@@ -14,7 +14,7 @@ body {
   overflow-x: hidden;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 11px;
-  background-color: #F7F7F7;
+  background-color: #ffffff;
 }
 
 main {
@@ -579,7 +579,7 @@ svg[atributos] {
 
 .tabs .tab a:hover,
 .tabs .tab a.active {
-  background-color: transparent;
+  background-color: #ffffff;
   color: #000000;
 }
 
@@ -2779,7 +2779,7 @@ th {
 }
 
 .tabs {
-  background-color: #f7f7f7;
+  background-color: #ffffff;
 }
 
 .resultados-Tabla {
@@ -3325,5 +3325,4 @@ Rpt Existencias Inventario
           width: 40%;
           height: 42px;
           margin-right: 52px;
-          margin-top: 3rem !important;
 }

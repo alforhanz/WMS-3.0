@@ -3,21 +3,6 @@
 //_____________________________________________________________________________
 var detalleLineasContenedor = [];
 var desprachoIniciado = false;
-// document.addEventListener("DOMContentLoaded", function () { 
-//   if (localStorage.getItem("contenedor")) {
-//         let contenedor = localStorage.getItem("contenedor");
-//         let bodegaSolicita = localStorage.getItem("bodega_solicita");
-//         let estado_Pdt = localStorage.getItem("estado_Pdt");
-//         cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt);
-//   } else {
-//     Swal.fire({
-//       icon: "info",
-//       title: "No hay contenedores",
-//       text: "Lo sentimos, no hay contenedores disponibles en este momento.",
-//     });
-//   }
-// });
-
 document.addEventListener("DOMContentLoaded", function () {
 
   // Verificar si el despacho ya fue iniciado o hay lectura previa
@@ -72,12 +57,18 @@ function fniniciardespacho() {
   let pOpcion = "I";
   let pUsuario = document.getElementById("usuario").innerHTML;
   let pContenedor = localStorage.getItem("contenedor");
+  const totales = inicioTotales();
+  let pTotalCedi = totales.totalesCedi;
+  let pTotalSolicitado = totales.totalPedida;
 
   const params =
     "?pSistema=" + pSistema +
     "&pUsuario=" + pUsuario +
     "&pOpcion=" + pOpcion +
-    "&pContenedor=" + pContenedor;
+    "&pContenedor=" + pContenedor+
+    "&pTotalCedi=" + pTotalCedi +
+    "&pTotalSolicitado=" + pTotalSolicitado;
+  //";
 
   fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit)
     .then((response) => response.json())
@@ -113,48 +104,6 @@ function fniniciardespacho() {
       }
     });
 }
-// function fniniciardespacho() {
-//     let pSistema = "WMS";
-//     let pOpcion = "I";
-//     let pUsuario = document.getElementById("usuario").innerHTML;
-//     let pContenedor = localStorage.getItem("contenedor");
-
-//           const params =
-//                   "?pSistema=" +
-//                   pSistema +
-//                   "&pUsuario=" +
-//                   pUsuario +
-//                   "&pOpcion=" +
-//                   pOpcion +
-//                   "&pContenedor=" +
-//                   pContenedor;
-
-
-// fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit) //obtierne las lineas del contenedor
-//     .then((response) => response.json())
-//     .then((result) => {
-//       if (result.msg === "SUCCESS") { 
-//         if (result.rerspuesta.length != 0) {
-//             desprachoIniciado = true;
-//             localStorage.setItem("desprachoIniciado", "true");
-//             document.getElementById("codigo-barras").disabled = false;
-//             document.getElementById("cant-pedida").disabled = false;
-//             document.getElementById("codigo-barras").focus();
-//             console.log('RESPUESTA: '+ result.rerspuesta[0].Respuesta);
-         
-//         } else {
-//           Swal.fire({
-//             icon: "warning",
-//             title: "¡Opss!",
-//             text:" Problemas para iniciar el conteo...",
-//             confirmButtonColor: "#28a745",
-//           });
-//         }
-
-//       }
-//     });
-// }
-
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
@@ -716,6 +665,7 @@ function armarTablaVerificacion(detalleLineasContenedor) {
       tbody.appendChild(newRow);
     }
   });
+  actualizarTotalesTablaVerificacion();
 }
 //_____________________________________________________________________________
 //
@@ -961,9 +911,9 @@ function actualizarTotalesTablaVerificacion() {
   // Actualizar el contenido de la fila de totales
   totalRow.innerHTML = `
         <td colspan="2" class="totales-label"><em>Totales</em></td>       
-        <td><em>${totalPedida.toFixed(2)}</em></td>
-        <td><em>${totalLeida.toFixed(2)}</em></td>
-         <td><em></em>${totales_cedi.toFixed(2)}</td>
+        <td id="cantidadPedida"><em>${totalPedida.toFixed(2)}</em></td>
+        <td id="cantidadLeida"><em>${totalLeida.toFixed(2)}</em></td>
+         <td id="totalCedi"><em></em>${totales_cedi.toFixed(2)}</td>
         
         <td><em>${
           diferencia !== 0 ? diferencia.toFixed(2) : ""
@@ -1372,101 +1322,6 @@ function guardaParcialMente() {
 //
 //_____________________________________________________________________________
 ///////FUNCION PARA PROCESAR//////
-// function confirmaProcesar() {
-//   // Obtener todas las celdas de verificación
-//   //var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
-
-//   Swal.fire({
-//     icon: "warning",
-//     title: "¿Desea procesar el contenedor?",
-//     showCancelButton: true,
-//     confirmButtonText: "Continuar",
-//     cancelButtonText: "Cancelar",
-//     confirmButtonColor: "#28a745",
-//     cancelButtonColor: "#6e7881",
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       // Verificar si todas las celdas de verificación están marcadas
-//       if (validarVerificacion()) {
-//         // Si todas están marcadas, procesar el contenedor
-//         localStorage.removeItem("UsuarioAutorizacion");
-//         procesarContenedor();
-//       } else {
-//         Swal.fire({
-//           title: "Ingrese sus credenciales",
-//           html:
-//             '<input id="swal-input1" class="swal2-input" placeholder="Usuario" autocomplete="off">' +
-//             '<input id="swal-input2" class="swal2-input" placeholder="Contraseña" type="password" autocomplete="off">',
-//           focusConfirm: false,
-//           showCancelButton: true,
-//           confirmButtonText: "Aprobar",
-//           cancelButtonText: "Cancelar",
-//           confirmButtonColor: "#28a745",
-//           cancelButtonColor: "#6e7881",
-//           preConfirm: () => {
-//             const usuario = document
-//               .getElementById("swal-input1")
-//               .value.toUpperCase();
-//             const contraseña = document.getElementById("swal-input2").value;
-//             return { usuario: usuario, contraseña: contraseña };
-//           },
-//         }).then((result) => {
-//           if (!result.isDismissed && result.value && result.value.usuario && result.value.contraseña) {
-//                const params = "?pSistema=" +
-//                               'WMS' +
-//                               "&pUsuario=" +
-//                               result.value.usuario  +
-//                               "&pOpcion=" +
-//                               result.value.contraseña;                  
-
-//             // fetch(env.API_URL + "wmsautorizacioncontenedor" + params)
-//              fetch(env.API_URL + "wmsautorizaciones"+params)
-//               .then((response) => response.json())
-//               .then((resultado) => {
-//                 //console.log("Autorizacion Resultado: ");
-//                 //console.log(resultado.autorizacion);
-//                 const respuesta = resultado.autorizacion[1];
-//                 // if (respuesta &&respuesta.USUARIO === result.value.usuario && respuesta.PIN === result.value.contraseña) {
-//               if(respuesta === "OK") {
-//                   //console.log("Credenciales válidas");
-//                   //console.log(respuesta.USUARIO);
-//                   localStorage.setItem("UsuarioAutorizacion",respuesta.USUARIO);
-//                   // Realiza la acción deseada, como procesar el contenedor
-//                   procesarContenedor();
-//                 } else {
-//                   //console.log("Credenciales inválidas");
-//                   Swal.fire({
-//                     icon: "error",
-//                     title: "Error",
-//                     text: "Credenciales inválidas",
-//                   });
-//                 }
-//               })
-//               .catch((error) => {
-//                 console.error("Error al obtener los datos del API:", error);
-//                 Swal.fire({
-//                   icon: "error",
-//                   title: "Error",
-//                   text: "No se pudo obtener los datos del API",
-//                 });
-//               });
-//           } else {
-//             console.error(
-//               "Error: No se pudieron obtener los valores de usuario y contraseña del Swal"
-//             );
-//             Swal.fire({
-//               icon: "error",
-//               title: "Error",
-//               text: "No se pudieron obtener los valores de usuario y contraseña del Swal",
-//             });
-//           }
-//         });
-//       }
-//     }
-//   });
-// }
-
-///////FUNCION PARA PROCESAR//////
 function confirmaProcesar() {
   // Obtener todas las celdas de verificación
   //var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
@@ -1718,11 +1573,6 @@ function retornarVistaAnterior() {
   localStorage.removeItem("mensajes");
   window.location.href = "BusquedaDeContenedores.html";
 }
-// function retornarVistaAnterior() {
-//  // localStorage.removeItem("desprachoIniciado"); 
-//   window.location.href = "BusquedaDeContenedores.html";
-//   localStorage.removeItem('mensajes');
-// }
 //_____________________________________________________________________________
 //devolverArticulo(
 //_____________________________________________________________________________
@@ -1882,3 +1732,27 @@ function calcularTotalUnidadesLeidas() {
     }
     return totalLeido;
 }
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
+function inicioTotales() { 
+  // Calcular total de cantidadPedida desde detalleLineasContenedor
+  let totalPedida = 0;
+  detalleLineasContenedor.forEach(function (detalle) {
+    let cantidadPedida = parseFloat(detalle.LineaConsecutivo) || 0;
+    totalPedida += isNaN(cantidadPedida) ? 0 : cantidadPedida;
+  });
+
+  let totales_cedi = 0;
+  detalleLineasContenedor.forEach(function (detalle) {
+    let cantidadcedi = parseFloat(detalle.total_cedi) || 0;
+    totales_cedi += isNaN(cantidadcedi) ? 0 : cantidadcedi;
+  }); 
+
+  // RETORNAMOS los valores calculados para poder usarlos fuera
+  return {
+    totalPedida: totalPedida,
+    totalesCedi: totales_cedi
+  };
+}
+

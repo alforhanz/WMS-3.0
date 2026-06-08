@@ -1030,7 +1030,7 @@ async function guardaPaquete() {
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
  
-  const table = document.getElementById("tblc ontenedores");
+  const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
   for (let i = 1; i < table.rows.length; i++) {
