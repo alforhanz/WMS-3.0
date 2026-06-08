@@ -4,13 +4,10 @@
 <head>
   <meta charset="UTF-8">
 
-  <!--Import Materialize Icons-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <!--Import Personalize css-->
   <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
@@ -21,11 +18,20 @@
   <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <!-- FONTS -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+    
+    /* Pequeño ajuste para asegurar que los divs de los iconos no rompan el flex layout */
+    .btn-container-conteo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .impexcel, .imppdf {
+      display: flex;
+      align-items: center;
+    }
   </style>
-  <!-- FONTS -->
   <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/encabezado.js" type="text/javascript"></script>
@@ -34,9 +40,7 @@
 </head>
 
 <body id="home" tabindex="-1">
-  <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
   <main>
     <div id="contenedorLoader"></div>
 
@@ -46,30 +50,25 @@
 
       <div class="container">
 
-        <!-- ── CARD DE FILTROS ── -->
         <div class="row">
           <div class="card-tab col s12 m10 l10 ">
             <div class="card z-depth-2" id="filtrosCard">
               <div class="card-content">
                 <span class="card-title">Filtros de búsqueda</span>
 
-                <!-- Tabs dentro del card -->
                 <ul class="tabs tabs-fixed-width" id="filtrosTabs">
                   <li class="tab col s6"><a class="active tab-title" href="#tab-basico">Búsqueda</a></li>
                   <li class="tab col s6"><a class="active tab-title" href="#tab-clasificacion">Clasificación</a></li>
                 </ul>
 
-                <!-- ── TAB 1: Búsqueda básica ── -->
                 <div id="tab-basico" class="col s12" style="padding: 16px 0;">
 
-                  <!-- Input artículo -->
                   <div class="input-field">
                     <i class="material-icons prefix">search</i>
                     <input id="pArticulo" type="text" class="validate" placeholder="Todos los artículos">
                     <label for="pArticulo">Artículo</label>
                   </div>
 
-                  <!-- Checkboxes -->
                   <div class="row" style="margin-top: 8px; margin-bottom: 0;">
                     <div class="col s12 m6">
                       <label>
@@ -86,10 +85,8 @@
                   </div>
                 </div>
 
-                <!-- ── TAB 2: Clasificaciones ── -->
                 <div id="tab-clasificacion" class="col s12" style="padding: 16px 0;">
 
-                  <!-- Fila 1 -->
                   <div class="row" style="margin-bottom: 0;">
 
                     <div class="input-field col s1">
@@ -124,7 +121,6 @@
 
                   </div>
 
-                  <!-- Fila 2 -->
                   <div class="row" style="margin-bottom: 0;">
 
                     <div class="input-field col s1">
@@ -149,81 +145,57 @@
 
                   </div>
                 </div>
-                <!-- ── FIN TABS ── -->
-
-              </div><!-- /card-content -->
-
-              <div class="card-action" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                </div><div class="card-action" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <button type="button" id="btnRptExistencias" class="btn-guardar-existencias"
                   onclick="validarParametros()">
                   Mostrar Reporte
                   <i class="material-icons right">send</i>
                 </button>
+
+                <div class="btn-container-conteo">
+                  <div class="impexcel">
+                    <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
+                      <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
+                    </button>
+                    <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar Excel</label>
+                  </div>
+
+                  <div class="imppdf">
+                    <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
+                      <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
+                    </button>
+                    <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
+                  </div>
+                </div>
               </div>
 
-            </div><!-- /card -->
-          </div>
+            </div></div>
         </div>
-        <!-- ── FIN CARD ── -->
-
-        <!-- ── TABLA ── -->
-        <!-- ── TABLA ── -->
         <div class="row reporteExInv">
           <div class="col s12">
 
             <label id="cantidadDeRegistros"></label>
 
-            <!-- Botones de descarga -->
-            <div class="btn-container-conteo">
-              <!-- Botón de Excel (ícono en formato PNG) -->
-              <div class="impexcel">
-                <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
-                  <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
-                </button>
-                <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar Excel</label>
-              </div>
-
-              <!-- Botón de PDF (ícono en formato PNG) -->
-              <div class="imppdf">
-                <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
-                  <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-                </button>
-                <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
-              </div>
-            </div>
             <table id="tblRptExist">
               <thead id="htblRptExist"></thead>
               <tbody id="tblbodyRptExist"></tbody>
             </table>
 
-            <!-- Paginación — DEBAJO de la tabla ← -->
             <div id="barraInferior">
               <div id="contenedorPaginacion"></div>
             </div>
 
           </div>
         </div>
-        <!-- ── FIN TABLA ── -->
-        <!-- ── FIN TABLA ── -->
-
-      </div><!-- /container -->
-      <!-- Paginación + Botones de descarga en la misma línea -->
-      <div id="barraInferior">
+        </div><div id="barraInferior">
         <div id="contenedorPaginacion"></div>
       </div>
 
+    </div></main>  
 
-    </div><!-- /resultadoBusqueda -->
-  </main>
-
-  <!-- Incluir la biblioteca de jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-  <!-- SheetJS para exportar Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!--JavaScript at end of body for optimized loading-->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -231,10 +203,8 @@
   <script type="text/javascript" src="js/main.js?v1.1" defer></script>
   <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
   <script type="text/javascript" src="js/reporteDeExistenciaEnInventario.js" defer></script>
-  <!-- <script type="text/javascript" src="js/verificadorDeContenedoresPrueba.js" defer></script> -->
-  <script type="tex/javascript" src="js/paginacion.js"></script>
+  <!-- <script type="text/javascript" src="js/paginacion.js"></script> -->
   <script type="text/javascript" src="js/loader.js"></script>
-  <!--JavaScript local-->
 </body>
 
 </html>

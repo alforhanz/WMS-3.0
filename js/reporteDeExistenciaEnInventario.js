@@ -639,7 +639,6 @@ function fetchRptExistencias(params) {
 // ─────────────────────────────────────────────
 const REGISTROS_POR_PAGINA = 15;
 let paginaActual = 1;
-
 // ─────────────────────────────────────────────
 // 3. RENDER COMPLETO: HEADER + BODY + TOTALES + PAGINACIÓN
 // ─────────────────────────────────────────────
@@ -650,7 +649,6 @@ function renderTablaReporte(data) {
     document.getElementById("cantidadDeRegistros").textContent =
         `Total de registros: ${data.length}`;
 }
-
 // ─────────────────────────────────────────────
 // PAGINADO — calcula slice y llama a body + controles
 // ─────────────────────────────────────────────
@@ -668,12 +666,10 @@ function _renderPaginado(data) {
     _renderBody(slice);
     _renderControlesPaginacion(totalPaginas);
 }
-
 function irAPagina(pagina) {
     paginaActual = pagina;
     _renderPaginado(ArrayDataFiltrado);
 }
-
 // ─────────────────────────────────────────────
 // HEADER
 // ─────────────────────────────────────────────
@@ -712,7 +708,6 @@ function _renderHeader() {
 
     thead.appendChild(tr);
 }
-
 // ─────────────────────────────────────────────
 // BODY — solo el slice de la página actual
 // ─────────────────────────────────────────────
@@ -754,12 +749,10 @@ function _renderBody(data) {
         tbody.appendChild(tr);
     });
 }
-
 // ─────────────────────────────────────────────
 // TOTALES — suma sobre ArrayDataFiltrado completo
 // ─────────────────────────────────────────────
 function _renderTotales(data) {
-    // Reutilizar tfoot o crearlo si no existe
     let tfoot = document.querySelector("#tblRptExist tfoot");
     if (!tfoot) {
         tfoot = document.createElement("tfoot");
@@ -769,7 +762,6 @@ function _renderTotales(data) {
 
     const camposNumericos = ["disponible", "remitida", "reservada"];
 
-    // Calcular totales sobre el dataset completo (no solo la página)
     const totales = camposNumericos.reduce((acc, campo) => {
         acc[campo] = data.reduce(
             (sum, row) => sum + parseFloat(row[campo] ?? 0),
@@ -781,25 +773,30 @@ function _renderTotales(data) {
     const tr = document.createElement("tr");
     tr.classList.add("tr-totales");
 
-    // Celda etiqueta "TOTALES"
     const tdLabel = document.createElement("td");
     tdLabel.colSpan = 2;
     tdLabel.classList.add("td-totales-label");
     tdLabel.textContent = "TOTALES";
     tr.appendChild(tdLabel);
 
-    // Celdas de totales
     camposNumericos.forEach((campo) => {
         const td = document.createElement("td");
         td.classList.add("td-numero", "td-total");
-        td.textContent = totales[campo].toFixed(2);
-        //if (campo === "diferencia" && totales[campo] < 0) td.classList.add("td-negativo");
+
+        // Formato con comas y 2 decimales
+        td.textContent = totales[campo].toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
+        // Alineación a la derecha
+        td.style.textAlign = "right";
+
         tr.appendChild(td);
     });
 
     tfoot.appendChild(tr);
 }
-
 // ─────────────────────────────────────────────
 // CONTROLES DE PAGINACIÓN
 // ─────────────────────────────────────────────
@@ -998,12 +995,9 @@ function descargarExcel() {
     XLSX.utils.book_append_sheet(wb, ws, "Existencias");
     XLSX.writeFile(wb, `Existencias_${bodega}_${fecha.replace(/\//g, "-")}.xlsx`);
 }
-
-
 // ─────────────────────────────────────────────
 // DESCARGAR PDF
 // ─────────────────────────────────────────────
-
 function descargarPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "letter" });
@@ -1014,6 +1008,14 @@ function descargarPDF() {
     let marcaActivaAlSaltar = "";
     const marcaPorFila = [];
 
+    // ── Formateador de números (Estilo: 1,234.55) ──
+    const formatearNumero = (valor) => {
+        const numero = parseFloat(valor ?? 0);
+        return new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(numero);
+    };
 
     function _encabezado(doc, nPagina) {
         const pW = doc.internal.pageSize.getWidth();
@@ -1026,7 +1028,7 @@ function descargarPDF() {
         // ── Empresa — CENTRADO ──
         doc.setFont("helvetica", "bold");
         doc.setFontSize(13);
-        doc.text(EMPRESA.nombre, pW / 2, 11, { align: "center" }); // ← centrado
+        doc.text(EMPRESA.nombre, pW / 2, 11, { align: "center" });
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
         doc.text(EMPRESA.direccion, pW / 2, 16, { align: "center" });
@@ -1070,7 +1072,7 @@ function descargarPDF() {
 
         // Línea separadora inferior
         doc.setLineWidth(0.2);
-        doc.line(10, 57, pW - 10, 57); // ← bajó 7mm para dar espacio a la marca
+        doc.line(10, 57, pW - 10, 57);
     }
 
     // ── Construir filas agrupadas por marca ──
@@ -1079,37 +1081,28 @@ function descargarPDF() {
     Object.entries(grupos).forEach(([marca, articulos]) => {
         articulos.forEach((row) => {
             body.push([
-                `${row.articulo ?? ""}\n${row.descripcion ?? ""}`, // ← una sola celda
+                `${row.articulo ?? ""}\n${row.descripcion ?? ""}`,
                 row.codBarra ?? LINEA,
                 LINEA,
                 LINEA,
-                parseFloat(row.disponible ?? 0).toFixed(2),
-                parseFloat(row.remitida ?? 0).toFixed(2),
-                parseFloat(row.reservada ?? 0).toFixed(2),
+                formatearNumero(row.disponible), // Formateado con comas
+                formatearNumero(row.remitida),   // Formateado con comas
+                formatearNumero(row.reservada),  // Formateado con comas
                 LINEA,
             ]);
             marcaPorFila.push(marca);
         });
     });
 
-    // Fila de totales
-    const totDisponible = ArrayDataFiltrado.reduce(
-        (s, r) => s + parseFloat(r.disponible ?? 0),
-        0,
-    );
-    const totRemitida = ArrayDataFiltrado.reduce(
-        (s, r) => s + parseFloat(r.remitida ?? 0),
-        0,
-    );
-    const totReservada = ArrayDataFiltrado.reduce(
-        (s, r) => s + parseFloat(r.reservada ?? 0),
-        0,
-    );
+    // Fila de totales (Sumas numéricas primero)
+    const totDisponible = ArrayDataFiltrado.reduce((s, r) => s + parseFloat(r.disponible ?? 0), 0);
+    const totRemitida = ArrayDataFiltrado.reduce((s, r) => s + parseFloat(r.remitida ?? 0), 0);
+    const totReservada = ArrayDataFiltrado.reduce((s, r) => s + parseFloat(r.reservada ?? 0), 0);
 
     body.push([
         {
             content: "TOTALES",
-            colSpan: 4, // ← era 5
+            colSpan: 4,
             styles: {
                 fontStyle: "bold",
                 fillColor: [158, 158, 158],
@@ -1117,16 +1110,7 @@ function descargarPDF() {
             },
         },
         {
-            content: totDisponible.toFixed(2),
-            styles: {
-                fontStyle: "bold",
-                fillColor: [158, 158, 158],
-                textColor: [255, 255, 255],
-                halign: "center",
-            },
-        },
-        {
-            content: totRemitida.toFixed(2),
+            content: formatearNumero(totDisponible), // Formateado con comas
             styles: {
                 fontStyle: "bold",
                 fillColor: [158, 158, 158],
@@ -1135,7 +1119,16 @@ function descargarPDF() {
             },
         },
         {
-            content: totReservada.toFixed(2),
+            content: formatearNumero(totRemitida),    // Formateado con comas
+            styles: {
+                fontStyle: "bold",
+                fillColor: [158, 158, 158],
+                textColor: [255, 255, 255],
+                halign: "center",
+            },
+        },
+        {
+            content: formatearNumero(totReservada),   // Formateado con comas
             styles: {
                 fontStyle: "bold",
                 fillColor: [158, 158, 158],
@@ -1152,7 +1145,7 @@ function descargarPDF() {
     doc.autoTable({
         head: [
             [
-                { content: "Artículo / Descripción", styles: { halign: "left" } }, // ← una sola
+                { content: "Artículo / Descripción", styles: { halign: "left" } },
                 { content: "Cód Barra", styles: { halign: "center" } },
                 { content: "Conteo", styles: { halign: "center" } },
                 { content: "Total", styles: { halign: "center" } },
@@ -1168,27 +1161,26 @@ function descargarPDF() {
         margin: { top: 60, left: 10, right: 10, bottom: 15 },
         styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak" },
         headStyles: {
-                fillColor: [126, 129, 128],
-                textColor: [255, 255, 255],
-                fontStyle: "bold",
-                fontSize: 8,
-                halign: "center",
-                valign: "middle",
-                // minCellHeight: 12, 
-            },
+            fillColor: [126, 129, 128],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: 8,
+            halign: "center",
+            valign: "middle",
+        },
 
         columnStyles: {
-            0: { cellWidth: 45, halign: "left" }, // Artículo + Descripción
-            1: { cellWidth: 38, halign: "center" }, // Cód Barra
-            2: { cellWidth: 15, halign: "center" }, // Conteo
-            3: { cellWidth: 15, halign: "center" }, // Total
-            4: { cellWidth: 20, halign: "center" }, // Disponible
-            5: { cellWidth: 20, halign: "center" }, // Remitida
-            6: { cellWidth: 20, halign: "center" }, // Reservada
-            7: { cellWidth: 0, halign: "center" }, // Diferencia — auto
-        }, // TOTAL: ~175mm ✓
+            0: { cellWidth: 40, halign: "left" }, 
+            1: { cellWidth: 35, halign: "center" }, 
+            2: { cellWidth: 20, halign: "center" }, 
+            3: { cellWidth: 15, halign: "center" }, 
+            4: { cellWidth: 20, halign: "center" }, 
+            5: { cellWidth: 20, halign: "center" }, 
+            6: { cellWidth: 20, halign: "center" }, 
+            7: { cellWidth: 0, halign: "center" }, 
+        },
 
-      alternateRowStyles: { fillColor: [245, 245, 245] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
 
         didParseCell: (hookData) => {
             if (hookData.section === "body") {
@@ -1228,8 +1220,6 @@ function inicializarBotonesDescarga() {
     ? (btnDescargarPDF.hidden = false)
     : (btnDescargarPDF.hidden = true);
 }
-
-
 // __________________________________________
 // Función para borrar la tabla
 // __________________________________________
