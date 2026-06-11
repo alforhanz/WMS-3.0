@@ -176,6 +176,36 @@ function cargarCodigosRelacionados(codigoArt) {
       M.FormSelect.init(select);
     });
 }
+//___________________________________________________________
+//              INCERTA CÓDIGO DE BARRA
+//___________________________________________________________
+// function InsertaCodigoBarra() {
+//   const usuario = document.getElementById("hUsuario").value;
+//   const contrasena = document.getElementById("autorizacion").value;
+//   const articulo = document.getElementById("pArticulo").value;
+//   const codigoBarra = document.getElementById("pCodigoBarra").value;
+//   const switchCodigo = localStorage.getItem("arti_Kit");
+
+//   let pOpcion = switchCodigo === "true" ? "T" : "K";
+
+//   const params = `?pUsuario=${usuario}&pClave=${contrasena}&pArticulo=${articulo}&pCodigoBarra=${codigoBarra}&pOpcion=${pOpcion}`;
+
+//   fetch(env.API_URL + "wmsinsertacodigobarra" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       console.log("rESULTADO\n" + result.codigobarra[0].Mensaje);
+//       if (result.msg === "SUCCESS") {
+//         Swal.fire({
+//           position: "centered",
+//           icon: "success",
+//           title: `${result.codigobarra[0].Mensaje}`,
+//           showConfirmButton: false,
+//           timer: 2000,
+//         });
+//         //clearScreen();
+//       }
+//     });
+// }
 
 function InsertaCodigoBarra() {
   const usuario = document.getElementById("hUsuario").value;
@@ -193,18 +223,34 @@ function InsertaCodigoBarra() {
     .then((result) => {
       console.log("rESULTADO\n" + result.codigobarra[0].Mensaje);
       if (result.msg === "SUCCESS") {
-        Swal.fire({
-          position: "centered",
-          icon: "success",
-          title: `${result.codigobarra[0].Mensaje}`,
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        clearScreen();
+           const  mensaje = result.codigobarra[0].Mensaje;
+           if (mensaje === "Código insertado exitosamente") {
+                 Swal.fire({
+                    position: "centered",
+                    icon: "success",
+                    title: `${result.codigobarra[0].Mensaje}`,
+                    showConfirmButton: false,
+                    timer: 2000,
+                  });
+                clearScreen();
+           }else{
+            Swal.fire({
+                    position: "centered",
+                    icon: "success",
+                    title: `${result.codigobarra[0].Mensaje}`,
+                    showConfirmButton: false,
+                    timer: 2000,
+                  });
+                  document.getElementById("autorizacion").value = "";
+           }       
       }
     });
 }
 
+
+//___________________________________________________________
+//         Agregar un evento de cambio al checkbox
+//___________________________________________________________
 // Agregar un evento de cambio al checkbox
 check_switch.addEventListener("change", function () {
   handleSwitchChange();

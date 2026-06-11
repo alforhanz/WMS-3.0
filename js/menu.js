@@ -32,74 +32,7 @@ let menuEnlaces = [
                     { MODULO: 4,  SUBMODULO: 7,  ICON: "",               LINK: "#"                                    }, //
                   ];
 
-// let menuEnlaces = [
-//   //CONSULTA
-//   { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing", LINK: "" }, //PROCESOS
-//   { MODULO: 10, SUBMODULO: 1, ICON: "", LINK: "verificacionDePedidos.html" }, //VERIFICACION DE PEDIDOS
-//   { MODULO: 10, SUBMODULO: 2, ICON: "", LINK: "verificacionDePicking.html" }, // ORDENES DE COMPRAS
-//   { MODULO: 10, SUBMODULO: 3, ICON: "", LINK: "BusquedaDeContenedores.html" }, //
-//   {
-//     MODULO: 10,
-//     SUBMODULO: 4,
-//     ICON: "",
-//     LINK: "VerificadorDeContenedores.html",
-//   },
-//   { MODULO: 10, SUBMODULO: 5, ICON: "", LINK: "verificacionDeTraslados.html" },
-//   {
-//     MODULO: 10,
-//     SUBMODULO: 6,
-//     ICON: "",
-//     LINK: "verificacionDePickingDetraslados.html",
-//   },
-//   { MODULO: 10, SUBMODULO: 7, ICON: "", LINK: "conteoDeInventario.html" },
-//   { MODULO: 10, SUBMODULO: 8, ICON: "", LINK: "boletaDeInventario.html" },
-//   {
-//     MODULO: 10,
-//     SUBMODULO: 9,
-//     ICON: "",
-//     LINK: "verificacionDeOrdenesDeCompra.html",
-//   },
 
-//   { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: "" }, //CONSULTAS
-//   {
-//     MODULO: 12,
-//     SUBMODULO: 1,
-//     ICON: "",
-//     LINK: "verificacionDeOrdenesDeCompraProcesadas.html",
-//   },
-//   {
-//     MODULO: 12,
-//     SUBMODULO: 2,
-//     ICON: "",
-//     LINK: "detalleTrasladoVerificados.html",
-//   },
-//   {
-//     MODULO: 12,
-//     SUBMODULO: 3,
-//     ICON: "",
-//     LINK: "paqueteDeContenedoresVerificados.html",
-//   },
-
-//   { MODULO: 13, SUBMODULO: 0, ICON: "rocket", LINK: "" }, //Operacion
-//   { MODULO: 13, SUBMODULO: 1, ICON: "", LINK: "ingresaCodigoBarra.html" }, //ingresa cod barras
-
-//   { MODULO: 3, SUBMODULO: 0, ICON: "monitoring", LINK: "" }, //REPORTES
-//   {
-//     MODULO: 3,
-//     SUBMODULO: 23,
-//     ICON: "",
-//     LINK: "resumenConteoDeInventario.html",
-//   }, //REPORTES
-//   {
-//     MODULO: 3,
-//     SUBMODULO: 24,
-//     ICON: "",
-//     LINK: "reportedeInventarioGeneral.html",
-//   }, //Resumen de Conteo de Inventario General
-
-//   { MODULO: 4, SUBMODULO: 0, ICON: "manage_accounts", LINK: "" }, //ADMINISTRACION
-//   { MODULO: 4, SUBMODULO: 7, ICON: "", LINK: "#" },
-// ];
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 $(document).ready(function () {
@@ -224,7 +157,7 @@ var buildUL = function (items) {
             </span>
         </a>
     </div>
-     <div class="collapsible-header" id="expand_morefather">
+    <!-- <div class="collapsible-header" id="expand_morefather">
         <a href="dash2.html">
             <span class="margen-pedido" style="">
                 <span id="dash2" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
@@ -247,9 +180,10 @@ var buildUL = function (items) {
                 Dashboard 4
             </span>
         </a>
-    </div>
+    </div> -->
 </li>`;
-//   htm += `<li>
+//htm += `
+//<li>
 //     <div class="collapsible-header" id="expand_morefather">
 //         <a href="home.html">
 //             <span class="margen-pedido" style="color:black;">
@@ -271,22 +205,6 @@ var buildUL = function (items) {
 //             <span class="margen-pedido" style="">
 //                 <span id="dash1" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">bar_chart</span>
 //                 Dashboard 1
-//             </span>
-//         </a>
-//     </div>
-//      <div class="collapsible-header" id="expand_morefather">
-//         <a href="home.html">
-//             <span class="margen-pedido" style="">
-//                 <span id="dash2" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
-//                 Dashboard 2
-//             </span>
-//         </a>
-//     </div>
-//     <div class="collapsible-header" id="expand_morefather">
-//         <a href="home.html">
-//             <span class="margen-pedido" style="">
-//                 <span id="dash3" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
-//                 Dashboard 3
 //             </span>
 //         </a>
 //     </div>
