@@ -49,6 +49,29 @@
       <div class="row">
         <div class="input-field col s12 m6">
           <i class="material-icons prefix">inventory_2</i>
+          <input id="pArticulo" type="text" class="validate" autocomplete="new-password" name="pArticulo_field">
+          <label for="pArticulo">Código de Artículo</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <select id="selectBarcodes" autocomplete="off">
+            <option value="" disabled selected>Seleccione un código</option>
+          </select>
+          <label>Códigos de Barra Asociados</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">qr_code_scanner</i>
+          <input id="pCodigoBarra" type="text" class="validate" autocomplete="new-password" name="pCodigoBarra_field">
+          <label for="pCodigoBarra">Nuevo Código de Barra</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">lock</i>
+          <input id="autorizacion" type="password" class="validate" autocomplete="new-password" name="autorizacion_field">
+          <label for="autorizacion">Clave de Autorización</label>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">inventory_2</i>
           <input id="pArticulo" type="text" class="validate" autocomplete="off">
           <label for="pArticulo">Código de Artículo</label>
         </div>
@@ -68,7 +91,7 @@
           <input id="autorizacion" type="password" class="validate" autocomplete="off">
           <label for="autorizacion">Clave de Autorización</label>
         </div>
-      </div>
+      </div> -->
       <div class="row">
         <div class="col s12">
           <button id="btnCodBarras" class="btn waves-effect waves-light btn-large w100" onclick="InsertaCodigoBarra()">
