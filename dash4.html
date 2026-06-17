@@ -19,74 +19,554 @@
     <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
-    <!-- <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" /> -->
     <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
     <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-    <!-- FONTS -->
-    <script src="js/encabezado.js" type="text/javascript"></script>
+    
+    <!-- GOOGLE FONTS -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Orbitron:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap');
 
-        /* CSS PERSONALIZADO PARA LOOK POWER BI */
         :root {
-            /* --bg-dark: #d7e1eb; */
-            /* --card-bg: #2a3f54; */
             --bg-dark: #eaeef3;
-            --card-bg: #2a3f54;
-            --accent-teal: #008080;
-            --text-main: #ffffff;
-            --text-dim: #b4d0f0;
+            --sidebar-bg: #1e293b;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            
+            /* Curated color palette matching the mockup */
+            --green-main: #10b981;
+            --green-light: #ecfdf5;
+            --red-main: #ef4444;
+            --red-light: #fef2f2;
+            --blue-main: #3b82f6;
+            --blue-light: #eff6ff;
+            --orange-main: #f59e0b;
+            --orange-light: #fffbeb;
+            --purple-main: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --border-color: #e2e8f0;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark) !important;
+            color: var(--text-dark) !important;
+            font-family: 'Outfit', 'Roboto', sans-serif !important;
         }
 
-        .chart-container {
-            position: relative;
-            width: 78%;
-            height: 494px;    
+        /* Sidebar Filtros */
+        .filter-sidebar {
+            background: var(--sidebar-bg);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        canvas#chartPrecision {
-            width: 86% !important;
-            height: 454px !important;
+        .filter-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
         }
 
-        .chart-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: #f5f8fa;
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
+        .clear-filters {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s ease;
         }
 
-        /* Small only */
-        @media screen and (max-width: 39.9375em) {
-            #bodega_sucursales {
-                width: 80%;
-                top: 20px !important;
-                left: 38px !important;
-                max-height: 100% !important;
-                margin-left: 3px !important;
+        .clear-filters:hover {
+            color: #ffffff;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px;
+            margin-top: 15px;
+        }
+
+        .filter-input, .filter-input-text, .filter-select {
+            width: 100% !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            padding: 8px 12px !important;
+            box-sizing: border-box !important;
+            height: 40px !important;
+            font-size: 0.9rem !important;
+            outline: none !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .filter-input:focus, .filter-input-text:focus, .filter-select:focus {
+            border-color: var(--blue-main) !important;
+            background-color: rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+        }
+
+        .filter-select option {
+            background-color: var(--sidebar-bg);
+            color: #ffffff;
+        }
+
+        .btn-aplicar {
+            width: 100%;
+            background-color: var(--blue-main) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            padding: 10px !important;
+            height: auto !important;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .btn-aplicar:hover {
+            background-color: #2563eb !important;
+            transform: translateY(-1px);
+        }
+
+        .filter-footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .dashboard-main-title {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0 0 5px 0;
+        }
+
+        .dashboard-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .date-badge {
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .date-badge i {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .btn-export {
+            background-color: #ffffff !important;
+            color: var(--text-dark) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+        }
+
+        .btn-export:hover {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* KPI Cards Layout */
+        .kpi-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -10px;
+            margin-left: -10px;
+        }
+
+        .kpi-col {
+            flex: 1;
+            min-width: 175px;
+            padding-right: 10px;
+            padding-left: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media screen and (max-width: 1300px) {
+            .kpi-col {
+                flex: 0 0 33.333%;
+                max-width: 33.333%;
             }
         }
 
-        /* Medium and up */
-        @media screen and (min-width: 40em) {}
+        @media screen and (max-width: 768px) {
+            .kpi-col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
 
-        /* Medium only */
-        @media screen and (min-width: 40em) and (max-width: 63.9375em) {}
+        @media screen and (max-width: 480px) {
+            .kpi-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
 
-        /* Large and up */
-        @media screen and (min-width: 64em) {}
+        .kpi-card-custom {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-        /* Large only */
-        @media screen and (min-width: 64em) and (max-width: 74.9375em) {}
+        .kpi-card-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .border-green { border-left-color: var(--green-main); }
+        .border-red { border-left-color: var(--red-main); }
+        .border-blue { border-left-color: var(--blue-main); }
+        .border-orange { border-left-color: var(--orange-main); }
+        .border-purple { border-left-color: var(--purple-main); }
+
+        .kpi-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .kpi-title-custom {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .kpi-icon-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-green-light { background-color: var(--green-light); }
+        .bg-red-light { background-color: var(--red-light); }
+        .bg-blue-light { background-color: var(--blue-light); }
+        .bg-orange-light { background-color: var(--orange-light); }
+        .bg-purple-light { background-color: var(--purple-light); }
+
+        .text-green { color: var(--green-main) !important; }
+        .text-red { color: var(--red-main) !important; }
+        .text-blue { color: var(--blue-main) !important; }
+        .text-orange { color: var(--orange-main) !important; }
+        .text-purple { color: var(--purple-main) !important; }
+
+        .kpi-content-custom {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kpi-label-small {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .kpi-value-custom {
+            font-size: 1.45rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 2px 0;
+        }
+
+        .kpi-cost-custom {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .kpi-variation-custom {
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+        }
+        
+        .kpi-variation-custom.positive {
+            color: var(--green-main);
+        }
+        
+        .kpi-variation-custom.negative {
+            color: var(--red-main);
+        }
+
+        /* Dashboard Chart Card */
+        .dashboard-chart-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-chart-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title-custom {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .chart-subtitle-custom {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: none;
+            font-weight: 400;
+        }
+
+        .chart-canvas-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        .chart-canvas-container-donut {
+            position: relative;
+            height: 180px;
+            width: 100%;
+        }
+
+        .chart-canvas-container-gauge {
+            position: relative;
+            height: 130px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Tables styling */
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .table-custom th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 10px 6px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .table-custom td {
+            padding: 10px 6px;
+            border-bottom: 1px solid var(--border-color);
+            color: #334155;
+            text-align: left;
+        }
+
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-positive {
+            background-color: var(--green-light);
+            color: var(--green-main);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-negative {
+            background-color: var(--red-light);
+            color: var(--red-main);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        /* Heatmap styling */
+        .table-heatmap {
+            font-size: 0.75rem;
+        }
+
+        .table-heatmap th, .table-heatmap td {
+            text-align: center !important;
+            padding: 8px 4px !important;
+        }
+
+        .table-heatmap td:first-child, .table-heatmap th:first-child {
+            text-align: left !important;
+            font-weight: 600;
+            width: 110px;
+            background: #ffffff;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .heatmap-cell {
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.08);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 8;
+            position: relative;
+        }
+
+        .heatmap-legend {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+        }
+
+        .heatmap-legend-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: linear-gradient(to right, #fef2f2, #fee2e2, #fca5a5, #f87171, #ef4444, #dc2626);
+            margin: 0 10px;
+            border-radius: 4px;
+        }
+
+        /* Metrics bottom panel */
+        .chart-footer-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .metric-box {
+            text-align: center;
+        }
+
+        .metric-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .metric-lbl {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-top: 2px;
+        }
+
+        .gauge-legend-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+
+        .gauge-legend-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .gauge-legend-percentage {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .gauge-legend-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Helper styles */
+        .mt-5 { margin-top: 5px !important; }
+        .mt-10 { margin-top: 10px !important; }
+        .mt-15 { margin-top: 15px !important; }
+        .mb-20 { margin-bottom: 20px !important; }
+        
+        .dashBody {
+            padding: 20px !important;
+        }
+
+        .clear-both {
+            clear: both;
+        }
     </style>
+    <script src="js/encabezado.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -95,98 +575,390 @@
     <main class="container-fluidx dashBody">
         <div id="contenedorLoader"></div>
         <div id="resultadoBusqueda">
-             <div class="s12 m4 l4 col black-text">
-                    <div class="row">
-                        <div class="col s12 m3 l3">
-                            <div class="kpi-card teal white-text">
-                                <i class="material-icons">local_shipping</i>
-                                <div class="kpi-title">Total de Pedidos</div>
-                                <div class="kpi-value" id="kpi_pedidos">0</div>
-                            </div>
-                        </div>
-                        <div class="col s12 m3 l3">
-                            <div class="kpi-card blue-grey darken-1 white-text">
-                                <i class="material-icons">compare_arrows</i>
-                                <div class="kpi-title">Finalizados</div>
-                                <div class="kpi-value" id="kpi_finalizados">0</div>
-                            </div>
-                        </div>
-                        <div class="col s12 m3 l3">
-                            <div class="kpi-card orange darken-2 white-text">
-                                <i class="material-icons">shopping_cart</i>
-                                <div class="kpi-title">Pendientes</div>
-                                <div class="kpi-value" id="kpi_compras">0</div>
-                            </div>
-                        </div>
-                        <div class="col s12 m3 l3">
-                            <div class="kpi-card gradient-45deg-green-teal white-text">
-                                <i class="material-icons">task_alt</i>
-                                <div class="kpi-title">% Eficiencia</div>
-                                <div class="kpi-value" id="kpi_eficiencia">0%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             <div class="row">
-                <div class="col s12 m6 l6">
-                    <div class="chart-container">
-                        <div class="chart-title">Precisión de Verificación</div>
-                        <canvas id="chartPrecision"></canvas>
-                    </div>
-                </div>
-                <!-- <div class="col s12 m8">
-                    <div class="card card-bg ">
-                        <div class="card-content black-text">
-                            <span class="card-title"><i class="material-icons left">analytics</i>Resumen de Movimientos
-                                Totales</span>
-                            <table class="highlight centered">
-                                <thead>
-                                    <tr style="color: black;">
-                                        <th>Concepto Operativo</th>
-                                        <th>Total Acumulado</th>
-                                        <th>Estado de Flujo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaTotalesOperativos">
-                                </tbody>
-                            </table>
+                <!-- PANEL IZQUIERDO: FILTROS -->
+                <div class="col s12 m12 l3">
+                    <div class="filter-sidebar">
+                        <div class="filter-title">
+                            <span style="display: flex; align-items: center;"><i class="material-icons left">filter_list</i>Filtros</span>
+                            <span class="clear-filters" onclick="limpiarFiltros()">Limpiar filtros</span>
                         </div>
-                    </div>
-                </div> -->
-            </div>
-            <!-- <div class="row">
-                <div class="s12 m8 l8 col black-text">
-                    <div class="row">
-                        <div class="col s12 m6 l6">
-                            <div class="chart-container">
-                                <div class="chart-title">Productividad por Hora</div>
-                                <canvas id="chartProductividadReal"></canvas>
+                        
+                        <div>
+                            <div>
+                                <span class="filter-label">Rango de Fechas</span>
+                                <input id="filter_fecha_desde" type="date" class="filter-input">
+                                <input id="filter_fecha_hasta" type="date" class="filter-input mt-5">
                             </div>
-                        </div>
-                        <div class="col s12 m6 l6">
-                            <div class="chart-container">
-                                <div class="chart-title">Top 5 Artículos</div>
-                                <canvas id="chartTopArticulos"></canvas>
+                            
+                            <div>
+                                <span class="filter-label">Bodegas</span>
+                                <label style="display: block; margin-top: 5px; margin-bottom: 10px;">
+                                    <input type="checkbox" id="chk_todas_bodegas" checked class="filled-in" onchange="toggleBodegaSelect()" />
+                                    <span style="color: #ffffff; font-size: 0.95rem; font-weight: 500;">Todas las bodegas</span>
+                                </label>
+                                <select id="filter_bodega" class="browser-default filter-select" disabled>
+                                    <option value="" disabled selected>Seleccione una bodega</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-                </div>
-               
-            </div> -->
-        </div>
+                            
+                            <div>
+                                <span class="filter-label">Clasificación 1</span>
+                                <select id="filter_clase1" class="browser-default filter-select">
+                                    <option value="" selected>Todas</option>
+                                </select>
+                            </div>
 
+                            <div>
+                                <span class="filter-label">Clasificación 2</span>
+                                <select id="filter_clase2" class="browser-default filter-select">
+                                    <option value="" selected>Todas</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <span class="filter-label">Clasificación 3</span>
+                                <select id="filter_clase3" class="browser-default filter-select">
+                                    <option value="" selected>Todas</option>
+                                </select>
+                            </div>
+                            
+                            <div class="center-align mt-15">
+                                <button class="btn btn-aplicar waves-effect waves-light" onclick="aplicarFiltros()">
+                                    Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+                        <div class="filter-footer">
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+                                <i class="material-icons" style="font-size: 14px;">schedule</i>
+                                <span>Última actualización:</span>
+                            </div>
+                            <span id="txt_ultima_actualizacion" style="font-weight: 600;">08/05/2025 08:30 a.m.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PANEL DERECHO: DASHBOARD CONTENT -->
+                <div class="col s12 m12 l9">
+                    <!-- CABECERA DEL DASHBOARD -->
+                    <div class="dashboard-header-row">
+                        <div>
+                            <h4 class="dashboard-main-title">Control de Ajustes Físicos de Inventario</h4>
+                            <p class="dashboard-subtitle">Resumen general del período seleccionado</p>
+                        </div>
+                        <div class="header-actions">
+                            <div class="date-badge">
+                                <i class="material-icons">calendar_today</i>
+                                <span id="lbl_periodo_seleccionado">01/01/2025 - 31/12/2025</span>
+                            </div>
+                            <button class="btn btn-export waves-effect waves-light" onclick="exportarDatos()">
+                                <i class="material-icons left">download</i>Exportar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- KPIs Principales -->
+                    <div class="kpi-row">
+                        <!-- Ajustes Positivos -->
+                        <div class="kpi-col">
+                            <div class="kpi-card-custom border-green">
+                                <div class="kpi-header-custom">
+                                    <span class="kpi-title-custom text-green">AJUSTES POSITIVOS</span>
+                                    <div class="kpi-icon-circle bg-green-light">
+                                        <i class="material-icons text-green">arrow_upward</i>
+                                    </div>
+                                </div>
+                                <div class="kpi-content-custom">
+                                    <span class="kpi-label-small">Unidades</span>
+                                    <span class="kpi-value-custom text-green" id="kpi_pos_unidades">0</span>
+                                    <span class="kpi-label-small mt-5">Costo</span>
+                                    <span class="kpi-cost-custom" id="kpi_pos_costo">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ajustes Negativos -->
+                        <div class="kpi-col">
+                            <div class="kpi-card-custom border-red">
+                                <div class="kpi-header-custom">
+                                    <span class="kpi-title-custom text-red">AJUSTES NEGATIVOS</span>
+                                    <div class="kpi-icon-circle bg-red-light">
+                                        <i class="material-icons text-red">arrow_downward</i>
+                                    </div>
+                                </div>
+                                <div class="kpi-content-custom">
+                                    <span class="kpi-label-small">Unidades</span>
+                                    <span class="kpi-value-custom text-red" id="kpi_neg_unidades">0</span>
+                                    <span class="kpi-label-small mt-5">Costo</span>
+                                    <span class="kpi-cost-custom" id="kpi_neg_costo">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Diferencia Neta -->
+                        <div class="kpi-col">
+                            <div class="kpi-card-custom border-blue">
+                                <div class="kpi-header-custom">
+                                    <span class="kpi-title-custom text-blue">DIFERENCIA NETA</span>
+                                    <div class="kpi-icon-circle bg-blue-light">
+                                        <i class="material-icons text-blue">scale</i>
+                                    </div>
+                                </div>
+                                <div class="kpi-content-custom">
+                                    <span class="kpi-label-small">Unidades</span>
+                                    <span class="kpi-value-custom text-blue" id="kpi_net_unidades">0</span>
+                                    <span class="kpi-label-small mt-5">Costo</span>
+                                    <span class="kpi-cost-custom" id="kpi_net_costo">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cantidad de Físicos -->
+                        <div class="kpi-col">
+                            <div class="kpi-card-custom border-orange">
+                                <div class="kpi-header-custom">
+                                    <span class="kpi-title-custom text-orange">CANTIDAD DE FÍSICOS</span>
+                                    <div class="kpi-icon-circle bg-orange-light">
+                                        <i class="material-icons text-orange">assignment</i>
+                                    </div>
+                                </div>
+                                <div class="kpi-content-custom">
+                                    <span class="kpi-label-small">Artículos Afectados</span>
+                                    <span class="kpi-value-custom text-orange" id="kpi_articulos_afectados">0</span>
+                                    <span class="kpi-label-small mt-5">Bodegas Afectadas</span>
+                                    <span class="kpi-cost-custom" id="kpi_bodegas_afectadas">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Impacto de Ajustes -->
+                        <div class="kpi-col">
+                            <div class="kpi-card-custom border-purple">
+                                <div class="kpi-header-custom">
+                                    <span class="kpi-title-custom text-purple" style="display: flex; align-items: center; gap: 4px;">
+                                        IMPACTO DE AJUSTES
+                                        <i class="material-icons text-purple text-darken-2" style="font-size: 14px; cursor: pointer;" onclick="mostrarModalFormula()" title="Ver fórmulas de cálculo">info_outline</i>
+                                    </span>
+                                    <div class="kpi-icon-circle bg-purple-light">
+                                        <i class="material-icons text-purple">percent</i>
+                                    </div>
+                                </div>
+                                <div class="kpi-content-custom">
+                                    <span class="kpi-label-small">Impacto Actual</span>
+                                    <span class="kpi-value-custom text-purple" id="kpi_impacto_porcentaje">0.00%</span>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid #f1f5f9; padding-top: 6px;">
+                                        <div>
+                                            <span class="kpi-label-small" style="display: block;">Imp. Anterior</span>
+                                            <span id="kpi_impacto_anterior_porcentaje" style="font-weight: 600; font-size: 0.95rem; color: #475569;">0.00%</span>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="kpi-label-small" style="display: block;">Variación</span>
+                                            <span class="kpi-variation-custom" id="kpi_impacto_variacion" style="margin-top: 0;">
+                                                <i class="material-icons tiny left" style="vertical-align: middle;">arrow_downward</i>
+                                                <span>0.00%</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fila 1 de Gráficos: Tendencias y Comparativo -->
+                    <div class="row">
+                        <!-- Tendencia de Ajustes (Unidades) -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card">
+                                <div class="card-title-custom">TENDENCIA DE AJUSTES <span class="chart-subtitle-custom">(Unidades)</span></div>
+                                <div class="chart-canvas-container">
+                                    <canvas id="chartTendenciaUnidades"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tendencia de Costos ($) -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card">
+                                <div class="card-title-custom">TENDENCIA DE COSTOS <span class="chart-subtitle-custom">($)</span></div>
+                                <div class="chart-canvas-container">
+                                    <canvas id="chartTendenciaCostos"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Balance Mensual de Ajustes (Costo) -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card" style="height: 275px; overflow-y: auto;">
+                                <div class="card-title-custom">BALANCE MENSUAL DE AJUSTES <span class="chart-subtitle-custom">(Costo)</span></div>
+                                <table class="table-custom highlight">
+                                    <thead>
+                                        <tr>
+                                            <th>Mes</th>
+                                            <th>Costo (+)</th>
+                                            <th>Costo (-)</th>
+                                            <th>Dif. Neta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_comparativo_mensual">
+                                        <!-- Carga dinámica -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fila 2 de Gráficos: Top Bodegas, Clases y Heatmap -->
+                    <div class="row">
+                        <!-- Top 5 Bodegas con más ajustes negativos -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card">
+                                <div class="card-title-custom">TOP 5 BODEGAS CON MÁS AJUSTES NEGATIVOS <span class="chart-subtitle-custom">(Costo)</span></div>
+                                <div class="chart-canvas-container">
+                                    <canvas id="chartTopBodegas"></canvas>
+                                </div>
+                                <div class="chart-footer-metrics">
+                                    <div class="metric-box">
+                                        <div class="metric-val" id="metric_total_bodegas">0</div>
+                                        <div class="metric-lbl">Total Bodegas</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="metric-val text-red" id="metric_bodegas_negativas">0</div>
+                                        <div class="metric-lbl">Faltantes</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="metric-val text-blue" id="metric_porcentaje_diferencia">0%</div>
+                                        <div class="metric-lbl">% con Dif.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ajustes negativos por clasificación -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card">
+                                <div class="card-title-custom">AJUSTES NEGATIVOS POR CLASIFICACIÓN <span class="chart-subtitle-custom">(Costo)</span></div>
+                                <div class="chart-canvas-container-donut">
+                                    <canvas id="chartClasificaciones"></canvas>
+                                </div>
+                                <div class="chart-footer-metrics">
+                                    <div class="metric-box">
+                                        <div class="metric-val" id="metric_total_clases">0</div>
+                                        <div class="metric-lbl">Clases</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="metric-val text-red" id="metric_clases_ajustadas">0</div>
+                                        <div class="metric-lbl">Ajustadas</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="metric-val text-blue" id="metric_porcentaje_top3">0%</div>
+                                        <div class="metric-lbl">% Top 3</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Heatmap Bodega vs Clasificación -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card" style="height: 388px; overflow-y: auto;">
+                                <div class="card-title-custom">HEATMAP BODEGA vs CLASIFICACIÓN <span class="chart-subtitle-custom">(Costo Negativo)</span></div>
+                                <table class="table-custom table-heatmap">
+                                    <thead>
+                                        <tr id="heatmap_header">
+                                            <th>Clasificación</th>
+                                            <!-- Se llena dinámicamente con bodegas -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_heatmap">
+                                        <!-- Se llena dinámicamente con filas -->
+                                    </tbody>
+                                </table>
+                                <div class="heatmap-legend">
+                                    <span>Menor pérdida</span>
+                                    <div class="heatmap-legend-bar"></div>
+                                    <span>Mayor pérdida</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fila 3 de Gráficos: Tablas de detalles y calibre de distribución -->
+                    <div class="row">
+                        <!-- Top 5 Artículos con más ajustes negativos -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card" style="height: 350px; overflow-y: auto;">
+                                <div class="card-title-custom">TOP 5 ARTÍCULOS CON MÁS AJUSTES NEGATIVOS <span class="chart-subtitle-custom">(Costo)</span></div>
+                                <table class="table-custom highlight">
+                                    <thead>
+                                        <tr>
+                                            <th>Artículo</th>
+                                            <th>Descripción</th>
+                                            <th>Bodega</th>
+                                            <th>Unds</th>
+                                            <th>Costo (-)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_articulos_perdidas">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Frecuencia de ajustes por artículo -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card" style="height: 350px; overflow-y: auto;">
+                                <div class="card-title-custom">FRECUENCIA DE AJUSTES POR ARTÍCULO</div>
+                                <table class="table-custom highlight">
+                                    <thead>
+                                        <tr>
+                                            <th>Artículo</th>
+                                            <th>Descripción</th>
+                                            <th># Ajustes</th>
+                                            <th>Unds Ajustadas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_frecuencia_ajustes">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Distribución de Ajustes (Gauge) -->
+                        <div class="col s12 m12 l4">
+                            <div class="dashboard-chart-card">
+                                <div class="card-title-custom" style="display: flex; align-items: center; gap: 6px;">
+                                    <span>DISTRIBUCIÓN DE AJUSTES</span>
+                                    <i class="material-icons text-muted tooltipped" data-position="top" data-tooltip="Muestra qué porcentaje del costo total ajustado corresponde a sobrantes (ajustes positivos) vs faltantes (ajustes negativos)." style="font-size: 16px; cursor: pointer; vertical-align: middle;">info_outline</i>
+                                </div>
+                                <div class="chart-canvas-container-gauge">
+                                    <canvas id="chartDistribucionGauge"></canvas>
+                                </div>
+                                <div class="gauge-legend-container">
+                                    <div class="gauge-legend-item text-red">
+                                        <div class="gauge-legend-percentage" id="gauge_pct_negativos">0.00%</div>
+                                        <div class="gauge-legend-label">Faltantes (Costo)</div>
+                                    </div>
+                                    <div class="gauge-legend-item text-green">
+                                        <div class="gauge-legend-percentage" id="gauge_pct_positivos">0.00%</div>
+                                        <div class="gauge-legend-label">Sobrantes (Costo)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- IMprimir Código de barra -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="text/javascript" src="js/dash4.js"></script>
     <script type="text/javascript" src="js/main.js?v2.1" defer></script>
     <script type="text/javascript" src="js/menu.js?v2.1" defer></script>

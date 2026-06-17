@@ -3,6 +3,10 @@
 /////////////////////////////////////////////////////////////////////
 var ArrayMenu = [];
 let menuEnlaces = [
+
+                     { MODULO: 2, SUBMODULO: 0, ICON: "incomplete_circle",  LINK: ""                                      }, // TABLEROS
+                    { MODULO: 2, SUBMODULO: 1, ICON: "",               LINK: "dash4.html"                             }, // DASH4
+
                     //CONSULTA
                     { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing",  LINK: ""                                      }, // PROCESOS
                     { MODULO: 10, SUBMODULO: 1, ICON: "",               LINK: "verificacionDePedidos.html"             }, // VERIFICACION DE PEDIDOS
@@ -180,7 +184,7 @@ var buildUL = function (items) {
                 Dashboard 4
             </span>
         </a>
-    </div> -->
+    </div>--> 
 </li>`;
 //htm += `
 //<li>
