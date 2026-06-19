@@ -3,6 +3,11 @@
 /////////////////////////////////////////////////////////////////////
 var ArrayMenu = [];
 let menuEnlaces = [
+
+                    { MODULO: 2, SUBMODULO: 0, ICON: "incomplete_circle",  LINK: ""                                      }, // TABLEROS
+                    { MODULO: 2, SUBMODULO: 1, ICON: "",               LINK: "dash1.html"                             }, // DASH4
+                    { MODULO: 2, SUBMODULO: 2, ICON: "",               LINK: "dash4.html"                             }, // DASH4
+
                     //CONSULTA
                     { MODULO: 10, SUBMODULO: 0, ICON: "manufacturing",  LINK: ""                                      }, // PROCESOS
                     { MODULO: 10, SUBMODULO: 1, ICON: "",               LINK: "verificacionDePedidos.html"             }, // VERIFICACION DE PEDIDOS
@@ -149,7 +154,7 @@ var buildUL = function (items) {
             </span>
         </a>
     </div>
-    <div class="collapsible-header" id="expand_morefather">
+    <!--<div class="collapsible-header" id="expand_morefather">
         <a href="dash1.html">
             <span class="margen-pedido" style="">
                 <span id="dash1" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">bar_chart</span>
@@ -157,7 +162,7 @@ var buildUL = function (items) {
             </span>
         </a>
     </div>
-    <!-- <div class="collapsible-header" id="expand_morefather">
+     <div class="collapsible-header" id="expand_morefather">
         <a href="dash2.html">
             <span class="margen-pedido" style="">
                 <span id="dash2" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">incomplete_circle</span>
@@ -180,7 +185,7 @@ var buildUL = function (items) {
                 Dashboard 4
             </span>
         </a>
-    </div> -->
+    </div>--> 
 </li>`;
 //htm += `
 //<li>
