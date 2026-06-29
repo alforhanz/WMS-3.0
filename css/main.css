@@ -1648,6 +1648,8 @@ th {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+  width: 50%;
+  margin-left: 0;
 }
 
 #tblcontenedores tbody tr:nth-child(even) {
