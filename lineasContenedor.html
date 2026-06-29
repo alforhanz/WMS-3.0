@@ -51,9 +51,9 @@
         <div class="row"><label id="bodega_solicita"></label></div>
           <!-- Boton Iniciar Despacho -->
         <div class="row col-md-12 S12" id="indespacho-conten-btn">
-        <button id="btniniciardespacho" class="btn-iniciar-despacho" type="submit" onclick="validaInicioConteo()"> 
+        <!-- <button id="btniniciardespacho" class="btn-iniciar-despacho" type="submit" onclick="validaInicioConteo()"> 
           Iniciar Despacho
-        </button>
+        </button> -->
         <button id="btn-regresar" class="btn-regresar" type="button" onclick="retornarVistaAnterior()"> 
          Regresar
         </button>
@@ -86,11 +86,11 @@
                     </td>
                     <td class="codigo-barras-cell">
                       <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCodigoBarras(this)" disabled>
+                        onchange="validarCodigoBarras(this)" >
                     </td>
                     <td class="codigo-barras-cell2">
                       <input id="cant-pedida" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCantidadPedida(this)" disabled>
+                        onchange="validarCantidadPedida(this)" >
                     </td>
                     <td class="codigo-barras-cell2">
                       <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
@@ -98,6 +98,9 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div class="row">
+              
             </div>
           </div>
           <div id="tabla-verificacion" class="col s12">
@@ -114,7 +117,7 @@
                     <th id="totalCedi" style="width: 10%;">Total<br> CEDI</th>
                     <th id="verificado" style="width: 10%;">VERIF</th>
                     <th class="width: 10%;" hidden>DEL</th>
-                    <th class="width: 10%;" hidden>DEL</th>
+                    <!-- <th class="width: 10%;" hidden>DEL</th> -->
                   </tr>
                 </thead>
                 <tbody id="tblbodyLineasContenedor">

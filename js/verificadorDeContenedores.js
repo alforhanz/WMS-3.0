@@ -45,7 +45,7 @@ function validarBusquedaContenedor() {
     mostrarLoader();
     let pSistema = "WMS";
     let pUsuario = document.getElementById("hUsuario").value;
-    let pOpcion = "B";
+    let pOpcion = "A";
     let pBodegaEnvia = bodega;
     let pConsecutivo = $("#pContenedor").val();
     let pEstado = "";
@@ -127,15 +127,7 @@ function enviarDatosControlador(params) {
   ocultarLoader();
 }
 
-function mostrarPestanaLectura() {
-  // Cambia la pestaña activa
-  const tabLectura = document.querySelector(
-    '#tabs-swipe-demo a[href="#tabla-lectura"]'
-  );
-  tabLectura.click(); // Simula el clic
-  // Opcional: enfocar el input del código de barras
-  document.getElementById("codigo-barras").focus();
-}
+
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -881,6 +873,7 @@ function confirmarGuardadoParcial() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
+      verificacion();
       guardaParcialMente();
     }
   });
@@ -900,7 +893,7 @@ async function guardaParcialMente() {
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
-  for (let i = 1; i < table.rows.length; i++) {
+  for (let i = 1; i < table.rows.length-1; i++) {
     const row = table.rows[i];
 
     const contenedor =
@@ -2039,4 +2032,14 @@ function calcularTotalesVerificacion() {
     // 4. Insertar la fila de totales en el tfoot y el tfoot en la tabla
     tfoot.appendChild(filaTotal);
     tabla.appendChild(tfoot);
+}
+
+function mostrarPestanaLectura() {
+  // Cambia la pestaña activa
+  const tabLectura = document.querySelector(
+    '#tabs-swipe-demo a[href="#tabla-lectura"]'
+  );
+  tabLectura.click(); // Simula el clic
+  // Opcional: enfocar el input del código de barras
+  document.getElementById("codigo-barras").focus();
 }

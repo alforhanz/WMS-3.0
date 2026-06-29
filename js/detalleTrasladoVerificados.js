@@ -8,12 +8,7 @@ let totalSalidasGlobal = 0;
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  // var elems = document.querySelectorAll(".datepicker");
-  // var instances = M.Datepicker.init(elems, {
-  //   format: "yyyy-mm-dd",
-  // });
-
-  // Verificar si existe una búsqueda previa
+    // Verificar si existe una búsqueda previa
   let busquedaFlag = localStorage.getItem("autoSearchTraslados") === "true";
 
   if (busquedaFlag) {
@@ -49,27 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
                       });
                   }
               });
-          }, 100);
-
-    // $("#fecha_ini").val(fechaIni);
-    // $("#fecha_fin").val(fechaFin);
-
-    // instances.forEach(function (instance) {
-    //   instance.setDate(new Date(fechaIni));
-    //   instance.setDate(new Date(fechaFin));
-    // });
+          }, 100);   
 
     listadoTraslados(parametrosBusqueda);
   } else {
-    // Si no hay búsqueda previa, limpiar el localStorage
-    localStorage.clear();
+      localStorage.clear();
   }
 
   const user = document.getElementById("hUsuario");
   const bodega = document.getElementById("bodega").value;
   localStorage.setItem("username", user.value);
   localStorage.setItem("bodegaUser", bodega);
-
   const checkClase = document.getElementById("clase-todas");
   localStorage.setItem("check_Clase", checkClase.checked);
   const checkMarca = document.getElementById("marca-todas");
@@ -499,26 +484,8 @@ function mostrarTotalesGlobales() {
     tabla.parentNode.insertBefore(totalesContainer, tabla.nextSibling);
   }
 }
-
-// function mostrarTotalesGlobales() {
-//   const totalesContainer = document.getElementById("totalesContainer") || document.createElement("div");
-//   totalesContainer.id = "totalesContainer";
-//   totalesContainer.innerHTML = `
-//     <div style="font-size: 20px; text-align: right; right margin-top: 20px; padding: 10px; ">
-//       <p style="margin: 5px 0; font-weight: bold; color: #00796b;">Total de Entradas: ${totalEntradasGlobal.toFixed(2)}</p>
-//       <p style="margin: 5px 0; font-weight: bold; color: #d32f2f;">Total de Salidas: ${totalSalidasGlobal.toFixed(2)}</p>
-//     </div>
-//   `;
-//   // Asegurarse de que esté después de la tabla
-//   const tabla = document.getElementById("tblDetallestrasladosVerif");
-//   if (!document.getElementById("totalesContainer")) {
-//     tabla.parentNode.insertBefore(totalesContainer, tabla.nextSibling);
-//   }
-// }
-
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-// Función principal actualizada
 function armarTablaDetalleTrasladosVerificados(desde, hasta) {
   if (!ArrayDataFiltrado || ArrayDataFiltrado.length === 0) {
     console.error("ArrayDataFiltrado no está definido o está vacío.");
@@ -785,32 +752,6 @@ function descargarPDF() {
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// function descargarExcel() {
-//   // Obtener los datos de la tabla generada dinámicamente
-//   const jsonData = ArrayData;
-
-//   // Obtener los encabezados dinámicos (del mismo modo que en generarTabla)
-//   const headers = Object.keys(jsonData[0]);
-//   const encabezado = headers.map((header) => header.replace(/_/g, " ")); // Reemplazar guiones bajos por espacios
-
-//   // Crear las filas con los datos
-//   const rows = jsonData.map(
-//     (item) => headers.map((header) => parseFloat(item[header]) || item[header]) // Asegurar que los valores numéricos sean correctos
-//   );
-
-//   // Crear la hoja de Excel
-//   const worksheetData = [encabezado, ...rows];
-
-//   // Crear la hoja de Excel a partir de los datos
-//   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-
-//   // Crear un nuevo libro de trabajo y agregar la hoja con los datos
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
-
-//   // Escribir y descargar el archivo Excel
-//   XLSX.writeFile(workbook, "Reporte_Conteo_Inventario_General.xlsx");
-// }
 function descargarExcel() {
   const jsonData = ArrayData;
 

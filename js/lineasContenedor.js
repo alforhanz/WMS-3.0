@@ -2,18 +2,18 @@
 //                        CARGA DEL //DOM
 //_____________________________________________________________________________
 var detalleLineasContenedor = [];
-var desprachoIniciado = false;
+//var desprachoIniciado = false; variable que guarda si el despacho inició
 document.addEventListener("DOMContentLoaded", function () {
 
   // Verificar si el despacho ya fue iniciado o hay lectura previa
-  desprachoIniciado = localStorage.getItem("desprachoIniciado") === "true";
+ // desprachoIniciado = localStorage.getItem("desprachoIniciado") === "true";
 
-  if (desprachoIniciado) {
-    const btn = document.getElementById("btniniciardespacho");
-    btn.disabled = true;
-    btn.style.backgroundColor = "#6e7881";
-    btn.style.cursor = "not-allowed";
-  }
+  // if (desprachoIniciado) {
+  //   const btn = document.getElementById("btniniciardespacho");
+  //   btn.disabled = true;
+  //   btn.style.backgroundColor = "#6e7881";
+  //   btn.style.cursor = "not-allowed";
+  // }
 
   if (localStorage.getItem("contenedor")) {
     let contenedor = localStorage.getItem("contenedor");
@@ -45,7 +45,7 @@ function validaInicioConteo() {
       btn.disabled = true;
       btn.style.backgroundColor = "#6e7881";
       btn.style.cursor = "not-allowed";
-      fniniciardespacho();
+     // fniniciardespacho();
     }
   });
 }
@@ -113,10 +113,15 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
     document.getElementById("usuario").innerText ||
     document.getElementById("usuario").innerHTML;
   let opcion = localStorage.getItem("contenDetalleOPC");
+  let guardado = localStorage.getItem('guardado');
+
   let pOpcion = "L";
-  if (opcion === "A") {
-    pOpcion = "LW";
-  }
+      if(guardado){
+        pOpcion="LW";
+      }
+  // if (opcion === "A") {
+  //   pOpcion = "LW";
+  // }
 
   let pBodegaEnvia = document.getElementById("bodega").value;
   let pBodegaSolicita = bodegaSolicita;
@@ -157,21 +162,20 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
           detalleLineasContenedor = result.contenedor;
           const siGuardadoParcial = detalleLineasContenedor.some(
             (detalle) =>
-              detalle.LineaContada != null && detalle.LineaContada !== "" && detalle.LineaContada !=0,
-          );                     
+              detalle.LineaContada != null && detalle.LineaContada !== "" && detalle.LineaContada !=0,);                     
                if (siGuardadoParcial) {
                       // Hay lectura previa: bloquear el botón igual que si ya inició
-                      desprachoIniciado = true;
-                      localStorage.setItem("desprachoIniciado", "true");
+                    //  desprachoIniciado = true;
+                     // localStorage.setItem("desprachoIniciado", "true");
 
-                      const btn = document.getElementById("btniniciardespacho");
-                      btn.disabled = true;
-                      btn.style.backgroundColor = "#6e7881";
-                      btn.style.cursor = "not-allowed";                              
-                      armarTablaLectura(detalleLineasContenedor);
+                     // const btn = document.getElementById("btniniciardespacho");
+                      // btn.disabled = true;
+                      // btn.style.backgroundColor = "#6e7881";
+                      // btn.style.cursor = "not-allowed";                              
+                      //armarTablaLectura(detalleLineasContenedor);
                       armarTablaVerificacion(detalleLineasContenedor); 
                       guardarTablaEnArray();
-                      verificacioniciardespacho();
+                      // verificacioniciardespacho();
                      
                     }else{
                                                
@@ -233,29 +237,30 @@ function armarTablaLectura(detalleLineasContenedor) {
                         </td>
                     `;
           tbody.appendChild(newRow);
-        } else {
-          desprachoIniciado = "true";
-          var newRow = document.createElement("tr");
-              newRow.innerHTML = `
-                    <td>
-                        <span style="display: block; text-align: center;">${detalle.Articulo}</span>
-                    </td>
-                    <td class="codigo-barras-cell" style="text-align: center;">
-                        <input id="codigo-barras" type="text" class="codigo-barras-input" 
-                        value="${detalle.codigoBarra || ""}" onchange="validarCodigoBarras(this)" 
-                        autofocus ${!desprachoIniciado ? 'disabled' : ''}>
-                    </td>
-                    <td class="codigo-barras-cell2" style="text-align: center;">
-                        <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" 
-                        value="${detalle.LineaContada || ""}" onchange="guardarTablaEnArray(this)" 
-                        ${!desprachoIniciado ? 'disabled' : ''}>
-                    </td>
-                    <td class="codigo-barras-cell2" style="text-align: center;">
-                        <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
-                    </td>
-                `;
-            tbody.appendChild(newRow);
-        }
+         } 
+        //else {
+        //   //desprachoIniciado = "true";
+        //   var newRow = document.createElement("tr");
+        //       newRow.innerHTML = `
+        //             <td>
+        //                 <span style="display: block; text-align: center;">${detalle.Articulo}</span>
+        //             </td>
+        //             <td class="codigo-barras-cell" style="text-align: center;">
+        //                 <input id="codigo-barras" type="text" class="codigo-barras-input" 
+        //                 value="${detalle.codigoBarra || ""}" onchange="validarCodigoBarras(this)" 
+        //                 autofocus ${!desprachoIniciado ? 'disabled' : ''}>
+        //             </td>
+        //             <td class="codigo-barras-cell2" style="text-align: center;">
+        //                 <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" 
+        //                 value="${detalle.LineaContada || ""}" onchange="guardarTablaEnArray(this)" 
+        //                 ${!desprachoIniciado ? 'disabled' : ''}>
+        //             </td>
+        //             <td class="codigo-barras-cell2" style="text-align: center;">
+        //                 <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
+        //             </td>
+        //         `;
+        //     tbody.appendChild(newRow);
+        // }
       }else{
         //  desprachoIniciado = false;
         //                           Swal.fire({
@@ -280,51 +285,51 @@ function armarTablaLectura(detalleLineasContenedor) {
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
-function verificacioniciardespacho() {
-    let pSistema = "WMS";
-    let pOpcion = "I";
-    let pUsuario = document.getElementById("usuario").innerHTML;
-    let pContenedor = localStorage.getItem("contenedor");
+// function verificacioniciardespacho() {
+//     let pSistema = "WMS";
+//     let pOpcion = "I";
+//     let pUsuario = document.getElementById("usuario").innerHTML;
+//     let pContenedor = localStorage.getItem("contenedor");
 
-          const params =
-                  "?pSistema=" +
-                  pSistema +
-                  "&pUsuario=" +
-                  pUsuario +
-                  "&pOpcion=" +
-                  pOpcion +
-                  "&pContenedor=" +
-                  pContenedor;
+//           const params =
+//                   "?pSistema=" +
+//                   pSistema +
+//                   "&pUsuario=" +
+//                   pUsuario +
+//                   "&pOpcion=" +
+//                   pOpcion +
+//                   "&pContenedor=" +
+//                   pContenedor;
 
 
-fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit) //obtierne las lineas del contenedor
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.msg === "SUCCESS") { 
-        if (result.rerspuesta.length != 0) {            
-            console.log('RESPUESTA: '+ result.rerspuesta[0].Respuesta);
-            if(result.rerspuesta[0].Respuesta==="CI"){
-                Swal.fire({
-                                    icon: "info",
-                                    title: "Conteo iniciado",
-                                    text: "Proceda a realizar el picking...",
-                                    confirmButtonColor: "#28a745",
-                                    confirmButtonText: "ok",                                    
-                                  });
-            }
+// fetch(env.API_URL + "wmsiniciaconteneo" + params, myInit) //obtierne las lineas del contenedor
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") { 
+//         if (result.rerspuesta.length != 0) {            
+//             console.log('RESPUESTA: '+ result.rerspuesta[0].Respuesta);
+//             if(result.rerspuesta[0].Respuesta==="CI"){
+//                 Swal.fire({
+//                                     icon: "info",
+//                                     title: "Conteo iniciado",
+//                                     text: "Proceda a realizar el picking...",
+//                                     confirmButtonColor: "#28a745",
+//                                     confirmButtonText: "ok",                                    
+//                                   });
+//             }
          
-        } else {
-          Swal.fire({
-            icon: "warning",
-            title: "¡Opss!",
-            text:" Problemas para iniciar el conteo...",
-            confirmButtonColor: "#28a745",
-          });
-        }
+//         } else {
+//           Swal.fire({
+//             icon: "warning",
+//             title: "¡Opss!",
+//             text:" Problemas para iniciar el conteo...",
+//             confirmButtonColor: "#28a745",
+//           });
+//         }
 
-      }
-    });
-}
+//       }
+//     });
+// }
 //_____________________________________________________________________________
 //_____________________________________________________________________________
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
@@ -420,11 +425,11 @@ function crearNuevaFila() {
     <td class="sticky-column" style="text-align: center;"><span style="display: inline-block;"></span></td>
     <td class="codigo-barras-cell" style="text-align: center;">
         <input type="text" style="text-align: center;" id="codigo-barras" class="codigo-barras-input" 
-        value="" onchange="validarCodigoBarras(this)" autofocus ${!desprachoIniciado ? 'disabled' : ''}>
+        value="" onchange="validarCodigoBarras(this)" autofocus >
     </td>
     <td class="codigo-barras-cell2" style="text-align: center;">
         <input id="cant-pedida" style="text-align: center;" type="text" class="codigo-barras-input" 
-        value="" onchange="validarCantidadPedida(this)" ${!desprachoIniciado ? 'disabled' : ''}>
+        value="" onchange="validarCantidadPedida(this)" >
     </td>
     <td class="codigo-barras-cell2" style="text-align: center;">
         <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
@@ -456,35 +461,52 @@ function validarCantidadPedida() {
 function guardarTablaEnArray() {
   var dataArray = [];
 
+  // --- PASO CLAVE NUEVO ---
+  // Antes de vaciar el localStorage, respaldamos lo que ya existía para no perder los tiempos originales
+  var localStoragePrevio = JSON.parse(localStorage.getItem("dataArray")) || [];
+  // Creamos un mapa rápido de Artículo -> Tiempo de Lectura para buscar al instante
+  var tiemposPreviosMap = {};
+  localStoragePrevio.forEach(function(oldItem) {
+    if (oldItem.ARTICULO && oldItem.TIEMPO_LECTURA) {
+      tiemposPreviosMap[oldItem.ARTICULO] = oldItem.TIEMPO_LECTURA;
+    }
+  });
+  // ------------------------
+
   var table = document.getElementById("myTableLectura");
   var rows = table.getElementsByTagName("tr");
 
   for (var i = 1; i < rows.length; i++) {
-    // Comenzamos desde 1 para omitir la fila de encabezado
     var row = rows[i];
     var cells = row.getElementsByTagName("td");
-    //aqui se seleccionan los elemendos de las columnas de la tabla lectura
 
     var articulo = cells[0].querySelector("span").textContent.trim();
     var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
     var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
 
     var codigoBarra = codigoBarraInput.value;
-
     var cantidadLeida = parseFloat(cantidadLeidaInput.value);
-    // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
 
     if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
+      
+      // Si el artículo ya tenía un tiempo registrado en el localStorage previo, lo preservamos.
+      // Si es un artículo totalmente nuevo en la lectura actual, le asignamos la hora de este segundo.
+      //var tiempoAsignado = tiemposPreviosMap[articulo] || new Date().toLocaleString('es-PA');
+       var tiempoAsignado = tiemposPreviosMap[articulo] || new Date();
+
+
       var rowData = {
         ARTICULO: articulo,
         CODIGO_BARRA: codigoBarra,
         CANTIDAD_LEIDA: cantidadLeida,
+        TIEMPO_LECTURA: tiempoAsignado // Aquí inyectamos el tiempo original preservado
       };
 
       dataArray.push(rowData);
     }
   }
 
+  // Ahora sí se sobreescribe de forma segura, porque dataArray ya lleva los tiempos viejos intactos
   localStorage.setItem("dataArray", JSON.stringify(dataArray));
 
   agrupar();
@@ -492,29 +514,118 @@ function guardarTablaEnArray() {
 
   return dataArray;
 }
+
+// function guardarTablaEnArray() {
+//   var dataArray = [];
+
+//   var table = document.getElementById("myTableLectura");
+//   var rows = table.getElementsByTagName("tr");
+
+//   for (var i = 1; i < rows.length; i++) {
+//     // Comenzamos desde 1 para omitir la fila de encabezado
+//     var row = rows[i];
+//     var cells = row.getElementsByTagName("td");
+//     //aqui se seleccionan los elemendos de las columnas de la tabla lectura
+
+//     var articulo = cells[0].querySelector("span").textContent.trim();
+//     var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
+//     var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
+   
+
+//     var codigoBarra = codigoBarraInput.value;
+
+//     var cantidadLeida = parseFloat(cantidadLeidaInput.value);
+//     // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
+
+//     if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
+//       var rowData = {
+//         ARTICULO: articulo,
+//         CODIGO_BARRA: codigoBarra,
+//         CANTIDAD_LEIDA: cantidadLeida,       
+//       };
+
+//       dataArray.push(rowData);
+//     }
+//   }
+
+//   localStorage.setItem("dataArray", JSON.stringify(dataArray));
+
+//   agrupar();
+//   actualizarProgresoLectura();
+
+//   return dataArray;
+// }
+
+
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
 ///////////////////////FUNCION QUE AGRUPA EL DATA ARRAY CON LAS LECTURAS DEL PEDIDO////////////////////
+
+
+// function agrupar() {
+//   // Obtener el arreglo almacenado en localStorage
+//   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];  
+
+//   // Objeto para almacenar las cantidades consolidadas
+//   var cantidadesConsolidadas = {};
+
+//   // Recorrer el arreglo dataArray
+//   dataArray.forEach(function (item) {
+//     var articulo = item.ARTICULO;
+//     var cantidad = item.CANTIDAD_LEIDA;
+
+//     // Verificar si ya existe una cantidad para este artículo
+//     if (cantidadesConsolidadas.hasOwnProperty(articulo)) {
+//       // Si existe, sumar la cantidad
+//       cantidadesConsolidadas[articulo] += cantidad;
+//     } else {
+//       // Si no existe, agregar una nueva entrada
+//       cantidadesConsolidadas[articulo] = cantidad;
+//     }
+//   });
+
+//   // Crear un nuevo arreglo con los resultados consolidados
+//   var newArray = [];
+//   for (var articulo in cantidadesConsolidadas) {
+//     if (cantidadesConsolidadas.hasOwnProperty(articulo)) {
+//       newArray.push({
+//         ARTICULO: articulo,
+//         CANTIDAD_LEIDA: cantidadesConsolidadas[articulo],      
+//       });
+//     }
+//   }
+
+//   // Actualizar el arreglo en localStorage con los resultados consolidados
+//   localStorage.setItem("dataArray", JSON.stringify(newArray));
+// }
 function agrupar() {
   // Obtener el arreglo almacenado en localStorage
   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
-
-  // Objeto para almacenar las cantidades consolidadas
+  
+  // Objeto para almacenar las cantidades y el primer tiempo de lectura
   var cantidadesConsolidadas = {};
 
   // Recorrer el arreglo dataArray
   dataArray.forEach(function (item) {
     var articulo = item.ARTICULO;
     var cantidad = item.CANTIDAD_LEIDA;
-
-    // Verificar si ya existe una cantidad para este artículo
+    
+    // Si el item ya trae un tiempo previo de lecturas anteriores, lo preservamos; 
+    // si no, usamos la hora exacta de este instante.
+    //var tiempoOriginal = item.TIEMPO_LECTURA || new Date().toLocaleString('es-PA');
+    var tiempoOriginal = item.TIEMPO_LECTURA || new Date();
+    // Verificar si ya existe una cantidad para este artículo en nuestro objeto de control
     if (cantidadesConsolidadas.hasOwnProperty(articulo)) {
-      // Si existe, sumar la cantidad
-      cantidadesConsolidadas[articulo] += cantidad;
+      // Si existe, SOLO sumamos la cantidad (respetando el tiempo que se guardó primero)
+      cantidadesConsolidadas[articulo].cantidad += cantidad;
     } else {
-      // Si no existe, agregar una nueva entrada
-      cantidadesConsolidadas[articulo] = cantidad;
+      // Si NO existe, creamos la entrada guardando la cantidad Y el tiempo original
+      cantidadesConsolidadas[articulo] = {
+        cantidad: cantidad,
+        tiempo: tiempoOriginal
+      };
     }
   });
 
@@ -524,7 +635,8 @@ function agrupar() {
     if (cantidadesConsolidadas.hasOwnProperty(articulo)) {
       newArray.push({
         ARTICULO: articulo,
-        CANTIDAD_LEIDA: cantidadesConsolidadas[articulo],
+        CANTIDAD_LEIDA: cantidadesConsolidadas[articulo].cantidad,
+        TIEMPO_LECTURA: cantidadesConsolidadas[articulo].tiempo // Mantiene la primera fecha fija
       });
     }
   }
@@ -532,6 +644,7 @@ function agrupar() {
   // Actualizar el arreglo en localStorage con los resultados consolidados
   localStorage.setItem("dataArray", JSON.stringify(newArray));
 }
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
@@ -594,6 +707,7 @@ function eliminarFila(icon) {
 //
 //_____________________________________________________________________________
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
+
 function armarTablaVerificacion(detalleLineasContenedor) {
   // Obtener la referencia del cuerpo de la tabla
   var tbody = document.getElementById("tblbodyLineasContenedor");
@@ -612,61 +726,245 @@ function armarTablaVerificacion(detalleLineasContenedor) {
     // Crear una nueva fila
     var newRow = document.createElement("tr");
 
+    // --- PARSEO DE VALORES ---
+    var consecutivo = parseFloat(detalle.LineaConsecutivo) || 0;
+    var contada = parseFloat(detalle.LineaContada) || 0;
+
+    // --- LÓGICA PARA LA LÍNEA CONTADA (CANT LEÍDA) ---
+    var mostrarLineaContada = contada === 0 ? "" : contada.toFixed(2);
+
+    // --- EVALUAR SI COINCIDEN PARA EL EFECTO VISUAL ---
+    var estanCompletos = consecutivo === contada && consecutivo > 0;
+    
+    // Determinamos el color y las clases del Artículo según el estado
+    var colorTextoHtml = estanCompletos ? 'style="color: #e15e0e;"' : '';
+    var claseArticulo = estanCompletos ? '' : 'class="blue-text text-darken-2 centered"';
+    
+    // Si están completos, inyectamos el icono check, si no, se queda vacío
+    var contenidoVerificado = estanCompletos 
+      ? '<span class="material-icons" style="color: #e15e0e;">done_all</span>' 
+      : '';
+
     if (detalle.total_cedi > 0) {
       // Construir el contenido de la fila usando variables HTML
       newRow.innerHTML = `
-            <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2 centered">${
-              detalle.Articulo
-            }</span></h5><h6>${detalle.Descripcion}</h6></td>
-            <td id="codigoDeBarras">${detalle.Codigo_Barra || ""}</td>
-           
-            <td id="cantidadPedida">${
-              isNaN(parseFloat(detalle.LineaConsecutivo))
-                ? 0
-                : parseFloat(detalle.LineaConsecutivo).toFixed(2)
-            }</td>
-            <td id="cantidadLeida"></td> <!-- Cantidad leída, inicialmente en blanco -->
-             <td id="totalCedi">${
+            <td id="articulo" ${colorTextoHtml}>
+              <h5 id="verifica-articulo">
+                <span ${claseArticulo} ${estanCompletos ? 'style="color: #e15e0e;"' : ''}>${detalle.Articulo}</span>
+              </h5>
+              <h6 ${estanCompletos ? 'style="color: #e15e0e;"' : ''}>${detalle.Descripcion}</h6>
+            </td>
+            <td id="codigoDeBarras" ${colorTextoHtml}>${detalle.Codigo_Barra || ""}</td>
+            <td id="cantidadPedida" ${colorTextoHtml}>${consecutivo.toFixed(2)}</td>
+            <td id="cantidadLeida" ${colorTextoHtml}>${mostrarLineaContada}</td> 
+            <td id="totalCedi" ${colorTextoHtml}>${
               isNaN(parseFloat(detalle.total_cedi))
                 ? 0
                 : parseFloat(detalle.total_cedi).toFixed(2)
             }</td>
-            <td id="verificado"></td> 
-            <td id="articulosEliminado" hidden>${
-              detalle.ARTICULO_ELIMINADO
-            }</td> 
-             <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
-      // Agregar la fila al cuerpo de la tabla
+            <td id="verificado">${contenidoVerificado}</td> 
+            <td id="articulosEliminado" hidden>${detalle.ARTICULO_ELIMINADO}</td> 
+            <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
+      
       tbody.appendChild(newRow);
     } else {
-      // Construir el contenido de la fila usando variables HTML
+      // Bloque para cuando total_cedi <= 0 (Mantiene sus estilos rojos de alerta a menos que esté completo)
+      var claseArticuloRed = estanCompletos ? '' : 'class="red-text text-darken-4 centered"';
+      var claseDescripcionRed = estanCompletos ? '' : 'class="red-text text-darken-4"';
+      var claseCeldasRed = estanCompletos ? '' : 'class="red-text text-darken-4"';
+
       newRow.innerHTML = `
-                <td id="articulo" contenteditable="false"><h5 id="verifica-articulo"><span class="red-text text-darken-4 centered">${
-                  detalle.Articulo
-                }</span></h5><h6 class="red-text text-darken-4">${
-                  detalle.Descripcion
-                }</h6></td>
-                <td id="codigoDeBarras" contenteditable="false" class="red-text text-darken-4">${
+                <td id="articulo" contenteditable="false" ${colorTextoHtml}>
+                  <h5 id="verifica-articulo">
+                    <span ${claseArticuloRed} ${estanCompletos ? 'style="color: #e15e0e;"' : ''}>${detalle.Articulo}</span>
+                  </h5>
+                  <h6 ${claseDescripcionRed} ${estanCompletos ? 'style="color: #e15e0e;"' : ''}>${detalle.Descripcion}</h6>
+                </td>
+                <td id="codigoDeBarras" contenteditable="false" ${estanCompletos ? colorTextoHtml : claseCeldasRed}>${
                   detalle.Codigo_Barra || ""
                 }</td>
-                <td id="cantidadPedida" contenteditable="false" class="red-text text-darken-4">${
-                  isNaN(parseFloat(detalle.LineaConsecutivo))
-                    ? 0
-                    : parseFloat(detalle.LineaConsecutivo).toFixed(2)
-                }</td>
-                <td id="cantidadLeida" contenteditable="false" class="red-text text-darken-4"></td> <!-- Cantidad leída, inicialmente en blanco -->
-                 <td id="totalCedi">${0.0}</td>
-                <td id="verificado" contenteditable="false"></td> 
-                <td id="articulosEliminado" hidden>${
-                  detalle.ARTICULO_ELIMINADO
-                }</td> 
+                <td id="cantidadPedida" contenteditable="false" ${estanCompletos ? colorTextoHtml : claseCeldasRed}>${consecutivo.toFixed(2)}</td>
+                <td id="cantidadLeida" contenteditable="false" ${estanCompletos ? colorTextoHtml : claseCeldasRed}>${mostrarLineaContada}</td> 
+                <td id="totalCedi" ${colorTextoHtml}>${0.0}</td>
+                <td id="verificado" contenteditable="false">${contenidoVerificado}</td> 
+                <td id="articulosEliminado" hidden>${detalle.ARTICULO_ELIMINADO}</td> 
                 <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
-      // Agregar la fila al cuerpo de la tabla
+      
       tbody.appendChild(newRow);
     }
   });
   actualizarTotalesTablaVerificacion();
 }
+
+
+// function armarTablaVerificacion(detalleLineasContenedor) {
+//   // Obtener la referencia del cuerpo de la tabla
+//   var tbody = document.getElementById("tblbodyLineasContenedor");
+
+//   // Limpiar el contenido actual del cuerpo de la tabla
+//   tbody.innerHTML = "";
+
+//   // Obtener la referencia del label cantidadDeRegistros
+//   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
+//   // Actualizar el texto del label con la cantidad de registros
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detalleLineasContenedor.length;
+
+//   // Iterar sobre cada elemento en detalleLineasContenedor
+//   detalleLineasContenedor.forEach(function (detalle) {
+//     // Crear una nueva fila
+//     var newRow = document.createElement("tr");
+
+//     // --- LOGICA PARA LA LINEA CONTADA (CANT LEIDA) ---
+//     // Si es NaN, nulo o igual a 0, se asigna un string vacío "" para que no muestre nada
+//     var valorLineaContada = parseFloat(detalle.LineaContada);
+//     var mostrarLineaContada = isNaN(valorLineaContada) || valorLineaContada === 0 
+//       ? "" 
+//       : valorLineaContada.toFixed(2);
+//     // -------------------------------------------------
+
+//     if (detalle.total_cedi > 0) {
+//       // Construir el contenido de la fila usando variables HTML
+//       newRow.innerHTML = `
+//             <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2 centered">${
+//               detalle.Articulo
+//             }</span></h5><h6>${detalle.Descripcion}</h6></td>
+//             <td id="codigoDeBarras">${detalle.Codigo_Barra || ""}</td>
+           
+//             <td id="cantidadPedida">${
+//               isNaN(parseFloat(detalle.LineaConsecutivo))
+//                 ? 0
+//                 : parseFloat(detalle.LineaConsecutivo).toFixed(2)
+//             }</td>
+//             <td id="cantidadLeida">${mostrarLineaContada}</td> 
+//              <td id="totalCedi">${
+//               isNaN(parseFloat(detalle.total_cedi))
+//                 ? 0
+//                 : parseFloat(detalle.total_cedi).toFixed(2)
+//             }</td>
+//             <td id="verificado"></td> 
+//             <td id="articulosEliminado" hidden>${
+//               detalle.ARTICULO_ELIMINADO
+//             }</td> 
+//              <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
+//       // Agregar la fila al cuerpo de la tabla
+//       tbody.appendChild(newRow);
+//     } else {
+//       // Construir el contenido de la fila usando variables HTML
+//       newRow.innerHTML = `
+//                 <td id="articulo" contenteditable="false"><h5 id="verifica-articulo"><span class="red-text text-darken-4 centered">${
+//                   detalle.Articulo
+//                 }</span></h5><h6 class="red-text text-darken-4">${
+//                   detalle.Descripcion
+//                 }</h6></td>
+//                 <td id="codigoDeBarras" contenteditable="false" class="red-text text-darken-4">${
+//                   detalle.Codigo_Barra || ""
+//                 }</td>
+//                 <td id="cantidadPedida" contenteditable="false" class="red-text text-darken-4">${
+//                   isNaN(parseFloat(detalle.LineaConsecutivo))
+//                     ? 0
+//                     : parseFloat(detalle.LineaConsecutivo).toFixed(2)
+//                 }</td>
+//                 <td id="cantidadLeida" contenteditable="false" class="red-text text-darken-4">${mostrarLineaContada}</td> 
+//                 <td id="totalCedi">${0.0}</td>
+//                 <td id="verificado" contenteditable="false"></td> 
+//                 <td id="articulosEliminado" hidden>${
+//                   detalle.ARTICULO_ELIMINADO
+//                 }</td> 
+//                 <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
+//       // Agregar la fila al cuerpo de la tabla
+//       tbody.appendChild(newRow);
+//     }
+//   });
+//   actualizarTotalesTablaVerificacion();
+// }
+
+
+
+// function armarTablaVerificacion(detalleLineasContenedor) {
+//   // Obtener la referencia del cuerpo de la tabla
+//   var tbody = document.getElementById("tblbodyLineasContenedor");
+
+//   // Limpiar el contenido actual del cuerpo de la tabla
+//   tbody.innerHTML = "";
+
+//   // Obtener la referencia del label cantidadDeRegistros
+//   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
+//   // Actualizar el texto del label con la cantidad de registros
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detalleLineasContenedor.length;
+
+//   // Iterar sobre cada elemento en detalleLineasContenedor
+//   detalleLineasContenedor.forEach(function (detalle) {
+//     // Crear una nueva fila
+//     var newRow = document.createElement("tr");
+
+//     if (detalle.total_cedi > 0) {
+//       // Construir el contenido de la fila usando variables HTML
+//       newRow.innerHTML = `
+//             <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2 centered">${
+//               detalle.Articulo
+//             }</span></h5><h6>${detalle.Descripcion}</h6></td>
+//             <td id="codigoDeBarras">${detalle.Codigo_Barra || ""}</td>
+           
+//             <td id="cantidadPedida">${
+//               isNaN(parseFloat(detalle.LineaConsecutivo))
+//                 ? 0
+//                 : parseFloat(detalle.LineaConsecutivo).toFixed(2)
+//             }</td>
+//             <td id="cantidadLeida">${
+//               isNaN(parseFloat(detalle.LineaContada))
+//                 ? 0
+//                 : parseFloat(detalle.LineaContada).toFixed(2)
+//             }</td> <!-- Cantidad leída, inicialmente en blanco -->
+//              <td id="totalCedi">${
+//               isNaN(parseFloat(detalle.total_cedi))
+//                 ? 0
+//                 : parseFloat(detalle.total_cedi).toFixed(2)
+//             }</td>
+//             <td id="verificado"></td> 
+//             <td id="articulosEliminado" hidden>${
+//               detalle.ARTICULO_ELIMINADO
+//             }</td> 
+//              <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
+//       // Agregar la fila al cuerpo de la tabla
+//       tbody.appendChild(newRow);
+//     } else {
+//       // Construir el contenido de la fila usando variables HTML
+//       newRow.innerHTML = `
+//                 <td id="articulo" contenteditable="false"><h5 id="verifica-articulo"><span class="red-text text-darken-4 centered">${
+//                   detalle.Articulo
+//                 }</span></h5><h6 class="red-text text-darken-4">${
+//                   detalle.Descripcion
+//                 }</h6></td>
+//                 <td id="codigoDeBarras" contenteditable="false" class="red-text text-darken-4">${
+//                   detalle.Codigo_Barra || ""
+//                 }</td>
+//                 <td id="cantidadPedida" contenteditable="false" class="red-text text-darken-4">${
+//                   isNaN(parseFloat(detalle.LineaConsecutivo))
+//                     ? 0
+//                     : parseFloat(detalle.LineaConsecutivo).toFixed(2)
+//                 }</td>
+//                 <td id="cantidadLeida" contenteditable="false" class="red-text text-darken-4">
+//                 ${isNaN(parseFloat(detalle.LineaContada))
+//                 ? 0
+//                 : parseFloat(detalle.LineaContada).toFixed(2)}
+                
+//                 </td> <!-- Cantidad leída, inicialmente en blanco -->
+//                 <td id="totalCedi">${0.0}</td>
+//                 <td id="verificado" contenteditable="false"></td> 
+//                 <td id="articulosEliminado" hidden>${
+//                   detalle.ARTICULO_ELIMINADO
+//                 }</td> 
+//                 <td id="solicitud" hidden>${detalle.Solicitud}</td>`;
+//       // Agregar la fila al cuerpo de la tabla
+//       tbody.appendChild(newRow);
+//     }
+//   });
+//   actualizarTotalesTablaVerificacion();
+// }
+
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
@@ -676,7 +974,9 @@ function limpiarMensajes() {
   const mensajeTextArea = document.getElementById("mensajeText");
   mensajeTextArea.value = "";
   // Limpiar la variable 'mensajes' del localStorage
+  //window.location.reload();
   guardarTablaEnArray();
+
 }
 //_____________________________________________________________________________
 //
@@ -684,41 +984,34 @@ function limpiarMensajes() {
 //FUNCION QUE VERIFICA LAS COINCIDENCIAS,TOMA LOS VALORES DE LAS CANTIDADES
 // POR ARTICULO, COMPARA LO QUE TIENE EL ARRAY DEL LS Y VERIFICA LAS COINCIDENCIAS, PARA MOSTRARLO EN LA PESTAÑA VERIFICACION
 function verificacion() {
-  var dataArray = JSON.parse(localStorage.getItem("dataArray"));
+  var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
 
   // Obtener la tabla por su ID
   const tabla = document.getElementById("myTableVerificacion");
 
-  // Verificar si la tabla existe
+  // 1. Limpiador inicial inteligente
   if (tabla) {
-    // Obtener el tbody de la tabla
     const tbody = tabla.querySelector("tbody");
-
-    // Buscar todas las filas (tr) dentro del tbody
     const filas = tbody.querySelectorAll("tr");
 
-    // Iterar a través de las filas
     filas.forEach((fila) => {
-      // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
-      const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
+      const celdaARTICULO = fila.querySelector("h5");
       const verifcheck = fila.querySelector("#verificado");
-      if (cantidadLeidaCell) {
-        cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
-      }
-
-      if (verifcheck) {
-        verifcheck.textContent = ""; // Vacía el contenido de la celda
+      
+      if (celdaARTICULO) {
+        var articuloFila = celdaARTICULO.textContent.trim();
+        var tieneLecturaActual = dataArray.some(item => item.ARTICULO === articuloFila);
+        
+        if (tieneLecturaActual && verifcheck) {
+          verifcheck.textContent = ""; 
+        }
       }
     });
   }
 
-  // Objeto para almacenar los totales de cantidades
+  // Objeto para almacenar los totales de cantidades leídas en la sesión actual
   var cantidadesTotales = {};
 
-  // Crear un nuevo array con los resultados
-  var resultadoArray = [];
-
-  // Bucle para buscar coincidencias y sumar cantidades
   dataArray.forEach(function (item) {
     var articulo = item.ARTICULO;
     var cantidad = item.CANTIDAD_LEIDA;
@@ -728,138 +1021,290 @@ function verificacion() {
     } else {
       cantidadesTotales[articulo] = cantidad;
     }
-
-    // Verificar si la cantidad total coincide con la cantidad leída
-    if (cantidadesTotales[articulo] === cantidad) {
-      resultadoArray.push(item);
-      delete cantidadesTotales[articulo];
-    }
   });
 
-  // Agregar las cantidades totales restantes al resultadoArray
-  for (var articulo in cantidadesTotales) {
+  // Convertimos el mapa agrupado de la sesión a un array analizable
+  var resultadoArray = [];
+  for (var art in cantidadesTotales) {
     resultadoArray.push({
-      ARTICULO: articulo,
-      CANTIDAD_LEIDA: cantidadesTotales[articulo],
+      ARTICULO: art,
+      CANTIDAD_LEIDA: cantidadesTotales[art]
     });
   }
 
-  //Agregar resto de verificación
   var LineasContenedor = detalleLineasContenedor;
-
-  // Array para almacenar los mensajes
   const mensajesArray = [];
+
+  // Analizar y contrastar cada resultado de la lectura física
   resultadoArray.forEach((resultado) => {
-    const pedido = LineasContenedor.find(
-      (pedido) =>
-        pedido.Articulo === resultado.ARTICULO &&
-        parseFloat(pedido.LineaConsecutivo) ===
-          parseFloat(resultado.CANTIDAD_LEIDA)
-    );
+    const pedido = LineasContenedor.find(p => p.Articulo === resultado.ARTICULO);
 
     if (pedido) {
-      // Buscar la tabla por su ID
-      const tabla = document.getElementById("myTableVerificacion");
-
-      // Verificar si la tabla existe
       if (tabla) {
-        // Obtener el tbody de la tabla
         const tbody = tabla.querySelector("tbody");
-
-        // Buscar todas las filas (tr) dentro del tbody
         const filas = tbody.querySelectorAll("tr");
 
-        // Iterar a través de las filas
         filas.forEach((fila) => {
-          // Encontrar la celda (td) con el valor de ARTICULO
-
           const celdaARTICULO = fila.querySelector("h5");
 
-          // Verificar si la celda contiene el mismo valor que resultado.ARTICULO
-          //compara la cantidad del detalle del pedido con la cantidad de lo leido.
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
-            // Encontrar la celda con el id "verificado"
+          if (celdaARTICULO && celdaARTICULO.textContent.trim() === resultado.ARTICULO) {
             const celdaVerificado = fila.querySelector("#verificado");
-
-            // Agregar el "Verificado" en la celda
-            if (celdaVerificado) {
-              celdaVerificado.textContent = "";
-              // Crear un elemento <span> para el ícono de Material Icons
-              const spanVerificacion = document.createElement("span");
-              spanVerificacion.classList.add("material-icons");
-              spanVerificacion.textContent = "done_all"; // Texto que indica qué ícono de Material Icons se mostrará
-              // Establecer el color verde en línea
-              spanVerificacion.style.color = "green";
-              // Agregar el span a la celda
-              celdaVerificado.appendChild(spanVerificacion);
-            }
-            // Encuentra la celda de "CANTIDAD LEIDA" en cada fila para colocar la cantidad que fue leida
-            // const cantidadVerificadaCell = fila.querySelector('[id="cantidadLeida"]');
             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+            const cantPedida = fila.querySelector("#cantidadPedida");
+
+            // Extraemos valores para el cálculo
+            let conteoPrevioBaseDeDatos = parseFloat(pedido.LineaContada) || 0;
+            let lecturaSesionActual = parseFloat(resultado.CANTIDAD_LEIDA) || 0;
+            let totalAcumuladoReal = conteoPrevioBaseDeDatos + lecturaSesionActual;
+            let cantidadSolicitada = parseFloat(cantPedida.textContent) || 0;
+
+            // Inyectamos el gran total acumulado en la celda
             if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+              cantidadVerificadaCell.textContent = totalAcumuladoReal.toFixed(2);
+            }
+
+            // --- CASO 1: LAS CANTIDADES COINCIDEN (VERIFICADO) ---
+            if (totalAcumuladoReal === cantidadSolicitada) {
+              if (celdaVerificado) {
+                celdaVerificado.innerHTML = "";
+                const spanVerificacion = document.createElement("span");
+                spanVerificacion.classList.add("material-icons");
+                spanVerificacion.textContent = "done_all"; 
+                spanVerificacion.style.color = "green";
+                celdaVerificado.appendChild(spanVerificacion);
+              }
+
+              // --- NUEVO CAMBIO DE COLOR ---
+              // Obtenemos todas las celdas de la fila y les aplicamos el color #e15e0e
+              const celdasFila = fila.querySelectorAll("td");
+              celdasFila.forEach((celda) => {
+                // Cambiar el color de texto de la celda
+                celda.style.color = "green";
+                
+                // Si la celda contiene etiquetas internas como h5, h6 o span (caso de la columna Artículo),
+                // forzamos también el color en ellas para sobreescribir estilos previos de Materialize.
+                const elementosInternos = celda.querySelectorAll("h5, h6, span");
+                elementosInternos.forEach((el) => {
+                  el.style.color = "green";
+                  // Quitamos clases de Materialize que fuercen azul o rojo para que no hagan conflicto
+                  el.className = el.className.replace(/\b(blue|red)-text\b/g, "");
+                });
+              });
+              // ------------------------------
+
+            // --- CASO 2: LA CANTIDAD ES MAYOR ---
+            } else if (totalAcumuladoReal > cantidadSolicitada) {
+              var resultadoOperacion = "+" + (totalAcumuladoReal - cantidadSolicitada).toFixed(2);
+              if (celdaVerificado) celdaVerificado.textContent = resultadoOperacion;
+              
+              const mensaje = `*La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
+              mensajesArray.push(mensaje);
+
+              // Resetear el color por si acaso la fila cambia de estado dinámicamente
+              fila.querySelectorAll("td").forEach(td => td.style.color = "");
+
+            // --- CASO 3: LA CANTIDAD ES MENOR ---
+            } else if (totalAcumuladoReal < cantidadSolicitada && totalAcumuladoReal > 0) {
+              var resultadoOperacion = (totalAcumuladoReal - cantidadSolicitada).toFixed(2);
+              if (celdaVerificado) celdaVerificado.textContent = resultadoOperacion;
+              
+              const mensaje = `>La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
+              mensajesArray.push(mensaje);
+
+              // Resetear el color por si acaso la fila cambia de estado dinámicamente
+              fila.querySelectorAll("td").forEach(td => td.style.color = "");
             }
           }
         });
-      }
-      //limpiarMensajes();
-    }
-    //No hay coincidencias
-    else {
-      // Buscar la tabla por su ID
-      const tabla = document.getElementById("myTableVerificacion");
-      // Array para almacenar mensajes de verificación
-      if (tabla) {
-        // Obtener el tbody de la tabla
-        const tbody = tabla.querySelector("tbody");
-
-        // Buscar todas las filas (tr) dentro del tbody
-        const filas = tbody.querySelectorAll("tr");
-
-        // Iterar a través de las filas
-        filas.forEach((fila) => {
-          // Encontrar la celda (td) con el valor de ARTICULO
-
-          const celdaARTICULO = fila.querySelector("h5");
-
-          // Verificar si la celda contiene el mismo valor que resultado.ARTICULO en la fila correspondiente
-          if ( celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
-            // Encontrar la celda con el id "verificado"
-            const celdaVerificado = fila.querySelector("#verificado");
-
-            // Encuentra la celda de "CANT VERIF" en cada fila segun el codigo del artículo
-            const cantPedida = fila.querySelector("#cantidadPedida");
-            const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
-
-            if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
-              var resultadoOperacion ="+" +(resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
-              celdaVerificado.textContent = resultadoOperacion;
-              // Agregar el mensaje directamente al textarea
-              const mensaje = `*La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
-              mensajesArray.push(mensaje);
-            } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
-              var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
-              celdaVerificado.textContent = resultadoOperacion;
-              // Agregar el mensaje directamente al textarea
-              const mensaje = `>La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
-              mensajesArray.push(mensaje);
-            }
-            // Encuentra la celda de "CANTIDAD VERIFICADA" en cada fila para colocar la cantidad que fue leida
-            if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
-            }
-          }
-        }); //fin del forEach
         localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
       }
     }
   });
-  guardaAutomaticante();
+
   actualizarTotalesTablaVerificacion(detalleLineasContenedor);
-} 
+}
+// function verificacion() {
+//   var dataArray = JSON.parse(localStorage.getItem("dataArray"));
+
+//   // Obtener la tabla por su ID
+//   const tabla = document.getElementById("myTableVerificacion");
+
+//   // Verificar si la tabla existe
+//   if (tabla) {
+//     // Obtener el tbody de la tabla
+//     const tbody = tabla.querySelector("tbody");
+
+//     // Buscar todas las filas (tr) dentro del tbody
+//     const filas = tbody.querySelectorAll("tr");
+
+//     // Iterar a través de las filas
+//     filas.forEach((fila) => {
+//       // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
+//       const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
+//       const verifcheck = fila.querySelector("#verificado");
+//       if (cantidadLeidaCell) {
+//         cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
+//       }
+
+//       if (verifcheck) {
+//         verifcheck.textContent = ""; // Vacía el contenido de la celda
+//       }
+//     });
+//   }
+
+//   // Objeto para almacenar los totales de cantidades
+//   var cantidadesTotales = {};
+
+//   // Crear un nuevo array con los resultados
+//   var resultadoArray = [];
+
+//   // Bucle para buscar coincidencias y sumar cantidades
+//   dataArray.forEach(function (item) {
+//     var articulo = item.ARTICULO;
+//     var cantidad = item.CANTIDAD_LEIDA;
+
+//     if (cantidadesTotales[articulo]) {
+//       cantidadesTotales[articulo] += cantidad;
+//     } else {
+//       cantidadesTotales[articulo] = cantidad;
+//     }
+
+//     // Verificar si la cantidad total coincide con la cantidad leída
+//     if (cantidadesTotales[articulo] === cantidad) {
+//       resultadoArray.push(item);
+//       delete cantidadesTotales[articulo];
+//     }
+//   });
+
+//   // Agregar las cantidades totales restantes al resultadoArray
+//   for (var articulo in cantidadesTotales) {
+//     resultadoArray.push({
+//       ARTICULO: articulo,
+//       CANTIDAD_LEIDA: cantidadesTotales[articulo],
+//     });
+//   }
+
+//   //Agregar resto de verificación
+//   var LineasContenedor = detalleLineasContenedor;
+
+//   // Array para almacenar los mensajes
+//   const mensajesArray = [];
+//   resultadoArray.forEach((resultado) => {
+//     const pedido = LineasContenedor.find(
+//       (pedido) =>
+//         pedido.Articulo === resultado.ARTICULO &&
+//         parseFloat(pedido.LineaConsecutivo) ===
+//           parseFloat(resultado.CANTIDAD_LEIDA)
+//     );
+
+//     if (pedido) {
+//       // Buscar la tabla por su ID
+//       const tabla = document.getElementById("myTableVerificacion");
+
+//       // Verificar si la tabla existe
+//       if (tabla) {
+//         // Obtener el tbody de la tabla
+//         const tbody = tabla.querySelector("tbody");
+
+//         // Buscar todas las filas (tr) dentro del tbody
+//         const filas = tbody.querySelectorAll("tr");
+
+//         // Iterar a través de las filas
+//         filas.forEach((fila) => {
+//           // Encontrar la celda (td) con el valor de ARTICULO
+
+//           const celdaARTICULO = fila.querySelector("h5");
+
+//           // Verificar si la celda contiene el mismo valor que resultado.ARTICULO
+//           //compara la cantidad del detalle del pedido con la cantidad de lo leido.
+//           if (
+//             celdaARTICULO &&
+//             celdaARTICULO.textContent === resultado.ARTICULO
+//           ) {
+//             // Encontrar la celda con el id "verificado"
+//             const celdaVerificado = fila.querySelector("#verificado");
+
+//             // Agregar el "Verificado" en la celda
+//             if (celdaVerificado) {
+//               celdaVerificado.textContent = "";
+//               // Crear un elemento <span> para el ícono de Material Icons
+//               const spanVerificacion = document.createElement("span");
+//               spanVerificacion.classList.add("material-icons");
+//               spanVerificacion.textContent = "done_all"; // Texto que indica qué ícono de Material Icons se mostrará
+//               // Establecer el color verde en línea
+//               spanVerificacion.style.color = "green";
+//               // Agregar el span a la celda
+//               celdaVerificado.appendChild(spanVerificacion);
+//             }
+//             // Encuentra la celda de "CANTIDAD LEIDA" en cada fila para colocar la cantidad que fue leida
+//             // const cantidadVerificadaCell = fila.querySelector('[id="cantidadLeida"]');
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+//             }
+//           }
+//         });
+//       }
+//       //limpiarMensajes();
+//     }
+//     //No hay coincidencias
+//     else {
+//       // Buscar la tabla por su ID
+//       const tabla = document.getElementById("myTableVerificacion");
+//       // Array para almacenar mensajes de verificación
+//       if (tabla) {
+//         // Obtener el tbody de la tabla
+//         const tbody = tabla.querySelector("tbody");
+
+//         // Buscar todas las filas (tr) dentro del tbody
+//         const filas = tbody.querySelectorAll("tr");
+
+//         // Iterar a través de las filas
+//         filas.forEach((fila) => {
+//           // Encontrar la celda (td) con el valor de ARTICULO
+
+//           const celdaARTICULO = fila.querySelector("h5");
+
+//           // Verificar si la celda contiene el mismo valor que resultado.ARTICULO en la fila correspondiente
+//           if ( celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
+//             // Encontrar la celda con el id "verificado"
+//             const celdaVerificado = fila.querySelector("#verificado");
+
+//             // Encuentra la celda de "CANT VERIF" en cada fila segun el codigo del artículo
+//             const cantPedida = fila.querySelector("#cantidadPedida");
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+
+//             if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
+//               var resultadoOperacion ="+" +(resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
+//               celdaVerificado.textContent = resultadoOperacion;
+//               // Agregar el mensaje directamente al textarea
+//               const mensaje = `*La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//             } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
+//               var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toString();
+//               celdaVerificado.textContent = resultadoOperacion;
+//               // Agregar el mensaje directamente al textarea
+//               const mensaje = `>La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//             }
+//             // Encuentra la celda de "CANTIDAD VERIFICADA" en cada fila para colocar la cantidad que fue leida
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+//             }
+//           }
+//         }); //fin del forEach
+//         localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//       }
+//     }
+//   });
+//   //guardaAutomaticante();
+//   actualizarTotalesTablaVerificacion(detalleLineasContenedor);
+// } 
+
+
+
+
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
@@ -981,8 +1426,7 @@ document
 function inicializarBotones() {
   const contenDetalleOPC = localStorage.getItem("contenDetalleOPC");
 
-  // Crear los botones y el contenedor
-  const contenedorBotones = document.createElement("div");
+  // 1. Crear los botones independientes
   const botonProcesar = document.createElement("button");
   const botonGuardarParcial = document.createElement("button");
   const retornar = document.createElement("button");
@@ -990,23 +1434,20 @@ function inicializarBotones() {
   // Configurar propiedades de los botones
   botonProcesar.textContent = "Procesar";
   botonProcesar.id = "btnProcesar";
-  // botonProcesar.hidden = false;
   botonProcesar.hidden = contenDetalleOPC === "A" ? true : false;
-  botonProcesar.onclick = confirmaProcesar; // Agregar onclick
+  botonProcesar.onclick = confirmaProcesar; 
 
   botonGuardarParcial.textContent = "Guardar";
   botonGuardarParcial.id = "btnGuardar";
-  // botonGuardarParcial.hidden = false;
   botonGuardarParcial.hidden = contenDetalleOPC === "A" ? true : false;
-  botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
+  botonGuardarParcial.onclick = confirmarGuardadoParcial; 
 
   retornar.textContent = "Retornar";
   retornar.id = "btnRetornar";
-  // retornar.hidden = false;
   retornar.hidden = contenDetalleOPC === "A" ? false : true;
-  retornar.onclick = retornarVistaAnterior; // Agregar onclick
+  retornar.onclick = retornarVistaAnterior; 
 
-  // Aplicar estilos al botón de guardado parcial
+  // --- ESTILOS GENERALES (Mantenemos tus medidas de WMS) ---
   botonGuardarParcial.style.backgroundColor = "#28a745";
   botonGuardarParcial.style.borderRadius = "5px";
   botonGuardarParcial.style.color = "white";
@@ -1016,17 +1457,15 @@ function inicializarBotones() {
   botonGuardarParcial.style.height = "36px";
   botonGuardarParcial.style.width = "100px";
 
-  // Aplicar estilos al botón de Procesar
   botonProcesar.style.width = "100px";
   botonProcesar.style.backgroundColor = "#28a745";
   botonProcesar.style.borderRadius = "5px";
   botonProcesar.style.color = "white";
   botonProcesar.style.marginTop = "16px";
-  botonProcesar.style.marginLeft = "6em";
+  botonProcesar.style.marginLeft = "16px"; // Ajustado para simetría individual
   botonProcesar.style.height = "36px";
-  botonProcesar.style.marginbottom = "25px";
+  botonProcesar.style.marginBottom = "25px";
 
-  // Aplicar estilos al botón de guardado retornar
   retornar.style.backgroundColor = "#28a745";
   retornar.style.borderRadius = "5px";
   retornar.style.color = "white";
@@ -1036,28 +1475,132 @@ function inicializarBotones() {
   retornar.style.height = "36px";
   retornar.style.width = "100px";
 
-  // Agregar botones al contenedor
-  contenedorBotones.appendChild(botonGuardarParcial);
-  contenedorBotones.appendChild(botonProcesar);
-  contenedorBotones.appendChild(retornar);
+  // --- INYECCIÓN QUIRÚRGICA POR PESTAÑA ---
 
-  // Obtener tabla de verificación
-  const tablaVerificacion = document.getElementById("myTableVerificacion");
+  // Obtener los contenedores de las pestañas del HTML
+  const pestañaLectura = document.getElementById("tabla-lectura");
+  const pestañaVerificacion = document.getElementById("tabla-verificacion");
 
-  // Insertar contenedor de botones después de la tabla de verificación
-  tablaVerificacion.parentNode.insertBefore(
-    contenedorBotones,
-    tablaVerificacion.nextSibling
-  );
+  // A. Lo que va en la pestaña de LECTURA (Guardar)
+  if (pestañaLectura) {
+    const divBotonesLectura = document.createElement("div");
+    divBotonesLectura.appendChild(botonGuardarParcial);
+    
+    // Si el flujo exige retornar, lo ponemos también en lectura
+    if (contenDetalleOPC === "A") {
+      divBotonesLectura.appendChild(retornar);
+    }
+    
+    pestañaLectura.appendChild(divBotonesLectura);
+  }
+
+  // B. Lo que va en la pestaña de VERIFICACIÓN (Procesar)
+  if (pestañaVerificacion) {
+    const divBotonesVerif = document.createElement("div");
+    divBotonesVerif.appendChild(botonProcesar);
+    
+    // Si necesitas que el retornar se vea en verificación cuando 'contenDetalleOPC' sea 'A'
+    if (contenDetalleOPC === "A") {
+      // Clonamos el botón o creamos otro para que no se mueva de pestaña
+      const retornarVerif = retornar.cloneNode(true);
+      retornarVerif.onclick = retornarVistaAnterior;
+      divBotonesVerif.appendChild(retornarVerif);
+    }
+
+    pestañaVerificacion.appendChild(divBotonesVerif);
+  }
 
   // Media query para pantallas grandes
   const mediaQuery = window.matchMedia("(min-width: 64em)");
   if (mediaQuery.matches) {
-    // Aplicar estilos específicos para pantallas grandes
     botonGuardarParcial.style.marginLeft = "200px";
-    botonProcesar.style.marginLeft = "500px";
+    botonProcesar.style.marginLeft = "200px"; 
   }
 }
+
+// function inicializarBotones() {
+//   const contenDetalleOPC = localStorage.getItem("contenDetalleOPC");
+
+//   // Crear los botones y el contenedor
+//   const contenedorBotones = document.createElement("div");
+//   const botonProcesar = document.createElement("button");
+//   const botonGuardarParcial = document.createElement("button");
+//   const retornar = document.createElement("button");
+
+//   // Configurar propiedades de los botones
+//   botonProcesar.textContent = "Procesar";
+//   botonProcesar.id = "btnProcesar";
+//   // botonProcesar.hidden = false;
+//   botonProcesar.hidden = contenDetalleOPC === "A" ? true : false;
+//   botonProcesar.onclick = confirmaProcesar; // Agregar onclick
+
+//   botonGuardarParcial.textContent = "Guardar";
+//   botonGuardarParcial.id = "btnGuardar";
+//   // botonGuardarParcial.hidden = false;
+//   botonGuardarParcial.hidden = contenDetalleOPC === "A" ? true : false;
+//   botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
+
+//   retornar.textContent = "Retornar";
+//   retornar.id = "btnRetornar";
+//   // retornar.hidden = false;
+//   retornar.hidden = contenDetalleOPC === "A" ? false : true;
+//   retornar.onclick = retornarVistaAnterior; // Agregar onclick
+
+//   // Aplicar estilos al botón de guardado parcial
+//   botonGuardarParcial.style.backgroundColor = "#28a745";
+//   botonGuardarParcial.style.borderRadius = "5px";
+//   botonGuardarParcial.style.color = "white";
+//   botonGuardarParcial.style.marginTop = "16px";
+//   botonGuardarParcial.style.marginLeft = "16px";
+//   botonGuardarParcial.style.marginRight = "16px";
+//   botonGuardarParcial.style.height = "36px";
+//   botonGuardarParcial.style.width = "100px";
+
+//   // Aplicar estilos al botón de Procesar
+//   botonProcesar.style.width = "100px";
+//   botonProcesar.style.backgroundColor = "#28a745";
+//   botonProcesar.style.borderRadius = "5px";
+//   botonProcesar.style.color = "white";
+//   botonProcesar.style.marginTop = "16px";
+//   botonProcesar.style.marginLeft = "6em";
+//   botonProcesar.style.height = "36px";
+//   botonProcesar.style.marginbottom = "25px";
+
+//   // Aplicar estilos al botón de guardado retornar
+//   retornar.style.backgroundColor = "#28a745";
+//   retornar.style.borderRadius = "5px";
+//   retornar.style.color = "white";
+//   retornar.style.marginTop = "16px";
+//   retornar.style.marginLeft = "16px";
+//   retornar.style.marginRight = "16px";
+//   retornar.style.height = "36px";
+//   retornar.style.width = "100px";
+
+//   // Agregar botones al contenedor
+//   contenedorBotones.appendChild(botonGuardarParcial);
+//   contenedorBotones.appendChild(botonProcesar);
+//   contenedorBotones.appendChild(retornar);
+
+//   // Obtener tabla de verificación
+//   const tablaVerificacion = document.getElementById("myTableVerificacion");
+//    const tablaLectura = document.getElementById("myTableLectura");
+
+//   // Insertar contenedor de botones después de la tabla de verificación
+//   tablaVerificacion.parentNode.insertBefore(
+//     contenedorBotones,
+//     tablaVerificacion.nextSibling
+//   );
+
+//   // Media query para pantallas grandes
+//   const mediaQuery = window.matchMedia("(min-width: 64em)");
+//   if (mediaQuery.matches) {
+//     // Aplicar estilos específicos para pantallas grandes
+//     botonGuardarParcial.style.marginLeft = "200px";
+//     botonProcesar.style.marginLeft = "500px";
+//   }
+// }
+
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
@@ -1082,7 +1625,7 @@ function mostrarProcesoEnConstruccion() {
 //_____________________________________________________________________________
 
 
-//FUNCION DE GUARDADO PARCIAL
+//FUNCION DE GUARDADO PARCIAL DE FORMA AUTOMÁTICA
 function guardaAutomaticante() {
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
@@ -1198,6 +1741,7 @@ function confirmarGuardadoParcial() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
+      verificacion();
       guardaParcialMente();
       Swal.fire({
         icon: "info",
@@ -1225,6 +1769,19 @@ function guardaParcialMente() {
   let pBodegaDestino = localStorage.getItem("bodega_solicita");
   let pUsuarioAutorizacion =
     localStorage.getItem("UsuarioAutorizacion") || null;
+    
+  // --- PASO CLAVE NUEVO ---
+  // 1. Traer el dataArray con las estampas de tiempo originales de la lectura
+  var dataArrayLectura = JSON.parse(localStorage.getItem("dataArray")) || [];
+  // 2. Crear un mapa para indexar el tiempo por ARTICULO
+  var mapaTiempos = {};
+  dataArrayLectura.forEach(function (item) {
+    if (item.ARTICULO && item.TIEMPO_LECTURA) {
+      mapaTiempos[item.ARTICULO.trim()] = item.TIEMPO_LECTURA;
+    }
+  });
+  // ------------------------
+
   // Obtener la tabla
   let table = document.getElementById("myTableVerificacion");
 
@@ -1232,7 +1789,7 @@ function guardaParcialMente() {
   for (let i = 1; i < table.rows.length - 1; i++) {
     let row = table.rows[i];
 
-    // Obtener lasolicitud
+    // Obtener la solicitud
     let solicitud = row.querySelector("#solicitud").textContent.trim();
 
     // Obtener el valor del artículo
@@ -1249,20 +1806,27 @@ function guardaParcialMente() {
     let cantidadLeida =
       row.querySelector("#cantidadLeida").textContent.trim() || 0;
 
-    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
+    // 3. Buscar si este artículo tiene un tiempo de lectura guardado en nuestro mapa
+    // Si no lo encuentra por alguna razón, podemos ponerle null o el tiempo actual como fallback
+    let tiempoLecturaAsociado = mapaTiempos[articulo] || null;
+
+    // Crear un objeto para cada fila incluyendo la propiedad TIEMPO_LECTURA
     var detalle = {
       SOLICITUD: solicitud,
       ARTICULO: articulo,
       CANT_CONSEC: cantidadPedida,
       CANT_LEIDA: cantidadLeida,
+      TIEMPO_LECTURA: tiempoLecturaAsociado // <-- Inyección del dato
     };
 
     // Agregar el objeto al array
     detalles.push(detalle);
   }
+  
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = encodeURIComponent(JSON.stringify(detalles));
   console.log("JSONDetalles:\n\t:" + decodeURIComponent(jsonDetalles) );
+  
   const params =
     "?pSistema=" +
     pSistema +
@@ -1284,46 +1848,147 @@ function guardaParcialMente() {
     pBodegaDestino +
     "&pUsuarioAutorizacion=" +
     pUsuarioAutorizacion;
-  ////console.log("Parametros: \n" + params);
+    
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      //console.log("Respuesta del SP");
-      //console.log(result.contenedor);
-      //console.log("mensaje " + result.message);
-
-      // //console.log("Respuesta Contenedor");
-      // //console.log(result);
-
       if (result.msg === "SUCCESS") {
         if (result.contenedor.length != 0) {
-          // Resto del código de éxito
           Swal.fire({
             icon: "success",
-            //title: "Datos guardados correctamente",
             title: result.message,
             confirmButtonText: "Aceptar",
             confirmButtonColor: "#28a745",
             cancelButtonColor: "#6e7881",
           }).then((result) => {
             if (result.isConfirmed) {
-              // Redirecciona a tu otra vista aquí
-              //localStorage.removeItem("desprachoIniciado"); 
-              //window.location.href = "BusquedaDeContenedores.html";
+              // refreshDetalleContenedor();
+              localStorage.setItem('guardado', true);
+              window.location.reload();
             }
           });
         }
       } else {
-        //console.log(result.message);
+        console.log(result.message);
       }
     });
-} //fin fn
+}
+
+// function guardaParcialMente() {
+//   let pSistema = "WMS";
+//   let pUsuario = document.getElementById("hUsuario").value;
+//   let pOpcion = "G";
+//   let pModulo = "WMS_BC";
+//   var pConsecutivo = localStorage.getItem("contenedor");
+//   // Array para almacenar todas las cantidades y artículos
+//   let detalles = [];
+//   let pEstado = null;
+//   let pBodegaEnvia = document.getElementById("bodega").value;
+//   let pBodegaDestino = localStorage.getItem("bodega_solicita");
+//   let pUsuarioAutorizacion =
+//     localStorage.getItem("UsuarioAutorizacion") || null;
+//   // Obtener la tabla
+//   let table = document.getElementById("myTableVerificacion");
+
+//   // Iterar sobre las filas de la tabla (excluyendo el encabezado)
+//   for (let i = 1; i < table.rows.length - 1; i++) {
+//     let row = table.rows[i];
+
+//     // Obtener lasolicitud
+//     let solicitud = row.querySelector("#solicitud").textContent.trim();
+
+//     // Obtener el valor del artículo
+//     let articulo = row
+//       .querySelector("#verifica-articulo span")
+//       .textContent.trim();
+
+//     // Obtener la cantidad pedida
+//     let cantidadPedida = row
+//       .querySelector("#cantidadPedida")
+//       .textContent.trim();
+
+//     // Obtener la cantidad leída
+//     let cantidadLeida =
+//       row.querySelector("#cantidadLeida").textContent.trim() || 0;
+
+//     // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
+//     var detalle = {
+//       SOLICITUD: solicitud,
+//       ARTICULO: articulo,
+//       CANT_CONSEC: cantidadPedida,
+//       CANT_LEIDA: cantidadLeida,
+//     };
+
+//     // Agregar el objeto al array
+//     detalles.push(detalle);
+//   }
+//   // Convertir el array de objetos a formato JSON
+//   var jsonDetalles = encodeURIComponent(JSON.stringify(detalles));
+//   console.log("JSONDetalles:\n\t:" + decodeURIComponent(jsonDetalles) );
+//   const params =
+//     "?pSistema=" +
+//     pSistema +
+//     "&pUsuario=" +
+//     pUsuario +
+//     "&pOpcion=" +
+//     pOpcion +
+//     "&pModulo=" +
+//     pModulo +
+//     "&pConsecutivo=" +
+//     pConsecutivo +
+//     "&jsonDetalles=" +
+//     jsonDetalles +
+//     "&pEstado=" +
+//     pEstado +
+//     "&pBodegaEnvia=" +
+//     pBodegaEnvia +
+//     "&pBodegaDestino=" +
+//     pBodegaDestino +
+//     "&pUsuarioAutorizacion=" +
+//     pUsuarioAutorizacion;
+//   ////console.log("Parametros: \n" + params);
+//   fetch(env.API_URL + "contenedor" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       //console.log("Respuesta del SP");
+//       //console.log(result.contenedor);
+//       //console.log("mensaje " + result.message);
+
+//       // //console.log("Respuesta Contenedor");
+//       // //console.log(result);
+
+//       if (result.msg === "SUCCESS") {
+//         if (result.contenedor.length != 0) {
+//           // Resto del código de éxito
+//           Swal.fire({
+//             icon: "success",
+//             //title: "Datos guardados correctamente",
+//             title: result.message,
+//             confirmButtonText: "Aceptar",
+//             confirmButtonColor: "#28a745",
+//             cancelButtonColor: "#6e7881",
+//           }).then((result) => {
+//             if (result.isConfirmed) {
+//               // Redirecciona a tu otra vista aquí
+//               //localStorage.removeItem("desprachoIniciado"); 
+//               //window.location.href = "BusquedaDeContenedores.html";
+//             }
+//           });
+//         }
+//       } else {
+//         //console.log(result.message);
+//       }
+//     });
+// } //fin fn
+
+
+
 //_____________________________________________________________________________
 //
 //_____________________________________________________________________________
 ///////FUNCION PARA PROCESAR//////
 function confirmaProcesar() {
-  // Obtener todas las celdas de verificación
+   // Obtener todas las celdas de verificación
   //var celdasVerificacion = document.querySelectorAll('#tblbodyLineasContenedor td#verificado');
 
   Swal.fire({
@@ -1756,3 +2421,101 @@ function inicioTotales() {
   };
 }
 
+//_____________________________________________________________________________
+//
+//_____________________________________________________________________________
+function refreshDetalleContenedor() {
+
+if (localStorage.getItem("contenedor")) {
+    let contenedor = localStorage.getItem("contenedor");
+    let bodegaSolicita = localStorage.getItem("bodega_solicita");
+    let estado_Pdt = localStorage.getItem("estado_Pdt");
+    cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt);
+  }else {
+    Swal.fire({
+      icon: "info",
+      title: "No hay contenedores",
+      text: "No hay lineas del contenedor disponibles en este momento.",
+    });
+  }
+
+
+  let pSistema = "WMS";
+  let pUsuario =
+    document.getElementById("usuario").innerText ||
+    document.getElementById("usuario").innerHTML;
+  let opcion = localStorage.getItem("contenDetalleOPC");
+  let pOpcion = "LW";
+  if (opcion === "A") {
+    pOpcion = "LW";
+  }
+
+  let pBodegaEnvia = document.getElementById("bodega").value;
+  let pBodegaSolicita = bodegaSolicita;
+  let pConsecutivo = contenedor;
+  let pEstado = estado_Pdt;
+
+  // Concatena la variable con texto y asigna el valor al label documento y pedido
+  document.getElementById("contenedor").innerHTML =
+    "Número de Contenedor: " + contenedor;
+  document.getElementById("bodega_solicita").innerHTML =
+    "Bodega destino: " + bodegaSolicita;
+
+  const params =
+    "?pSistema=" +
+    pSistema +
+    "&pUsuario=" +
+    pUsuario +
+    "&pOpcion=" +
+    pOpcion +
+    "&pBodegaEnvia=" +
+    pBodegaEnvia +
+    "&pBodegaSolicita=" +
+    pBodegaSolicita +
+    "&pConsecutivo=" +
+    pConsecutivo +
+    "&pEstado=" +
+    pEstado;
+
+
+  fetch(env.API_URL + "contenedor" + params, myInit) //obtierne las lineas del contenedor
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS") {
+     
+            console.log(result.contenedor)
+            actualizarProgresoLectura()       
+        if (result.contenedor.length != 0) {
+          detalleLineasContenedor = result.contenedor;
+          const siGuardadoParcial = detalleLineasContenedor.some(
+            (detalle) =>
+              detalle.LineaContada != null && detalle.LineaContada !== "" && detalle.LineaContada !=0,
+          );                     
+               if (siGuardadoParcial) {
+                                            
+                      //armarTablaLectura(detalleLineasContenedor);
+                      armarTablaVerificacion(detalleLineasContenedor); 
+                      guardarTablaEnArray();
+                      // verificacioniciardespacho();
+                     
+                    }else{
+                                               
+                        armarTablaVerificacion(detalleLineasContenedor);  
+                    }         
+
+            } else {
+              Swal.fire({
+                icon: "warning",
+                title: "¡Contenedor sin lineas!",
+                text:
+                  "El contenedor " +
+                  contenedor +
+                  " no cuenta con lineas para verificar",
+                confirmButtonColor: "#28a745",
+              });
+            }
+
+        
+      }
+    });
+}
