@@ -49,22 +49,42 @@
         <h2 style="text-align:center ; text-transform: uppercase;">Lineas de contenedor</h2>
         <div class="row"><label id="contenedor"></label></div>
         <div class="row"><label id="bodega_solicita"></label></div>
-          <!-- Boton Iniciar Despacho -->
+        <!-- Boton Iniciar Despacho -->
         <div class="row col-md-12 S12" id="indespacho-conten-btn">
-        <!-- <button id="btniniciardespacho" class="btn-iniciar-despacho" type="submit" onclick="validaInicioConteo()"> 
+          <!-- <button id="btniniciardespacho" class="btn-iniciar-despacho" type="submit" onclick="validaInicioConteo()"> 
           Iniciar Despacho
         </button> -->
-        <button id="btn-regresar" class="btn-regresar" type="button" onclick="retornarVistaAnterior()"> 
-         Regresar
-        </button>
-      </div>
+          <button id="btn-regresar" class="btn-regresar" type="button" onclick="retornarVistaAnterior()">
+            Regresar
+          </button>
+        </div>
 
-        <div class="row">
+        <!-- <div class="row">
           <ul id="tabs-swipe-demo" class="tabs">
             <li class="tab col s3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
             <li class="tab col s3"><a href="#tabla-verificacion" onclick="verificacion()">VERFICACIÓN</a></li>
           </ul>
-          <div id="tabla-lectura" class="col s12">
+          <div id="tabla-lectura" class="col s12"> -->
+          <div class="row">
+            <ul id="tabs-swipe-demo" class="tabs" style="display: flex; align-items: center;">
+              <li class="tab col s4 m3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
+              <li class="tab col s4 m3"><a href="#tabla-verificacion" onclick="verificacion()">VERIFICACIÓN</a></li>
+          
+              <li style="margin-left: auto; padding-right: 15px; display: flex; align-items: center; gap: 16px;">
+                <i class="material-icons green-text text-darken-2"
+                  style="cursor: pointer; font-size: 26px; transition: transform 0.2s;" onclick="window.location.reload();"
+                  title="Refrescar Pantalla" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  refresh
+                </i>          
+                <i class="material-icons blue-text" style="cursor: pointer; font-size: 26px; transition: transform 0.2s;"
+                  onclick="mostrarInfoColores()" title="Información de Colores" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  info
+                </i>
+              </li>
+            </ul>          
+            <div id="tabla-lectura" class="col s12">
             <div class="row">
               <label id="progresoLecturaLabel">
                 Progreso: 0/0
@@ -86,11 +106,11 @@
                     </td>
                     <td class="codigo-barras-cell">
                       <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCodigoBarras(this)" >
+                        onchange="validarCodigoBarras(this)">
                     </td>
                     <td class="codigo-barras-cell2">
                       <input id="cant-pedida" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCantidadPedida(this)" >
+                        onchange="validarCantidadPedida(this)">
                     </td>
                     <td class="codigo-barras-cell2">
                       <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
@@ -100,7 +120,7 @@
               </table>
             </div>
             <div class="row">
-              
+
             </div>
           </div>
           <div id="tabla-verificacion" class="col s12">
@@ -145,8 +165,9 @@
   <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
   <script type="text/javascript" src="js/main.js?v1.1" defer></script>
   <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/lineasContenedor.js?v1.1" defer></script>
   <script type="text/javascript" src="js/loader.js"></script>
+  <script type="text/javascript" src="js/lineasContenedor.js?v1.1" defer></script>
+
 </body>
 
 </html>

@@ -198,12 +198,18 @@ function enviarDatosControlador(
         } else {
           document.getElementById("resultadoGeneral").innerHTML = "";
           document.getElementById("resultadoPaginador").innerHTML = "";
+          
           Swal.fire({
             icon: "info",
             title: "Información",
             text: "No hay registros asignados para el usuario: " + pUsuario,
             confirmButtonColor: "#28a745",
-          });
+          }).then((result) => {
+            if (result.isConfirmed) {
+              localStorage.removeItem('parametrosBusquedaContenedor');
+              localStorage.removeItem('SearchParameterFlag');
+              window.location.reload();
+            }});
           ocultarLoader();
         }
       } else {

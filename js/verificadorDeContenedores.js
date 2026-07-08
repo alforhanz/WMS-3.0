@@ -78,7 +78,7 @@ function validarBusquedaContenedor() {
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//LLama al API para armar las tablas
+
 function enviarDatosControlador(params) {
   console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
 
@@ -88,13 +88,17 @@ function enviarDatosControlador(params) {
       if (result.msg === "SUCCESS") {
         ocultarLoader();
         detalleLineasContenedoreses = result.respuesta;
-        if (result.respuesta.length != 0) {
+        
+        if (result.respuesta && result.respuesta.length > 0) {
+          // --- NUEVA VALIDACIÓN: HABILITAR BOTONES ---
+          alternarEstadoBotonesAccion(true);
+          // ------------------------------------------
+
           armarTablaLectura(detalleLineasContenedoreses);
           guardarTablaEnArray();
           armarTablaVerificacion(detalleLineasContenedoreses);
           mostrarPestanaLectura();
-          console.log("REsultados:");
-          console.log(detalleLineasContenedoreses);
+          
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -103,6 +107,11 @@ function enviarDatosControlador(params) {
           });
         } else {
           ocultarLoader();
+          
+          // --- NUEVA VALIDACIÓN: DESHABILITAR EN CASO DE ESTAR VACÍO ---
+          alternarEstadoBotonesAccion(false);
+          // -------------------------------------------------------------
+
           limpiarResultadoGeneral();
           limpiarTblLectura();
           mostrarPestanaLectura();
@@ -112,14 +121,16 @@ function enviarDatosControlador(params) {
             text: "No hay registros asignados para el usuario",
             confirmButtonColor: "#28a745",
           });
-
         }
         document.getElementById("carga").innerHTML = "";
       } else {
+        // Deshabilitar por seguridad si el API arroja error de servidor
+        alternarEstadoBotonesAccion(false);
+
         Swal.fire({
           icon: "error",
           title: "error",
-          text: "Se registro un error en la aplicación",
+          text: "Se registró un error en la aplicación",
           confirmButtonColor: "#28a745",
         });
       }
@@ -127,6 +138,57 @@ function enviarDatosControlador(params) {
   ocultarLoader();
 }
 
+
+// function enviarDatosControlador(params) {
+//   console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
+
+//   fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       if (result.msg === "SUCCESS") {
+//         ocultarLoader();
+//         detalleLineasContenedoreses = result.respuesta;
+//         if (result.respuesta.length != 0) {
+//           // --- LIMPIAR BUSCADOR DE FILTRO SI TENÍA TEXTO DE UNA CONSULTA ANTERIOR ---
+//             const inputFiltro = document.getElementById("filtrarArticuloVerif");
+//             if(inputFiltro) inputFiltro.value = "";
+//           armarTablaLectura(detalleLineasContenedoreses);
+//           guardarTablaEnArray();
+//           armarTablaVerificacion(detalleLineasContenedoreses);
+//           mostrarPestanaLectura();
+//           console.log("REsultados:");
+//           console.log(detalleLineasContenedoreses);
+//           Swal.fire({
+//             icon: "info",
+//             title: "Información",
+//             text: "Registros cargados en la pestaña Verificación",
+//             confirmButtonColor: "#28a745",
+//           });
+//         } else {
+//           ocultarLoader();
+//           limpiarResultadoGeneral();
+//           limpiarTblLectura();
+//           mostrarPestanaLectura();
+//           Swal.fire({
+//             icon: "info",
+//             title: "Información",
+//             text: "No hay registros asignados para el usuario",
+//             confirmButtonColor: "#28a745",
+//           });
+
+//         }
+//         document.getElementById("carga").innerHTML = "";
+//       } else {
+//         Swal.fire({
+//           icon: "error",
+//           title: "error",
+//           text: "Se registro un error en la aplicación",
+//           confirmButtonColor: "#28a745",
+//         });
+//       }
+//     });
+//   ocultarLoader();
+// }
 
 
 /////////////////////////////////////////////////////////////////////
@@ -759,28 +821,28 @@ function inicializarBotones() {
   const contenedorBotones = document.createElement("div");
   const botonProcesar = document.createElement("button");
   const botonGuardarParcial = document.createElement("button");
-  const botonGuardarLectura =document.createElement("button");
-
-
+  const botonGuardarLectura = document.createElement("button");
 
   // Configurar propiedades de los botones
-
   botonGuardarLectura.textContent = "Guardar";
-  botonGuardarLectura.id = "btnGuardar";
+  botonGuardarLectura.id = "btnGuardarLectura"; // ID único asignado
   botonGuardarLectura.hidden = false;
+  botonGuardarLectura.disabled = true; // Deshabilitado por defecto al inicio
   botonGuardarLectura.onclick = confirmarGuardadoParcial;
 
   botonProcesar.textContent = "Crear Paquete";
   botonProcesar.id = "btnCrearPaqueteContenedor";
   botonProcesar.hidden = false; 
+  botonProcesar.disabled = true; // Deshabilitado por defecto para evitar paquetes vacíos
   botonProcesar.onclick = guardaPaquete;
 
   botonGuardarParcial.textContent = "Guardar";
-  botonGuardarParcial.id = "btnGuardar";
+  botonGuardarParcial.id = "btnGuardarVerificacion"; // ID único asignado
   botonGuardarParcial.hidden = false;
-  botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
+  botonGuardarParcial.disabled = true; // Deshabilitado por defecto al inicio
+  botonGuardarParcial.onclick = confirmarGuardadoParcial;
 
-    // Aplicar estilos al botón de guardado parcial lectura
+  // --- [Tus estilos se mantienen exactamente igual] ---
   botonGuardarLectura.style.backgroundColor = "#28a745";
   botonGuardarLectura.style.borderRadius = "5px";
   botonGuardarLectura.style.color = "white";
@@ -790,7 +852,6 @@ function inicializarBotones() {
   botonGuardarLectura.style.height = "36px";
   botonGuardarLectura.style.width = "100px";
 
-  // Aplicar estilos al botón de guardado parcial
   botonGuardarParcial.style.backgroundColor = "#28a745";
   botonGuardarParcial.style.borderRadius = "5px";
   botonGuardarParcial.style.color = "white";
@@ -800,7 +861,6 @@ function inicializarBotones() {
   botonGuardarParcial.style.height = "36px";
   botonGuardarParcial.style.width = "100px";
 
-  // Aplicar estilos al botón de Procesar
   botonProcesar.style.width = "100px";
   botonProcesar.style.backgroundColor = "#28a745";
   botonProcesar.style.borderRadius = "5px";
@@ -808,37 +868,117 @@ function inicializarBotones() {
   botonProcesar.style.marginTop = "16px";
   botonProcesar.style.marginLeft = "6em";
   botonProcesar.style.height = "40px";
-  botonProcesar.style.marginbottom = "25px";
-
+  botonProcesar.style.marginBottom = "25px";
  
   // Agregar botones al contenedor
   contenedorTblLectura.appendChild(botonGuardarLectura);
   contenedorBotones.appendChild(botonGuardarParcial);
   contenedorBotones.appendChild(botonProcesar);
 
-  // Obtener tabla de verificación
+  // Obtener tablas del DOM e insertar contenedores
   const tablaLectura = document.getElementById("myTableLectura");
   const tablaVerificacion = document.getElementById("tblcontenedores");
 
-  tablaLectura.parentNode.insertBefore(
-    contenedorTblLectura,
-    tablaLectura.nextSibling
-  );
-  // Insertar contenedor de botones después de la tabla de verificación
-  tablaVerificacion.parentNode.insertBefore(
-    contenedorBotones,
-    tablaVerificacion.nextSibling
-  );
+  if(tablaLectura) {
+    tablaLectura.parentNode.insertBefore(contenedorTblLectura, tablaLectura.nextSibling);
+  }
+  if(tablaVerificacion) {
+    tablaVerificacion.parentNode.insertBefore(contenedorBotones, tablaVerificacion.nextSibling);
+  }
 
   // Media query para pantallas grandes
   const mediaQuery = window.matchMedia("(min-width: 64em)");
   if (mediaQuery.matches) {
-    // Aplicar estilos específicos para pantallas grandes
     botonGuardarLectura.style.marginLeft = "200px";
     botonGuardarParcial.style.marginLeft = "200px";
     botonProcesar.style.marginLeft = "500px";
   }
 }
+
+// function inicializarBotones() {
+//   // Crear los botones y el contenedor
+//   const contenedorTblLectura = document.createElement("div");
+//   const contenedorBotones = document.createElement("div");
+//   const botonProcesar = document.createElement("button");
+//   const botonGuardarParcial = document.createElement("button");
+//   const botonGuardarLectura =document.createElement("button");
+
+//   // Configurar propiedades de los botones
+
+//   botonGuardarLectura.textContent = "Guardar";
+//   botonGuardarLectura.id = "btnGuardar";
+//   botonGuardarLectura.hidden = false;
+//   botonGuardarLectura.onclick = confirmarGuardadoParcial;
+
+//   botonProcesar.textContent = "Crear Paquete";
+//   botonProcesar.id = "btnCrearPaqueteContenedor";
+//   botonProcesar.hidden = false; 
+//   botonProcesar.onclick = guardaPaquete;
+
+//   botonGuardarParcial.textContent = "Guardar";
+//   botonGuardarParcial.id = "btnGuardar";
+//   botonGuardarParcial.hidden = false;
+//   botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
+
+//     // Aplicar estilos al botón de guardado parcial lectura
+//   botonGuardarLectura.style.backgroundColor = "#28a745";
+//   botonGuardarLectura.style.borderRadius = "5px";
+//   botonGuardarLectura.style.color = "white";
+//   botonGuardarLectura.style.marginTop = "16px";
+//   botonGuardarLectura.style.marginLeft = "16px";
+//   botonGuardarLectura.style.marginRight = "16px";
+//   botonGuardarLectura.style.height = "36px";
+//   botonGuardarLectura.style.width = "100px";
+
+//   // Aplicar estilos al botón de guardado parcial
+//   botonGuardarParcial.style.backgroundColor = "#28a745";
+//   botonGuardarParcial.style.borderRadius = "5px";
+//   botonGuardarParcial.style.color = "white";
+//   botonGuardarParcial.style.marginTop = "16px";
+//   botonGuardarParcial.style.marginLeft = "16px";
+//   botonGuardarParcial.style.marginRight = "16px";
+//   botonGuardarParcial.style.height = "36px";
+//   botonGuardarParcial.style.width = "100px";
+
+//   // Aplicar estilos al botón de Procesar
+//   botonProcesar.style.width = "100px";
+//   botonProcesar.style.backgroundColor = "#28a745";
+//   botonProcesar.style.borderRadius = "5px";
+//   botonProcesar.style.color = "white";
+//   botonProcesar.style.marginTop = "16px";
+//   botonProcesar.style.marginLeft = "6em";
+//   botonProcesar.style.height = "40px";
+//   botonProcesar.style.marginbottom = "25px";
+
+ 
+//   // Agregar botones al contenedor
+//   contenedorTblLectura.appendChild(botonGuardarLectura);
+//   contenedorBotones.appendChild(botonGuardarParcial);
+//   contenedorBotones.appendChild(botonProcesar);
+
+//   // Obtener tabla de verificación
+//   const tablaLectura = document.getElementById("myTableLectura");
+//   const tablaVerificacion = document.getElementById("tblcontenedores");
+
+//   tablaLectura.parentNode.insertBefore(
+//     contenedorTblLectura,
+//     tablaLectura.nextSibling
+//   );
+//   // Insertar contenedor de botones después de la tabla de verificación
+//   tablaVerificacion.parentNode.insertBefore(
+//     contenedorBotones,
+//     tablaVerificacion.nextSibling
+//   );
+
+//   // Media query para pantallas grandes
+//   const mediaQuery = window.matchMedia("(min-width: 64em)");
+//   if (mediaQuery.matches) {
+//     // Aplicar estilos específicos para pantallas grandes
+//     botonGuardarLectura.style.marginLeft = "200px";
+//     botonGuardarParcial.style.marginLeft = "200px";
+//     botonProcesar.style.marginLeft = "500px";
+//   }
+// }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
@@ -892,6 +1032,7 @@ async function guardaParcialMente() {
   localStorage.setItem('Observaciones',pComentario);
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
+  mostrarLoader();
 
   for (let i = 1; i < table.rows.length-1; i++) {
     const row = table.rows[i];
@@ -1002,6 +1143,7 @@ async function guardaParcialMente() {
       mostrarPestanaLectura();
     }
   });
+  ocultarLoader();
 }
 
 ///////////////FUNCIONES PARA PROCESAR///////////
@@ -2042,4 +2184,84 @@ function mostrarPestanaLectura() {
   tabLectura.click(); // Simula el clic
   // Opcional: enfocar el input del código de barras
   document.getElementById("codigo-barras").focus();
+}
+
+// //_____________________________________________________________________________
+// ///////// FILTRAR LÍNEAS DE VERIFICACIÓN DINÁMICAMENTE //////////////////
+// //_____________________________________________________________________________
+// function filtrarTablaVerificacion() {
+//   // Aseguramos tener datos cargados antes de filtrar
+//   if (!detalleLineasContenedoreses || detalleLineasContenedoreses.length === 0) return;
+
+//   // Obtener el valor escrito por el operador
+//   const textoBusqueda = document.getElementById("filtrarArticuloVerif").value.toLowerCase().trim();
+
+//   // Si el buscador está vacío, volvemos a armar la tabla con el arreglo original completo
+//   if (textoBusqueda === "") {
+//     armarTablaVerificacion(detalleLineasContenedoreses);
+//     return;
+//   }
+
+//   // Filtrar el arreglo maestro buscando coincidencias en Artículo, Descripción o Código de Barra
+//   const datosFiltrados = detalleLineasContenedoreses.filter(function (detalle) {
+//     const articulo = (detalle.Articulo || "").toLowerCase();
+//     const descripcion = (detalle.Descripcion || "").toLowerCase();
+//     const codigoBarra = (detalle.Codigo_Barra || "").toLowerCase();
+
+//     // También verificamos si existen códigos alternativos separados por barra "|"
+//     let codigosAlternativos = "";
+//     if (detalle.codigos_barras) {
+//       codigosAlternativos = detalle.codigos_barras.toLowerCase();
+//     }
+
+//     return (
+//       articulo.includes(textoBusqueda) ||
+//       descripcion.includes(textoBusqueda) ||
+//       codigoBarra.includes(textoBusqueda) ||
+//       codigosAlternativos.includes(textoBusqueda)
+//     );
+//   });
+
+//   // Re-armar la tabla de verificación pasando únicamente el arreglo filtrado
+//   armarTablaVerificacion(datosFiltrados);
+// }
+
+//_____________________________________________________________________________
+///////// FILTRAR LÍNEAS DE VERIFICACIÓN POR CONTENEDOR Y ARTÍCULO /////////////
+//_____________________________________________________________________________
+function filtrarTablaVerificacion() {
+  // Aseguramos tener datos cargados antes de filtrar
+  if (!detalleLineasContenedoreses || detalleLineasContenedoreses.length === 0) return;
+
+  // Obtener el valor escrito por el operador en minúsculas y sin espacios muertos
+  const textoBusqueda = document.getElementById("filtrarArticuloVerif").value.toLowerCase().trim();
+
+  // Si el buscador está vacío, volvemos a armar la tabla con el arreglo original completo
+  if (textoBusqueda === "") {
+    armarTablaVerificacion(detalleLineasContenedoreses);
+    return;
+  }
+
+  // Filtrar el arreglo maestro buscando coincidencias EXCLUSIVAMENTE en Contenedor y Articulo
+  const datosFiltrados = detalleLineasContenedoreses.filter(function (detalle) {
+    const contenedor = (detalle.Contenedor || "").toLowerCase();
+    const articulo = (detalle.Articulo || "").toLowerCase();
+
+    // Retorna true si el texto coincide con cualquiera de las dos columnas especificadas
+    return contenedor.includes(textoBusqueda) || articulo.includes(textoBusqueda);
+  });
+
+  // Re-armar la tabla de verificación pasando únicamente el arreglo filtrado
+  armarTablaVerificacion(datosFiltrados);
+}
+
+function alternarEstadoBotonesAccion(habilitar) {
+  const btnLectura = document.getElementById("btnGuardarLectura");
+  const btnVerificacion = document.getElementById("btnGuardarVerificacion");
+  const btnProcesar = document.getElementById("btnCrearPaqueteContenedor");
+
+  // Si los botones existen en el DOM, alteramos su estado disabled
+  if (btnLectura) btnLectura.disabled = !habilitar;
+  if (btnVerificacion) btnVerificacion.disabled = !habilitar;
+  if (btnProcesar) btnProcesar.disabled = !habilitar;
 }
