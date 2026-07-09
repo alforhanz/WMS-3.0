@@ -125,25 +125,18 @@ function ValidaOrdenesDeCompra() {
 
 //////////////////FUNCION PARA MOSTRAR EL DETALLE DE las ORDENES DE COMPRAS///////////
 
-function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
+function enviarDatosControlador(pSistema, pUsuario, pOpcion, pBodega, pEstado, pOrden, pFechaDesde, pFechaHasta) {
   mostrarLoader();
+  
   const params =
-    "?pSistema=" +
-    pSistema +
-    "&pUsuario=" +
-    pUsuario +
-    "&pBodega=" +
-    pBodega +
-    "&pEstado=" +
-    pEstado +
-    "&pOrden=" +
-    pOrden +
-    "&pOpcion=" +
-    pOpcion +
-    "&pFechaDesde=" +
-    pFechaDesde +
-    "&pFechaHasta=" +
-    pFechaHasta;
+    "?pSistema=" + pSistema +
+    "&pUsuario=" + pUsuario +
+    "&pBodega=" + pBodega +
+    "&pEstado=" + pEstado +
+    "&pOrden=" + pOrden +
+    "&pOpcion=" + pOpcion +
+    "&pFechaDesde=" + pFechaDesde +
+    "&pFechaHasta=" + pFechaHasta;
 
   localStorage.setItem("parametrosBusquedaOrdenesDeCompraList", params);
   localStorage.setItem("autoSearchOrdenDeComprasList", "true");
@@ -152,13 +145,51 @@ function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrde
     .then((response) => response.json())
     .then((result) => {
       console.log("Respuesta del servidor:", result);
+      
       if (result.msg === "SUCCESS") {
-        if (result.respuesta.length != 0) {
+        
+        // --- 1. VALIDACIÓN DE EXCEPCIONES DEL STORED PROCEDURE ---
+        if (result.respuesta && result.respuesta.length > 0) {
+          const primerRegistro = result.respuesta[0];
+
+          // Evalúa si el SP devuelve 'X' (Plano o en propiedad Objeto) -> Orden no existe
+          if (primerRegistro === "X" || (primerRegistro && primerRegistro.Respuesta === "X")) {
+            Swal.fire({
+              icon: "warning",
+              title: "Orden No Existe",
+              text: "La orden de compra ingresada no se encuentra creada en el sistema.",
+              confirmButtonColor: "#28a745",
+            });
+            document.getElementById("carga").innerHTML = "";
+            if (typeof limpiarResultadoGeneral === "function") limpiarResultadoGeneral();
+            ocultarLoader();
+            return; // Interrumpe el flujo de renderizado de tablas
+          }
+
+          // Evalúa si el SP devuelve 'N' (Plano o en propiedad Objeto) -> No asociada a embarque
+          if (primerRegistro === "N" || (primerRegistro && primerRegistro.Respuesta === "N")) {
+            Swal.fire({
+              icon: "error",
+              title: "Sin Embarque Asociado",
+              text: "La orden de compra no se encuentra asociada a ningún embarque activo.",
+              confirmButtonColor: "#28a745",
+            });
+            document.getElementById("carga").innerHTML = "";
+            if (typeof limpiarResultadoGeneral === "function") limpiarResultadoGeneral();
+            ocultarLoader();
+            return; // Interrumpe el flujo de renderizado de tablas
+          }
+        }
+
+        // --- 2. FLUJO NORMAL: CARGA Y PAGINACIÓN DE REGISTROS VÁLIDOS ---
+        if (result.respuesta && result.respuesta.length !== 0) {
           ArrayData = result.respuesta;
           ArrayDataFiltrado = result.respuesta;
           console.log(ArrayDataFiltrado);
+          
           let cantReg = result.respuesta.length;
           let nPag = Math.ceil(cantReg / xPag);
+          
           const tabla = document.getElementById("tblordendecompra");
           $("#tblordendecompra tbody").remove();
 
@@ -170,7 +201,9 @@ function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrde
           mostrarResultadosVerificacionOrdenes(nPag, 1);
           document.getElementById("carga").innerHTML = "";
           ocultarLoader();
+          
         } else {
+          // Si el array viene vacío (length === 0)
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -178,12 +211,85 @@ function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrde
             confirmButtonColor: "#28a745",
           });
           document.getElementById("carga").innerHTML = "";
-          limpiarResultadoGeneral();
+          if (typeof limpiarResultadoGeneral === "function") limpiarResultadoGeneral();
           ocultarLoader();
         }
+      } else {
+        // Manejo por si result.msg devuelve algo distinto a SUCCESS (ej: ERROR)
+        Swal.fire({
+          icon: "error",
+          title: "Error de Servidor",
+          text: "No se pudo procesar la solicitud de órdenes de compra.",
+          confirmButtonColor: "#28a745",
+        });
+        ocultarLoader();
       }
+    })
+    .catch((error) => {
+      console.error("Error en la petición Fetch:", error);
+      ocultarLoader();
     });
 }
+
+// function enviarDatosControlador(pSistema,pUsuario, pOpcion,pBodega,pEstado,pOrden,pFechaDesde,pFechaHasta) {
+//   mostrarLoader();
+//   const params =
+//     "?pSistema=" +
+//     pSistema +
+//     "&pUsuario=" +
+//     pUsuario +
+//     "&pBodega=" +
+//     pBodega +
+//     "&pEstado=" +
+//     pEstado +
+//     "&pOrden=" +
+//     pOrden +
+//     "&pOpcion=" +
+//     pOpcion +
+//     "&pFechaDesde=" +
+//     pFechaDesde +
+//     "&pFechaHasta=" +
+//     pFechaHasta;
+
+//   localStorage.setItem("parametrosBusquedaOrdenesDeCompraList", params);
+//   localStorage.setItem("autoSearchOrdenDeComprasList", "true");
+
+//   fetch(env.API_URL + "wmsordenesdecompras" + params, myInit)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       console.log("Respuesta del servidor:", result);
+//       if (result.msg === "SUCCESS") {
+//         if (result.respuesta.length != 0) {
+//           ArrayData = result.respuesta;
+//           ArrayDataFiltrado = result.respuesta;
+//           console.log(ArrayDataFiltrado);
+//           let cantReg = result.respuesta.length;
+//           let nPag = Math.ceil(cantReg / xPag);
+//           const tabla = document.getElementById("tblordendecompra");
+//           $("#tblordendecompra tbody").remove();
+
+//           let htm = `<div class="row" id="totalregistros">
+//               <div class="col s12"><span>Total de Registros: </span><span>${result.respuesta.length}</span></div>
+//             </div>`;
+
+//           document.getElementById("resultadoGeneral").innerHTML = htm;
+//           mostrarResultadosVerificacionOrdenes(nPag, 1);
+//           document.getElementById("carga").innerHTML = "";
+//           ocultarLoader();
+//         } else {
+//           Swal.fire({
+//             icon: "info",
+//             title: "Información",
+//             text: "No hay registros asignados para el usuario: " + pUsuario,
+//             confirmButtonColor: "#28a745",
+//           });
+//           document.getElementById("carga").innerHTML = "";
+//           limpiarResultadoGeneral();
+//           ocultarLoader();
+//         }
+//       }
+//     });
+// }
 
 function irDetalleOC(pOrden, OBSERVACION) {
   localStorage.setItem("OrdenDeCompra_finalizadas", checkbox.checked);
