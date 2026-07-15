@@ -51,6 +51,63 @@
             <!-- <label>Busqueda de contenedores</label> -->
           </div>
           <div class="row">
+                <div class="input-field col s12">
+                  <input placeholder="Ingrese el número de contenedor" id="pContenedor" type="text" class="validate">
+                  <label for="pContenedor">Número de Contenedor</label>
+                </div>
+                </div>                
+                  <div class="row">
+                    <div class="input-field col s12 m4">
+                      <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
+                      <label for="fecha_ini">Fecha Desde</label>
+                    </div>
+                  
+                    <div class="input-field col s12 m4">
+                      <select id="placa-camion">
+                        <option value="" disabled selected>Seleccione una placa</option>
+                      </select>
+                      <label for="placa-camion">Placa Camión</label>
+                    </div>
+                  
+                    <div class="input-field col s12 m4">
+                      <select id="conductor-camion">
+                        <option value="" disabled selected>Seleccione un conductor</option>
+                      </select>
+                      <label for="conductor-camion">Conductor del Camión</label>
+                    </div>
+                  </div>
+          <!-- /////////////////////////////////////////////////////////////// -->
+          <!-- //            se agrega el conductor manualmente                -->
+          <!-- /////////////////////////////////////////////////////////////// -->
+          <!-- <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="Ingrese el número de contenedor" id="pContenedor" type="text" class="validate">
+              <label for="pContenedor">Número de Contenedor</label>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="input-field col s12 m4">
+              <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
+              <label for="fecha_ini">Fecha Desde</label>
+            </div>
+          
+            <div class="input-field col s12 m4">
+              <select id="placa-camion">
+                <option value="" disabled selected>Seleccione una placa</option>
+                <option value="ABC-123">ABC-123</option>
+                <option value="XYZ-789">XYZ-789</option>
+              </select>
+              <label for="placa-camion">Placa Camión</label>
+            </div>
+          
+            <div class="input-field col s12 m4">
+              <input placeholder="Nombre del conductor" id="conductor-camion" type="text" class="validate">
+              <label for="conductor-camion">Conductor del Camión</label>
+            </div>
+          </div> -->
+
+          <!-- <div class="row">
             <div class="input-field col s12">
               <input placeholder="Ingrese el número de contenedor" id="pContenedor" type="text" class="validate">
 
@@ -66,7 +123,7 @@
             <input placeholder="" id="placa-camion" type="text">
             <label for="placa-camion">Placa Camión</label>
           </div>
-        </div>
+        </div> -->
         <!-- BODEGA DE DESTINO -->
         <label id="lbl_bodega_destino" for="bodegaSelect">Cambiar bodega de destino</label>
         <!-- <div class="row" style="display: flex; align-items: center;"> -->
@@ -90,6 +147,20 @@
               <li class="tab col s3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a>
               </li>
               <li class="tab col s3"><a href="#tabla-verificacion" onclick="verificacion()">VERFICACIÓN</a></li>
+
+                 <li style="margin-left: auto; padding-right: 15px; display: flex; align-items: center; gap: 16px;">
+                <i class="material-icons green-text text-darken-2"
+                  style="cursor: pointer; font-size: 26px; transition: transform 0.2s;" onclick="window.location.reload();"
+                  title="Refrescar Pantalla" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  refresh
+                </i>          
+                <i class="material-icons blue-text" style="cursor: pointer; font-size: 26px; transition: transform 0.2s;"
+                  onclick="mostrarInfo()" title="Información de Colores" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  info
+                </i>
+              </li>
             </ul>
             <div id="tabla-lectura" class="col s12">
               <div class="row">

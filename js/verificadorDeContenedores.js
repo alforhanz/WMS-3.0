@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.warn("No se encontró el elemento con ID 'Observaciones'");
     }
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems);
+    cargarSelectPlacas();
+    cargarSelectConductores();
     cargarBodegas();
 });
 /////////////////////////////////////////////////////////////////////
@@ -228,6 +232,7 @@ function limpiarTblLectura() {
       tbody.innerHTML = "";
     }
   }
+  crearNuevaFila();
 }
 // Función para cargar las bodegas
 function cargarBodegas() {
@@ -2264,4 +2269,108 @@ function alternarEstadoBotonesAccion(habilitar) {
   if (btnLectura) btnLectura.disabled = !habilitar;
   if (btnVerificacion) btnVerificacion.disabled = !habilitar;
   if (btnProcesar) btnProcesar.disabled = !habilitar;
+}
+
+function mostrarInfo() {
+  Swal.fire({
+    title: '<strong style="font-family:\'Oswald\',sans-serif;">Guía de Operación y Colores</strong>',
+    icon: 'info',
+    html: `
+      <div style="text-align: left; font-size: 14px; font-family: 'Roboto', sans-serif; line-height: 1.5; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+        
+        <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0;">
+          🎨 Estados y Colores en Verificación
+        </h6>
+        <div style="margin-bottom: 15px;">
+          <p style="margin: 5px 0;">
+            <span style="display:inline-block; width:18px; height:18px; background-color:  #4caf50; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
+            <strong>Verde:</strong> Líneas completas cuyo conteo ya se encuentra <strong>guardado con éxito en la Base de Datos</strong>.
+          </p>
+          <p style="margin: 5px 0;">
+            <span style="display:inline-block; width:18px; height:18px; background-color: #ff9800 ; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
+            <strong>Naranja:</strong> Líneas completas en memoria técnica que <strong>aún NO se han guardado</strong> en la Base de Datos.
+          </p>
+          <p style="margin: 5px 0;">
+            <span style="display:inline-block; width:18px; height:18px; background-color: #ffffff; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
+            <strong>Sin Color:</strong> Líneas del contenedor que todavía no registran ninguna lectura o conteo en el sistema.
+          </p>
+        </div>
+
+        <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+          🔄 Flujo del Proceso (Picker)
+        </h6>
+        <ul style="padding-left: 15px; margin: 8px 0; list-style-type: disc;">
+          <li style="margin-bottom: 6px;"><strong>Inicio:</strong> Al cargar el contenedor, la pestaña <em>Verificación</em> muestra la columna <strong>CANT Leída vacía</strong>.</li>
+          <li style="margin-bottom: 6px;"><strong>Validación de Lectura:</strong> Al escanear una referencia en la pestaña <em>Lectura</em>, el sistema valida que exista en el contenedor y que su código de barras coincida de forma estricta.</li>
+          <li style="margin-bottom: 6px;"><strong>Monitoreo en Vivo:</strong> El avance se puede inspeccionar en caliente usando el label <strong>Leído</strong> (Artículos leídos vs. Solicitados) o cambiando a la pestaña <em>Verificación</em>, la cual cruzará las tablas en tiempo real para poblar la columna de <strong>CANT Leída</strong>.</li>
+          <li style="margin-bottom: 6px;"><strong>Guardado de Datos:</strong> Al pulsar "Guardar" desde la pestaña de lectura, los registros se insertan en la BD, se refresca la grilla, las líneas completadas en base de datos cambian a color verde y desaparecen de la vista activa de verificación.</li>
+        </ul>
+
+        <div style="margin-top: 15px; background-color: #fff3e0; border-left: 4px solid #ff9800; padding: 10px; border-radius: 4px;">
+          <strong style="color: #e65100; display: block; margin-bottom: 2px;">⚠️ ¡Atención con las recargas!</strong>
+          Si la vista se llega a refrescar (F5 / Recargar) por cualquier motivo antes de presionar el botón <strong>Guardar</strong> en la pestaña de lectura, toda la información de las lecturas temporales en memoria se perderá de forma definitiva.
+        </div>
+
+      </div>
+    `,
+    showCloseButton: true,
+    confirmButtonColor: '#1e88e5',
+    confirmButtonText: 'Entendido'
+  });
+}
+
+
+// Arreglos de datos (Simulando respuesta del backend o catálogo local)
+const listaPlacas = [
+  { id: "ABC-123", texto: "ABC-123 (Volvo Blanco)" },
+  { id: "XYZ-789", texto: "XYZ-789 (Freightliner Azul)" },
+  { id: "PAN-456", texto: "PAN-456 (Isuzu Rojo)" },
+  { id: "WMS-777", texto: "WMS-777 (Mack Amarillo)" }
+];
+
+const listaConductores = [
+  { id: "1", nombre: "Juan Pérez" },
+  { id: "2", nombre: "Carlos Mendoza" },
+  { id: "3", nombre: "José Santana" },
+  { id: "4", nombre: "Luis Castillo" }
+];
+
+// Función para cargar las Placas en el Select
+function cargarSelectPlacas() {
+  const selectPlaca = document.getElementById("placa-camion");
+  if (!selectPlaca) return;
+
+  // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+  selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
+
+  // Recorrer el arreglo y crear las etiquetas <option>
+  listaPlacas.forEach(placa => {
+    const option = document.createElement("option");
+    option.value = placa.id;
+    option.textContent = placa.texto;
+    selectPlaca.appendChild(option);
+  });
+
+  // CRUCIAL: Reinicializar el select específico en Materialize
+  M.FormSelect.init(selectPlaca);
+}
+
+// Función para cargar los Conductores en el Select
+function cargarSelectConductores() {
+  const selectConductor = document.getElementById("conductor-camion");
+  if (!selectConductor) return;
+
+  // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+  selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
+
+  // Recorrer el arreglo y crear las etiquetas <option>
+  listaConductores.forEach(conductor => {
+    const option = document.createElement("option");
+    option.value = conductor.id;
+    option.textContent = conductor.nombre;
+    selectConductor.appendChild(option);
+  });
+
+  // CRUCIAL: Reinicializar el select específico en Materialize
+  M.FormSelect.init(selectConductor);
 }

@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
 ////////////////////////////////////
 ////// 	DATOS PEDIDOS /////////////
 ////////////////////////////////////
-
 function getDataDash() {
   // var usuarioSinComillas = document.getElementById('hUsuario').value;
   let usuario = document.getElementById("hUsuario").value;
