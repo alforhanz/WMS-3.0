@@ -39,7 +39,6 @@ function validarBusquedaContenedor() {
 
   // if (pPlaca === "" || pBodegaSolicita == "") {
     if (pBodegaSolicita == "") {
-
     Swal.fire({
       icon: "warning",
       title: "Advertencia",
@@ -49,7 +48,16 @@ function validarBusquedaContenedor() {
     mostrarLoader();
     let pSistema = "WMS";
     let pUsuario = document.getElementById("hUsuario").value;
-    let pOpcion = "A";
+    let pOpcion = "";
+    let chkporContenedor = document.getElementById('chk-mostrar-contenedor');
+        if(chkporContenedor.checked==true){
+                console.log('se muestra por contenedor');
+                 pOpcion = "B";
+        }
+        else{
+              console.log('se muestra por referencia');
+                pOpcion = "A";
+        }   
     let pBodegaEnvia = bodega;
     let pConsecutivo = $("#pContenedor").val();
     let pEstado = "";
@@ -1173,7 +1181,7 @@ async function guardaPaquete() {
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
 
-  for (let i = 1; i < table.rows.length; i++) {
+  for (let i = 1; i < table.rows.length-1; i++) {
     const row = table.rows[i];
 
     const contenedor =
@@ -1380,13 +1388,16 @@ function CrearPaqueteContenedores() {
   let pBodegaOrigen = document.getElementById("bodega").value;
   let pBodegaDestino = document.getElementById("bodegaSelect").value;
   let pFecha = new Date().toISOString().split("T")[0];
-  let pPlaca = document.getElementById("placa-camion").value;
+  let conductor= document.getElementById('conductor-camion').value
+  let placa = document.getElementById("placa-camion").value;
+  let pPlaca=placa+'|'+conductor;
+
   let jsonPaquete = "";
   let pReferencia = document.getElementById('pContenedor').value;
   //"Ref o null";
   let pComentario = document.getElementById('observaciones').value;
   //let pPlaca = document.getElementById("placa-camion").value;
-  if (pPlaca == "") {
+  if (pPlaca == "|") {
     Swal.fire({
       icon: "warning",
       title: "Advertencia",

@@ -125,22 +125,45 @@
           </div>
         </div> -->
         <!-- BODEGA DE DESTINO -->
-        <label id="lbl_bodega_destino" for="bodegaSelect">Cambiar bodega de destino</label>
-        <!-- <div class="row" style="display: flex; align-items: center;"> -->
+        <!-- <label id="lbl_bodega_destino" for="bodegaSelect">Cambiar bodega de destino</label>
         <div class=" bodega-destino-container row">
           <div class="col-md-6">
             <select id="bodegaSelect" class="browser-default">
               <option value="" disabled selected>Seleccione una bodega</option>
             </select>
           </div><br>
-
-          <!-- Boton Buscar Contenedores -->
           <div class="row col-md-12 S12">
             <button id="verifica-contenedores" class="btn waves-effect waves-light" type="submit"
               onclick="validarBusquedaContenedor()">Cargar Lineas de Contenedores
               <i class="material-icons right">send</i>
             </button>
+          </div> -->
+          <div class="bodega-destino-container row" style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+          
+          <div class="col s12 m4" style="margin-bottom: 10px;">
+            <label id="lbl_bodega_destino" for="bodegaSelect" style="display: block; margin-bottom: 5px;">Cambiar bodega de destino</label>
+            <select id="bodegaSelect" class="browser-default" style="width: 50%;">
+              <option value="" disabled selected>Seleccione una bodega</option>
+            </select>
           </div>
+
+          <div class="col s12 m4" style="margin-top: 15px; margin-bottom: 10px;">
+            <label>
+              <input type="checkbox" id="chk-mostrar-contenedor" class="filled-in" />
+              <span>Mostrar por contenedor</span>
+            </label>
+          </div>
+          
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button id="verifica-contenedores" class="btn waves-effect waves-light" type="submit"
+              onclick="validarBusquedaContenedor()">Cargar Lineas de Contenedores
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+        </div>
 
           <div class="row">
             <ul id="tabs-swipe-demo" class="tabs">
