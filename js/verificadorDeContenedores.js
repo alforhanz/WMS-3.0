@@ -98,9 +98,10 @@ function enviarDatosControlador(params) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
+        console.log(result.respuesta);
         ocultarLoader();
         detalleLineasContenedoreses = result.respuesta;
-        
+       
         if (result.respuesta && result.respuesta.length > 0) {
           // --- NUEVA VALIDACIÓN: HABILITAR BOTONES ---
           alternarEstadoBotonesAccion(true);
@@ -149,60 +150,6 @@ function enviarDatosControlador(params) {
     });
   ocultarLoader();
 }
-
-
-// function enviarDatosControlador(params) {
-//   console.log("BUSQUEDA CONTENEDOR PARAMETROS\n " + params);
-
-//   fetch(env.API_URL + "verificadordecontenedores" + params, myInit)
-//     .then((response) => response.json())
-//     .then((result) => {
-//       if (result.msg === "SUCCESS") {
-//         ocultarLoader();
-//         detalleLineasContenedoreses = result.respuesta;
-//         if (result.respuesta.length != 0) {
-//           // --- LIMPIAR BUSCADOR DE FILTRO SI TENÍA TEXTO DE UNA CONSULTA ANTERIOR ---
-//             const inputFiltro = document.getElementById("filtrarArticuloVerif");
-//             if(inputFiltro) inputFiltro.value = "";
-//           armarTablaLectura(detalleLineasContenedoreses);
-//           guardarTablaEnArray();
-//           armarTablaVerificacion(detalleLineasContenedoreses);
-//           mostrarPestanaLectura();
-//           console.log("REsultados:");
-//           console.log(detalleLineasContenedoreses);
-//           Swal.fire({
-//             icon: "info",
-//             title: "Información",
-//             text: "Registros cargados en la pestaña Verificación",
-//             confirmButtonColor: "#28a745",
-//           });
-//         } else {
-//           ocultarLoader();
-//           limpiarResultadoGeneral();
-//           limpiarTblLectura();
-//           mostrarPestanaLectura();
-//           Swal.fire({
-//             icon: "info",
-//             title: "Información",
-//             text: "No hay registros asignados para el usuario",
-//             confirmButtonColor: "#28a745",
-//           });
-
-//         }
-//         document.getElementById("carga").innerHTML = "";
-//       } else {
-//         Swal.fire({
-//           icon: "error",
-//           title: "error",
-//           text: "Se registro un error en la aplicación",
-//           confirmButtonColor: "#28a745",
-//         });
-//       }
-//     });
-//   ocultarLoader();
-// }
-
-
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function limpiarResultadoGeneral() {
@@ -659,33 +606,41 @@ function armarTablaVerificacion(detalleLineasContenedores) {
     const tbody = document.getElementById("tblbodyLineasContenedor");
     tbody.innerHTML = "";
 
-    // ====================================================================
-    // 1. ORDENAMIENTO POR CONTENEDOR (Optimización de Datos)
-    // ====================================================================
-    detalleLineasContenedores.sort((a, b) => {
-        const contenedorA = a.Contenedor;
-        const contenedorB = b.Contenedor;
+    // Verificar si el checkbox 'Por Contenedor' está marcado
+    const chkMostrarContenedor = document.getElementById("chk-mostrar-contenedor");
+    const esModoContenedor = chkMostrarContenedor ? chkMostrarContenedor.checked : false;
 
-        // Compara las cadenas de texto (alfabético/lexicográfico)
-        // Puedes cambiar a contenedorB.localeCompare(contenedorA) para ordenar Descendente.
-        if (contenedorA < contenedorB) {
-            return -1;
-        }
-        if (contenedorA > contenedorB) {
-            return 1;
-        }
-        return 0; // Los contenedores son iguales
+    // ====================================================================
+    // 0. FILTRADO CONDICIONAL: 
+    // Si NO está en modo contenedor, filtramos las líneas con Estado_ml === "N"
+    // ====================================================================
+    const lineasAProcesar = esModoContenedor
+        ? detalleLineasContenedores
+        : detalleLineasContenedores.filter((detalle) => detalle.Estado_ml !== "N");
+
+    // ====================================================================
+    // 1. ORDENAMIENTO POR CONTENEDOR
+    // ====================================================================
+    lineasAProcesar.sort((a, b) => {
+        const contenedorA = a.Contenedor || "";
+        const contenedorB = b.Contenedor || "";
+
+        if (contenedorA < contenedorB) return -1;
+        if (contenedorA > contenedorB) return 1;
+        return 0;
     });
+
+    // Actualizar el contador según las líneas actualmente visibles
+    const cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
+    if (cantidadDeRegistrosLabel) {
+        cantidadDeRegistrosLabel.textContent =
+            "Cantidad de registros: " + lineasAProcesar.length;
+    }
+
     // ====================================================================
-
-    const cantidadDeRegistrosLabel = document.getElementById(
-        "cantidadDeRegistros"
-    );
-    cantidadDeRegistrosLabel.textContent =
-        "Cantidad de registros: " + detalleLineasContenedores.length;
-
-    // 2. Renderizado de la Tabla (Ya ordenada)
-    detalleLineasContenedores.forEach((detalle) => {
+    // 2. RENDERIZADO DE LA TABLA
+    // ====================================================================
+    lineasAProcesar.forEach((detalle) => {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
             <td class="solicitud" hidden>${detalle.Traslado}</td>
@@ -729,11 +684,94 @@ function armarTablaVerificacion(detalleLineasContenedores) {
             `;
         tbody.appendChild(newRow);
     });
-
-    // Opcional: Si el ordenamiento altera los totales, se debe recalcular aquí:
-    // calcularTotalesVerificacion(); 
 }
-//VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
+
+// function armarTablaVerificacion(detalleLineasContenedores) {
+//     const tbody = document.getElementById("tblbodyLineasContenedor");
+//     tbody.innerHTML = "";
+
+//     // ====================================================================
+//     // 1. ORDENAMIENTO POR CONTENEDOR (Optimización de Datos)
+//     // ====================================================================
+//     detalleLineasContenedores.sort((a, b) => {
+//         const contenedorA = a.Contenedor;
+//         const contenedorB = b.Contenedor;
+
+//         // Compara las cadenas de texto (alfabético/lexicográfico)
+//         // Puedes cambiar a contenedorB.localeCompare(contenedorA) para ordenar Descendente.
+//         if (contenedorA < contenedorB) {
+//             return -1;
+//         }
+//         if (contenedorA > contenedorB) {
+//             return 1;
+//         }
+//         return 0; // Los contenedores son iguales
+//     });
+//     // ====================================================================
+
+//     const cantidadDeRegistrosLabel = document.getElementById(
+//         "cantidadDeRegistros"
+//     );
+//     cantidadDeRegistrosLabel.textContent =
+//         "Cantidad de registros: " + detalleLineasContenedores.length;
+
+//     // 2. Renderizado de la Tabla (Ya ordenada)
+//     detalleLineasContenedores.forEach((detalle) => {
+//         const newRow = document.createElement("tr");
+//         newRow.innerHTML = `
+//             <td class="solicitud" hidden>${detalle.Traslado}</td>
+//             <td class="contenedor" style="text-align: left;">
+//                 <h5>${detalle.Contenedor}</h5>
+//                 <h6>${detalle.Traslado}</h6>
+//             </td>
+//             <td class="articulo">
+//                 <h5 class="verifica-articulo">
+//                     <span class="blue-text text-darken-2">${detalle.Articulo}</span>
+//                 </h5>
+//                 <h6 style="text-align:left;">${detalle.Descripcion}</h6>
+//             </td>
+//             <td class="cantidadPedida" style="text-align: left;">
+//                 ${
+//                     isNaN(parseFloat(detalle.Cant_Pedida))
+//                         ? 0
+//                         : parseFloat(detalle.Cant_Pedida).toFixed(2)
+//                 }
+//             </td>
+//             <td class="cantidadPreparada" style="text-align: left;">
+//                 ${
+//                     isNaN(parseFloat(detalle.Cant_Verificada))
+//                         ? 0
+//                         : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//                 }
+//             </td>
+//             <td class="cantidadLeida" style="text-align: left;"></td>
+//             <td class="verificado" style="text-align: left;"></td>
+//             <td class="devolver" style="text-align: left;">
+//                 <i class="material-icons"
+//                     style="color: #FF0000; cursor: pointer;"
+//                     onclick="autorizaDevolucion('${detalle.Articulo}', '${
+//                         detalle.Contenedor
+//                     }','${
+//                         isNaN(parseFloat(detalle.Cant_Verificada))
+//                             ? 0
+//                             : parseFloat(detalle.Cant_Verificada).toFixed(2)
+//                     }')">reply</i>
+//             </td>
+//             `;
+//         tbody.appendChild(newRow);
+//     });
+
+//     // Opcional: Si el ordenamiento altera los totales, se debe recalcular aquí:
+//     // calcularTotalesVerificacion(); 
+// }
+/**
+ * @function verificacion
+ * @description VERIFICA LA CANTIDAD LEIDA EN LA
+ * PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
+ * @param {Array<Object>} detalleLineasContenedores - Array de objetos con el detalle de las líneas.
+ */
+
+// VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
 function verificacion() {
   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
   console.log("DataArray", dataArray);
@@ -742,10 +780,10 @@ function verificacion() {
   if (!tabla)
     return console.warn("⚠️ No se encontró la tabla de verificación.");
 
-  const filas = tabla.querySelectorAll("tbody tr");
+  const filas = Array.from(tabla.querySelectorAll("tbody tr"));
   const mensajesArray = [];
 
-  // Limpiar las celdas previas de cantidadLeida y verificado
+  // 1. Limpiar celdas previas
   filas.forEach((fila) => {
     const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
     const verifcheck = fila.querySelector(".verificado");
@@ -753,75 +791,408 @@ function verificacion() {
     if (verifcheck) verifcheck.textContent = "";
   });
 
-  // Construir objeto de totales
-  const cantidadesTotales = {};
-
+  // 2. Consolidar totales leídos por artículo desde la pestaña Lectura
+  const cantidadesTotalesLectura = {};
   dataArray.forEach((item) => {
-    const art = item.ARTICULO.trim();
+    const art = item.ARTICULO ? item.ARTICULO.trim() : "";
     const cant = parseFloat(item.CANTIDAD_LEIDA) || 0;
-    cantidadesTotales[art] = (cantidadesTotales[art] || 0) + cant;
-  });
-
-  // console.log("Totales agrupados:", cantidadesTotales);
-
-  // Recorrer filas para verificar coincidencias
-  filas.forEach((fila) => {
-    const articuloCell = fila.querySelector(".verifica-articulo span");
-    const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
-    const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
-    const verificadoCell = fila.querySelector(".verificado");
-
-    if (!articuloCell || !cantPreparadaCell) return;
-
-    const articulo = articuloCell.textContent.trim();
-    const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
-
-    const cantLeida = cantidadesTotales.hasOwnProperty(articulo)
-      ? cantidadesTotales[articulo]
-      : null;
-    // const cantLeida = cantidadesTotales[articulo] || 0;
-
-    // Mostrar cantidad leída
-    if (cantidadLeidaCell) cantidadLeidaCell.textContent = cantLeida;
-    // cantLeida.toFixed(2);
-
-    // Comparar cantidades
-    if (cantLeida === cantPedida && cantLeida > 0) {
-      // ✅ Coincidencia exacta
-      if (verificadoCell) {
-        const icon = document.createElement("span");
-        icon.classList.add("material-icons");
-        icon.textContent = "done_all";
-        icon.style.color = "green";
-        verificadoCell.appendChild(icon);
-      }
-    } else if (cantLeida > cantPedida) {
-      // ⚠️ Exceso
-      const diff = (cantLeida - cantPedida).toFixed(2);
-      if (verificadoCell) verificadoCell.textContent = `+${diff}`;
-      mensajesArray.push(
-        `*La cantidad verificada del artículo ${articulo} es mayor a la solicitada.`
-      );
-    } else if (cantLeida < cantPedida && cantLeida > 0) {
-      // ⚠️ Faltante
-      const diff = (cantLeida - cantPedida).toFixed(2);
-      if (verificadoCell) verificadoCell.textContent = diff;
-      mensajesArray.push(
-        `>La cantidad verificada del artículo ${articulo} es menor a la solicitada.`
-      );
+    if (art) {
+      cantidadesTotalesLectura[art] = (cantidadesTotalesLectura[art] || 0) + cant;
     }
   });
-      calcularTotalesVerificacion();
-  // Guardar mensajes en localStorage y mostrarlos
+
+  // 3. Validar el estado del checkbox
+  const chkPorContenedor = document.getElementById("chk-mostrar-contenedor");
+  const esPorContenedor = chkPorContenedor ? chkPorContenedor.checked : false;
+
+  if (esPorContenedor) {
+    // =========================================================================
+    // MODO B: MOSTRAR POR CONTENEDOR (Con distribución de excesos)
+    // =========================================================================
+    
+    // Objeto para llevar el saldo restante a distribuir por artículo
+    const saldosDisponibles = { ...cantidadesTotalesLectura };
+
+    // Mapeamos las filas que pertenecen a cada artículo para saber cuál es la última
+    const filasPorArticulo = {};
+    filas.forEach((fila) => {
+      const articuloCell = fila.querySelector(".verifica-articulo span");
+      if (articuloCell) {
+        const art = articuloCell.textContent.trim();
+        if (!filasPorArticulo[art]) filasPorArticulo[art] = [];
+        filasPorArticulo[art].push(fila);
+      }
+    });
+
+    // Procesar cada artículo y sus contenedores
+    Object.keys(filasPorArticulo).forEach((articulo) => {
+      const listaFilas = filasPorArticulo[articulo];
+      const totalFilas = listaFilas.length;
+
+      listaFilas.forEach((fila, index) => {
+        const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
+        const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+        const verificadoCell = fila.querySelector(".verificado");
+
+        const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
+        let saldoDisponible = saldosDisponibles[articulo] || 0;
+        let cantLeidaAsignada = 0;
+
+        const esUltimoContenedor = index === totalFilas - 1;
+
+        if (esUltimoContenedor) {
+          // El último contenedor absorbe todo el saldo restante (sea menor, igual o EXCESO)
+          cantLeidaAsignada = saldoDisponible;
+          saldosDisponibles[articulo] = 0;
+        } else {
+          // Contenedores intermedios: toman hasta completar su pedido
+          if (saldoDisponible >= cantPedida) {
+            cantLeidaAsignada = cantPedida;
+            saldosDisponibles[articulo] -= cantPedida;
+          } else {
+            cantLeidaAsignada = saldoDisponible;
+            saldosDisponibles[articulo] = 0;
+          }
+        }
+
+        // Mostrar en UI
+        if (cantidadLeidaCell) {
+          cantidadLeidaCell.textContent = cantLeidaAsignada > 0 ? cantLeidaAsignada : null;
+        }
+
+        // Evaluar estado de la fila
+        if (cantLeidaAsignada === cantPedida && cantLeidaAsignada > 0) {
+          if (verificadoCell) {
+            const icon = document.createElement("span");
+            icon.classList.add("material-icons");
+            icon.textContent = "done_all";
+            icon.style.color = "green";
+            verificadoCell.appendChild(icon);
+          }
+        } else if (cantLeidaAsignada > cantPedida) {
+          const diff = (cantLeidaAsignada - cantPedida).toFixed(2);
+          if (verificadoCell) verificadoCell.textContent = `+${diff}`;
+          mensajesArray.push(
+            `*La cantidad del artículo ${articulo} excede en +${diff} en su contenedor.`
+          );
+        } else if (cantLeidaAsignada < cantPedida && cantLeidaAsignada > 0) {
+          const diff = (cantLeidaAsignada - cantPedida).toFixed(2);
+          if (verificadoCell) verificadoCell.textContent = diff;
+          mensajesArray.push(
+            `>La cantidad verificada del artículo ${articulo} es menor a la solicitada.`
+          );
+        }
+      });
+    });
+
+  } else {
+    // =========================================================================
+    // MODO A: MOSTRAR POR REFERENCIA (Suma global por fila)
+    // =========================================================================
+    filas.forEach((fila) => {
+      const articuloCell = fila.querySelector(".verifica-articulo span");
+      const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
+      const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+      const verificadoCell = fila.querySelector(".verificado");
+
+      if (!articuloCell || !cantPreparadaCell) return;
+
+      const articulo = articuloCell.textContent.trim();
+      const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
+
+      const cantLeida = cantidadesTotalesLectura.hasOwnProperty(articulo)
+        ? cantidadesTotalesLectura[articulo]
+        : null;
+
+      if (cantidadLeidaCell) cantidadLeidaCell.textContent = cantLeida;
+
+      // Comparar cantidades globales
+      if (cantLeida === cantPedida && cantLeida > 0) {
+        if (verificadoCell) {
+          const icon = document.createElement("span");
+          icon.classList.add("material-icons");
+          icon.textContent = "done_all";
+          icon.style.color = "green";
+          verificadoCell.appendChild(icon);
+        }
+      } else if (cantLeida > cantPedida) {
+        const diff = (cantLeida - cantPedida).toFixed(2);
+        if (verificadoCell) verificadoCell.textContent = `+${diff}`;
+        mensajesArray.push(
+          `*La cantidad verificada del artículo ${articulo} es mayor a la solicitada.`
+        );
+      } else if (cantLeida < cantPedida && cantLeida > 0) {
+        const diff = (cantLeida - cantPedida).toFixed(2);
+        if (verificadoCell) verificadoCell.textContent = diff;
+        mensajesArray.push(
+          `>La cantidad verificada del artículo ${articulo} es menor a la solicitada.`
+        );
+      }
+    });
+  }
+
+  // Recalcular totales y actualizar avisos
+  calcularTotalesVerificacion();
+
   localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
   limpiarMensajes();
 
-  // Mostrar mensajes en el textarea
   const mensajeText = document.getElementById("mensajeText");
   if (mensajeText) mensajeText.value = mensajesArray.join("\n");
+}
 
-  // console.log("Mensajes generados:", mensajesArray);
-} ////FIN de VERIFICACION
+// // VERIFICA LA CANTIDAD LEIDA EN LA PESTAÑA LECTURA, CONTRA LO QUE SE INDICA EN LA TABLA DE LA PESTAÑA VERIFICACION
+// function verificacion() {
+//   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   console.log("DataArray", dataArray);
+
+//   const tabla = document.getElementById("tblcontenedores");
+//   if (!tabla)
+//     return console.warn("⚠️ No se encontró la tabla de verificación.");
+
+//   const filas = tabla.querySelectorAll("tbody tr");
+//   const mensajesArray = [];
+
+//   // 1. Limpiar celdas previas
+//   filas.forEach((fila) => {
+//     const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+//     const verifcheck = fila.querySelector(".verificado");
+//     if (cantidadLeidaCell) cantidadLeidaCell.textContent = "";
+//     if (verifcheck) verifcheck.textContent = "";
+//   });
+
+//   // 2. Consolidar totales leídos por artículo desde la pestaña Lectura
+//   const cantidadesTotalesLectura = {};
+//   dataArray.forEach((item) => {
+//     const art = item.ARTICULO ? item.ARTICULO.trim() : "";
+//     const cant = parseFloat(item.CANTIDAD_LEIDA) || 0;
+//     if (art) {
+//       cantidadesTotalesLectura[art] = (cantidadesTotalesLectura[art] || 0) + cant;
+//     }
+//   });
+
+//   // 3. Validar el estado del checkbox
+//   const chkPorContenedor = document.getElementById("chk-mostrar-contenedor");
+//   const esPorContenedor = chkPorContenedor ? chkPorContenedor.checked : false;
+
+//   if (esPorContenedor) {
+//     // =========================================================================
+//     // MODO B: MOSTRAR POR CONTENEDOR (Distribución Cascada / Casos Duplicados)
+//     // =========================================================================
+    
+//     // Crear una copia de los saldos disponibles para ir restando a medida que cubrimos contenedores
+//     const saldosDisponibles = { ...cantidadesTotalesLectura };
+
+//     // Objeto para acumular el total asignado por artículo y detectar si hay exceso global
+//     const asignacionTotalPorArticulo = {};
+
+//     filas.forEach((fila) => {
+//       const articuloCell = fila.querySelector(".verifica-articulo span");
+//       const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
+//       const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+//       const verificadoCell = fila.querySelector(".verificado");
+
+//       if (!articuloCell || !cantPreparadaCell) return;
+
+//       const articulo = articuloCell.textContent.trim();
+//       const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
+
+//       let saldoDisponible = saldosDisponibles[articulo] || 0;
+//       let cantLeidaAsignada = 0;
+
+//       if (saldoDisponible > 0) {
+//         if (saldoDisponible >= cantPedida) {
+//           cantLeidaAsignada = cantPedida;
+//           saldosDisponibles[articulo] -= cantPedida;
+//         } else {
+//           cantLeidaAsignada = saldoDisponible;
+//           saldosDisponibles[articulo] = 0;
+//         }
+//       }
+
+//       // Acumular cuánto se le asignó a este artículo en total entre todos sus contenedores
+//       asignacionTotalPorArticulo[articulo] = (asignacionTotalPorArticulo[articulo] || 0) + cantLeidaAsignada;
+
+//       // Imprimir valor en la celda
+//       if (cantidadLeidaCell) {
+//         cantidadLeidaCell.textContent = cantLeidaAsignada > 0 ? cantLeidaAsignada : null;
+//       }
+
+//       // Evaluar estado por contenedor individual
+//       if (cantLeidaAsignada === cantPedida && cantLeidaAsignada > 0) {
+//         if (verificadoCell) {
+//           const icon = document.createElement("span");
+//           icon.classList.add("material-icons");
+//           icon.textContent = "done_all";
+//           icon.style.color = "green";
+//           verificadoCell.appendChild(icon);
+//         }
+//       } else if (cantLeidaAsignada < cantPedida && cantLeidaAsignada > 0) {
+//         const diff = (cantLeidaAsignada - cantPedida).toFixed(2);
+//         if (verificadoCell) verificadoCell.textContent = diff;
+//         mensajesArray.push(
+//           `>La cantidad verificada del artículo ${articulo} es menor a la solicitada en su contenedor.`
+//         );
+//       }
+//     });
+
+//     // Detectar si hubo Sobrante/Exceso global que superó la suma de todos los contenedores
+//     Object.keys(cantidadesTotalesLectura).forEach((articulo) => {
+//       const totalLeido = cantidadesTotalesLectura[articulo] || 0;
+//       const totalAsignado = asignacionTotalPorArticulo[articulo] || 0;
+
+//       if (totalLeido > totalAsignado) {
+//         const exceso = (totalLeido - totalAsignado).toFixed(2);
+//         mensajesArray.push(
+//           `*La cantidad verificada global del artículo ${articulo} excede en +${exceso} a la suma de sus contenedores.`
+//         );
+//       }
+//     });
+
+//   } else {
+//     // =========================================================================
+//     // MODO A: MOSTRAR POR REFERENCIA (Comportamiento por Defecto)
+//     // =========================================================================
+//     filas.forEach((fila) => {
+//       const articuloCell = fila.querySelector(".verifica-articulo span");
+//       const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
+//       const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+//       const verificadoCell = fila.querySelector(".verificado");
+
+//       if (!articuloCell || !cantPreparadaCell) return;
+
+//       const articulo = articuloCell.textContent.trim();
+//       const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
+
+//       const cantLeida = cantidadesTotalesLectura.hasOwnProperty(articulo)
+//         ? cantidadesTotalesLectura[articulo]
+//         : null;
+
+//       if (cantidadLeidaCell) cantidadLeidaCell.textContent = cantLeida;
+
+//       // Comparar cantidades globales por fila
+//       if (cantLeida === cantPedida && cantLeida > 0) {
+//         if (verificadoCell) {
+//           const icon = document.createElement("span");
+//           icon.classList.add("material-icons");
+//           icon.textContent = "done_all";
+//           icon.style.color = "green";
+//           verificadoCell.appendChild(icon);
+//         }
+//       } else if (cantLeida > cantPedida) {
+//         const diff = (cantLeida - cantPedida).toFixed(2);
+//         if (verificadoCell) verificadoCell.textContent = `+${diff}`;
+//         mensajesArray.push(
+//           `*La cantidad verificada del artículo ${articulo} es mayor a la solicitada.`
+//         );
+//       } else if (cantLeida < cantPedida && cantLeida > 0) {
+//         const diff = (cantLeida - cantPedida).toFixed(2);
+//         if (verificadoCell) verificadoCell.textContent = diff;
+//         mensajesArray.push(
+//           `>La cantidad verificada del artículo ${articulo} es menor a la solicitada.`
+//         );
+//       }
+//     });
+//   }
+
+//   // Recalcular totales y actualizar los avisos en UI
+//   calcularTotalesVerificacion();
+
+//   localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//   limpiarMensajes();
+
+//   const mensajeText = document.getElementById("mensajeText");
+//   if (mensajeText) mensajeText.value = mensajesArray.join("\n");
+// }
+
+// function verificacion() {
+//   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   console.log("DataArray", dataArray);
+
+//   const tabla = document.getElementById("tblcontenedores");
+//   if (!tabla)
+//     return console.warn("⚠️ No se encontró la tabla de verificación.");
+
+//   const filas = tabla.querySelectorAll("tbody tr");
+//   const mensajesArray = [];
+
+//   // Limpiar las celdas previas de cantidadLeida y verificado
+//   filas.forEach((fila) => {
+//     const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+//     const verifcheck = fila.querySelector(".verificado");
+//     if (cantidadLeidaCell) cantidadLeidaCell.textContent = "";
+//     if (verifcheck) verifcheck.textContent = "";
+//   });
+
+//   // Construir objeto de totales
+//   const cantidadesTotales = {};
+
+//   dataArray.forEach((item) => {
+//     const art = item.ARTICULO.trim();
+//     const cant = parseFloat(item.CANTIDAD_LEIDA) || 0;
+//     cantidadesTotales[art] = (cantidadesTotales[art] || 0) + cant;
+//   });
+
+//   // console.log("Totales agrupados:", cantidadesTotales);
+
+//   // Recorrer filas para verificar coincidencias
+//   filas.forEach((fila) => {
+//     const articuloCell = fila.querySelector(".verifica-articulo span");
+//     const cantPreparadaCell = fila.querySelector(".cantidadPreparada");
+//     const cantidadLeidaCell = fila.querySelector(".cantidadLeida");
+//     const verificadoCell = fila.querySelector(".verificado");
+
+//     if (!articuloCell || !cantPreparadaCell) return;
+
+//     const articulo = articuloCell.textContent.trim();
+//     const cantPedida = parseFloat(cantPreparadaCell.textContent) || 0;
+
+//     const cantLeida = cantidadesTotales.hasOwnProperty(articulo)
+//       ? cantidadesTotales[articulo]
+//       : null;
+//     // const cantLeida = cantidadesTotales[articulo] || 0;
+
+//     // Mostrar cantidad leída
+//     if (cantidadLeidaCell) cantidadLeidaCell.textContent = cantLeida;
+//     // cantLeida.toFixed(2);
+
+//     // Comparar cantidades
+//     if (cantLeida === cantPedida && cantLeida > 0) {
+//       // ✅ Coincidencia exacta
+//       if (verificadoCell) {
+//         const icon = document.createElement("span");
+//         icon.classList.add("material-icons");
+//         icon.textContent = "done_all";
+//         icon.style.color = "green";
+//         verificadoCell.appendChild(icon);
+//       }
+//     } else if (cantLeida > cantPedida) {
+//       // ⚠️ Exceso
+//       const diff = (cantLeida - cantPedida).toFixed(2);
+//       if (verificadoCell) verificadoCell.textContent = `+${diff}`;
+//       mensajesArray.push(
+//         `*La cantidad verificada del artículo ${articulo} es mayor a la solicitada.`
+//       );
+//     } else if (cantLeida < cantPedida && cantLeida > 0) {
+//       // ⚠️ Faltante
+//       const diff = (cantLeida - cantPedida).toFixed(2);
+//       if (verificadoCell) verificadoCell.textContent = diff;
+//       mensajesArray.push(
+//         `>La cantidad verificada del artículo ${articulo} es menor a la solicitada.`
+//       );
+//     }
+//   });
+//       calcularTotalesVerificacion();
+//   // Guardar mensajes en localStorage y mostrarlos
+//   localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//   limpiarMensajes();
+
+//   // Mostrar mensajes en el textarea
+//   const mensajeText = document.getElementById("mensajeText");
+//   if (mensajeText) mensajeText.value = mensajesArray.join("\n");
+
+//   // console.log("Mensajes generados:", mensajesArray);
+// } ////FIN de VERIFICACION
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                               Función para inicializar los botones                                      //

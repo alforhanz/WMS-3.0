@@ -76,68 +76,7 @@
                       <label for="conductor-camion">Conductor del Camión</label>
                     </div>
                   </div>
-          <!-- /////////////////////////////////////////////////////////////// -->
-          <!-- //            se agrega el conductor manualmente                -->
-          <!-- /////////////////////////////////////////////////////////////// -->
-          <!-- <div class="row">
-            <div class="input-field col s12">
-              <input placeholder="Ingrese el número de contenedor" id="pContenedor" type="text" class="validate">
-              <label for="pContenedor">Número de Contenedor</label>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="input-field col s12 m4">
-              <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
-              <label for="fecha_ini">Fecha Desde</label>
-            </div>
-          
-            <div class="input-field col s12 m4">
-              <select id="placa-camion">
-                <option value="" disabled selected>Seleccione una placa</option>
-                <option value="ABC-123">ABC-123</option>
-                <option value="XYZ-789">XYZ-789</option>
-              </select>
-              <label for="placa-camion">Placa Camión</label>
-            </div>
-          
-            <div class="input-field col s12 m4">
-              <input placeholder="Nombre del conductor" id="conductor-camion" type="text" class="validate">
-              <label for="conductor-camion">Conductor del Camión</label>
-            </div>
-          </div> -->
-
-          <!-- <div class="row">
-            <div class="input-field col s12">
-              <input placeholder="Ingrese el número de contenedor" id="pContenedor" type="text" class="validate">
-
-              <label for="first_name"></label>
-            </div>
-          </div>
-
-          <div class="input-field col s6">
-            <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
-            <label for="fecha_ini">Fecha Desde</label>
-          </div>
-          <div class="input-field col s6">
-            <input placeholder="" id="placa-camion" type="text">
-            <label for="placa-camion">Placa Camión</label>
-          </div>
-        </div> -->
-        <!-- BODEGA DE DESTINO -->
-        <!-- <label id="lbl_bodega_destino" for="bodegaSelect">Cambiar bodega de destino</label>
-        <div class=" bodega-destino-container row">
-          <div class="col-md-6">
-            <select id="bodegaSelect" class="browser-default">
-              <option value="" disabled selected>Seleccione una bodega</option>
-            </select>
-          </div><br>
-          <div class="row col-md-12 S12">
-            <button id="verifica-contenedores" class="btn waves-effect waves-light" type="submit"
-              onclick="validarBusquedaContenedor()">Cargar Lineas de Contenedores
-              <i class="material-icons right">send</i>
-            </button>
-          </div> -->
+         
           <div class="bodega-destino-container row" style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
           
           <div class="col s12 m4" style="margin-bottom: 10px;">
@@ -221,11 +160,9 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-           
+            </div>           
                   <div id="tabla-verificacion" class="col s12">
-                    <label id="cantidadDeRegistros"> Registros:</label>
-                  
+                    <label id="cantidadDeRegistros"> Registros:</label>                  
                     <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
                       <div class="input-field col s12 m6 l4">
                         <i class="material-icons prefix">search</i>
@@ -256,15 +193,12 @@
                 </table>
                 <div id="resultadoPaginador"></div>
               </div>
-
               <div class="row" id="observacion">
                 <div class="input-field col s12">
                   <label id="lblObservaciones" for="observaciones">Observaciones</label>
                   <textarea placeholder="Observaciones" id="observaciones" type="text"></textarea>
                 </div>
-              </div>
-
-              <!--Text area para los mensajes-->
+              </div>              
               <div id="mensajes" class="container">
                 <div class="centered col s12">
                   <label for="mensajeText"></label>
@@ -272,11 +206,7 @@
                 </div>
               </div>
             </div>
-
-          </div>
-          <!-- Cierre de tabla de resultados -->
-
-
+          </div>    
         </div>
       </div>
   </main>
