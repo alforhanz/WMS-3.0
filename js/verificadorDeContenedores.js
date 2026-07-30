@@ -56,7 +56,7 @@ function validarBusquedaContenedor() {
         }
         else{
               console.log('se muestra por referencia');
-                pOpcion = "A";
+                pOpcion = "D";
         }   
     let pBodegaEnvia = bodega;
     let pConsecutivo = $("#pContenedor").val();
@@ -616,7 +616,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
     // ====================================================================
     const lineasAProcesar = esModoContenedor
         ? detalleLineasContenedores
-        : detalleLineasContenedores.filter((detalle) => detalle.Estado_ml !== "N");
+        : detalleLineasContenedores.filter((detalle) => detalle.Estado_ml !== "");
 
     // ====================================================================
     // 1. ORDENAMIENTO POR CONTENEDOR
