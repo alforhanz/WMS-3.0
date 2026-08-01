@@ -1402,7 +1402,7 @@ function procesarContenedor() {
 //
 //_____________________________________________________________________________
 function retornarVistaAnterior() {
-  localStorage.removeItem("desprachoIniciado");
+  //localStorage.removeItem("desprachoIniciado");
   localStorage.removeItem("mensajes");
   window.location.href = "BusquedaDeContenedores.html";
 }
