@@ -61,8 +61,23 @@
           <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker">
           <label for="fecha_fin">Fecha Final</label>
         </div>
+        <ul>
+                <li style="margin-left: auto; padding-right: 15px; display: flex; align-items: center; gap: 16px;">
+                <i class="material-icons green-text text-darken-2"
+                  style="cursor: pointer; font-size: 26px; transition: transform 0.2s;" onclick="refrescaPantalla()"
+                  title="Refrescar Pantalla" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  refresh
+                </i>          
+                <i class="material-icons blue-text" style="cursor: pointer; font-size: 26px; transition: transform 0.2s;"
+                  onclick="mostrarInfo()" title="Información de Colores" onmouseover="this.style.transform='scale(1.1)'"
+                  onmouseout="this.style.transform='scale(1)'">
+                  info
+                </i>
+              </li>
+        </ul>
         <!-- Switch Pedidos acturados y finalizados-->
-        <div class="row col s12 switch-estilo">
+        <!-- <div class="row col s12 switch-estilo">
           <div class="switch">
             <label class="lblcheck">
               <input checked="false" type="checkbox" id="toggleSwitch">
@@ -70,7 +85,7 @@
               Contenedores preparados
             </label>
           </div>
-        </div>
+        </div> -->
       </div>
       <!-- BODEGA DE DESTINO -->
       <label id="lbl_bodega_destino" for="bodegaSelectOC">Bodega de destino</label>

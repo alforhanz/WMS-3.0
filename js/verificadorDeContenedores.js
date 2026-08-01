@@ -642,7 +642,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
     // ====================================================================
     lineasAProcesar.forEach((detalle) => {
         const newRow = document.createElement("tr");
-        newRow.innerHTML = `
+         newRow.innerHTML = `
             <td class="solicitud" hidden>${detalle.Traslado}</td>
             <td class="contenedor" style="text-align: left;">
                 <h5>${detalle.Contenedor}</h5>
@@ -672,6 +672,7 @@ function armarTablaVerificacion(detalleLineasContenedores) {
             <td class="verificado" style="text-align: left;"></td>
             <td class="devolver" style="text-align: left;">
                 <i class="material-icons"
+                    title="Devolver artículo"
                     style="color: #FF0000; cursor: pointer;"
                     onclick="autorizaDevolucion('${detalle.Articulo}', '${
                         detalle.Contenedor
@@ -682,6 +683,48 @@ function armarTablaVerificacion(detalleLineasContenedores) {
                     }')">reply</i>
             </td>
             `;
+
+
+        // newRow.innerHTML = `
+        //     <td class="solicitud" hidden>${detalle.Traslado}</td>
+        //     <td class="contenedor" style="text-align: left;">
+        //         <h5>${detalle.Contenedor}</h5>
+        //         <h6>${detalle.Traslado}</h6>
+        //     </td>
+        //     <td class="articulo">
+        //         <h5 class="verifica-articulo">
+        //             <span class="blue-text text-darken-2">${detalle.Articulo}</span>
+        //         </h5>
+        //         <h6 style="text-align:left;">${detalle.Descripcion}</h6>
+        //     </td>
+        //     <td class="cantidadPedida" style="text-align: left;">
+        //         ${
+        //             isNaN(parseFloat(detalle.Cant_Pedida))
+        //                 ? 0
+        //                 : parseFloat(detalle.Cant_Pedida).toFixed(2)
+        //         }
+        //     </td>
+        //     <td class="cantidadPreparada" style="text-align: left;">
+        //         ${
+        //             isNaN(parseFloat(detalle.Cant_Verificada))
+        //                 ? 0
+        //                 : parseFloat(detalle.Cant_Verificada).toFixed(2)
+        //         }
+        //     </td>
+        //     <td class="cantidadLeida" style="text-align: left;"></td>
+        //     <td class="verificado" style="text-align: left;"></td>
+        //     <td class="devolver" style="text-align: left;">
+        //         <i class="material-icons"
+        //             style="color: #FF0000; cursor: pointer;"
+        //             onclick="autorizaDevolucion('${detalle.Articulo}', '${
+        //                 detalle.Contenedor
+        //             }','${
+        //                 isNaN(parseFloat(detalle.Cant_Verificada))
+        //                     ? 0
+        //                     : parseFloat(detalle.Cant_Verificada).toFixed(2)
+        //             }')">reply</i>
+        //     </td>
+        //     `;
         tbody.appendChild(newRow);
     });
 }
@@ -1397,7 +1440,7 @@ function confirmarGuardadoParcial() {
     cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
-      verificacion();
+      //verificacion();
       guardaParcialMente();
     }
   });
@@ -1410,7 +1453,9 @@ async function guardaParcialMente() {
   let pBodegaOrigen = document.getElementById("bodega").value;
   let pBodegaDestino = document.getElementById("bodegaSelect").value;
   let pFecha = new Date().toISOString().split("T")[0];
-  let pPlaca = document.getElementById("placa-camion").value;
+    let conductor= document.getElementById('conductor-camion').value
+  let placa = document.getElementById("placa-camion").value;
+  let pPlaca=placa+'|'+conductor;
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
   localStorage.setItem('Observaciones',pComentario);
@@ -1822,8 +1867,8 @@ function CrearPaqueteContenedores() {
               if (resultSwal.isConfirmed) {
               } else if (resultSwal.isDenied) {
                 imprimirPaqueteReporte(respuesta);
-               limpiarResultadoGeneral();
-               limpiarMensajes();
+                limpiarResultadoGeneral();
+                limpiarMensajes();
                 location.reload();
               }
             });
@@ -2658,39 +2703,58 @@ function mostrarInfo() {
     title: '<strong style="font-family:\'Oswald\',sans-serif;">Guía de Operación y Colores</strong>',
     icon: 'info',
     html: `
-      <div style="text-align: left; font-size: 14px; font-family: 'Roboto', sans-serif; line-height: 1.5; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+      <div style="text-align: left; font-size: 14px; font-family: 'Roboto', sans-serif; line-height: 1.5; max-height: 430px; overflow-y: auto; padding-right: 8px;">
         
+        <!-- ESTADOS Y COLORES -->
         <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0;">
           🎨 Estados y Colores en Verificación
         </h6>
         <div style="margin-bottom: 15px;">
           <p style="margin: 5px 0;">
-            <span style="display:inline-block; width:18px; height:18px; background-color:  #4caf50; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
-            <strong>Verde:</strong> Líneas completas cuyo conteo ya se encuentra <strong>guardado con éxito en la Base de Datos</strong>.
-          </p>
-          <p style="margin: 5px 0;">
-            <span style="display:inline-block; width:18px; height:18px; background-color: #ff9800 ; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
-            <strong>Naranja:</strong> Líneas completas en memoria técnica que <strong>aún NO se han guardado</strong> en la Base de Datos.
-          </p>
+            <span style="display:inline-block; width:18px; height:18px; background-color: #4caf50; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
+            <strong>Doble gancho verde:</strong> Líneas completas cuyo conteo llegó al máximo solicitado.
+          </p>        
           <p style="margin: 5px 0;">
             <span style="display:inline-block; width:18px; height:18px; background-color: #ffffff; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle; margin-right: 8px;"></span>
-            <strong>Sin Color:</strong> Líneas del contenedor que todavía no registran ninguna lectura o conteo en el sistema.
+            <strong>Sin Color:</strong> Líneas del contenedor sin ningún registro o con lectura parcial en el sistema.
           </p>
         </div>
 
+        <!-- FLUJO DEL PROCESO -->
         <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
-          🔄 Flujo del Proceso (Picker)
+          🔄 Flujo de Verificación y Lectura
         </h6>
-        <ul style="padding-left: 15px; margin: 8px 0; list-style-type: disc;">
-          <li style="margin-bottom: 6px;"><strong>Inicio:</strong> Al cargar el contenedor, la pestaña <em>Verificación</em> muestra la columna <strong>CANT Leída vacía</strong>.</li>
-          <li style="margin-bottom: 6px;"><strong>Validación de Lectura:</strong> Al escanear una referencia en la pestaña <em>Lectura</em>, el sistema valida que exista en el contenedor y que su código de barras coincida de forma estricta.</li>
-          <li style="margin-bottom: 6px;"><strong>Monitoreo en Vivo:</strong> El avance se puede inspeccionar en caliente usando el label <strong>Leído</strong> (Artículos leídos vs. Solicitados) o cambiando a la pestaña <em>Verificación</em>, la cual cruzará las tablas en tiempo real para poblar la columna de <strong>CANT Leída</strong>.</li>
-          <li style="margin-bottom: 6px;"><strong>Guardado de Datos:</strong> Al pulsar "Guardar" desde la pestaña de lectura, los registros se insertan en la BD, se refresca la grilla, las líneas completadas en base de datos cambian a color verde y desaparecen de la vista activa de verificación.</li>
+        <ol style="padding-left: 18px; margin: 8px 0;">
+          <li style="margin-bottom: 6px;">
+            <strong>Carga Inicial:</strong> Selecciona la <em>Bodega de Destino</em> y presiona el botón <strong>Cargar Lineas de Contenedores</strong>. Aparecerá un mensaje indicando que la información se ha cargado en la pestaña <em>Verificación</em> para su revisión.
+          </li>
+          <li style="margin-bottom: 6px;">
+            <strong>Lectura de Artículos:</strong> Pasa a la pestaña <em>Lectura</em> y escanea o ingresa las referencias/códigos de barra. El sistema validará su existencia y sumará las cantidades.
+          </li>
+          <li style="margin-bottom: 6px;">
+            <strong>Monitoreo y Guardado:</strong> Puedes verificar el avance con la etiqueta <em>Leído (X/Y)</em> o revisar en tiempo real la pestaña <em>Verificación</em>. Presiona el botón <strong>Guardar</strong> para registrar en base de datos el progreso parcial.
+          </li>
+          <li style="margin-bottom: 6px;">
+            <strong>Crear Paquete:</strong> Una vez completada la verificación, utiliza el botón <strong>Crear Paquete</strong> para procesar la transacción y generar el comprobante.
+          </li>
+        </ol>
+
+        <!-- AUTORIZACIONES Y EXCEPCIONES -->
+        <h6 style="font-weight: bold; color: #e65100; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 12px;">
+          🔑 Autorización de Supervisor
+        </h6>
+        <p style="margin: 5px 0 10px 0;">
+          El sistema solicitará credenciales de supervisor en las siguientes situaciones:
+        </p>
+        <ul style="padding-left: 18px; margin: 5px 0; list-style-type: disc;">
+          <li>Si existen <strong>diferencias entre la cantidad leída y la solicitada</strong> al intentar crear el paquete.</li>
+          <li>Al realizar una <strong>Devolución de Artículos verificados</strong> (índice o botón <i class="material-icons" style="font-size:16px; vertical-align:middle; color:#FF0000;">reply</i>).</li>
         </ul>
 
+        <!-- ADVERTENCIA RECARGAS -->
         <div style="margin-top: 15px; background-color: #fff3e0; border-left: 4px solid #ff9800; padding: 10px; border-radius: 4px;">
           <strong style="color: #e65100; display: block; margin-bottom: 2px;">⚠️ ¡Atención con las recargas!</strong>
-          Si la vista se llega a refrescar (F5 / Recargar) por cualquier motivo antes de presionar el botón <strong>Guardar</strong> en la pestaña de lectura, toda la información de las lecturas temporales en memoria se perderá de forma definitiva.
+          Si recargas la página (F5 o botón refrescar) antes de pulsar el botón <strong>Guardar</strong>, la información de lecturas en memoria se perderá.
         </div>
 
       </div>
@@ -2702,57 +2766,152 @@ function mostrarInfo() {
 }
 
 
-// Arreglos de datos (Simulando respuesta del backend o catálogo local)
-const listaPlacas = [
-  { id: "ABC-123", texto: "ABC-123 (Volvo Blanco)" },
-  { id: "XYZ-789", texto: "XYZ-789 (Freightliner Azul)" },
-  { id: "PAN-456", texto: "PAN-456 (Isuzu Rojo)" },
-  { id: "WMS-777", texto: "WMS-777 (Mack Amarillo)" }
-];
-
-const listaConductores = [
-  { id: "1", nombre: "Juan Pérez" },
-  { id: "2", nombre: "Carlos Mendoza" },
-  { id: "3", nombre: "José Santana" },
-  { id: "4", nombre: "Luis Castillo" }
-];
-
-// Función para cargar las Placas en el Select
-function cargarSelectPlacas() {
+// Función para cargar las Placas en el Select vía API
+async function cargarSelectPlacas() {
   const selectPlaca = document.getElementById("placa-camion");
   if (!selectPlaca) return;
 
-  // Limpiar opciones anteriores guardando solo la primera (el placeholder)
-  selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
+  // Parámetros
+  const pSistema = "WMS";
+  const pUsuarioElement = document.getElementById("hUsuario");
+  const pUsuario = pUsuarioElement ? pUsuarioElement.value : "PRUEBAPMA";
+  const pOpcion = "S";
+  const pPlaca = "";
 
-  // Recorrer el arreglo y crear las etiquetas <option>
-  listaPlacas.forEach(placa => {
-    const option = document.createElement("option");
-    option.value = placa.id;
-    option.textContent = placa.texto;
-    selectPlaca.appendChild(option);
-  });
+  // Construcción de los parámetros URL
+  const params = `?pSistema=${pSistema}&pUsuario=${pUsuario}&pOpcion=${pOpcion}&pPlaca=${pPlaca}`;
 
-  // CRUCIAL: Reinicializar el select específico en Materialize
-  M.FormSelect.init(selectPlaca);
+  try {
+    const response = await fetch(env.API_URL + "selectcamion" + params, myInit);
+    const data = await response.json();
+
+    // Limpiar opciones anteriores
+    selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
+
+    const listaPlacas = data.respuesta || data;
+
+    if (Array.isArray(listaPlacas)) {
+      listaPlacas.forEach(placa => {
+        const option = document.createElement("option");
+        
+        // 1. Limpiar los textos quitando saltos de línea (\r\n) y espacios sobrantes
+        const numPlaca = (placa.NUM_PLACA || "").trim();
+        const descripcion = (placa.DESCRIPCION || "").trim();
+
+        // 2. Asignar NUM_PLACA limpia como value
+        option.value = numPlaca;
+
+        // 3. Formato legible para el usuario: "PLACA - DESCRIPCION" (o solo la placa si no hay descripción)
+        option.textContent = descripcion ? `${numPlaca} - ${descripcion}` : numPlaca;
+
+        selectPlaca.appendChild(option);
+      });
+    }
+
+    // Reinicializar el select específico en Materialize
+    M.FormSelect.init(selectPlaca);
+  } catch (error) {
+    console.error("Error al cargar las placas de camión:", error);
+  }
 }
 
-// Función para cargar los Conductores en el Select
-function cargarSelectConductores() {
+// Función para cargar los Conductores en el Select vía API
+async function cargarSelectConductores() {
   const selectConductor = document.getElementById("conductor-camion");
   if (!selectConductor) return;
 
-  // Limpiar opciones anteriores guardando solo la primera (el placeholder)
-  selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
+  // Parámetros
+  const pSistema = "WMS";
+  const pUsuarioElement = document.getElementById("hUsuario");
+  const pUsuario = pUsuarioElement ? pUsuarioElement.value : "PRUEBAPMA";
+  const pOpcion = "S";
+  const pConductor = 0;
 
-  // Recorrer el arreglo y crear las etiquetas <option>
-  listaConductores.forEach(conductor => {
-    const option = document.createElement("option");
-    option.value = conductor.id;
-    option.textContent = conductor.nombre;
-    selectConductor.appendChild(option);
-  });
+  // Construcción de los parámetros URL
+  const params = `?pSistema=${pSistema}&pUsuario=${pUsuario}&pOpcion=${pOpcion}&pConductor=${pConductor}`;
 
-  // CRUCIAL: Reinicializar el select específico en Materialize
-  M.FormSelect.init(selectConductor);
+  try {
+    const response = await fetch(env.API_URL + "selectconductor" + params, myInit);
+    const data = await response.json();
+
+    // Limpiar opciones anteriores
+    selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
+
+    const listaConductores = data.respuesta || data;
+
+    if (Array.isArray(listaConductores)) {
+      listaConductores.forEach(conductor => {
+        const option = document.createElement("option");
+
+        // 1. Asignar ID_CONDUCTOR como value
+        option.value = conductor.ID_CONDUCTOR;
+
+        // 2. Limpiar el nombre del conductor
+        const nombreConductor = (conductor.CONDUCTOR || "").trim();
+        option.textContent = nombreConductor;
+
+        selectConductor.appendChild(option);
+      });
+    }
+
+    // Reinicializar el select específico en Materialize
+    M.FormSelect.init(selectConductor);
+  } catch (error) {
+    console.error("Error al cargar los conductores:", error);
+  }
 }
+
+// // Arreglos de datos (Simulando respuesta del backend o catálogo local)
+// const listaPlacas = [
+//   { id: "ABC-123", texto: "ABC-123 (Volvo Blanco)" },
+//   { id: "XYZ-789", texto: "XYZ-789 (Freightliner Azul)" },
+//   { id: "PAN-456", texto: "PAN-456 (Isuzu Rojo)" },
+//   { id: "WMS-777", texto: "WMS-777 (Mack Amarillo)" }
+// ];
+
+// const listaConductores = [
+//   { id: "1", nombre: "Juan Pérez" },
+//   { id: "2", nombre: "Carlos Mendoza" },
+//   { id: "3", nombre: "José Santana" },
+//   { id: "4", nombre: "Luis Castillo" }
+// ];
+
+// // Función para cargar las Placas en el Select
+// function cargarSelectPlacas() {
+//   const selectPlaca = document.getElementById("placa-camion");
+//   if (!selectPlaca) return;
+
+//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+//   selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
+
+//   // Recorrer el arreglo y crear las etiquetas <option>
+//   listaPlacas.forEach(placa => {
+//     const option = document.createElement("option");
+//     option.value = placa.id;
+//     option.textContent = placa.texto;
+//     selectPlaca.appendChild(option);
+//   });
+
+//   // CRUCIAL: Reinicializar el select específico en Materialize
+//   M.FormSelect.init(selectPlaca);
+// }
+
+// // Función para cargar los Conductores en el Select
+// function cargarSelectConductores() {
+//   const selectConductor = document.getElementById("conductor-camion");
+//   if (!selectConductor) return;
+
+//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+//   selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
+
+//   // Recorrer el arreglo y crear las etiquetas <option>
+//   listaConductores.forEach(conductor => {
+//     const option = document.createElement("option");
+//     option.value = conductor.id;
+//     option.textContent = conductor.nombre;
+//     selectConductor.appendChild(option);
+//   });
+
+//   // CRUCIAL: Reinicializar el select específico en Materialize
+//   M.FormSelect.init(selectConductor);
+// }

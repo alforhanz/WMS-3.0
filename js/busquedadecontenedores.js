@@ -1,12 +1,14 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  localStorage.removeItem("desprachoIniciado"); 
+  //localStorage.removeItem("desprachoIniciado");
   const busqueda = localStorage.getItem("SearchParameterFlag");
-  localStorage.setItem("switch_procesados", "false");
+  //localStorage.setItem("switch_procesados", "false");
   if (busqueda === "true") {
-    const parametrosBusqueda = localStorage.getItem("parametrosBusquedaContenedor");
-    localStorage.setItem("contenedorSwitch", true);
+    const parametrosBusqueda = localStorage.getItem(
+      "parametrosBusquedaContenedor",
+    );
+    //localStorage.setItem("contenedorSwitch", true);
 
     if (parametrosBusqueda) {
       const params = new URLSearchParams(parametrosBusqueda);
@@ -14,39 +16,40 @@ document.addEventListener("DOMContentLoaded", function () {
       const pUsuario = params.get("pUsuario") ?? "";
       const pOpcion = params.get("pOpcion") ?? "";
       const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
-      const pBodegaDestino = params.get("pBodegaDestino") ?? "";
+      const pBodegaDestino = params.get("pBodegaSolicita") ?? "";
       const pFechaDesde = params.get("pFechaDesde") ?? "";
       const pFechaHasta = params.get("pFechaHasta") ?? "";
 
-      
       // Establecer los valores de los campos de fecha
-      if(pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
-      if(pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      if (pFechaDesde) document.getElementById("fecha_ini").value = pFechaDesde;
+      if (pFechaHasta) document.getElementById("fecha_fin").value = pFechaHasta;
+      if (pBodegaDestino)
+        document.getElementById("bodegaSelectOC").value = pBodegaDestino;
       // 2. Esperar un instante para que Materialize inicialice y luego forzar el estado
-          setTimeout(() => {
-              // Forzar a los labels a subir
-              M.updateTextFields();
+      setTimeout(() => {
+        // Forzar a los labels a subir
+        M.updateTextFields();
 
-              // Reinicializar los datepickers específicamente con la fecha guardada
-              const inputs = document.querySelectorAll('.datepicker');
-              inputs.forEach(input => {
-                  const fechaGuardada = input.id === 'fecha_ini' ? pFechaDesde : pFechaHasta;
-                  
-                  if (fechaGuardada) {
-                      // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
-                      const dateParts = fechaGuardada.split('-'); // Asumiendo YYYY-MM-DD
-                      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        // Reinicializar los datepickers específicamente con la fecha guardada
+        const inputs = document.querySelectorAll(".datepicker");
+        inputs.forEach((input) => {
+          const fechaGuardada =
+            input.id === "fecha_ini" ? pFechaDesde : pFechaHasta;
 
-                      M.Datepicker.init(input, {
-                          format: 'yyyy-mm-dd',
-                          defaultDate: d,
-                          setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
-                          autoClose: true
-                      });
-                  }
-              });
-          }, 100);
+          if (fechaGuardada) {
+            // Crear objeto fecha (importante añadir la hora para evitar desfases de zona horaria)
+            const dateParts = fechaGuardada.split("-"); // Asumiendo YYYY-MM-DD
+            const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
 
+            M.Datepicker.init(input, {
+              format: "yyyy-mm-dd",
+              defaultDate: d,
+              setDefaultDate: true, // Esto obliga al calendario a mostrar la fecha
+              autoClose: true,
+            });
+          }
+        });
+      }, 100);
 
       enviarDatosControlador(
         pSistema,
@@ -55,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pBodegaEnvia,
         pBodegaDestino,
         pFechaDesde,
-        pFechaHasta
+        pFechaHasta,
       );
     }
   }
@@ -119,7 +122,7 @@ function validarBusquedaContenedor() {
     pBodegaEnvia,
     pBodegaDestino,
     pFechaDesde,
-    pFechaHasta
+    pFechaHasta,
   );
 }
 /////////////////////////////////////////////////////////////////////
@@ -131,7 +134,7 @@ function enviarDatosControlador(
   pBodegaEnvia,
   pBodegaDestino,
   pFechaDesde,
-  pFechaHasta
+  pFechaHasta,
 ) {
   const params =
     "?pSistema=" +
@@ -158,7 +161,7 @@ function enviarDatosControlador(
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-     // //console.log("Datos de la API:", result); // Depuración
+      // //console.log("Datos de la API:", result); // Depuración
       if (result.msg === "SUCCESS") {
         if (result.contenedor && result.contenedor.length > 0) {
           ArrayData = result.contenedor;
@@ -198,7 +201,7 @@ function enviarDatosControlador(
         } else {
           document.getElementById("resultadoGeneral").innerHTML = "";
           document.getElementById("resultadoPaginador").innerHTML = "";
-          
+
           Swal.fire({
             icon: "info",
             title: "Información",
@@ -206,10 +209,11 @@ function enviarDatosControlador(
             confirmButtonColor: "#28a745",
           }).then((result) => {
             if (result.isConfirmed) {
-              localStorage.removeItem('parametrosBusquedaContenedor');
-              localStorage.removeItem('SearchParameterFlag');
-              window.location.reload();
-            }});
+              //localStorage.removeItem('parametrosBusquedaContenedor');
+              //localStorage.removeItem('SearchParameterFlag');
+              //window.location.reload();
+            }
+          });
           ocultarLoader();
         }
       } else {
@@ -249,7 +253,7 @@ function mostrarResultadosVerificacionContenedores(nPag, pag) {
   let htm = paginadorTablasContenedor(
     nPag,
     pag,
-    "mostrarResultadosVerificacionContenedores"
+    "mostrarResultadosVerificacionContenedores",
   );
   document.getElementById("resultadoPaginador").innerHTML = htm;
 
@@ -392,7 +396,7 @@ checkbox.addEventListener("change", function () {
     contenedoresProcesados();
   } else {
   }
-  limpiarResultadoGeneral();
+  //limpiarResultadoGeneral();
   $("#toggleSwitch").prop("checked", true);
   localStorage.setItem("contenedorSwitch", true);
 });
@@ -443,6 +447,73 @@ function limpiarResultadoGeneral() {
       tbody.innerHTML = "";
     }
   }
+  //localStorage.removeItem("SearchParameterFlag");
+  //localStorage.removeItem("parametrosBusquedaContenedor");
+}
+
+function refrescaPantalla() {
   localStorage.removeItem("SearchParameterFlag");
   localStorage.removeItem("parametrosBusquedaContenedor");
+  window.location.reload();
+}
+
+function mostrarInfo() {
+  Swal.fire({
+    title:
+      "<strong style=\"font-family:'Oswald',sans-serif;\">Guía de Búsqueda de Contenedores</strong>",
+    icon: "info",
+    html: `
+      <div style="text-align: left; font-size: 14px; font-family: 'Roboto', sans-serif; line-height: 1.5; max-height: 430px; overflow-y: auto; padding-right: 8px;">
+        
+        <!-- BÚSQUEDA Y FILTROS -->
+        <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0;">
+          🔍 Criterios de Búsqueda
+        </h6>
+        <div style="margin-bottom: 15px;">
+          <p style="margin: 5px 0;">
+            • <strong>Número de Contenedor:</strong> Ingrese el código o número de contenedor si desea filtrar un registro específico.
+          </p>
+          <p style="margin: 5px 0;">
+            • <strong>Rango de Fechas:</strong> Utilice los campos <em>Fecha Inicial</em> y <em>Fecha Final</em> para acotar la consulta dentro de un periodo.
+          </p>
+          <p style="margin: 5px 0;">
+            • <strong>Bodega de Destino:</strong> Es obligatorio seleccionar una bodega de destino de la lista desplegable antes de consultar.
+          </p>
+        </div>
+
+        <!-- FLUJO DEL PROCESO -->
+        <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+          🔄 Flujo de Trabajo
+        </h6>
+        <ol style="padding-left: 18px; margin: 8px 0;">
+          <li style="margin-bottom: 6px;">
+            <strong>Consulta:</strong> Una vez definidos los filtros, haga clic en el botón <strong>Mostrar Contenedores</strong> para cargar el listado.
+          </li>
+          <li style="margin-bottom: 6px;">
+            <strong>Resultados:</strong> La tabla mostrará la información clave de cada contenedor, incluyendo la <em>Cantidad Solicitada</em>, <em>Cantidad Leída</em> y la <em>Fecha de Creación</em>.
+          </li>
+          <li style="margin-bottom: 6px;">
+            <strong>Ver Detalle / Verificación:</strong> Haga clic sobre cualquier fila del listado para abrir el detalle del contenedor y comenzar o continuar con el proceso de lectura de líneas.
+          </li>
+        </ol>
+
+        <!-- HERRAMIENTAS ADICIONALES -->
+        <h6 style="font-weight: bold; color: #1e88e5; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 12px;">
+          ⚙️ Herramientas de Pantalla
+        </h6>
+        <ul style="padding-left: 18px; margin: 5px 0; list-style-type: disc;">
+          <li style="margin-bottom: 4px;">
+            <strong>Refrescar Pantalla (<i class="material-icons green-text text-darken-2" style="font-size: 16px; vertical-align: middle;">refresh</i>):</strong> Limpia los filtros y parámetros guardados en memoria, reiniciando la vista.
+          </li>
+          <li style="margin-bottom: 4px;">
+            <strong>Paginador:</strong> Al final de la tabla podrá navegar entre las diferentes páginas de resultados o seleccionar el número de página deseado.
+          </li>
+        </ul>
+
+      </div>
+    `,
+    showCloseButton: true,
+    confirmButtonColor: "#1e88e5",
+    confirmButtonText: "Entendido",
+  });
 }
