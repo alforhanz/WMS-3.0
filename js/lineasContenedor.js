@@ -4,6 +4,7 @@
 var detalleLineasContenedor = [];
 
 document.addEventListener("DOMContentLoaded", function () {
+  loadSwitchState(); // <-- Cargar estado del switch al iniciar
   if (localStorage.getItem("contenedor")) {
     let contenedor = localStorage.getItem("contenedor");
     let bodegaSolicita = localStorage.getItem("bodega_solicita");
@@ -17,6 +18,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+function loadSwitchState() {
+  let storedState = localStorage.getItem("switchLecturaState_Contenedor");
+  
+  // Si no se ha guardado previamente (null o undefined), el valor predeterminado es false
+  let switchState = storedState !== null ? storedState === "true" : false;
+  
+  let toggleSwitch = document.getElementById("toggleSwitchLectura");
+  if (toggleSwitch) {
+    toggleSwitch.checked = switchState;
+  }
+  
+  // Guardamos el valor por defecto para mantener consistencia
+  localStorage.setItem("switchLecturaState_Contenedor", switchState.toString());
+}
+
+function toggleSwitchLecturaState(checkbox) {
+  localStorage.setItem("switchLecturaState_Contenedor", checkbox.checked);
+}
 
 window.onload = function () {
   inicializarBotones();
@@ -107,6 +128,7 @@ function cargarDetalleContenedor(contenedor, bodegaSolicita, estado_Pdt) {
 function validarCodigoBarras(input) {
   var LineasContenedor = detalleLineasContenedor;
   const codbarra = input.value.toUpperCase().trim();
+  let lecturaKitsActiva = localStorage.getItem("switchLecturaState_Contenedor") === "true";
 
   const row = input.closest("tr");
   const firstTd = row.querySelector("td:first-child");
@@ -117,41 +139,77 @@ function validarCodigoBarras(input) {
   var codigoValido = false;
 
   for (var i = 0; i < LineasContenedor.length; i++) {
-    let codigosArrayArticulo = [];
-    if (LineasContenedor[i].codigos_barras) {
-      codigosArrayArticulo = LineasContenedor[i].codigos_barras
-        .split("|")
-        .map((codigo) => codigo.toUpperCase().trim());
-    }
+    let item = LineasContenedor[i];
 
-    if (
-      (LineasContenedor[i].Articulo &&
-        LineasContenedor[i].Articulo.toUpperCase() === codbarra) ||
-      (LineasContenedor[i].Codigo_Barra &&
-        LineasContenedor[i].Codigo_Barra.toUpperCase() === codbarra) ||
-      codigosArrayArticulo.includes(codbarra)
-    ) {
-      codigoValido = true;
+    // Arrays para codigos normales y codigos de kits/cajas
+    let codigosUnidad = item.codigos_barras 
+      ? item.codigos_barras.split("|").map(c => c.toUpperCase().trim()) 
+      : [];
+    let codigosKits = item.codigos_barras_kits 
+      ? item.codigos_barras_kits.split("|").map(c => c.toUpperCase().trim()) 
+      : [];
 
-      if (LineasContenedor[i].total_cedi > 0) {
-        span.textContent = LineasContenedor[i].Articulo;
-        cantFila.value = 1;
-        input.setAttribute("readonly", "readonly");
+    let esCodigoUnidad = (item.Articulo && item.Articulo.toUpperCase() === codbarra) ||
+                         (item.Codigo_Barra && item.Codigo_Barra.toUpperCase() === codbarra) ||
+                         codigosUnidad.includes(codbarra);
 
-        crearNuevaFila();
-        guardarTablaEnArray();
-        verificacion();
-        break;
-      } else {
+    let esCodigoKit = (item.ARTICULO_PADRE && item.ARTICULO_PADRE.toUpperCase() === codbarra) ||
+                       codigosKits.includes(codbarra);
+
+    if (esCodigoUnidad || esCodigoKit) {
+      if (item.total_cedi <= 0) {
         Swal.fire({
           icon: "warning",
           title: "¡Artículo sin Existencias!",
-          text: "La referencia " + LineasContenedor[i].Articulo + " no cuenta con existencias",
+          text: "La referencia " + item.Articulo + " no cuenta con existencias",
           confirmButtonColor: "#28a745",
         });
         input.value = "";
-        break;
+        return;
       }
+
+      // EVALUACIÓN SEGÚN EL MODO DEL SWITCH
+      if (!lecturaKitsActiva) {
+        // MODO LECTURA POR UNIDAD (Switch desmarcado)
+        if (esCodigoKit && !esCodigoUnidad) {
+          input.value = "";
+          Swal.fire({
+            icon: "warning",
+            title: "Alerta: Lectura por Unidades activada",
+            text: "Está intentando leer un código por kit o caja. Active el switch para lectura por Kit/Caja.",
+            confirmButtonColor: "#28a745",
+          });
+          return;
+        }
+
+        span.textContent = item.Articulo;
+        cantFila.value = 1;
+        span.style.color = "";
+      } else {
+        // MODO LECTURA POR KITS / CAJAS (Switch marcado)
+        if (esCodigoUnidad && !esCodigoKit) {
+          input.value = "";
+          Swal.fire({
+            icon: "warning",
+            title: "Alerta: Lectura por Kits/Cajas activada",
+            text: "Está intentando leer un código individual. Desactive el switch para lectura por Unidad.",
+            confirmButtonColor: "#28a745",
+          });
+          return;
+        }
+
+        let unidadesPorKit = parseFloat(item.cant_kits) || 1;
+        span.textContent = item.Articulo;
+        cantFila.value = unidadesPorKit;
+        span.style.color = "#28a745"; // Color diferenciador para lectura por kit
+      }
+
+      codigoValido = true;
+      input.setAttribute("readonly", "readonly");
+      crearNuevaFila();
+      guardarTablaEnArray();
+      verificacion();
+      break;
     }
   }
 
@@ -165,6 +223,68 @@ function validarCodigoBarras(input) {
     });
   }
 }
+
+// function validarCodigoBarras(input) {
+//   var LineasContenedor = detalleLineasContenedor;
+//   const codbarra = input.value.toUpperCase().trim();
+
+//   const row = input.closest("tr");
+//   const firstTd = row.querySelector("td:first-child");
+//   const span = firstTd.querySelector("span");
+//   const siguienteTd = row.querySelector(".codigo-barras-cell2");
+//   const cantFila = siguienteTd.querySelector(".codigo-barras-input");
+
+//   var codigoValido = false;
+
+//   for (var i = 0; i < LineasContenedor.length; i++) {
+//     let codigosArrayArticulo = [];
+//     if (LineasContenedor[i].codigos_barras) {
+//       codigosArrayArticulo = LineasContenedor[i].codigos_barras
+//         .split("|")
+//         .map((codigo) => codigo.toUpperCase().trim());
+//     }
+
+//     if (
+//       (LineasContenedor[i].Articulo &&
+//         LineasContenedor[i].Articulo.toUpperCase() === codbarra) ||
+//       (LineasContenedor[i].Codigo_Barra &&
+//         LineasContenedor[i].Codigo_Barra.toUpperCase() === codbarra) ||
+//       codigosArrayArticulo.includes(codbarra)
+//     ) {
+//       codigoValido = true;
+
+//       if (LineasContenedor[i].total_cedi > 0) {
+//         span.textContent = LineasContenedor[i].Articulo;
+//         cantFila.value = 1;
+//         input.setAttribute("readonly", "readonly");
+
+//         crearNuevaFila();
+//         guardarTablaEnArray();
+//         verificacion();
+//         break;
+//       } else {
+//         Swal.fire({
+//           icon: "warning",
+//           title: "¡Artículo sin Existencias!",
+//           text: "La referencia " + LineasContenedor[i].Articulo + " no cuenta con existencias",
+//           confirmButtonColor: "#28a745",
+//         });
+//         input.value = "";
+//         break;
+//       }
+//     }
+//   }
+
+//   if (!codigoValido) {
+//     input.value = "";
+//     Swal.fire({
+//       icon: "warning",
+//       title: "¡Código no válido!",
+//       text: "El código ingresado no coincide con ningún artículo del pedido. Intente nuevamente.",
+//       confirmButtonColor: "#28a745",
+//     });
+//   }
+// }
 
 function crearNuevaFila() {
   actualizarProgresoLectura();

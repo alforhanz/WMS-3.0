@@ -1,7 +1,8 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  //localStorage.removeItem("desprachoIniciado");
+  localStorage.removeItem("switchLecturaState_Contenedor");
+
   const busqueda = localStorage.getItem("SearchParameterFlag");
   //localStorage.setItem("switch_procesados", "false");
   if (busqueda === "true") {
