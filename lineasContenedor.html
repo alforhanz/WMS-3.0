@@ -57,98 +57,103 @@
           <button id="btn-regresar" class="btn-regresar" type="button" onclick="retornarVistaAnterior()">
             Regresar
           </button>
-        </div>
-
-        <!-- <div class="row">
-          <ul id="tabs-swipe-demo" class="tabs">
-            <li class="tab col s3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
-            <li class="tab col s3"><a href="#tabla-verificacion" onclick="verificacion()">VERFICACIÓN</a></li>
-          </ul>
-          <div id="tabla-lectura" class="col s12"> -->
-          <div class="row">
-            <ul id="tabs-swipe-demo" class="tabs" style="display: flex; align-items: center;">
-              <li class="tab col s4 m3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
-              <li class="tab col s4 m3"><a href="#tabla-verificacion" onclick="verificacion()">VERIFICACIÓN</a></li>
-          
-              <li style="margin-left: auto; padding-right: 15px; display: flex; align-items: center; gap: 16px;">
-                <i class="material-icons green-text text-darken-2"
-                  style="cursor: pointer; font-size: 26px; transition: transform 0.2s;" onclick="window.location.reload();"
-                  title="Refrescar Pantalla" onmouseover="this.style.transform='scale(1.1)'"
-                  onmouseout="this.style.transform='scale(1)'">
-                  refresh
-                </i>          
-                <i class="material-icons blue-text" style="cursor: pointer; font-size: 26px; transition: transform 0.2s;"
-                  onclick="mostrarInfoColores()" title="Información de procesos" onmouseover="this.style.transform='scale(1.1)'"
-                  onmouseout="this.style.transform='scale(1)'">
-                  info
-                </i>
-              </li>
-            </ul>          
-            <div id="tabla-lectura" class="col s12">
-            <div class="row">
-              <label id="progresoLecturaLabel">
-                Progreso: 0/0
-              </label>
-              <div id="resultadoGeneral"></div>
-              <table id="myTableLectura" class="display">
-                <thead>
-                  <tr class="themeColor">
-                    <th style="width: 30%;">Articulo</th>
-                    <th id="codigoBarrasHeader" style="width: 30%;">Cod</th>
-                    <th style="width: 20%;">Cant</th>
-                    <th style="width: 10%;">CL</th>
-                  </tr>
-                </thead>
-                <tbody id="tblbodyLectura">
-                  <tr>
-                    <td>
-                      <span style="display: inline-block;"></span>
-                    </td>
-                    <td class="codigo-barras-cell">
-                      <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCodigoBarras(this)">
-                    </td>
-                    <td class="codigo-barras-cell2">
-                      <input id="cant-pedida" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCantidadPedida(this)">
-                    </td>
-                    <td class="codigo-barras-cell2">
-                      <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="row">
-
-            </div>
+          <!-- INICIO: Switch de lectura por Kits o Cajas -->
+          <!-- <div id="switchLecturaContainer" class="row col s12" ">
+                    <div class=" switch">
+            <label style="font-size: 16px !important;">
+              <input type="checkbox" id="toggleSwitchLectura" onchange="toggleSwitchLecturaState(this)">
+              <span class="lever"></span>
+              Lectura por Kits o Cajas
+            </label>
           </div>
-          <div id="tabla-verificacion" class="col s12">
-            <label id="cantidadDeRegistros"> Registros:</label>
-            <div class="row">
-              <div id="resultadoGeneral"></div>
-              <table id="myTableVerificacion" class="display centered">
-                <thead>
-                  <tr class="themeColor">
-                    <th style="width: 20%;">Articulo</th>
-                    <th id="codigoBarrasHeader" style="width: 20%;">Cod</th>
-                    <th id="cantidadPedida" style="width: 10%;">Cant<br>Solitud</th>
-                    <th id="cantidadLeida" style="width: 10%;">Cant<br>Leida</th>
-                    <th id="totalCedi" style="width: 10%;">Total<br> CEDI</th>
-                    <th id="verificado" style="width: 10%;">VERIF</th>
-                    <th class="width: 10%;" hidden>DEL</th>
-                    <!-- <th class="width: 10%;" hidden>DEL</th> -->
-                  </tr>
-                </thead>
-                <tbody id="tblbodyLineasContenedor">
-                  <tr>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        </div> -->
+        <!-- FIN: Switch de lectura por Kits o Cajas -->
+      </div> 
+      <div class="row">
+        <ul id="tabs-swipe-demo" class="tabs" style="display: flex; align-items: center;">
+          <li class="tab col s4 m3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
+          <li class="tab col s4 m3"><a href="#tabla-verificacion" onclick="verificacion()">VERIFICACIÓN</a></li>
+
+          <li style="margin-left: auto; padding-right: 15px; display: flex; align-items: center; gap: 16px;">
+            <i class="material-icons green-text text-darken-2"
+              style="cursor: pointer; font-size: 26px; transition: transform 0.2s;" onclick="window.location.reload();"
+              title="Refrescar Pantalla" onmouseover="this.style.transform='scale(1.1)'"
+              onmouseout="this.style.transform='scale(1)'">
+              refresh
+            </i>
+            <i class="material-icons blue-text" style="cursor: pointer; font-size: 26px; transition: transform 0.2s;"
+              onclick="mostrarInfoColores()" title="Información de procesos"
+              onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+              info
+            </i>
+          </li>
+        </ul>
+        <div id="tabla-lectura" class="col s12">
+          <div class="row">
+            <label id="progresoLecturaLabel">
+              Progreso: 0/0
+            </label>
+            <div id="resultadoGeneral"></div>
+            <table id="myTableLectura" class="display">
+              <!-- Encabezados de la tabla... -->
+              <thead>
+                <tr class="themeColor">
+                  <th style="width: 30%;">Articulo</th>
+                  <th id="codigoBarrasHeader" style="width: 30%;">Cod</th>
+                  <th style="width: 20%;">Cant</th>
+                  <th style="width: 10%;">CL</th>
+                </tr>
+              </thead>
+              <tbody id="tblbodyLectura">
+                <tr>
+                  <td>
+                    <span style="display: inline-block;"></span>
+                  </td>
+                  <td class="codigo-barras-cell">
+                    <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
+                      onchange="validarCodigoBarras(this)">
+                  </td>
+                  <td class="codigo-barras-cell2">
+                    <input id="cant-pedida" type="text" class="codigo-barras-input" value=""
+                      onchange="validarCantidadPedida(this)">
+                  </td>
+                  <td class="codigo-barras-cell2">
+                    <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+
+          </div>
+        </div>
+        <div id="tabla-verificacion" class="col s12">
+          <label id="cantidadDeRegistros"> Registros:</label>
+          <div class="row">
+            <div id="resultadoGeneral"></div>
+            <table id="myTableVerificacion" class="display centered">
+              <thead>
+                <tr class="themeColor">
+                  <th style="width: 20%;">Articulo</th>
+                  <th id="codigoBarrasHeader" style="width: 20%;">Cod</th>
+                  <th id="cantidadPedida" style="width: 10%;">Cant<br>Solitud</th>
+                  <th id="cantidadLeida" style="width: 10%;">Cant<br>Leida</th>
+                  <th id="totalCedi" style="width: 10%;">Total<br> CEDI</th>
+                  <th id="verificado" style="width: 10%;">VERIF</th>
+                  <th class="width: 10%;" hidden>DEL</th>
+                  <!-- <th class="width: 10%;" hidden>DEL</th> -->
+                </tr>
+              </thead>
+              <tbody id="tblbodyLineasContenedor">
+                <tr>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
     </div>
     <!--Text area para los mensajes-->
     <div id="mensajes" class="container">

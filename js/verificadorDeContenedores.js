@@ -1865,11 +1865,15 @@ function CrearPaqueteContenedores() {
               cancelButtonColor: "#6e7881",
             }).then((resultSwal) => {
               if (resultSwal.isConfirmed) {
+                //  imprimirPaqueteReporte(respuesta);
+                // limpiarResultadoGeneral();
+                // limpiarMensajes();
+                // //location.reload();
               } else if (resultSwal.isDenied) {
                 imprimirPaqueteReporte(respuesta);
-                limpiarResultadoGeneral();
-                limpiarMensajes();
-                location.reload();
+                // limpiarResultadoGeneral();
+                // limpiarMensajes();
+                //location.reload();
               }
             });
           } else {
