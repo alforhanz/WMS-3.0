@@ -4,12 +4,10 @@ document.addEventListener("DOMContentLoaded", function () {
   localStorage.removeItem("switchLecturaState_Contenedor");
 
   const busqueda = localStorage.getItem("SearchParameterFlag");
-  //localStorage.setItem("switch_procesados", "false");
   if (busqueda === "true") {
     const parametrosBusqueda = localStorage.getItem(
       "parametrosBusquedaContenedor",
     );
-    //localStorage.setItem("contenedorSwitch", true);
 
     if (parametrosBusqueda) {
       const params = new URLSearchParams(parametrosBusqueda);
@@ -18,6 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const pOpcion = params.get("pOpcion") ?? "";
       const pBodegaEnvia = params.get("pBodegaEnvia") ?? "";
       const pBodegaDestino = params.get("pBodegaSolicita") ?? "";
+      const pConsecutivo= "";
+      const pEstado = "";
       const pFechaDesde = params.get("pFechaDesde") ?? "";
       const pFechaHasta = params.get("pFechaHasta") ?? "";
 
@@ -52,15 +52,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }, 100);
 
-      enviarDatosControlador(
-        pSistema,
-        pUsuario,
-        pOpcion,
-        pBodegaEnvia,
-        pBodegaDestino,
-        pFechaDesde,
-        pFechaHasta,
-      );
+              enviarDatosControlador(
+              pSistema,
+              pUsuario,
+              pOpcion,
+              pBodegaEnvia,
+              pBodegaDestino,
+              pConsecutivo,
+              pEstado,
+              pFechaDesde,
+              pFechaHasta,
+            );
     }
   }
   cargarBodegas();
@@ -110,9 +112,12 @@ function validarBusquedaContenedor() {
   let switchContenedor = localStorage.getItem("contenedorSwitch");
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
-  let pOpcion = switchContenedor === "false" ? "A" : "E";
+  // let pOpcion = switchContenedor === "false" ? "A" : "E";
+   let pOpcion ="E";
   let pBodegaEnvia = document.getElementById("bodega").value;
   let pBodegaDestino = document.getElementById("bodegaSelectOC").value;
+  let pConsecutivo ="";
+  let pEstado ="";
   let pFechaDesde = $("#fecha_ini").val();
   let pFechaHasta = $("#fecha_fin").val();
 
@@ -122,6 +127,8 @@ function validarBusquedaContenedor() {
     pOpcion,
     pBodegaEnvia,
     pBodegaDestino,
+    pConsecutivo,
+    pEstado,
     pFechaDesde,
     pFechaHasta,
   );
@@ -134,6 +141,8 @@ function enviarDatosControlador(
   pOpcion,
   pBodegaEnvia,
   pBodegaDestino,
+  pConsecutivo,
+  pEstado,
   pFechaDesde,
   pFechaHasta,
 ) {
@@ -148,6 +157,10 @@ function enviarDatosControlador(
     pBodegaEnvia +
     "&pBodegaSolicita=" +
     pBodegaDestino +
+    "&pConsecutivo="+
+    pConsecutivo+
+    "&pEstado="+
+    pEstado+
     "&pFechaDesde=" +
     pFechaDesde +
     "&pFechaHasta=" +
@@ -162,19 +175,13 @@ function enviarDatosControlador(
   fetch(env.API_URL + "contenedor" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      // //console.log("Datos de la API:", result); // Depuración
+            console.log("Datos de la API:", result); // Depuración
       if (result.msg === "SUCCESS") {
         if (result.contenedor && result.contenedor.length > 0) {
           ArrayData = result.contenedor;
           ArrayDataFiltrado = result.contenedor;
-
-          //console.log("ArrayDataFiltrado:", ArrayDataFiltrado); // Depuración
-
           let cantReg = ArrayDataFiltrado.length;
           let nPag = Math.ceil(cantReg / xPag);
-
-          ////console.log("nPag:", nPag, "cantReg:", cantReg, "xPag:", xPag); // Depuración
-
           // Mostrar total de registros
           const htm = `<div class="row" id="totalregistros">
             <div class="col s12"><span>Total de Registros: </span><span>${cantReg}</span></div>
@@ -390,40 +397,40 @@ fecha_ini.addEventListener("change", function () {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // Obtener el elemento toggleSwitch de entrada tipo checkbox////////
-const checkbox = document.getElementById("toggleSwitch");
+// const checkbox = document.getElementById("toggleSwitch");
 /////////////// Agregar un evento de cambio al checkbox/////////////
-checkbox.addEventListener("change", function () {
-  if (checkbox.checked === false) {
-    contenedoresProcesados();
-  } else {
-  }
-  //limpiarResultadoGeneral();
-  $("#toggleSwitch").prop("checked", true);
-  localStorage.setItem("contenedorSwitch", true);
-});
+// checkbox.addEventListener("change", function () {
+//   if (checkbox.checked === false) {
+//     contenedoresProcesados();
+//   } else {
+//   }
+//   //limpiarResultadoGeneral();
+//   $("#toggleSwitch").prop("checked", true);
+//   localStorage.setItem("contenedorSwitch", true);
+// });
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 //Fucnion que activa el toggleSwitch para ver los contenedorers procesados
-function contenedoresProcesados() {
-  Swal.fire({
-    title: "¿Desea ver solo los contenedores finalizados?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí",
-    cancelButtonText: "No",
-    confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6e7881",
-  }).then((result) => {
-    // Resultado de la acción
-    if (result.isConfirmed) {
-      $("#toggleSwitch").prop("checked", false);
-      localStorage.setItem("contenedorSwitch", false);
-    } else {
-      $("#toggleSwitch").prop("checked", true);
-      localStorage.setItem("contenedorSwitch", true);
-    }
-  });
-}
+// function contenedoresProcesados() {
+//   Swal.fire({
+//     title: "¿Desea ver solo los contenedores finalizados?",
+//     icon: "question",
+//     showCancelButton: true,
+//     confirmButtonText: "Sí",
+//     cancelButtonText: "No",
+//     confirmButtonColor: "#28a745",
+//     cancelButtonColor: "#6e7881",
+//   }).then((result) => {
+//     // Resultado de la acción
+//     if (result.isConfirmed) {
+//       $("#toggleSwitch").prop("checked", false);
+//       localStorage.setItem("contenedorSwitch", false);
+//     } else {
+//       $("#toggleSwitch").prop("checked", true);
+//       localStorage.setItem("contenedorSwitch", true);
+//     }
+//   });
+// }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function limpiarResultadoGeneral() {

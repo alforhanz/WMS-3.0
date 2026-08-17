@@ -1550,29 +1550,56 @@ async function guardaParcialMente() {
 
       console.log(`✅ Lote ${i + 1} procesado`, result);
 
-      if (result.msg !== "SUCCESS") {
-        console.warn(`⚠️ Error en lote ${i + 1}`, result);
+      if (result.msg !== "SUCCESS"||result.respuesta[0].Respuesta !="OK") {
+        //console.warn(`⚠️ Error en lote ${i + 1}`, result);
+         Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "⚠️ Error: "+result.respuesta[0].Respuesta,
+                  });
+                  ocultarLoader();
         break; // Si hay un error, detén el proceso
-      }
+      }else{// 🎉 Mensaje final si todo fue bien
+            Swal.fire({
+              icon: "success",
+              title: "Todos los datos fueron Guardados correctamente",
+              confirmButtonText: "Aceptar",
+              confirmButtonColor: "#28a745",
+              cancelButtonColor: "#6e7881",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                mostrarPestanaLectura();
+              }
+            });
+            ocultarLoader();
+          }
     } catch (err) {
       console.error(`🚨 Error al enviar lote ${i + 1}:`, err);
       break;
     }
   }
+// if(result.respuesta[0].Respuesta !="OK"){
+//        Swal.fire({
+//                     icon: "error",
+//                     title: "Error",
+//                     text: "⚠️ Error: "+result.respuesta[0].Respuesta,
+//                   });
+// }else{
+//     // 🎉 Mensaje final si todo fue bien
+//   Swal.fire({
+//     icon: "success",
+//     title: "Todos los datos fueron Guardados correctamente",
+//     confirmButtonText: "Aceptar",
+//     confirmButtonColor: "#28a745",
+//     cancelButtonColor: "#6e7881",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       mostrarPestanaLectura();
+//     }
+//   });
+//   ocultarLoader();
+// }
 
-  // 🎉 Mensaje final si todo fue bien
-  Swal.fire({
-    icon: "success",
-    title: "Todos los datos fueron Guardados correctamente",
-    confirmButtonText: "Aceptar",
-    confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6e7881",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      mostrarPestanaLectura();
-    }
-  });
-  ocultarLoader();
 }
 
 ///////////////FUNCIONES PARA PROCESAR///////////
@@ -1683,11 +1710,20 @@ async function guardaPaquete() {
       );
       const result = await response.json();
 
-      console.log(`✅ Lote ${i + 1} procesado`, result);
+      console.log(`✅ Lote ${i + 1} procesado`, result);        
 
-      if (result.msg !== "SUCCESS") {
-        console.warn(`⚠️ Error en lote ${i + 1}`, result);
+      if (result.msg !== "SUCCESS" || result.respuesta[0].Respuesta !="OK") {
+        console.log(`⚠️ Error en lote ${i + 1}`, result.respuesta[0].Respuesta);
+         Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "⚠️ Error: "+result.respuesta[0].Respuesta,
+                  });
         break; // Si hay un error, detén el proceso
+      }else{
+              // 🎉 Mensaje final si todo fue bien
+              console.log("Se guardaron los elementos de la tabla lectura y se va a crear el paquete.");
+              ConfirmaCrearPaqueteContenedores();
       }
     } catch (err) {
       console.error(`🚨 Error al enviar lote ${i + 1}:`, err);
@@ -1695,11 +1731,7 @@ async function guardaPaquete() {
     }
   }
 
-  // 🎉 Mensaje final si todo fue bien
-  console.log(
-    "Se guardaron los elementos de la tabla lectura y se va a crear el paquete."
-  );
-  ConfirmaCrearPaqueteContenedores();
+
 }
 
 /**
