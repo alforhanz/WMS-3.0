@@ -1730,8 +1730,6 @@ async function guardaPaquete() {
       break;
     }
   }
-
-
 }
 
 /**
@@ -2643,7 +2641,6 @@ function calcularTotalesVerificacion() {
     tfoot.appendChild(filaTotal);
     tabla.appendChild(tfoot);
 }
-
 function mostrarPestanaLectura() {
   // Cambia la pestaña activa
   const tabLectura = document.querySelector(
@@ -2653,7 +2650,6 @@ function mostrarPestanaLectura() {
   // Opcional: enfocar el input del código de barras
   document.getElementById("codigo-barras").focus();
 }
-
 // //_____________________________________________________________________________
 // ///////// FILTRAR LÍNEAS DE VERIFICACIÓN DINÁMICAMENTE //////////////////
 // //_____________________________________________________________________________
@@ -2722,7 +2718,6 @@ function filtrarTablaVerificacion() {
   // Re-armar la tabla de verificación pasando únicamente el arreglo filtrado
   armarTablaVerificacion(datosFiltrados);
 }
-
 function alternarEstadoBotonesAccion(habilitar) {
   const btnLectura = document.getElementById("btnGuardarLectura");
   const btnVerificacion = document.getElementById("btnGuardarVerificacion");
@@ -2733,7 +2728,6 @@ function alternarEstadoBotonesAccion(habilitar) {
   if (btnVerificacion) btnVerificacion.disabled = !habilitar;
   if (btnProcesar) btnProcesar.disabled = !habilitar;
 }
-
 function mostrarInfo() {
   Swal.fire({
     title: '<strong style="font-family:\'Oswald\',sans-serif;">Guía de Operación y Colores</strong>',
@@ -2801,7 +2795,6 @@ function mostrarInfo() {
   });
 }
 
-
 // Función para cargar las Placas en el Select vía API
 async function cargarSelectPlacas() {
   const selectPlaca = document.getElementById("placa-camion");
@@ -2850,7 +2843,6 @@ async function cargarSelectPlacas() {
     console.error("Error al cargar las placas de camión:", error);
   }
 }
-
 // Función para cargar los Conductores en el Select vía API
 async function cargarSelectConductores() {
   const selectConductor = document.getElementById("conductor-camion");
@@ -2896,58 +2888,3 @@ async function cargarSelectConductores() {
     console.error("Error al cargar los conductores:", error);
   }
 }
-
-// // Arreglos de datos (Simulando respuesta del backend o catálogo local)
-// const listaPlacas = [
-//   { id: "ABC-123", texto: "ABC-123 (Volvo Blanco)" },
-//   { id: "XYZ-789", texto: "XYZ-789 (Freightliner Azul)" },
-//   { id: "PAN-456", texto: "PAN-456 (Isuzu Rojo)" },
-//   { id: "WMS-777", texto: "WMS-777 (Mack Amarillo)" }
-// ];
-
-// const listaConductores = [
-//   { id: "1", nombre: "Juan Pérez" },
-//   { id: "2", nombre: "Carlos Mendoza" },
-//   { id: "3", nombre: "José Santana" },
-//   { id: "4", nombre: "Luis Castillo" }
-// ];
-
-// // Función para cargar las Placas en el Select
-// function cargarSelectPlacas() {
-//   const selectPlaca = document.getElementById("placa-camion");
-//   if (!selectPlaca) return;
-
-//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
-//   selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
-
-//   // Recorrer el arreglo y crear las etiquetas <option>
-//   listaPlacas.forEach(placa => {
-//     const option = document.createElement("option");
-//     option.value = placa.id;
-//     option.textContent = placa.texto;
-//     selectPlaca.appendChild(option);
-//   });
-
-//   // CRUCIAL: Reinicializar el select específico en Materialize
-//   M.FormSelect.init(selectPlaca);
-// }
-
-// // Función para cargar los Conductores en el Select
-// function cargarSelectConductores() {
-//   const selectConductor = document.getElementById("conductor-camion");
-//   if (!selectConductor) return;
-
-//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
-//   selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
-
-//   // Recorrer el arreglo y crear las etiquetas <option>
-//   listaConductores.forEach(conductor => {
-//     const option = document.createElement("option");
-//     option.value = conductor.id;
-//     option.textContent = conductor.nombre;
-//     selectConductor.appendChild(option);
-//   });
-
-//   // CRUCIAL: Reinicializar el select específico en Materialize
-//   M.FormSelect.init(selectConductor);
-// }

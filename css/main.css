@@ -3329,3 +3329,65 @@ Rpt Existencias Inventario
           height: 42px;
           margin-right: 52px;
 }
+
+
+/* ═════════════════════════════════════════════════════
+   ESTILOS COMPACTOS PARA TABLA DE TRASLADOS (MÓVIL & DESKTOP)
+═════════════════════════════════════════════════════ */
+#tbltraslados {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  font-size: 11px !important;
+  margin-top: 10px;
+}
+
+#tbltraslados thead tr {
+  background-color: #7e8180 !important;
+}
+
+#tbltraslados thead th {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+  font-size: 11px !important;
+  line-height: 1.15;
+  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+  vertical-align: middle !important;
+}
+
+#tbltraslados thead th:last-child {
+  border-right: none !important;
+}
+
+#tbltraslados tbody td {
+  padding: 6px 2px !important;
+  text-align: center !important;
+  font-size: 11px !important;
+  vertical-align: middle !important;
+  word-break: break-word !important;
+}
+
+/* Distribución de anchos de columna */
+#tbltraslados th:nth-child(1), #tbltraslados td:nth-child(1) { width: 28% !important; }
+#tbltraslados th:nth-child(2), #tbltraslados td:nth-child(2) { width: 18% !important; }
+#tbltraslados th:nth-child(3), #tbltraslados td:nth-child(3) { width: 16% !important; }
+#tbltraslados th:nth-child(4), #tbltraslados td:nth-child(4) { width: 16% !important; }
+#tbltraslados th:nth-child(5), #tbltraslados td:nth-child(5) { width: 22% !important; }
+
+/* Estilo rojo y partición del Traslado */
+.td-traslado-codigo {
+  color: #e51c23 !important;
+  font-weight: bold !important;
+  line-height: 1.15 !important;
+  display: block;
+}
+
+/* Alternancia de color de filas */
+#tbltraslados tbody tr:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+#tbltraslados tbody tr:nth-child(even) {
+  background-color: #d7d5d5 !important;
+}
