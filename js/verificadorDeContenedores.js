@@ -1322,90 +1322,6 @@ function inicializarBotones() {
   }
 }
 
-// function inicializarBotones() {
-//   // Crear los botones y el contenedor
-//   const contenedorTblLectura = document.createElement("div");
-//   const contenedorBotones = document.createElement("div");
-//   const botonProcesar = document.createElement("button");
-//   const botonGuardarParcial = document.createElement("button");
-//   const botonGuardarLectura =document.createElement("button");
-
-//   // Configurar propiedades de los botones
-
-//   botonGuardarLectura.textContent = "Guardar";
-//   botonGuardarLectura.id = "btnGuardar";
-//   botonGuardarLectura.hidden = false;
-//   botonGuardarLectura.onclick = confirmarGuardadoParcial;
-
-//   botonProcesar.textContent = "Crear Paquete";
-//   botonProcesar.id = "btnCrearPaqueteContenedor";
-//   botonProcesar.hidden = false; 
-//   botonProcesar.onclick = guardaPaquete;
-
-//   botonGuardarParcial.textContent = "Guardar";
-//   botonGuardarParcial.id = "btnGuardar";
-//   botonGuardarParcial.hidden = false;
-//   botonGuardarParcial.onclick = confirmarGuardadoParcial; // Agregar onclick
-
-//     // Aplicar estilos al botón de guardado parcial lectura
-//   botonGuardarLectura.style.backgroundColor = "#28a745";
-//   botonGuardarLectura.style.borderRadius = "5px";
-//   botonGuardarLectura.style.color = "white";
-//   botonGuardarLectura.style.marginTop = "16px";
-//   botonGuardarLectura.style.marginLeft = "16px";
-//   botonGuardarLectura.style.marginRight = "16px";
-//   botonGuardarLectura.style.height = "36px";
-//   botonGuardarLectura.style.width = "100px";
-
-//   // Aplicar estilos al botón de guardado parcial
-//   botonGuardarParcial.style.backgroundColor = "#28a745";
-//   botonGuardarParcial.style.borderRadius = "5px";
-//   botonGuardarParcial.style.color = "white";
-//   botonGuardarParcial.style.marginTop = "16px";
-//   botonGuardarParcial.style.marginLeft = "16px";
-//   botonGuardarParcial.style.marginRight = "16px";
-//   botonGuardarParcial.style.height = "36px";
-//   botonGuardarParcial.style.width = "100px";
-
-//   // Aplicar estilos al botón de Procesar
-//   botonProcesar.style.width = "100px";
-//   botonProcesar.style.backgroundColor = "#28a745";
-//   botonProcesar.style.borderRadius = "5px";
-//   botonProcesar.style.color = "white";
-//   botonProcesar.style.marginTop = "16px";
-//   botonProcesar.style.marginLeft = "6em";
-//   botonProcesar.style.height = "40px";
-//   botonProcesar.style.marginbottom = "25px";
-
- 
-//   // Agregar botones al contenedor
-//   contenedorTblLectura.appendChild(botonGuardarLectura);
-//   contenedorBotones.appendChild(botonGuardarParcial);
-//   contenedorBotones.appendChild(botonProcesar);
-
-//   // Obtener tabla de verificación
-//   const tablaLectura = document.getElementById("myTableLectura");
-//   const tablaVerificacion = document.getElementById("tblcontenedores");
-
-//   tablaLectura.parentNode.insertBefore(
-//     contenedorTblLectura,
-//     tablaLectura.nextSibling
-//   );
-//   // Insertar contenedor de botones después de la tabla de verificación
-//   tablaVerificacion.parentNode.insertBefore(
-//     contenedorBotones,
-//     tablaVerificacion.nextSibling
-//   );
-
-//   // Media query para pantallas grandes
-//   const mediaQuery = window.matchMedia("(min-width: 64em)");
-//   if (mediaQuery.matches) {
-//     // Aplicar estilos específicos para pantallas grandes
-//     botonGuardarLectura.style.marginLeft = "200px";
-//     botonGuardarParcial.style.marginLeft = "200px";
-//     botonProcesar.style.marginLeft = "500px";
-//   }
-// }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
@@ -1446,22 +1362,22 @@ function confirmarGuardadoParcial() {
   });
 }
 //FUNCION DE GUARDADO PARCIAL
+
 async function guardaParcialMente() {
+  verificacion();
   let pSistema = "WMS";
   let pUsuario = document.getElementById("hUsuario").value;
   let pOpcion = "L";
   let pBodegaOrigen = document.getElementById("bodega").value;
   let pBodegaDestino = document.getElementById("bodegaSelect").value;
   let pFecha = new Date().toISOString().split("T")[0];
-    let conductor= document.getElementById('conductor-camion').value
-  let placa = document.getElementById("placa-camion").value;
-  let pPlaca=placa+'|'+conductor;
+  let pPlaca ="";
+//  let pPlaca = document.getElementById("placa-camion").value;
   let pReferencia = "Ref o null";
   let pComentario = document.getElementById("observaciones").value;
   localStorage.setItem('Observaciones',pComentario);
   const table = document.getElementById("tblcontenedores");
   const detalles = [];
-  mostrarLoader();
 
   for (let i = 1; i < table.rows.length-1; i++) {
     const row = table.rows[i];
@@ -1550,57 +1466,184 @@ async function guardaParcialMente() {
 
       console.log(`✅ Lote ${i + 1} procesado`, result);
 
-      if (result.msg !== "SUCCESS"||result.respuesta[0].Respuesta !="OK") {
-        //console.warn(`⚠️ Error en lote ${i + 1}`, result);
-         Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "⚠️ Error: "+result.respuesta[0].Respuesta,
-                  });
-                  ocultarLoader();
+      if (result.msg !== "SUCCESS") {
+        console.warn(`⚠️ Error en lote ${i + 1}`, result);
         break; // Si hay un error, detén el proceso
-      }else{// 🎉 Mensaje final si todo fue bien
-            Swal.fire({
-              icon: "success",
-              title: "Todos los datos fueron Guardados correctamente",
-              confirmButtonText: "Aceptar",
-              confirmButtonColor: "#28a745",
-              cancelButtonColor: "#6e7881",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                mostrarPestanaLectura();
-              }
-            });
-            ocultarLoader();
-          }
+      }
     } catch (err) {
       console.error(`🚨 Error al enviar lote ${i + 1}:`, err);
       break;
     }
   }
-// if(result.respuesta[0].Respuesta !="OK"){
-//        Swal.fire({
+
+  // 🎉 Mensaje final si todo fue bien
+  Swal.fire({
+    icon: "success",
+    title: "Todos los datos fueron Guardados correctamente",
+    confirmButtonText: "Aceptar",
+    confirmButtonColor: "#28a745",
+    cancelButtonColor: "#6e7881",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      mostrarPestanaLectura();
+    }
+  });
+}
+// async function guardaParcialMente() {
+//   let pSistema = "WMS";
+//   let pUsuario = document.getElementById("hUsuario").value;
+//   let pOpcion = "L";
+//   let pBodegaOrigen = document.getElementById("bodega").value;
+//   let pBodegaDestino = document.getElementById("bodegaSelect").value;
+//   let pFecha = new Date().toISOString().split("T")[0];
+//     let conductor= document.getElementById('conductor-camion').value
+//   let placa = document.getElementById("placa-camion").value;
+//   let pPlaca=placa+'|'+conductor;
+//   let pReferencia = "Ref o null";
+//   let pComentario = document.getElementById("observaciones").value;
+//   localStorage.setItem('Observaciones',pComentario);
+//   const table = document.getElementById("tblcontenedores");
+//   const detalles = [];
+//   mostrarLoader();
+
+//   for (let i = 1; i < table.rows.length-1; i++) {
+//     const row = table.rows[i];
+
+//     const contenedor =
+//       row.querySelector(".contenedor h5")?.textContent.trim() || "0";
+//     const solicitud =
+//       row.querySelector(".solicitud")?.textContent.trim() || "0";
+//     const articulo =
+//       row.querySelector(".verifica-articulo span")?.textContent.trim() || "";
+//     const cantidadPedida = Number(
+//       row.querySelector(".cantidadPedida")?.textContent.trim() || 0
+//     );
+//     const cantidadPreparada = Number(
+//       row.querySelector(".cantidadPreparada")?.textContent.trim() || 0
+//     );
+//     const cantidadLeida = Number(
+//       row.querySelector(".cantidadLeida")?.textContent.trim() || 0
+//     );
+
+//     detalles.push({
+//       CONTENEDOR: contenedor,
+//       SOLICITUD: solicitud,
+//       ARTICULO: articulo,
+//       CANT_CONSEC: cantidadPedida,
+//       CANT_PREPARADA: cantidadPreparada,
+//       CANT_LEIDA: cantidadLeida,
+//     });
+//   }
+//   console.log("detallesARRAY:\n ", detalles);
+
+//   // console.log(`Total de registros a enviar: ${detalles.length}`);
+
+//   // 🔁 Dividir el array en chunks de 20
+//   const chunkSize = 20;
+//   const chunks = [];
+//   for (let i = 0; i < detalles.length; i += chunkSize) {
+//     chunks.push(detalles.slice(i, i + chunkSize));
+//   }
+
+//   // console.log(`Se dividirán en ${chunks.length} lotes de ${chunkSize} (último puede ser menor)`);
+
+//   // ⚙️ Configuración base del fetch
+//   const myInit = {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" },
+//   };
+
+//   // 🔄 Enviar cada lote secuencialmente recorremos el array detalles[] dividido segun el tamaño de los paquetes
+//   for (let i = 0; i < chunks.length; i++) {
+//     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
+//     //const jsonPaquete = encodeURIComponent(JSON.stringify(chunks[i]));
+//     const jsonPaquete = JSON.stringify(chunks[i]);
+//     const params =
+//       "?pSistema=" +
+//       pSistema +
+//       "&pUsuario=" +
+//       pUsuario +
+//       "&pOpcion=" +
+//       pOpcion +
+//       "&pBodegaOrigen=" +
+//       pBodegaOrigen +
+//       "&pBodegaDestino=" +
+//       pBodegaDestino +
+//       "&pFecha=" +
+//       pFecha +
+//       "&pPlaca=" +
+//       pPlaca +
+//       "&jsonPaquete=" +
+//       jsonPaquete +
+//       "&pReferencia=" +
+//       pReferencia +
+//       "&pComentario=" +
+//       pComentario;
+//     console.log("PARAMETROS: " + params);
+//     console.log(`📦 Enviando lote ${i + 1} de ${chunks.length}...`);
+//     console.log("jsonPaquete=\n", jsonPaquete);
+//     console.log("Fin...");
+//     //llamada al API...
+//     try {
+//       const response = await fetch(
+//         env.API_URL + "guardacreapaquete" + params,
+//         myInit
+//       );
+//       const result = await response.json();
+
+//       console.log(`✅ Lote ${i + 1} procesado`, result);
+
+//       if (result.msg !== "SUCCESS"||result.respuesta[0].Respuesta !="OK") {
+//         //console.warn(`⚠️ Error en lote ${i + 1}`, result);
+//          Swal.fire({
 //                     icon: "error",
 //                     title: "Error",
 //                     text: "⚠️ Error: "+result.respuesta[0].Respuesta,
 //                   });
-// }else{
-//     // 🎉 Mensaje final si todo fue bien
-//   Swal.fire({
-//     icon: "success",
-//     title: "Todos los datos fueron Guardados correctamente",
-//     confirmButtonText: "Aceptar",
-//     confirmButtonColor: "#28a745",
-//     cancelButtonColor: "#6e7881",
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       mostrarPestanaLectura();
+//                   ocultarLoader();
+//         break; // Si hay un error, detén el proceso
+//       }else{// 🎉 Mensaje final si todo fue bien
+//             Swal.fire({
+//               icon: "success",
+//               title: "Todos los datos fueron Guardados correctamente",
+//               confirmButtonText: "Aceptar",
+//               confirmButtonColor: "#28a745",
+//               cancelButtonColor: "#6e7881",
+//             }).then((result) => {
+//               if (result.isConfirmed) {
+//                 mostrarPestanaLectura();
+//               }
+//             });
+//             ocultarLoader();
+//           }
+//     } catch (err) {
+//       console.error(`🚨 Error al enviar lote ${i + 1}:`, err);
+//       break;
 //     }
-//   });
-//   ocultarLoader();
-// }
+//   }
+// // if(result.respuesta[0].Respuesta !="OK"){
+// //        Swal.fire({
+// //                     icon: "error",
+// //                     title: "Error",
+// //                     text: "⚠️ Error: "+result.respuesta[0].Respuesta,
+// //                   });
+// // }else{
+// //     // 🎉 Mensaje final si todo fue bien
+// //   Swal.fire({
+// //     icon: "success",
+// //     title: "Todos los datos fueron Guardados correctamente",
+// //     confirmButtonText: "Aceptar",
+// //     confirmButtonColor: "#28a745",
+// //     cancelButtonColor: "#6e7881",
+// //   }).then((result) => {
+// //     if (result.isConfirmed) {
+// //       mostrarPestanaLectura();
+// //     }
+// //   });
+// //   ocultarLoader();
+// // }
 
-}
+// }
 
 ///////////////FUNCIONES PARA PROCESAR///////////
 //////////////////////////////////////////////
@@ -1730,6 +1773,8 @@ async function guardaPaquete() {
       break;
     }
   }
+
+
 }
 
 /**
@@ -2641,6 +2686,7 @@ function calcularTotalesVerificacion() {
     tfoot.appendChild(filaTotal);
     tabla.appendChild(tfoot);
 }
+
 function mostrarPestanaLectura() {
   // Cambia la pestaña activa
   const tabLectura = document.querySelector(
@@ -2650,6 +2696,7 @@ function mostrarPestanaLectura() {
   // Opcional: enfocar el input del código de barras
   document.getElementById("codigo-barras").focus();
 }
+
 // //_____________________________________________________________________________
 // ///////// FILTRAR LÍNEAS DE VERIFICACIÓN DINÁMICAMENTE //////////////////
 // //_____________________________________________________________________________
@@ -2718,6 +2765,7 @@ function filtrarTablaVerificacion() {
   // Re-armar la tabla de verificación pasando únicamente el arreglo filtrado
   armarTablaVerificacion(datosFiltrados);
 }
+
 function alternarEstadoBotonesAccion(habilitar) {
   const btnLectura = document.getElementById("btnGuardarLectura");
   const btnVerificacion = document.getElementById("btnGuardarVerificacion");
@@ -2728,6 +2776,7 @@ function alternarEstadoBotonesAccion(habilitar) {
   if (btnVerificacion) btnVerificacion.disabled = !habilitar;
   if (btnProcesar) btnProcesar.disabled = !habilitar;
 }
+
 function mostrarInfo() {
   Swal.fire({
     title: '<strong style="font-family:\'Oswald\',sans-serif;">Guía de Operación y Colores</strong>',
@@ -2795,6 +2844,7 @@ function mostrarInfo() {
   });
 }
 
+
 // Función para cargar las Placas en el Select vía API
 async function cargarSelectPlacas() {
   const selectPlaca = document.getElementById("placa-camion");
@@ -2843,6 +2893,7 @@ async function cargarSelectPlacas() {
     console.error("Error al cargar las placas de camión:", error);
   }
 }
+
 // Función para cargar los Conductores en el Select vía API
 async function cargarSelectConductores() {
   const selectConductor = document.getElementById("conductor-camion");
@@ -2888,3 +2939,58 @@ async function cargarSelectConductores() {
     console.error("Error al cargar los conductores:", error);
   }
 }
+
+// // Arreglos de datos (Simulando respuesta del backend o catálogo local)
+// const listaPlacas = [
+//   { id: "ABC-123", texto: "ABC-123 (Volvo Blanco)" },
+//   { id: "XYZ-789", texto: "XYZ-789 (Freightliner Azul)" },
+//   { id: "PAN-456", texto: "PAN-456 (Isuzu Rojo)" },
+//   { id: "WMS-777", texto: "WMS-777 (Mack Amarillo)" }
+// ];
+
+// const listaConductores = [
+//   { id: "1", nombre: "Juan Pérez" },
+//   { id: "2", nombre: "Carlos Mendoza" },
+//   { id: "3", nombre: "José Santana" },
+//   { id: "4", nombre: "Luis Castillo" }
+// ];
+
+// // Función para cargar las Placas en el Select
+// function cargarSelectPlacas() {
+//   const selectPlaca = document.getElementById("placa-camion");
+//   if (!selectPlaca) return;
+
+//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+//   selectPlaca.innerHTML = '<option value="" disabled selected>Seleccione una placa</option>';
+
+//   // Recorrer el arreglo y crear las etiquetas <option>
+//   listaPlacas.forEach(placa => {
+//     const option = document.createElement("option");
+//     option.value = placa.id;
+//     option.textContent = placa.texto;
+//     selectPlaca.appendChild(option);
+//   });
+
+//   // CRUCIAL: Reinicializar el select específico en Materialize
+//   M.FormSelect.init(selectPlaca);
+// }
+
+// // Función para cargar los Conductores en el Select
+// function cargarSelectConductores() {
+//   const selectConductor = document.getElementById("conductor-camion");
+//   if (!selectConductor) return;
+
+//   // Limpiar opciones anteriores guardando solo la primera (el placeholder)
+//   selectConductor.innerHTML = '<option value="" disabled selected>Seleccione un conductor</option>';
+
+//   // Recorrer el arreglo y crear las etiquetas <option>
+//   listaConductores.forEach(conductor => {
+//     const option = document.createElement("option");
+//     option.value = conductor.id;
+//     option.textContent = conductor.nombre;
+//     selectConductor.appendChild(option);
+//   });
+
+//   // CRUCIAL: Reinicializar el select específico en Materialize
+//   M.FormSelect.init(selectConductor);
+// }
