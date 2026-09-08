@@ -38,7 +38,7 @@ function cargarLineasTraslado(documento) {
 
   // Parametros adicionales para el detalle del traslado
   const params = parametros + "&Aplicacion=" + documento;
-
+  mostrarLoader();
   // Realizar la petición para obtener el detalle de los traslados
   fetch(env.API_URL + "wmsverificaciontraslados/L" + params, myInit)
     .then((response) => response.json())
@@ -57,6 +57,7 @@ function cargarLineasTraslado(documento) {
 
           // Llamar a la función para armar la tabla de verificación
           armarTablaVerificacion(detalleTrasladoList);
+          ocultarLoader();
 
           // Verificar si hay líneas previamente preparadas y si las hay, armar la tabla de lectura
           const siGuardadoParcial = detalleTrasladoList.some(

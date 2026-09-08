@@ -75,12 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
   localStorage.setItem("bodegaUser", bodega);
   localStorage.setItem("trasladosprocesados", estadoSwitchTrasPrep.checked);
 });
-
 function obtenerValorParametro(parametros, nombreParametro) {
   const urlParams = new URLSearchParams(parametros);
   return urlParams.get(nombreParametro);
 }
-
 // Función para extraer el valor de un parámetro específico de la cadena de búsqueda
 function obtenerValorParametro(parametros, nombreParametro) {
   // Crear un objeto URLSearchParams para manejar la cadena de parámetros
@@ -89,7 +87,6 @@ function obtenerValorParametro(parametros, nombreParametro) {
   // Retornar el valor del parámetro solicitado
   return urlParams.get(nombreParametro);
 }
-
 function verTrasladosLista() {
   //revisar como toma el valor
   var bodegaOrigen = document.getElementById("bodega").value;
@@ -105,7 +102,7 @@ function verTrasladosLista() {
     var pFechaHasta = $("#fecha_fin").val();
     var pFechaDesde = $("#fecha_ini").val();
     localStorage.setItem("autoSearchTraslados", "true"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
-    let pModulo = "WMS_PK";
+    let pModulo = "WMS_VP";
     let pOpcion = "S";
     let typeRpt = "R";
 
@@ -131,7 +128,6 @@ function verTrasladosLista() {
     listadoTraslados(params);
   }
 } //Fin de ver traslados lista
-
 function listadoTraslados(parametros) {
   mostrarLoader();
 
@@ -184,7 +180,6 @@ function listadoTraslados(parametros) {
       }
     });
 }
-
 function mostrarResultadosVerificacionTraslados(nPag, pag) {
   let htm = "";
   let desde = (pag - 1) * xPag;
@@ -194,7 +189,6 @@ function mostrarResultadosVerificacionTraslados(nPag, pag) {
   htm += paginadorTablas(nPag, pag, "mostrarResultadosVerificacionTraslados");
   document.getElementById("resultadoPaginador").innerHTML = htm;
 }
-
 function resultadosVerificacionTraslados(desde, hasta) {
   if (!ArrayDataFiltrado || ArrayDataFiltrado.length === 0) {
     console.error("ArrayDataFiltrado no está definido o está vacío.");
@@ -228,7 +222,6 @@ function resultadosVerificacionTraslados(desde, hasta) {
   }
   tbody.innerHTML = htm; // Insertar el contenido generado en el tbody
 }
-
 function irDetalleTraslado(documento, bodegaDestino) {
   let bodegaOrigen = document.getElementById("bodega").value;
 
@@ -260,7 +253,6 @@ function irDetalleTraslado(documento, bodegaDestino) {
   localStorage.setItem("destinoBodegaTraslado", bodegaDestino);
   window.location.href = "detalleTrasladoPicking.html";
 }
-
 ////flag para mostrar los traslados de entrada o de salida
 const mostrar_procesados_checkbox = document.getElementById("toggleSwitch");
 /////////////// Agregar un evento de cambio al checkbox/////////////
@@ -275,7 +267,6 @@ mostrar_procesados_checkbox.addEventListener("change", function () {
   }
   limpiarResultadoGeneral();
 });
-
 /////////////////Fucnion que activa el toggleSwitch para ver los traslados Preparados
 function trasladosFinalizados() {
   // Mostrar el cuadro de diálogo con SweetAlert2
@@ -297,7 +288,6 @@ function trasladosFinalizados() {
     }
   });
 }
-
 function aplicarEstilosTabla() {
   $("#tbltraslados tbody tr").each(function () {
     var documentoValue = $(this).find("td:eq(0)").text().trim();
@@ -310,7 +300,6 @@ function aplicarEstilosTabla() {
     }
   });
 }
-
 // //limpiar el contenido de la busqueda
 function limpiarResultadoGeneral() {
   const tabla = document.getElementById("tbltraslados");
@@ -335,12 +324,10 @@ function limpiarResultadoGeneral() {
     }
   }
 }
-
 const fecha_ini = document.getElementById("fecha_ini");
 fecha_ini.addEventListener("change", function () {
   limpiarResultadoGeneral();
 });
-
 const fecha_fin = document.getElementById("fecha_fin");
 fecha_fin.addEventListener("change", function () {
   limpiarResultadoGeneral();

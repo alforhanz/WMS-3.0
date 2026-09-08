@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function cargarLineasTraslado(documento) {
+ 
   // Actualizar el label con el documento y traslado
   document.getElementById("documento").innerHTML = "Documento: " + documento;
 
@@ -44,6 +45,7 @@ function cargarLineasTraslado(documento) {
   fetch(env.API_URL + "wmsverificaciontraslados/L" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
+       mostrarLoader();
       if (result.msg === "SUCCESS") {
         if (result.lineastraslados.length !== 0) {
           // Guardar el detalle del traslado en una variable
@@ -74,47 +76,14 @@ function cargarLineasTraslado(documento) {
             armarTablaLectura(detalleTrasladoList);
           }
         }
-
+ ocultarLoader();
         // Limpiar la pantalla de carga
         document.getElementById("carga").innerHTML = "";
       }
     });
+    
 }
 
-// function armarTablaLectura(detalleTrasladoList) {
-//   var tbody = document.getElementById('tblbodyLectura');
-
-//   // Limpiar el contenido del tbody antes de agregar nuevas filas
-//   tbody.innerHTML = '';
-//   // Recorrer el detalle del traslado y agregar filas si LINEAS_PREPARADAS tiene un valor
-//   detalleTrasladoList.forEach(function (detalle) {
-//     if (detalle.LINEAS_VERIFICADAS != null && detalle.LINEAS_VERIFICADAS !== ""  &&  detalle.LINEAS_VERIFICADAS > 0) {
-//       var newRow = document.createElement('tr');
-
-//       newRow.innerHTML = `
-//         <td>
-//           <span>${detalle.ARTICULO}</span>
-//         </td>
-//         <td class="codigo-barras-cell">
-//           <input id="codigo-barras" type="text" class="codigo-barras-input" value="${detalle.CODIGO_BARRA || ''}" onchange="validarCodigoBarras(this)" autofocus>
-//         </td>
-//         <td class="codigo-barras-cell2">
-//           <input id="cant-pedida" type="text" class="codigo-barras-input" value="${detalle.LINEAS_VERIFICADAS || ''}" onchange="guardarTablaEnArray(this)" style="text-align: center;">
-//         </td>
-//         <td class="codigo-barras-cell2">
-//           <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
-//         </td>
-//       `;
-//       tbody.appendChild(newRow);
-//     }
-//   });
-
-//   // Guardar la tabla en el array
-//   guardarTablaEnArray();
-
-//   // Crear una nueva fila vacía para permitir la entrada de más datos si es necesario
-//   crearNuevaFila();
-// }
 
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function armarTablaLectura(detalleTrasladoList) {

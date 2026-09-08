@@ -36,8 +36,6 @@ let menuEnlaces = [
                     { MODULO: 4,  SUBMODULO: 0,  ICON: "manage_accounts", LINK: ""                                    }, // ADMINISTRACION
                     { MODULO: 4,  SUBMODULO: 7,  ICON: "",               LINK: "#"                                    }, //
                   ];
-
-
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 $(document).ready(function () {
