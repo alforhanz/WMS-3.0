@@ -3391,3 +3391,8 @@ Rpt Existencias Inventario
 #tbltraslados tbody tr:nth-child(even) {
   background-color: #d7d5d5 !important;
 }
+
+#verif-traslados{
+  width: 25%!important;
+  height: 25px!important;
+}

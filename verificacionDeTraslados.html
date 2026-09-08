@@ -24,20 +24,13 @@
       gap: 12px;
       margin-top: 15px;
       margin-bottom: 20px;
-    }
-
-    .contenedor-botones-acciones button {
-      width: 100% !important;
-      margin: 0 !important;
-    }
-
+    }   
     @media screen and (min-width: 601px) {
-      .contenedor-botones-acciones {
-        flex-direction: row;
-        gap: 15px;
-      }
       .contenedor-botones-acciones button {
         flex: 1;
+        width: 100% !important;
+        height: 25px!important;
+        margin: 0 !important;
       }
     }
   </style>
@@ -58,7 +51,7 @@
           <div class="switch">
             <label class="label-button-switch">
               Salida (<span id="lblCantSalidas">0</span>)
-              <input type="checkbox" id="trasladosSwitch" checked="false">
+              <input type="checkbox" id="trasladosSwitch" checked="false">                          
               <span class="lever"></span>
               Entrada (<span id="lblCantEntradas">0</span>)
             </label>
@@ -91,12 +84,11 @@
             </div>
           </div>
         </div>  
-         <div class="contenedor-botones-acciones">         
-          <button class="btn waves-effect waves-light green darken-1" type="button" onclick="verTrasladosLista()">
-            Refrescar
-            <i class="material-icons right">refresh</i>
+          <div class="row col-md-12 S12">
+          <button class="btn waves-effect waves-light" type="submit" onclick="verTrasladosLista()">Buscar
+            <i class="material-icons right">send</i>
           </button>
-        </div>       
+        </div>         
             <div class="row tblcontenedor">
               <div id="resultadoGeneral"></div>
               <table id="tbltraslados" class="display centered">

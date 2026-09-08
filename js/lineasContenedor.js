@@ -165,6 +165,9 @@ function validarCodigoBarras(input) {
         return;
       }
 
+      // Definir la cantidad a sumar según el tipo de lectura
+      let cantidadASumar = 1;
+
       if (!lecturaKitsActiva) {
         if (esCodigoKit && !esCodigoUnidad) {
           input.value = "";
@@ -176,10 +179,6 @@ function validarCodigoBarras(input) {
           });
           return;
         }
-
-        span.textContent = item.Articulo;
-        cantFila.value = 1;
-        span.style.color = "";
       } else {
         if (esCodigoUnidad && !esCodigoKit) {
           input.value = "";
@@ -191,12 +190,39 @@ function validarCodigoBarras(input) {
           });
           return;
         }
-
-        let unidadesPorKit = parseFloat(item.cant_kits) || 1;
-        span.textContent = item.Articulo;
-        cantFila.value = unidadesPorKit;
-        span.style.color = "#28a745";
+        cantidadASumar = parseFloat(item.cant_kits) || 1;
       }
+
+      // --- VALIDACIÓN DE EXCESO DE CEDI ---
+      const totalCedi = parseFloat(item.total_cedi) || 0;
+      const conteoBD = parseFloat(item.LineaContada) || 0;
+     
+
+      const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+      const lecturaSesionActual = dataArray
+        .filter((el) => el.ARTICULO === item.Articulo)
+        .reduce((acum, el) => acum + (parseFloat(el.CANTIDAD_LEIDA) || 0), 0);
+
+      const nuevoTotalLeido = conteoBD + lecturaSesionActual + cantidadASumar;
+
+      if (nuevoTotalLeido > totalCedi) {
+        input.value = "";
+        Swal.fire({
+          icon: "warning",
+          title: "¡Cuidado!",
+          html: `El artículo <b>${item.Articulo}</b> ha superado el límite de existencia en cedi.<br>` +
+                `Existencia en CEDI: <b>${totalCedi}</b><br>` +
+                `Acumulado actual + intento: <b>${nuevoTotalLeido}</b>`,
+          confirmButtonColor: "#28a745",
+        });
+        return;
+      }
+      // ------------------------------------
+
+      // Asignar valores a la vista si pasa la validación
+      span.textContent = item.Articulo;
+      cantFila.value = cantidadASumar;
+      span.style.color = lecturaKitsActiva ? "#28a745" : "";
 
       codigoValido = true;
       input.setAttribute("readonly", "readonly");
@@ -217,6 +243,100 @@ function validarCodigoBarras(input) {
     });
   }
 }
+// function validarCodigoBarras(input) {
+//   var LineasContenedor = detalleLineasContenedor;
+//   const codbarra = input.value.toUpperCase().trim();
+//   let lecturaKitsActiva = localStorage.getItem("switchLecturaState_Contenedor") === "true";
+
+//   const row = input.closest("tr");
+//   const firstTd = row.querySelector("td:first-child");
+//   const span = firstTd.querySelector("span");
+//   const siguienteTd = row.querySelector(".codigo-barras-cell2");
+//   const cantFila = siguienteTd.querySelector(".codigo-barras-input");
+
+//   var codigoValido = false;
+
+//   for (var i = 0; i < LineasContenedor.length; i++) {
+//     let item = LineasContenedor[i];
+
+//     let codigosUnidad = item.codigos_barras 
+//       ? item.codigos_barras.split("|").map(c => c.toUpperCase().trim()) 
+//       : [];
+//     let codigosKits = item.codigos_barras_kits 
+//       ? item.codigos_barras_kits.split("|").map(c => c.toUpperCase().trim()) 
+//       : [];
+
+//     let esCodigoUnidad = (item.Articulo && item.Articulo.toUpperCase() === codbarra) ||
+//                          (item.Codigo_Barra && item.Codigo_Barra.toUpperCase() === codbarra) ||
+//                          codigosUnidad.includes(codbarra);
+
+//     let esCodigoKit = (item.ARTICULO_PADRE && item.ARTICULO_PADRE.toUpperCase() === codbarra) ||
+//                        codigosKits.includes(codbarra);
+
+//     if (esCodigoUnidad || esCodigoKit) {
+//       if (item.total_cedi <= 0) {
+//         Swal.fire({
+//           icon: "warning",
+//           title: "¡Artículo sin Existencias!",
+//           text: "La referencia " + item.Articulo + " no cuenta con existencias",
+//           confirmButtonColor: "#28a745",
+//         });
+//         input.value = "";
+//         return;
+//       }
+
+//       if (!lecturaKitsActiva) {
+//         if (esCodigoKit && !esCodigoUnidad) {
+//           input.value = "";
+//           Swal.fire({
+//             icon: "warning",
+//             title: "Alerta: Lectura por Unidades activada",
+//             text: "Está intentando leer un código por kit o caja. Active el switch para lectura por Kit/Caja.",
+//             confirmButtonColor: "#28a745",
+//           });
+//           return;
+//         }
+
+//         span.textContent = item.Articulo;
+//         cantFila.value = 1;
+//         span.style.color = "";
+//       } else {
+//         if (esCodigoUnidad && !esCodigoKit) {
+//           input.value = "";
+//           Swal.fire({
+//             icon: "warning",
+//             title: "Alerta: Lectura por Kits/Cajas activada",
+//             text: "Está intentando leer un código individual. Desactive el switch para lectura por Unidad.",
+//             confirmButtonColor: "#28a745",
+//           });
+//           return;
+//         }
+
+//         let unidadesPorKit = parseFloat(item.cant_kits) || 1;
+//         span.textContent = item.Articulo;
+//         cantFila.value = unidadesPorKit;
+//         span.style.color = "#28a745";
+//       }
+
+//       codigoValido = true;
+//       input.setAttribute("readonly", "readonly");
+//       crearNuevaFila();
+//       guardarTablaEnArray();
+//       verificacion();
+//       break;
+//     }
+//   }
+
+//   if (!codigoValido) {
+//     input.value = "";
+//     Swal.fire({
+//       icon: "warning",
+//       title: "¡Código no válido!",
+//       text: "El código ingresado no coincide con ningún artículo del pedido. Intente nuevamente.",
+//       confirmButtonColor: "#28a745",
+//     });
+//   }
+// }
 
 function crearNuevaFila() {
   actualizarProgresoLectura();
@@ -248,6 +368,49 @@ function crearNuevaFila() {
   }
 }
 
+
+// function validarCantidadPedida(input) {
+//   // 1. Guardar la tabla en el arreglo/localStorage
+//   guardarTablaEnArray();
+
+//   if (!input) return;
+
+//   // 2. Obtener la fila actual y el nombre del artículo leído
+//   const row = input.closest("tr");
+//   if (!row) return;
+
+//   const spanArticulo = row.querySelector("td:first-child span");
+//   const articuloCodigo = spanArticulo ? spanArticulo.textContent.trim() : "";
+
+//   if (!articuloCodigo) return;
+
+//   // 3. Buscar la información del artículo en el arreglo principal
+//   const itemBD = detalleLineasContenedor.find((item) => item.Articulo === articuloCodigo);
+//   if (!itemBD) return;
+
+//   const totalCedi = parseFloat(itemBD.total_cedi) || 0;
+
+//   // 4. Calcular el total leído acumulado (Base de Datos + Lecturas en Memoria de la sesión)
+//   const conteoBD = parseFloat(itemBD.LineaContada) || 0;
+  
+//   const dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   const lecturaSesionActual = dataArray
+//     .filter((item) => item.ARTICULO === articuloCodigo)
+//     .reduce((acum, item) => acum + (parseFloat(item.CANTIDAD_LEIDA) || 0), 0);
+
+//   const totalLeidoAcumulado = conteoBD + lecturaSesionActual;
+
+//   // 5. Validar si lo leído supera la existencia en CEDI
+//   if (totalLeidoAcumulado > totalCedi) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "¡Cantidad supera el total CEDI!",
+//       html: `La cantidad leída de <b>${articuloCodigo}</b> (<b>${totalLeidoAcumulado}</b>) supera la existencia disponible en CEDI (<b>${totalCedi}</b>).`,
+//       confirmButtonColor: "#28a745",
+//       confirmButtonText: "Entendido"
+//     });
+//   }
+// }
 function validarCantidadPedida() {
   guardarTablaEnArray();
 }

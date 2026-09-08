@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function cargarLineasTraslado(documento) {
+  mostrarLoader();
   // Actualizar el label con el documento y pedido
   document.getElementById("documento").innerHTML = "Documento: " + documento;
 
@@ -45,6 +46,7 @@ function cargarLineasTraslado(documento) {
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
+        
         if (result.lineastraslados.length !== 0) {
           // Guardar el detalle del traslado en una variable
           detalleTrasladoList = result.lineastraslados;
@@ -79,6 +81,7 @@ function cargarLineasTraslado(documento) {
         document.getElementById("carga").innerHTML = "";
       }
     });
+     ocultarLoader();
 }
 
 function armarTablaLectura(detalleTrasladoList) {

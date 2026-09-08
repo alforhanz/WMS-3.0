@@ -1,5 +1,4 @@
 const check_switch = document.getElementById("arti_Kit");
-
 document.addEventListener('DOMContentLoaded', function() {
       // Inicializar Selects de Materialize
       var elems = document.querySelectorAll('select');
@@ -45,7 +44,6 @@ document.getElementById('selectBarcodes').addEventListener('change', function() 
         M.FormSelect.init(this);
     });
     });
-
 // Función para llamar a tu API de borrado
 function confirmarEliminacion(codigo) {  
 
@@ -62,8 +60,6 @@ function confirmarEliminacion(codigo) {
         }
     });
 }
-
-
 function eliminarCodigoDeBarra(codigo) {
     const articulo = document.getElementById("pArticulo").value;
     const sistema = "WMS";
@@ -126,7 +122,6 @@ function eliminarCodigoDeBarra(codigo) {
         }
     });
 }
-
 function cargarCodigosRelacionados(codigoArt) {
   const select = document.getElementById('selectBarcodes');
   const params = `?pArticulo=${encodeURIComponent(codigoArt)}`;
@@ -206,7 +201,6 @@ function cargarCodigosRelacionados(codigoArt) {
 //       }
 //     });
 // }
-
 function InsertaCodigoBarra() {
   const usuario = document.getElementById("hUsuario").value;
   const contrasena = document.getElementById("autorizacion").value;
@@ -246,8 +240,6 @@ function InsertaCodigoBarra() {
       }
     });
 }
-
-
 //___________________________________________________________
 //         Agregar un evento de cambio al checkbox
 //___________________________________________________________

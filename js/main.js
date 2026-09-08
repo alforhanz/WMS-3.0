@@ -2510,6 +2510,15 @@ function imprimeCodigo() {
     return;
   }
 
+  // Obtenemos la fecha actual del sistema en formato YYYY-MM-DD
+  const hoy = new Date();
+  const fechaSistema = hoy.getFullYear() + "-" + 
+    String(hoy.getMonth() + 1).padStart(2, '0') + "-" + 
+    String(hoy.getDate()).padStart(2, '0') + " " +
+    String(hoy.getHours()).padStart(2, '0') + ":" +
+    String(hoy.getMinutes()).padStart(2, '0') + ":" +
+    String(hoy.getSeconds()).padStart(2, '0');
+
   // Crear una nueva ventana para imprimir
   const printWindow = window.open("", "_blank");
   printWindow.document.write(`
@@ -2517,22 +2526,45 @@ function imprimeCodigo() {
         <head>
             <title>Imprimir Código de Barras</title>
             <style>
+                @page {
+                    size: auto;   /* Se adapta automáticamente al papel de la impresora */
+                    margin: 0mm;  /* Elimina márgenes de página por defecto */
+                }
                 body { 
                     display: flex; 
                     flex-direction: column; 
                     justify-content: center; 
                     align-items: center; 
-                    height: 100vh; 
                     margin: 0; 
+                    padding: 5px;
                     font-family: Arial, sans-serif; 
+                    box-sizing: border-box;
                 }
-                canvas, div { 
+                #printBarcode {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                }
+                .barcode-wrapper {
+                    text-align: center;
+                    max-width: 100%;
+                }
+                canvas, img { 
+                    max-width: 100% !important; /* Escala la imagen al ancho disponible */
+                    height: auto !important; 
                     margin: 0 auto; 
                 }
-                p {
-                    margin-top: 10px;
+                .fecha {
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-bottom: 4px;
+                    text-align: center;
+                }
+                .descripcion {
+                    margin-top: 6px;
                     font-size: 10px;
                     text-align: center;
+                    word-wrap: break-word;
                 }
             </style>
         </head>
@@ -2546,10 +2578,19 @@ function imprimeCodigo() {
                     const size = ${size};
                     const symbology = "${symbology}";
                     const descripcion = "${descripcion || ""}";
+                    const fecha = "${fechaSistema}";
                     const printContainer = document.getElementById('printBarcode');
-                    const wrapper = document.createElement('div');
-                    wrapper.style.textAlign = 'center';
                     
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'barcode-wrapper';
+
+                    // 1. Agregar la fecha en la parte superior
+                    const fechaElement = document.createElement('p');
+                    fechaElement.className = 'fecha';
+                    fechaElement.textContent = "Fecha: " + fecha;
+                    wrapper.appendChild(fechaElement);
+                    
+                    // 2. Generar el código según el tipo
                     if (symbology === 'QR') {
                         const qrContainer = document.createElement('div');
                         new QRCode(qrContainer, {
@@ -2569,8 +2610,10 @@ function imprimeCodigo() {
                         wrapper.appendChild(canvas);
                     }
 
+                    // 3. Agregar la descripción en la parte inferior
                     if (descripcion) {
                         const descElement = document.createElement('p');
+                        descElement.className = 'descripcion';
                         descElement.textContent = descripcion;
                         wrapper.appendChild(descElement);
                     }
@@ -2599,6 +2642,113 @@ function imprimeCodigo() {
     confirmButtonColor: "#55b251",
   });
 }
+// function imprimeCodigo() {
+//   const data = document.getElementById("data").value;
+//   const symbology = document.getElementById("symbology").value;
+//   const size = parseFloat(document.getElementById("size").value);
+//   const descripcion = localStorage.getItem("descripcionImpCode");
+
+//   if (!data.trim()) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "Sin datos",
+//       text: "Por favor, ingrese un valor para generar el código de barras antes de imprimir.",
+//       confirmButtonText: "Aceptar",
+//       confirmButtonColor: "#55b251",
+//     });
+//     return;
+//   }
+
+//   // Crear una nueva ventana para imprimir
+//   const printWindow = window.open("", "_blank");
+//   printWindow.document.write(`
+//         <html>
+//         <head>
+//             <title>Imprimir Código de Barras</title>
+//             <style>
+//                 body { 
+//                     display: flex; 
+//                     flex-direction: column; 
+//                     justify-content: center; 
+//                     align-items: center; 
+//                     height: 100vh; 
+//                     margin: 0; 
+//                     font-family: Arial, sans-serif; 
+//                 }
+//                 canvas, div { 
+//                     margin: 0 auto; 
+//                 }
+//                 p {
+//                     margin-top: 10px;
+//                     font-size: 10px;
+//                     text-align: center;
+//                 }
+//             </style>
+//         </head>
+//         <body>
+//             <div id="printBarcode"></div>
+//             <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+//             <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+//             <script>
+//                 function generateBarcodeForPrint() {
+//                     const data = "${data}";
+//                     const size = ${size};
+//                     const symbology = "${symbology}";
+//                     const descripcion = "${descripcion || ""}";
+//                     const printContainer = document.getElementById('printBarcode');
+//                     const wrapper = document.createElement('div');
+//                     wrapper.style.textAlign = 'center';
+                    
+//                     if (symbology === 'QR') {
+//                         const qrContainer = document.createElement('div');
+//                         new QRCode(qrContainer, {
+//                             text: data,
+//                             width: 150 * size,
+//                             height: 150 * size
+//                         });
+//                         wrapper.appendChild(qrContainer);
+//                     } else if (symbology === 'CODE128') {
+//                         const canvas = document.createElement('canvas');
+//                         JsBarcode(canvas, data, {
+//                             format: symbology,
+//                             width: 2 * size,
+//                             height: 100 * size,
+//                             displayValue: true
+//                         });
+//                         wrapper.appendChild(canvas);
+//                     }
+
+//                     if (descripcion) {
+//                         const descElement = document.createElement('p');
+//                         descElement.textContent = descripcion;
+//                         wrapper.appendChild(descElement);
+//                     }
+
+//                     printContainer.appendChild(wrapper);
+//                 }
+//                 generateBarcodeForPrint();
+//                 window.onload = function() {
+//                     window.print();
+//                     window.onafterprint = function() {
+//                         window.close();
+//                     };
+//                 };
+//             </script>
+//         </body>
+//         </html>
+//     `);
+//   printWindow.document.close();
+
+//   // Mostrar notificación de impresión
+//   Swal.fire({
+//     icon: "info",
+//     title: "Imprimiendo",
+//     text: "Imprimiendo código...",
+//     confirmButtonText: "Aceptar",
+//     confirmButtonColor: "#55b251",
+//   });
+// }
+
 //-----------------------------------------------------------------------------------
 function information(codeArticulo, descripcion) {
   let pUsuario = document.getElementById("hUsuario").value;

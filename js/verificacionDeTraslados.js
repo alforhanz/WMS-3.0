@@ -1,36 +1,60 @@
+  ////////////////////////////////////////////////////
+ ////         VARIABLES GROBALES              ///////
+////////////////////////////////////////////////////
 window.ArrayData = window.ArrayData || [];
 window.ArrayDataFiltrado = window.ArrayDataFiltrado || [];
 window.xPag = 10;
+  ////////////////////////////////////////////////////
+ ////             DOM                         ///////
+////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  const hoy = new Date().toISOString().split("T")[0];
-  const inputIni = document.getElementById("fecha_ini");
-  const inputFin = document.getElementById("fecha_fin");
+  const busquedaPrevia = localStorage.getItem("parametrosBusqueda");
+  if(busquedaPrevia){
+    console.log("hay busqueda previa..")
+    const params = new URLSearchParams(busquedaPrevia);
+     const pModulo= params.get("pModulo") ?? "";
+     const pOpcion= params.get("pOpcion") ?? "";
+     const typeRpt= params.get("typeRpt") ?? "";
+     const fechaIni= params.get("fechaIni") ?? "";
+     const fechaFin= params.get("fechaFin") ?? "";
+     const bodegaOrigen= params.get("BodegaOrigen") ?? "";
+     if(pOpcion==="E"){
+          document.getElementById("trasladosSwitch").checked=false;
+        }else{
+          document.getElementById("trasladosSwitch").checked=true;
+        }
+      if (fechaIni) document.getElementById("fecha_ini").value = fechaIni;
+      if (fechaFin) document.getElementById("fecha_fin").value = fechaFin;
+      const parametros = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${fechaIni}&fechaFin=${fechaFin}&BodegaOrigen=${bodegaOrigen}`;
+      consultaAPI(parametros);
 
-  //inputIni.value = "2026-01-01"; // Valor de prueba
-  if (!inputIni.value) inputIni.value = hoy;
-  if (!inputFin.value) inputFin.value = hoy;
-
-  M.updateTextFields();
-  M.Datepicker.init(document.querySelectorAll('.datepicker'), {
-    format: 'yyyy-mm-dd',
-    autoClose: true
-  });
-
-  // Limpia la tabla si se mueve el switch sin haber presionado Consultar/Refrescar
-  const switchTipo = document.getElementById("trasladosSwitch");
-  switchTipo.addEventListener("change", function () {
-    limpiarResultadoGeneral();
-  });
-
-  // Switch de procesados: recarga datos
-  const switchProcesados = document.getElementById("toggleSwitch");
-  switchProcesados.addEventListener("change", function () {
-    verTrasladosLista();
-  });
-
-  // 1. Carga inicial: consulta general con pOpcion="", sin renderizar tabla
-  cargaInicialTraslados();
+  }else{
+          const hoy = new Date().toISOString().split("T")[0];
+          const inputIni = document.getElementById("fecha_ini");
+          const inputFin = document.getElementById("fecha_fin");
+          //inputIni.value = "2026-01-01"; // Valor de prueba
+          if (!inputIni.value) inputIni.value = hoy;
+          if (!inputFin.value) inputFin.value = hoy;
+          M.updateTextFields();
+          M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+            format: 'yyyy-mm-dd',
+            autoClose: true
+          });
+          const switchTipo = document.getElementById("trasladosSwitch");
+          switchTipo.addEventListener("change", function () {
+            limpiarResultadoGeneral();
+          });   
+          const switchProcesados = document.getElementById("toggleSwitch");
+          switchProcesados.addEventListener("change", function () {
+            verTrasladosLista();
+          });         
+          cargaInicialTraslados();
+      }
 });
+
+  ////////////////////////////////////////////////////
+ ////         CARGA INICIAL                   ///////
+////////////////////////////////////////////////////
 function cargaInicialTraslados() {
   const bodegaOrigen = document.getElementById("bodega")?.value || "";
 
@@ -65,6 +89,9 @@ function cargaInicialTraslados() {
       console.error("Error en carga inicial:", error);
     });
 }
+  ////////////////////////////////////////////////////
+ ////         CARGA MANUAL                    ///////
+////////////////////////////////////////////////////
 function verTrasladosLista() {
   const bodegaOrigen = document.getElementById("bodega")?.value || "";
 
@@ -90,9 +117,49 @@ function verTrasladosLista() {
   const params = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${pFechaDesde}&fechaFin=${pFechaHasta}&BodegaOrigen=${bodegaOrigen}`;
   
   localStorage.setItem("parametrosBusqueda", params);
+  consultaAPI(params);
+  // mostrarLoader();
+  // fetch(env.API_URL + "wmsverificaciontraslados/E" + params, myInit)
+  //   .then((response) => response.json())
+  //   .then((result) => {
+  //     ocultarLoader();
+  //     if (result.msg === "SUCCESS") {
+  //       ArrayData = result.traslados || [];
+  //       ArrayDataFiltrado = [...ArrayData];
+
+  //        console.log("=== CARGA REFRESH COMPLETA (ArrayData) ===", ArrayData);
+  //       	//actualizarBadgesConteo(ArrayData);
+  //         cargaInicialTraslados()
+
+  //       if (ArrayDataFiltrado.length === 0) {
+  //         limpiarResultadoGeneral();
+  //         Swal.fire({
+  //           icon: "info",
+  //           title: "Sin registros",
+  //           text: `No se encontraron traslados de ${esEntrada ? 'Entrada' : 'Salida'}.`,
+  //           confirmButtonColor: "#28a745",
+  //         });
+  //       } else {
+  //         renderizarTablaConPaginacion(1);
+  //       }
+  //     } else {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Error",
+  //         text: "Ocurrió un error al consultar el API.",
+  //         confirmButtonColor: "#28a745",
+  //       });
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     ocultarLoader();
+  //     console.error("Error en la solicitud Fetch:", error);
+  //   });
+}
+function consultaAPI(parametros){
   
   mostrarLoader();
-  fetch(env.API_URL + "wmsverificaciontraslados/E" + params, myInit)
+  fetch(env.API_URL + "wmsverificaciontraslados/E" + parametros, myInit)
     .then((response) => response.json())
     .then((result) => {
       ocultarLoader();
