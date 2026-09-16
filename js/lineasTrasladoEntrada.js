@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //--------------------------------------------------------------------------
   var documento = localStorage.getItem("traslado");
-  cargarLineasTraslado(documento);
+  var bodega = localStorage.getItem("BodegaTraslado");
+  cargarLineasTraslado(documento,bodega);
   localStorage.removeItem("dataArray"); //borra los elementos leidos del localstorage.
 
   const verificacionTab = document.querySelector(
@@ -30,10 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function cargarLineasTraslado(documento) {
+function cargarLineasTraslado(documento,bodega) {
  
   // Actualizar el label con el documento y traslado
   document.getElementById("documento").innerHTML = "Documento: " + documento;
+  document.getElementById("bodega_origen").innerHTML = "Bodega Origen: " + bodega;
+
 
   // Obtener los parámetros guardados en localStorage
   let parametros = localStorage.getItem("ListParamsDetalle");
@@ -42,26 +45,21 @@ function cargarLineasTraslado(documento) {
   const params = parametros + "&Aplicacion=" + documento;
 
   // Realizar la petición para obtener el detalle de los traslados
-  fetch(env.API_URL + "wmsverificaciontraslados/L" + params, myInit)
+  fetch(env.API_URL + "wmsverificaciontrasladosentrada" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
        mostrarLoader();
       if (result.msg === "SUCCESS") {
-        if (result.lineastraslados.length !== 0) {
+        if (result.respuesta.length !== 0) {
           // Guardar el detalle del traslado en una variable
-          detalleTrasladoList = result.lineastraslados;
+          detalleTrasladoList = result.respuesta;
           console.log("Detalle del traslado:");
           console.log(detalleTrasladoList);
 
           // Guardar la aplicación en localStorage
-          localStorage.setItem(
-            "pAplicacion",
-            detalleTrasladoList[0].TRASLADO_ORIGEN
-          );
-          localStorage.setItem(
-            "origenBodegaTraslado",
-            detalleTrasladoList[0].BODEGA_ORIGEN
-          );
+          localStorage.setItem("pAplicacion",detalleTrasladoList[0].TRASLADO_ORIGEN);
+          localStorage.setItem("origenBodegaTraslado",detalleTrasladoList[0].BODEGA_ORIGEN);
+         
 
           // Llamar a la función para armar la tabla de verificación
           armarTablaVerificacion(detalleTrasladoList);
@@ -451,46 +449,6 @@ function armarTablaVerificacion(detalleTrasladoList) {
   });
 }
 
-// function armarTablaVerificacion(detalleTrasladoList) {
-//   // Obtener la referencia del cuerpo de la tabla
-//   var tbody = document.getElementById("tblbodyVerificacion");
-
-//   // Limpiar el contenido actual del cuerpo de la tabla
-//   tbody.innerHTML = "";
-
-//   // Obtener la referencia del label cantidadDeRegistros
-//   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
-//   // Actualizar el texto del label con la cantidad de registros
-//   cantidadDeRegistrosLabel.textContent =
-//     "Cantidad de registros: " + detalleTrasladoList.length;
-
-//   // Iterar sobre cada elemento en detalleTrasladoList
-//   detalleTrasladoList.forEach(function (detalle) {
-//     // Crear una nueva fila
-//     var newRow = document.createElement("tr");
-
-//     // Construir el contenido de la fila usando variables HTML
-//     newRow.innerHTML = `
-//               <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2">${
-//                 detalle.ARTICULO
-//               }</span></h5><h6>${detalle.DESCRIPCION}</h6></td>
-//               <td id="codigoDeBarras">${detalle.CODIGO_BARRA || ""}</td>
-//               <td id="cantidadPedida">${
-//                 isNaN(parseFloat(detalle.CANTIDAD_PEDIDA))
-//                   ? 0
-//                   : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
-//               }</td>
-//               <td id="cantidadLeida">${
-//                 isNaN(parseFloat(detalle.LINEAS_PREPARADAS))
-//                   ? 0
-//                   : parseFloat(detalle.LINEAS_PREPARADAS).toFixed(2)
-//               }</td> <!-- Cantidad leída, inicialmente en blanco -->
-//               <td id="verificado"></td>             
-//           `;
-//     tbody.appendChild(newRow);
-//   });
-// }
-
 //Funcion que limpia el area de mensajes de error
 function limpiarMensajes() {
   localStorage.removeItem("mensajes");
@@ -593,32 +551,69 @@ function verificacion() {
     }
   });
 
-  // Manejo de visibilidad de botones
   let procesarHabilitado = todasLasFilasVerificadas();
   let guardarParcialHabilitado = activaGuardadoParcial();
-  let trasladospreparados = localStorage.getItem("trasladosprocesados") === "true";
+  let trasladosProcesados = localStorage.getItem("trasladosprocesados") === "true";
 
   const btnGuardar = document.getElementById("btnGuardar");
-  const btnProcesar = document.getElementById("btnProcesar");
+  const btnProcesar = document.getElementById("btnProcesar") || document.getElementById("btnPreparar");
   const btnRegresar = document.getElementById("btnRegresar");
 
-  if (guardarParcialHabilitado) {
-    btnGuardar.removeAttribute("hidden");
-  } else {
-    btnGuardar.setAttribute("hidden", "hidden");
-  }
+  // 1. Ocultar todos los botones por defecto
+  if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+  if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
+  if (btnRegresar) btnRegresar.setAttribute("hidden", "hidden");
 
-  if (procesarHabilitado) {
-    btnProcesar.removeAttribute("hidden");
-  } else {
-    btnProcesar.setAttribute("hidden", "hidden");
+  // 2. Evaluar estado de traslados ya finalizados
+  if (trasladosProcesados) {
+    // Si el traslado ya fue procesado con anterioridad, solo se permite regresar
+    if (btnRegresar) btnRegresar.removeAttribute("hidden");
+  } 
+  // 3. Si TODAS las líneas están verificadas (check verde done_all)
+  else if (procesarHabilitado) {
+    if (btnProcesar) btnProcesar.removeAttribute("hidden"); // Muestra Procesar
+    if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden"); // Oculta Guardar
+  } 
+  // 4. Si al menos UNA línea tiene cantidad leída mayor a 0 (lectura parcial)
+  else if (guardarParcialHabilitado) {
+    if (btnGuardar) btnGuardar.removeAttribute("hidden"); // Muestra Guardar
+    if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden"); // Oculta Procesar
   }
+  // 5. Sin lecturas: permanecen ocultos (hidden)
 
-  if (trasladospreparados) {
-    btnRegresar.setAttribute("hidden", "hidden");
-  } else {
-    btnRegresar.removeAttribute("hidden");
-  }
+  //  let procesarHabilitado = todasLasFilasVerificadas();
+  //   let trasladospreparados = localStorage.getItem("trasladosprocesados") === "false";
+  //   let guardarParcialHabilitado = activaGuardadoParcial();
+
+  //   const btnGuardar = document.getElementById("btnGuardar");
+  //   const btnPreparar = document.getElementById("btnPreparar");
+  //   const btnRegresar = document.getElementById("btnRegresar");
+
+  //   if (guardarParcialHabilitado) {
+  //     console.log("activa btn guardar");
+  //     btnGuardar.removeAttribute("hidden");
+  //   } else {
+  //     btnGuardar.setAttribute("hidden", "hidden");
+  //   }
+
+  //   if (procesarHabilitado) {
+  //     console.log("activa btn procesar");
+  //     btnPreparar.removeAttribute("hidden");
+  //     btnGuardar.setAttribute("hidden", "hidden");
+  //   } else {
+  //   // btnGuardar.removeAttribute("hidden");
+  //     btnPreparar.setAttribute("hidden", "hidden");
+  //   }
+
+  //   if (trasladospreparados) {
+  //     btnRegresar.setAttribute("hidden", "hidden");
+  //   } else {
+  //     // const btnRegresar = document.getElementById('btnRegresar');
+  //     console.log("activa btn regresar");
+  //     btnRegresar.removeAttribute("hidden");
+  //     btnGuardar.setAttribute("hidden", "hidden");
+  //     btnPreparar.setAttribute("hidden", "hidden");
+  //   }
 
   const observacion = document.getElementById("observaciones");
   if (observacion && TrasladoList && TrasladoList.length > 0) {
@@ -626,208 +621,21 @@ function verificacion() {
   }
 }
 
-// function verificacion() {
-//   var dataArray = JSON.parse(localStorage.getItem("dataArray"));
-//   // Obtener la tabla por su ID
-//   const tabla = document.getElementById("myTableVerificacion");
-
-//   // Verificar si la tabla existe
-//   if (tabla) {
-//     // Obtener el tbody de la tabla
-//     const tbody = tabla.querySelector("tbody");
-
-//     // Buscar todas las filas (tr) dentro del tbody
-//     const filas = tbody.querySelectorAll("tr");
-
-//     // Iterar a través de las filas
-//     filas.forEach((fila) => {
-//       // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
-//       const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
-//       const verifcheck = fila.querySelector("#verificado");
-//       if (cantidadLeidaCell) {
-//         cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
-//       }
-
-//       if (verifcheck) {
-//         verifcheck.textContent = ""; // Vacía el contenido de la celda
-//       }
-//     });
-//   }
-
-//   var cantidadesTotales = {};
-//   var resultadoArray = [];
-//   dataArray.forEach(function (item) {
-//     var articulo = item.ARTICULO;
-//     var cantidad = item.CANTIDAD_LEIDA;
-
-//     if (cantidadesTotales[articulo]) {
-//       cantidadesTotales[articulo] += cantidad;
-//     } else {
-//       cantidadesTotales[articulo] = cantidad;
-//     }
-
-//     if (cantidadesTotales[articulo] === cantidad) {
-//       resultadoArray.push(item);
-//       delete cantidadesTotales[articulo];
-//     }
-//   });
-
-//   for (var articulo in cantidadesTotales) {
-//     resultadoArray.push({
-//       ARTICULO: articulo,
-//       CANTIDAD_LEIDA: cantidadesTotales[articulo],
-//     });
-//   }
-
-//   var TrasladoList = detalleTrasladoList;
-//   const mensajesArray = [];
-//   let contadorMensajes = 1; // Contador para los mensajes
-
-//   resultadoArray.forEach((resultado) => {
-//     const traslado = TrasladoList.find(
-//       (traslado) =>
-//         traslado.ARTICULO === resultado.ARTICULO &&
-//         parseFloat(traslado.CANTIDAD_PEDIDA) ===
-//           parseFloat(resultado.CANTIDAD_LEIDA)
-//     );
-
-//     if (traslado) {
-//       const tabla = document.getElementById("myTableVerificacion");
-//       if (tabla) {
-//         const tbody = tabla.querySelector("tbody");
-//         const filas = tbody.querySelectorAll("tr");
-
-//         filas.forEach((fila) => {
-//           const celdaARTICULO = fila.querySelector("h5");
-//           if (
-//             celdaARTICULO &&
-//             celdaARTICULO.textContent === resultado.ARTICULO
-//           ) {
-//             const celdaVerificado = fila.querySelector("#verificado");
-//             if (celdaVerificado) {
-//               celdaVerificado.textContent = "";
-//               const spanVerificacion = document.createElement("span");
-//               spanVerificacion.classList.add("material-icons");
-//               spanVerificacion.textContent = "done_all";
-//               spanVerificacion.style.color = "green";
-//               celdaVerificado.appendChild(spanVerificacion);
-//             }
-//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
-//             if (cantidadVerificadaCell) {
-//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
-//             }
-//           }
-//         });
-//       }
-//     } else {
-//       const tabla = document.getElementById("myTableVerificacion");
-//       if (tabla) {
-//         const tbody = tabla.querySelector("tbody");
-//         const filas = tbody.querySelectorAll("tr");
-
-//         filas.forEach((fila) => {
-//           const celdaARTICULO = fila.querySelector("h5");
-//           if (
-//             celdaARTICULO &&
-//             celdaARTICULO.textContent === resultado.ARTICULO
-//           ) {
-//             const celdaVerificado = fila.querySelector("#verificado");
-//             const cantPedida = fila.querySelector("#cantidadPedida");
-//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
-
-//             if (
-//               parseFloat(resultado.CANTIDAD_LEIDA) >
-//               parseFloat(cantPedida.textContent)
-//             ) {
-//               var resultadoOperacion =
-//                 "+" +
-//                 (
-//                   resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-//                 ).toString();
-//               celdaVerificado.textContent = resultadoOperacion;
-//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
-//               mensajesArray.push(mensaje);
-//               contadorMensajes++; // Incrementar el contador
-//             } else if (
-//               resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)
-//             ) {
-//               var resultadoOperacion = (
-//                 resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-//               ).toString();
-//               celdaVerificado.textContent = resultadoOperacion;
-//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
-//               mensajesArray.push(mensaje);
-//               contadorMensajes++; // Incrementar el contador
-//             }
-//             if (cantidadVerificadaCell) {
-//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
-//             }
-//           }
-//         });
-//         localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
-//       }
-//     }
-//   });
-
-//   let procesarHabilitado = todasLasFilasVerificadas();
-//   let trasladospreparados =
-//     localStorage.getItem("trasladosprocesados") === "true";
-//   let guardarParcialHabilitado = activaGuardadoParcial();
-
-//   const btnGuardar = document.getElementById("btnGuardar");
-//   const btnProcesar = document.getElementById("btnProcesar");
-//   const btnRegresar = document.getElementById("btnRegresar");
-
-//   if (guardarParcialHabilitado) {
-//     btnGuardar.removeAttribute("hidden");
-//   } else {
-//     btnGuardar.setAttribute("hidden", "hidden");
-//   }
-
-//   if (procesarHabilitado) {
-//     btnProcesar.removeAttribute("hidden");
-//   } else {
-//     btnGuardar.removeAttribute("hidden");
-//     btnProcesar.setAttribute("hidden", "hidden");
-//   }
-
-//   if (trasladospreparados) {
-//     btnRegresar.setAttribute("hidden", "hidden");
-//   } else {
-//     // const btnRegresar = document.getElementById('btnRegresar');
-//     console.log("activa btn regresar");
-//     btnRegresar.removeAttribute("hidden");
-//     btnGuardar.setAttribute("hidden", "hidden");
-//     btnProcesar.setAttribute("hidden", "hidden");
-//   }
-
-//   const observacion = document.getElementById("observaciones");
-
-//   // observacion.innerHTML='comentario';
-//   observacion.innerHTML = TrasladoList[0].OBSERVACION;
-// } //Fin de verificacion
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
 function todasLasFilasVerificadas() {
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
-  
   if (filas.length === 0) return false;
 
   for (let i = 0; i < filas.length; i++) {
     const fila = filas[i];
-    const celdaVerificado = fila.querySelector("td.col-verificado");
-
+    // Soporta tanto si la celda usa clase col-verificado o id verificado
+    const celdaVerificado = fila.querySelector("td.col-verificado") || fila.querySelector("td#verificado");
     if (!celdaVerificado) return false;
 
-    const iconoVerificacion = celdaVerificado.querySelector("span.material-icons");
-
-    // Retorna false si no existe el icono o si no es "done_all"
-    if (!iconoVerificacion || iconoVerificacion.textContent.trim() !== "done_all") {
+    const icono = celdaVerificado.querySelector("span.material-icons");
+    if (!icono || icono.textContent.trim() !== "done_all") {
       return false;
     }
   }
-
   return true;
 }
 
@@ -836,20 +644,21 @@ function activaGuardadoParcial() {
 
   for (let i = 0; i < filas.length; i++) {
     const fila = filas[i];
-    const celdaCantidadLeida = fila.querySelector("td.col-cant-leida");
+    // Soporta tanto td.col-cant-leida como td#cantidadLeida
+    const celdaLeida = fila.querySelector("td.col-cant-leida") || fila.querySelector("td#cantidadLeida");
 
-    if (celdaCantidadLeida) {
-      const valorTxt = celdaCantidadLeida.textContent.trim();
-      const valNum = parseFloat(valorTxt);
-
-      // Se activa si se ha leído algo válido y mayor a 0
-      if (valorTxt !== "" && !isNaN(valNum) && valNum > 0) {
+    if (celdaLeida) {
+      const valor = parseFloat(celdaLeida.textContent.trim());
+      // Si por lo menos una línea tiene una cantidad mayor a 0
+      if (!isNaN(valor) && valor > 0) {
         return true;
       }
     }
   }
   return false;
 }
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
 // function todasLasFilasVerificadas() {
 //   // Obtener todas las filas de la tabla de verificación
 //   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
@@ -874,9 +683,8 @@ function activaGuardadoParcial() {
 //   // Si todas las celdas contienen el ícono "done_all", retornar verdadero
 //   return true;
 // }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// //FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL TRASLADO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 // function activaGuardadoParcial() {
 //   // Obtener todas las filas de la tabla de verificación
 //   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
@@ -884,17 +692,13 @@ function activaGuardadoParcial() {
 //   for (let i = 0; i < filas.length; i++) {
 //     const fila = filas[i];
 
-//     // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual
-//     const celdaCantidadPedida = fila.querySelector("td#cantidadPedida");
+//     // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual   
 //     const celdaCantidadLeida = fila.querySelector("td#cantidadLeida");
 
 //     // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
-//     if (
-//       (parseFloat(celdaCantidadLeida.textContent) >=
-//         parseFloat(celdaCantidadPedida.textContent) &&
-//         parseFloat(celdaCantidadLeida.textContent) != 0) ||
-//       parseFloat(celdaCantidadLeida.textContent) == ""
-//     ) {
+//     // if ((parseFloat(celdaCantidadLeida.textContent)>= parseFloat(celdaCantidadPedida.textContent)) && parseFloat(celdaCantidadLeida.textContent) != 0 || parseFloat(celdaCantidadLeida.textContent) == "") {
+//     // if ( parseFloat(celdaCantidadLeida.textContent) >=  parseFloat(celdaCantidadPedida.textContent)
+//     if ( parseFloat(celdaCantidadLeida.textContent) >=  0) {
 //       // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
 //       return true;
 //     }
@@ -902,6 +706,52 @@ function activaGuardadoParcial() {
 //   // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
 //   return false;
 // }
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
+// function todasLasFilasVerificadas() {
+//   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+  
+//   if (filas.length === 0) return false;
+
+//   for (let i = 0; i < filas.length; i++) {
+//     const fila = filas[i];
+//     const celdaVerificado = fila.querySelector("td.col-verificado");
+
+//     if (!celdaVerificado) return false;
+
+//     const iconoVerificacion = celdaVerificado.querySelector("span.material-icons");
+
+//     // Retorna false si no existe el icono o si no es "done_all"
+//     if (!iconoVerificacion || iconoVerificacion.textContent.trim() !== "done_all") {
+//       return false;
+//     }
+//   }
+
+//   return true;
+// }
+
+// function activaGuardadoParcial() {
+//   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+
+//   for (let i = 0; i < filas.length; i++) {
+//     const fila = filas[i];
+//     const celdaCantidadLeida = fila.querySelector("td.col-cant-leida");
+
+//     if (celdaCantidadLeida) {
+//       const valorTxt = celdaCantidadLeida.textContent.trim();
+//       const valNum = parseFloat(valorTxt);
+
+//       // Se activa si se ha leído algo válido y mayor a 0
+//       if (valorTxt !== "" && !isNaN(valNum) && valNum > 0) {
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
+
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
@@ -1006,33 +856,6 @@ function guardaParcialMente() {
 
     detalles.push(detalle);
   }
-  // for (let i = 1; i < table.rows.length; i++) {
-  //   let row = table.rows[i];
-
-  //   // Obtener el valor del artículo
-  //   let articulo = row
-  //     .querySelector("#verifica-articulo span")
-  //     .textContent.trim();
-
-  //   // Obtener la cantidad pedida
-  //   let cantidadPedida = row
-  //     .querySelector("#cantidadPedida")
-  //     .textContent.trim();
-
-  //   // Obtener la cantidad leída
-  //   let cantidadLeida =
-  //     row.querySelector("#cantidadLeida").textContent.trim() || 0;
-
-  //   // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
-  //   var detalle = {
-  //     ARTICULO: articulo,
-  //     CANT_CONSEC: cantidadPedida,
-  //     CANT_LEIDA: cantidadLeida,
-  //   };
-
-  //   // Agregar el objeto al array
-  //   detalles.push(detalle);
-  // }
 
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = JSON.stringify(detalles);
@@ -1065,13 +888,13 @@ function guardaParcialMente() {
   console.log("Aqui guardamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
   // window.location.href = 'verificacionDeTraslados.html';
-  fetch(env.API_URL + "wmsguardadopickingtraslado/G" + params, myInit)
+  fetch(env.API_URL + "wmsguardatrasladoverificado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       console.log("RESULTADOS_API:");
       console.log(result);
       if (result.msg === "SUCCESS") {
-        if (result.trasladoguardado.length != 0) {
+        if (result.respuesta.length != 0) {
           // Resto del código de éxito
           Swal.fire({
             icon: "success",
@@ -1083,7 +906,7 @@ function guardaParcialMente() {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
               localStorage.setItem("autoSearchTraslados", "true");
-              window.location.href = "verificacionDeTraslados.html";
+             // window.location.href = "verificacionDeTraslados.html";
             }
           });
         }

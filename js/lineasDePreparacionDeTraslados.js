@@ -778,7 +778,7 @@ function guardaParcialMente() {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
               localStorage.setItem("autoSearchTraslados", "true");
-              window.location.href = "verificacionDePickingDetraslados.html";
+              //window.location.href = "verificacionDePickingDetraslados.html";
             }
           });
         }

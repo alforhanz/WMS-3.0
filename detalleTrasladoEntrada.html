@@ -45,13 +45,19 @@
     <div id="resultadoBusqueda">
       <div id="carga" style="margin-top: -7px;"></div>
       <div class="container">
-        <div>
-          <i id="retornar" class="material-icons green-text" style="cursor: pointer;"
-            onclick="confirmaRegresar()">keyboard_backspace</i>
-        </div>
+        <!-- Reemplazo de la flecha <i id="retornar"> por botón regresar -->
+<div>
+  <button id="btnRegresarTop" 
+    class="btn waves-effect waves-light" 
+    style="background-color: #28a745; margin-top: 12px; margin-bottom: 8px; border-radius: 5px; height: 36px; display: inline-flex; align-items: center;"
+    onclick="confirmaRegresar()">
+    <i class="material-icons left">arrow_back</i> Regresar
+  </button>
+</div>
 
-        <h2 style="text-align:center ; text-transform: uppercase;">Detalle de Traslado de Entrada</h2>
+<h2 style="text-align:center ; text-transform: uppercase;">Detalle de Traslado de Entrada</h2>
         <div class="row"><label id="documento"></label></div>
+         <div class="row"><label id="bodega_origen"></label></div>
         <!-- <div class="row"><label id="pedido"></label></div>
       <div class="row"><label id="estadoPedido"></label></div> -->
         <div class="row">
@@ -92,11 +98,11 @@
                 </tbody>
               </table>
             </div>
-            <div>
+            <!-- <div>
               <button id="btnRegresarlectura"
                 style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
                 onclick="confirmaRegresar()">Regresar</button>
-            </div>
+            </div> -->
           </div>
           <div id="tabla-verificacion" class="col s12">
             <label id="cantidadDeRegistros"></label>
@@ -122,7 +128,34 @@
             </div>
 
             <!-- Botones para la verificación -->
+             <!-- Botones para la verificación -->
             <div id="contenedorBotones">
+              <button id="btnGuardar"
+                style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
+                onclick="confirmarGuardadoParcial()" hidden>Guardar</button>
+            
+              <button id="btnProcesar"
+                style="width: 105px; background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; height: 36px;"
+                onclick="confirmaProcesar()" hidden>Procesar</button>
+            
+              <button id="btnRegresar"
+                style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
+                onclick="confirmaRegresar()" hidden>Regresar</button>
+            </div>
+                  <!-- <div id="contenedorBotones">
+                    <button id="btnGuardar"
+                      style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
+                      onclick="confirmarGuardadoParcial()" hidden>Guardar</button>
+                  
+                    <button id="btnPreparar"
+                      style="width: 105px; background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; height: 36px;"
+                      onclick="confirmaProcesar()" hidden>Procesar</button>
+                  
+                    <button id="btnRegresar"
+                      style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
+                      onclick="confirmaRegresar()" hidden>Regresar</button>
+                  </div> -->
+            <!-- <div id="contenedorBotones">
               <button id="btnGuardar"
                 style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
                 onclick="confirmarGuardadoParcial()" hidden>Guardar</button>
@@ -132,7 +165,7 @@
               <button id="btnRegresar"
                 style="background-color: #28a745; border-radius: 5px; color: white; margin-top: 16px; margin-left: 16px; margin-right: 16px; height: 36px;"
                 onclick="confirmaRegresar()" hidden>Regresar</button>
-            </div>
+            </div> -->
           </div>
         </div>
         <!-- Tabla de resultados para listado de pedidos -->

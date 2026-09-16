@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (fechaIni) document.getElementById("fecha_ini").value = fechaIni;
       if (fechaFin) document.getElementById("fecha_fin").value = fechaFin;
       const parametros = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${fechaIni}&fechaFin=${fechaFin}&BodegaOrigen=${bodegaOrigen}`;
-      consultaAPI(parametros);
+      consultaAPI(parametros,pOpcion);
 
   }else{
           console.log("NO HAY PARAMETROS DE BÚSQUEDA PREVIOS")
@@ -245,7 +245,7 @@ function resultadosVerificacionTraslados(desde, hasta) {
       const opcionActual = item.OPCION || (esEntrada ? "S" : "E");    
 
       htm += `
-        <tr onclick="irDetalleTraslado('${item.TRASLADO}','${item.BODEGA_DESTINO || ''}','${item.ESTADO_TRASLADO || ''}','${opcionActual}');" style="cursor: pointer; background-color:${backgroundColor};">
+        <tr onclick="irDetalleTraslado('${item.TRASLADO}','${bodegaMostrar || ''}','${item.ESTADO_TRASLADO || ''}','${opcionActual}');" style="cursor: pointer; background-color:${backgroundColor};">
           <td><span class="td-traslado-codigo">${item.TRASLADO}</span></td>
           <td>${bodegaMostrar}</td>
           <td>${item.LINEAS_VERIFICADAS || 0}</td>
@@ -257,7 +257,7 @@ function resultadosVerificacionTraslados(desde, hasta) {
   tbody.innerHTML = htm;
  
 }
-function irDetalleTraslado(documento, bodegaDestino, estadoPreparacion, opcion) {
+function irDetalleTraslado(documento, bodega, estadoPreparacion, opcion) {
   const bodegaOrigen = document.getElementById("bodega")?.value || "";
   const pFechaHasta = document.getElementById("fecha_fin").value;
   const pFechaDesde = document.getElementById("fecha_ini").value;
@@ -268,7 +268,8 @@ function irDetalleTraslado(documento, bodegaDestino, estadoPreparacion, opcion) 
   
   localStorage.setItem("ListParamsDetalle", params);
   localStorage.setItem("traslado", documento);
-  localStorage.setItem("destinoBodegaTraslado", bodegaDestino);
+  localStorage.setItem("tipoTraslado", opcion);
+  localStorage.setItem("BodegaTraslado", bodega);
   localStorage.setItem("estadotraslado", estadoPreparacion);
 
   window.location.href = opcion === "E" ? "detalleTrasladoEntrada.html" : "detalleTrasladoSalida.html";

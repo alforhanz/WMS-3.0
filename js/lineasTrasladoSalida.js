@@ -136,55 +136,6 @@ function armarTablaLectura(detalleTrasladoList) {
     }
   });
 
-  // detalleTrasladoList.forEach(function (detalle) {
-  //   // if (detalle.LINEAS_PREPARADAS != null && detalle.LINEAS_PREPARADAS !== "" &&  detalle.LINEAS_PREPARADAS > 0) {
-  //     if (detalle.LINEAS_VERIFICADAS != null && detalle.LINEAS_VERIFICADAS !== ""  &&  detalle.LINEAS_VERIFICADAS > 0) {
-  //     var newRow = document.createElement('tr');
-  //     var disabled = (estadoPreparacion !== 'A') ? 'disabled' : '';
-  //     var cursor = (disabled) ? 'default' : 'pointer';
-  //     var onclick = (disabled) ? '' : 'onclick="eliminarFila(this)"';
-
-  //     newRow.innerHTML = `
-  //       <td>
-  //         <span>${detalle.ARTICULO}</span>
-  //       </td>
-  //       <td class="codigo-barras-cell">
-  //         <input id="codigo-barras" type="text" class="codigo-barras-input" value="${detalle.CODIGO_BARRA || ''}" onchange="validarCodigoBarras(this)" autofocus ${disabled}>
-  //       </td>
-  //       <td class="codigo-barras-cell2">
-  //         <input id="cant-pedida" type="text" class="codigo-barras-input" value="${detalle.LINEAS_VERIFICADAS || ''}" onchange="guardarTablaEnArray(this)" style="text-align: center;" ${disabled}>
-  //       </td>
-  //       <td class="codigo-barras-cell2">
-  //         <i class="material-icons red-text" style="cursor: ${cursor};" ${onclick}>clear</i>
-  //       </td>
-  //     `;
-  //     tbody.appendChild(newRow);
-  //            // Crear una nueva fila vacía para permitir la entrada de más datos si es necesario
-  //   crearNuevaFila();
-  //   }else{
-  //     var newRow = document.createElement('tr');
-  //     var disabled = (estadoPreparacion !== 'A') ? 'disabled' : '';
-  //     var cursor = (disabled) ? 'default' : 'pointer';
-  //     var onclick = (disabled) ? '' : 'onclick="eliminarFila(this)"';
-
-  //     newRow.innerHTML = `
-  //       <td>
-  //         <span></span>
-  //       </td>
-  //       <td class="codigo-barras-cell">
-  //         <input id="codigo-barras" type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus ${disabled}>
-  //       </td>
-  //       <td class="codigo-barras-cell2">
-  //         <input id="cant-pedida" type="text" class="codigo-barras-input" value="" onchange="guardarTablaEnArray(this)" style="text-align: center;" ${disabled}>
-  //       </td>
-  //       <td class="codigo-barras-cell2">
-  //         <i class="material-icons red-text" style="cursor: ${cursor};" ${onclick}>clear</i>
-  //       </td>
-  //     `;
-  //     tbody.appendChild(newRow);
-  //   }
-  // });
-
   // Guardar la tabla en el array
   guardarTablaEnArray();
 }
@@ -671,7 +622,7 @@ function verificacion() {
     }
   });
 
-let procesarHabilitado = todasLasFilasVerificadas();
+  let procesarHabilitado = todasLasFilasVerificadas();
   let trasladospreparados = localStorage.getItem("trasladosprocesados") === "false";
   let guardarParcialHabilitado = activaGuardadoParcial();
 
@@ -736,7 +687,6 @@ function todasLasFilasVerificadas() {
   // Si todas las celdas contienen el ícono "done_all", retornar verdadero
   return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL TRASLADO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
@@ -907,7 +857,7 @@ function guardaParcialMente() {
   console.log("Aqui guardamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
   // window.location.href = 'verificacionDeTraslados.html';
-  fetch(env.API_URL + "wmsinsertupdatepickingtraslado" + params, myInit)
+  fetch(env.API_URL + "wmsguardatrasladoverificado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       console.log(result.respuesta[0].Respuesta);
@@ -924,7 +874,7 @@ function guardaParcialMente() {
             if (result.isConfirmed) {
               // Redirecciona a tu otra vista aquí
               localStorage.setItem("autoSearchTraslados", "true");
-              window.location.href = "verificacionDeTraslados.html";
+             // window.location.href = "verificacionDeTraslados.html";
             }
           });
         }
