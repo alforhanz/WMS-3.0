@@ -8,7 +8,9 @@ window.xPag = 10;
  ////             DOM                         ///////
 ////////////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function () {
-  const busquedaPrevia = localStorage.getItem("parametrosBusqueda");
+  const busquedaFlag= localStorage.getItem("busquedaActiva")==="true";
+  if(busquedaFlag){
+    const busquedaPrevia = localStorage.getItem("parametrosBusqueda");
   if(busquedaPrevia){
     console.log("hay busqueda previa..")
     const params = new URLSearchParams(busquedaPrevia);
@@ -23,16 +25,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }else{
           document.getElementById("trasladosSwitch").checked=true;
         }
+        if(typeRpt=="R"){
+              document.getElementById("toggleSwitch").checked=true;
+        }else{
+          document.getElementById("toggleSwitch").checked=false;
+        }
       if (fechaIni) document.getElementById("fecha_ini").value = fechaIni;
       if (fechaFin) document.getElementById("fecha_fin").value = fechaFin;
       const parametros = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${fechaIni}&fechaFin=${fechaFin}&BodegaOrigen=${bodegaOrigen}`;
       consultaAPI(parametros);
 
   }else{
-          const hoy = new Date().toISOString().split("T")[0];
+          console.log("NO HAY PARAMETROS DE BÚSQUEDA PREVIOS")
+      }
+
+  }else{
+      localStorage.clear();         
+  }
+   const hoy = new Date().toISOString().split("T")[0];
           const inputIni = document.getElementById("fecha_ini");
           const inputFin = document.getElementById("fecha_fin");
-          //inputIni.value = "2026-01-01"; // Valor de prueba
+          inputIni.value = "2026-01-01"; // Valor de prueba
           if (!inputIni.value) inputIni.value = hoy;
           if (!inputFin.value) inputFin.value = hoy;
           M.updateTextFields();
@@ -44,25 +57,22 @@ document.addEventListener("DOMContentLoaded", function () {
           switchTipo.addEventListener("change", function () {
             limpiarResultadoGeneral();
           });   
-          const switchProcesados = document.getElementById("toggleSwitch");
-          switchProcesados.addEventListener("change", function () {
-            verTrasladosLista();
-          });         
+          // const switchProcesados = document.getElementById("toggleSwitch");
+          // switchProcesados.addEventListener("change", function () {
+          //   //verTrasladosLista();
+          // });         
           cargaInicialTraslados();
-      }
+  
 });
-
   ////////////////////////////////////////////////////
  ////         CARGA INICIAL                   ///////
 ////////////////////////////////////////////////////
 function cargaInicialTraslados() {
   const bodegaOrigen = document.getElementById("bodega")?.value || "";
-
   if (!bodegaOrigen) {
     console.warn("Bodega no seleccionada en carga inicial.");
     return;
   }
-
   const pFechaHasta = document.getElementById("fecha_fin").value;
   const pFechaDesde = document.getElementById("fecha_ini").value;
   const pModulo = "WMS_VT";
@@ -73,15 +83,14 @@ function cargaInicialTraslados() {
   const params = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${pFechaDesde}&fechaFin=${pFechaHasta}&BodegaOrigen=${bodegaOrigen}`;
   
   mostrarLoader();
-  fetch(env.API_URL + "wmsverificaciontraslados/E" + params, myInit)
+  fetch(env.API_URL + "entradasalida" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       ocultarLoader();
       if (result.msg === "SUCCESS") {
-        ArrayData = result.traslados || [];
+        ArrayData = result.respuesta || [];
         console.log("=== CARGA INICIAL COMPLETA (ArrayData) ===", ArrayData);
         actualizarBadgesConteo(ArrayData);
-        //limpiarResultadoGeneral(); // La tabla se mantiene oculta/limpia
       }
     })
     .catch((error) => {
@@ -103,68 +112,40 @@ function verTrasladosLista() {
     });
     return false;
   }
-
   const pFechaHasta = document.getElementById("fecha_fin").value;
   const pFechaDesde = document.getElementById("fecha_ini").value;
   const pModulo = "WMS_VT";
   const trasladosProcesados = document.getElementById("toggleSwitch").checked;
   const typeRpt = trasladosProcesados ? "R" : "TP";
-  
-  // checked = true -> Entrada ('E') | checked = false -> Salida ('S')
+  if(typeRpt==="TP"){
+        localStorage.setItem("trasladosprocesados", "true");
+  }else{
+    localStorage.setItem("trasladosprocesados", "false");
+  }
+   
   const esEntrada = document.getElementById("trasladosSwitch").checked;
   const pOpcion = esEntrada ? "S" : "E";
-
+    
   const params = `?pModulo=${pModulo}&pOpcion=${pOpcion}&typeRpt=${typeRpt}&fechaIni=${pFechaDesde}&fechaFin=${pFechaHasta}&BodegaOrigen=${bodegaOrigen}`;
-  
+  localStorage.setItem("busquedaActiva", "true");
   localStorage.setItem("parametrosBusqueda", params);
-  consultaAPI(params);
-  // mostrarLoader();
-  // fetch(env.API_URL + "wmsverificaciontraslados/E" + params, myInit)
-  //   .then((response) => response.json())
-  //   .then((result) => {
-  //     ocultarLoader();
-  //     if (result.msg === "SUCCESS") {
-  //       ArrayData = result.traslados || [];
-  //       ArrayDataFiltrado = [...ArrayData];
-
-  //        console.log("=== CARGA REFRESH COMPLETA (ArrayData) ===", ArrayData);
-  //       	//actualizarBadgesConteo(ArrayData);
-  //         cargaInicialTraslados()
-
-  //       if (ArrayDataFiltrado.length === 0) {
-  //         limpiarResultadoGeneral();
-  //         Swal.fire({
-  //           icon: "info",
-  //           title: "Sin registros",
-  //           text: `No se encontraron traslados de ${esEntrada ? 'Entrada' : 'Salida'}.`,
-  //           confirmButtonColor: "#28a745",
-  //         });
-  //       } else {
-  //         renderizarTablaConPaginacion(1);
-  //       }
-  //     } else {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         text: "Ocurrió un error al consultar el API.",
-  //         confirmButtonColor: "#28a745",
-  //       });
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     ocultarLoader();
-  //     console.error("Error en la solicitud Fetch:", error);
-  //   });
+    consultaAPI(params,pOpcion);  
 }
-function consultaAPI(parametros){
-  
-  mostrarLoader();
-  fetch(env.API_URL + "wmsverificaciontraslados/E" + parametros, myInit)
+function consultaAPI(parametros,opcion){
+   mostrarLoader();
+  console.log("pOpcion= "+ opcion);
+  let urlcontroller="";    
+  if(opcion==="S"){
+          urlcontroller="wmsverificaciontrasladossalida";
+  }else if(opcion==="E"){
+        urlcontroller="wmsverificaciontrasladosentrada";
+  }
+  fetch(env.API_URL+urlcontroller+parametros, myInit)
     .then((response) => response.json())
     .then((result) => {
-      ocultarLoader();
+      
       if (result.msg === "SUCCESS") {
-        ArrayData = result.traslados || [];
+        ArrayData = result.respuesta || [];
         ArrayDataFiltrado = [...ArrayData];
 
          console.log("=== CARGA REFRESH COMPLETA (ArrayData) ===", ArrayData);
@@ -176,7 +157,7 @@ function consultaAPI(parametros){
           Swal.fire({
             icon: "info",
             title: "Sin registros",
-            text: `No se encontraron traslados de ${esEntrada ? 'Entrada' : 'Salida'}.`,
+            text: `No se encontraron traslados`,
             confirmButtonColor: "#28a745",
           });
         } else {
@@ -195,47 +176,7 @@ function consultaAPI(parametros){
       ocultarLoader();
       console.error("Error en la solicitud Fetch:", error);
     });
-}
-function consultarTrasladosLocal() {
-  if (!ArrayData || ArrayData.length === 0) {
-    Swal.fire({
-      icon: "info",
-      title: "Información",
-      text: "No hay traslados cargados en memoria. Por favor pulse 'Refrescar'.",
-      confirmButtonColor: "#28a745",
-    });
-    limpiarResultadoGeneral();
-    return;
-  }
-
-  // checked = true -> Entrada ('E') | checked = false -> Salida ('S')
-  const esEntrada = document.getElementById("trasladosSwitch").checked;
-  const tipoOpcion = esEntrada ? "S" : "E";
-  const numTraslado = document.getElementById("pContenedor").value.trim().toUpperCase();
-
-  // 1. Filtrar por tipo (E o S)
-  let filtrados = ArrayData.filter((item) => (item.OPCION || "").toUpperCase() === tipoOpcion);
-
-  // 2. Filtrar por número si se ingresó
-  if (numTraslado !== "") {
-    filtrados = filtrados.filter((item) =>
-      item.TRASLADO && item.TRASLADO.toUpperCase().includes(numTraslado)
-    );
-  }
-
-  ArrayDataFiltrado = filtrados;
-
-  if (ArrayDataFiltrado.length === 0) {
-    limpiarResultadoGeneral();
-    Swal.fire({
-      icon: "info",
-      title: "Sin registros",
-      text: `No hay traslados de ${esEntrada ? "Entrada" : "Salida"} para los criterios indicados.`,
-      confirmButtonColor: "#28a745",
-    });
-  } else {
-    renderizarTablaConPaginacion(1);
-  }
+     ocultarLoader();
 }
 function actualizarBadgesConteo(data) {
   if (!Array.isArray(data)) return;
@@ -256,19 +197,7 @@ function actualizarBadgesConteo(data) {
   if (lblEntradas) lblEntradas.innerText = cantEntradas;
   if (lblSalidas)  lblSalidas.innerText  = cantSalidas;
 }
-// function actualizarBadgesConteo(data) {
-//   // const totalEntradas = data.filter((item) => (item.OPCION || "").toUpperCase() === "E").length;
-//   // const totalSalidas = data.filter((item) => (item.OPCION || "").toUpperCase() === "S").length;
 
-//     const totalEntradas = data.filter((item) => (item.OPCION || "").toUpperCase() === "E");
-//   const totalSalidas = data.filter((item) => (item.OPCION || "").toUpperCase() === "S");
-
-//   const lblEntradas = document.getElementById("lblCantEntradas");
-//   const lblSalidas = document.getElementById("lblCantSalidas");
-
-//   if (lblEntradas) lblEntradas.innerText = totalEntradas;
-//   if (lblSalidas) lblSalidas.innerText = totalSalidas;
-// }
 function renderizarTablaConPaginacion(pag) {
   const cantReg = ArrayDataFiltrado.length;
   const nPag = Math.ceil(cantReg / xPag);
@@ -313,18 +242,11 @@ function resultadosVerificacionTraslados(desde, hasta) {
     if (item) {
       const backgroundColor = i % 2 === 0 ? "#ffffff" : "#d7d5d5";
       const bodegaMostrar = item.BODEGA_DESTINO || item.BODEGA_ORIGEN || item.BODEGA || "";
-      const opcionActual = item.OPCION || (esEntrada ? "E" : "S");
-
-      // Partir el código de traslado en dos líneas si tiene guión (ej: TRAS81- / 0000041903)
-      let trasladoFormateado = item.TRASLADO || "";
-      if (trasladoFormateado.includes("-")) {
-        const partes = trasladoFormateado.split("-");
-        trasladoFormateado = `${partes[0]}-<br>${partes.slice(1).join("-")}`;
-      }
+      const opcionActual = item.OPCION || (esEntrada ? "S" : "E");    
 
       htm += `
         <tr onclick="irDetalleTraslado('${item.TRASLADO}','${item.BODEGA_DESTINO || ''}','${item.ESTADO_TRASLADO || ''}','${opcionActual}');" style="cursor: pointer; background-color:${backgroundColor};">
-          <td><span class="td-traslado-codigo">${trasladoFormateado}</span></td>
+          <td><span class="td-traslado-codigo">${item.TRASLADO}</span></td>
           <td>${bodegaMostrar}</td>
           <td>${item.LINEAS_VERIFICADAS || 0}</td>
           <td>${item.LINEAS_PREPARADAS || 0}</td>
@@ -333,6 +255,7 @@ function resultadosVerificacionTraslados(desde, hasta) {
     }
   }
   tbody.innerHTML = htm;
+ 
 }
 function irDetalleTraslado(documento, bodegaDestino, estadoPreparacion, opcion) {
   const bodegaOrigen = document.getElementById("bodega")?.value || "";

@@ -1,7 +1,114 @@
-  /////////////////////////////////////////////////////////////////////
- /////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 class MyHeader extends HTMLElement {
-  connectedCallback() { 
+  connectedCallback() {
+    /*******************************************************/
+    // ===============================
+    // CONTROL GLOBAL MULTI-PESTAÑAS
+    // ===============================
+    (function initTabControl() {
+      const user = sessionStorage.getItem("user");
+
+      // Si no hay sesión, no activar control
+      if (!user) return;
+
+      const username = JSON.parse(user);
+      const TAB_ID = Date.now() + "_" + Math.random();
+      const channel = new BroadcastChannel("bremen_single_tab_" + username);
+
+      let isMainTab = true;
+
+      // Avisar que esta pestaña quiere ser líder
+      channel.postMessage({ type: "CHECK_ACTIVE", tabId: TAB_ID });
+
+      channel.onmessage = (event) => {
+        const msg = event.data;
+
+        // Si otra pestaña ya es principal → bloquear esta
+        if (msg.type === "TAB_ACTIVE" && msg.tabId !== TAB_ID) {
+          isMainTab = false;
+          blockTab();
+        }
+
+        // Si alguien consulta y esta pestaña es la principal → responder
+        if (msg.type === "CHECK_ACTIVE" && isMainTab) {
+          channel.postMessage({ type: "TAB_ACTIVE", tabId: TAB_ID });
+        }
+      };
+
+      function blockTab() {
+        console.warn("⚠️ Pestaña bloqueada — sesión activa en otra ventana");
+
+        document.body.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      background:linear-gradient(135deg,#f5f5f5,#eeeeee);
+      font-family:'Jura', 'Segoe UI', sans-serif;
+    ">
+      <div style="
+        background:#ffffff;
+        border-radius:16px;
+        padding:35px 40px;
+        max-width:480px;
+        width:90%;
+        text-align:center;
+        box-shadow:0 10px 30px rgba(0,0,0,0.12);
+        animation:fadeIn .35s ease-in-out;
+      ">
+        <div style="
+          font-size:52px;
+          margin-bottom:15px;
+          color:#d32f2f;
+        ">⚠️</div>
+
+        <h2 style="
+          color:#b71c1c;
+          font-weight:700;
+          margin-bottom:12px;
+        ">
+          Sesión activa en otra pestaña
+        </h2>
+
+        <!--p style="
+          color:#444;
+          font-size:15px;
+          line-height:1.6;
+          margin-bottom:8px;
+        ">
+          Esta cuenta ya se encuentra abierta en otra ventana del sistema.
+        </p-->
+
+
+        <button onclick="window.close()" style="
+          margin-top:10px;
+          padding:10px 18px;
+          border-radius:8px;
+          border:none;
+          background:#d32f2f;
+          color:white;
+          font-weight:600;
+          cursor:pointer;
+        ">
+          Cerrar pestaña
+        </button>
+      </div>
+    </div>
+
+    <style>
+      @keyframes fadeIn {
+        from { opacity:0; transform:scale(0.96); }
+        to { opacity:1; transform:scale(1); }
+      }
+    </style>
+  `;
+      }
+    })();
+
+    /*******************************************************/
+
     this.innerHTML = `
 <header id="header" class="page-topbar">
     <!-- encabezado logo-->

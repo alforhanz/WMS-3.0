@@ -1,32 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Código que se ejecuta cuando el DOM se haya cargado
+  
   console.log("El DOM se ha cargado completamente.");
-
-  // let usuario = document.getElementById("hUsuario").value;
-  // console.log("hUsuario:", usuario);
-  // //localStorage.setItem('UserID',usuario);
-
-  // // Inicializar datepicker de Materialize
-  // var elems = document.querySelectorAll(".datepicker");
-  // var instances = M.Datepicker.init(elems, {
-  //   format: "yyyy-mm-dd", // Formato de fecha
-  // });
-
-  // Verificar si existe una búsqueda previa
   let busquedaFlag = localStorage.getItem("autoSearchTraslados") === "true";
 
   if (busquedaFlag) {
     // Obtener la cadena de parámetros guardada en el localStorage
     let parametrosBusqueda = localStorage.getItem("parametrosBusqueda");
-    let mostrarPreparados =
-      localStorage.getItem("trasladosprocesados") === "true";
+    let mostrarPreparados =  localStorage.getItem("trasladosprocesados");
 
-    if (mostrarPreparados) {
+    if (mostrarPreparados ==="true") {
       $("#toggleSwitch").prop("checked", true);
     } else {
       $("#toggleSwitch").prop("checked", false);
     }
-
     // Extraer los valores de 'fechaIni' y 'fechaFin' de la cadena de parámetros
     const fechaIni = obtenerValorParametro(parametrosBusqueda, "fechaIni");
     const fechaFin = obtenerValorParametro(parametrosBusqueda, "fechaFin");
@@ -70,23 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // Guardar el estado de usuario, bodega y otros datos en el localStorage
   const user = document.getElementById("hUsuario");
   const bodega = document.getElementById("bodega").value;
-  const estadoSwitchTrasPrep = document.getElementById("toggleSwitch");
+  const estadoSwitchTrasPrep = document.getElementById("toggleSwitch").checked;
   localStorage.setItem("username", user.value);
   localStorage.setItem("bodegaUser", bodega);
-  localStorage.setItem("trasladosprocesados", estadoSwitchTrasPrep.checked);
+  localStorage.setItem("trasladosprocesados", estadoSwitchTrasPrep);
 });
-function obtenerValorParametro(parametros, nombreParametro) {
-  const urlParams = new URLSearchParams(parametros);
-  return urlParams.get(nombreParametro);
-}
-// Función para extraer el valor de un parámetro específico de la cadena de búsqueda
-function obtenerValorParametro(parametros, nombreParametro) {
-  // Crear un objeto URLSearchParams para manejar la cadena de parámetros
-  const urlParams = new URLSearchParams(parametros);
 
-  // Retornar el valor del parámetro solicitado
+function obtenerValorParametro(parametros, nombreParametro) {
+  const urlParams = new URLSearchParams(parametros);
   return urlParams.get(nombreParametro);
 }
+
 function verTrasladosLista() {
   //revisar como toma el valor
   var bodegaOrigen = document.getElementById("bodega").value;
@@ -102,7 +82,8 @@ function verTrasladosLista() {
     var pFechaHasta = $("#fecha_fin").val();
     var pFechaDesde = $("#fecha_ini").val();
     localStorage.setItem("autoSearchTraslados", "true"); // Aquí se establece el valor 'false' para la búsqueda de los traslados
-    let pModulo = "WMS_VP";
+    // let pModulo = "WMS_VP";
+     let pModulo = "WMS_PK";
     let pOpcion = "S";
     let typeRpt = "R";
 
@@ -130,29 +111,22 @@ function verTrasladosLista() {
 } //Fin de ver traslados lista
 function listadoTraslados(parametros) {
   mostrarLoader();
-
-  fetch(env.API_URL + "wmsverificaciontraslados/E" + parametros, myInit)
+fetch(env.API_URL + "wmspreparaciondetraslados" + parametros, myInit)
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
         console.log("TRASLADOS");
-        console.log(result.traslados);
-        if (result.traslados.length != 0) {
-          ArrayData = result.traslados;
-          ArrayDataFiltrado = result.traslados;
-          let cantReg = result.traslados.length;
+        console.log(result.respuesta);
+        if (result.respuesta.length != 0) {
+          ArrayData = result.respuesta;
+          ArrayDataFiltrado = result.respuesta;
+          let cantReg = result.respuesta.length;
           let nPag = Math.ceil(cantReg / xPag);
-
-          $("#tbltraslados tbody").remove();
-
-          let htm = `<div class="row" id="totalregistros">
-            <div class="col s12"><span>Total de Registros: </span><span>${result.traslados.length}</span></div>
-          </div>`;
-
+          $("#tbltraslados tbody").remove();   
           let resultadoGeneral = document.getElementById("resultadoGeneral");
           if (resultadoGeneral) {
             let htm = `<div class="row" id="totalregistros">
-                            <div class="col s12"><span>Total de Registros: </span><span>${result.traslados.length}</span></div>
+                            <div class="col s12"><span>Total de Registros: </span><span>${result.respuesta.length}</span></div>
                          </div>`;
             resultadoGeneral.innerHTML = htm;
           } else {
@@ -168,8 +142,7 @@ function listadoTraslados(parametros) {
           Swal.fire({
             icon: "info",
             title: "Oops...",
-            text: "No tiene traslados pendientes!",
-            //footer: '<a href="#">Why do I have this issue?</a>',
+            text: "No tiene traslados pendientes!",           
             confirmButtonColor: "#28a745",
           });
           limpiarResultadoGeneral();
@@ -214,8 +187,8 @@ function resultadosVerificacionTraslados(desde, hasta) {
       htm += `<tr onclick="irDetalleTraslado('${ArrayDataFiltrado[i].TRASLADO}','${ArrayDataFiltrado[i].BODEGA_DESTINO}');" style="background-color:${backgroundColor};">`;
       htm += `<td>${ArrayDataFiltrado[i].TRASLADO}</td>`;
       htm += `<td >${ArrayDataFiltrado[i].BODEGA_DESTINO}</td>`;
-      htm += `<td>${ArrayDataFiltrado[i].LINEAS_VERIFICADAS}</td>`;
-      htm += `<td>${ArrayDataFiltrado[i].LINEAS_PREPARADAS}</td>`;
+        htm += `<td>${ArrayDataFiltrado[i].LINEAS_PREPARADAS}</td>`;
+      htm += `<td>${ArrayDataFiltrado[i].LINEAS_VERIFICADAS}</td>`;    
       htm += `<td>${ArrayDataFiltrado[i].FECHA}</td>`;
       htm += `</tr>`;
     }
@@ -224,17 +197,11 @@ function resultadosVerificacionTraslados(desde, hasta) {
 }
 function irDetalleTraslado(documento, bodegaDestino) {
   let bodegaOrigen = document.getElementById("bodega").value;
-
   let pFechaHasta = $("#fecha_fin").val();
   let pFechaDesde = $("#fecha_ini").val();
-  //const entradaSalida=localStorage.getItem('entrada_Salida_Traslado_switch');
-  let pModulo = "WMS_VP";
+  let pModulo = "WMS_PK";
   let pOpcion = "S";
-  let typeRpt = "D";
-
-  // if(entradaSalida==="false"){
-  //   pOpcion="S"
-  // }
+  let typeRpt = "D";  
   const params =
     "?pModulo=" +
     pModulo +

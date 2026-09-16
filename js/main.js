@@ -2562,7 +2562,7 @@ function imprimeCodigo() {
                 }
                 .descripcion {
                     margin-top: 6px;
-                    font-size: 10px;
+                    font-size: 13px;
                     text-align: center;
                     word-wrap: break-word;
                 }

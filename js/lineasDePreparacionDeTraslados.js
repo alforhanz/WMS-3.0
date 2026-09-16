@@ -1,10 +1,8 @@
 //Variable global que contiene el detalle del traslado
 var detalleTrasladoList = "";
-
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
   console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
   //--------------------------------------------------------------------------
   var documento = localStorage.getItem("traslado");
   cargarLineasTraslado(documento);
@@ -32,6 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
 function cargarLineasTraslado(documento) {
   // Actualizar el label con el documento y traslado
   document.getElementById("documento").innerHTML = "Documento: " + documento;
+  const bodegaOrigen=localStorage.getItem("bodegaUser");
+  const bodegaDestino=localStorage.getItem("destinoBodegaTraslado");
+  document.getElementById("bodega-origen").innerHTML = "Bodega-origen: " + bodegaOrigen;
+  document.getElementById("bodega-destino").innerHTML = "Bodega-Destino: " + bodegaDestino;
 
   // Obtener los parámetros guardados en localStorage
   let parametros = localStorage.getItem("ListParamsDetalle");
@@ -39,20 +41,17 @@ function cargarLineasTraslado(documento) {
   // Parametros adicionales para el detalle del traslado
   const params = parametros + "&Aplicacion=" + documento;
   mostrarLoader();
-  // Realizar la petición para obtener el detalle de los traslados
-  fetch(env.API_URL + "wmsverificaciontraslados/L" + params, myInit)
+  fetch(env.API_URL + "wmspreparaciondetraslados" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        if (result.lineastraslados.length !== 0) {
+        if (result.respuesta.length !== 0) {
           // Guardar el detalle del traslado en una variable
-          detalleTrasladoList = result.lineastraslados;
+          detalleTrasladoList = result.respuesta;
           console.log("Detalle del traslado:", detalleTrasladoList);
 
           // Guardar la aplicación en localStorage
-          localStorage.setItem(
-            "pAplicacion",
-            detalleTrasladoList[0].APLICACION
+          localStorage.setItem("pAplicacion", detalleTrasladoList[0].APLICACION
           );
 
           // Llamar a la función para armar la tabla de verificación
@@ -75,52 +74,42 @@ function cargarLineasTraslado(documento) {
       }
     });
 }
-
 function armarTablaLectura(detalleTrasladoList) {
   var tbody = document.getElementById("tblbodyLectura");
-
-  // Limpiar el contenido del tbody antes de agregar nuevas filas
+  if (!tbody) return;
   tbody.innerHTML = "";
 
-  // Recorrer el detalle del traslado y agregar filas si LINEAS_PREPARADAS tiene un valor
-  detalleTrasladoList.forEach(function (detalle) {
-    if (
-      detalle.LINEAS_PREPARADAS != null &&
-      detalle.LINEAS_PREPARADAS !== "" &&
-      detalle.LINEAS_PREPARADAS > 0
-    ) {
-      var newRow = document.createElement("tr");
-
-      newRow.innerHTML = `
-          <td>
-            <span>${detalle.ARTICULO}</span>
-          </td>
+  // Renderizar las líneas existentes si tienen datos
+  if (Array.isArray(detalleTrasladoList) && detalleTrasladoList.length > 0) {
+    detalleTrasladoList.forEach(function (detalle) {
+      if (
+        detalle.LINEAS_PREPARADAS != null &&
+        detalle.LINEAS_PREPARADAS !== "" &&
+        parseFloat(detalle.LINEAS_PREPARADAS) > 0
+      ) {
+        var newRow = document.createElement("tr");
+        newRow.innerHTML = `
+          <td><span>${detalle.ARTICULO || ''}</span></td>
           <td class="codigo-barras-cell">
-            <input id="codigo-barras" type="text" class="codigo-barras-input" value="${
-              detalle.CODIGO_BARRA || ""
-            }" onchange="validarCodigoBarras(this)" autofocus>
+            <input type="text" class="codigo-barras-input" value="${detalle.CODIGO_BARRA || ''}" onchange="validarCodigoBarras(this)" autofocus>
           </td>
           <td class="codigo-barras-cell2">
-            <input id="cant-pedida" type="text" class="codigo-barras-input" value="${
-              detalle.LINEAS_PREPARADAS || ""
-            }" onchange="guardarTablaEnArray(this)" style="text-align: center;">
+            <input type="text" class="codigo-barras-input" value="${detalle.LINEAS_PREPARADAS || ''}" onchange="guardarTablaEnArray(this)" style="text-align: center;">
           </td>
           <td class="codigo-barras-cell2">
             <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
           </td>
         `;
-      tbody.appendChild(newRow);
-    }
-  });
+        tbody.appendChild(newRow);
+      }
+    });
+  }
 
-  // Guardar la tabla en el array
+  // Sincronizar estado, permitir agregar nuevas filas y evaluar botones
   guardarTablaEnArray();
-
-  // Crear una nueva fila vacía para permitir la entrada de más datos si es necesario
   crearNuevaFila();
+  verificacion();
 }
-
-/////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var TrasladoList = detalleTrasladoList;
   console.log("Lineas Traslado");
@@ -135,37 +124,51 @@ function validarCodigoBarras(input) {
 
   var codigoValido = false;
 
-  for (var i = 0; i < TrasladoList.length; i++) {
-    let codigosArrayArticulo = [];
-    if (TrasladoList[i].codigos_barras) {
-      codigosArrayArticulo = TrasladoList[i].codigos_barras
-        .split("|")
-        .map((codigo) => codigo.toUpperCase());
+    for (var i = 0; i < TrasladoList.length; i++) {
+      let codigosArrayArticulo = [];
+      let codigosNuevos = [];
+
+      // Procesar códigos de barras estándar
+      if (TrasladoList[i].codigos_barras) {
+        codigosArrayArticulo = String(TrasladoList[i].codigos_barras)
+          .split("|")
+          .map((codigo) => codigo.trim().toUpperCase())
+          .filter((codigo) => codigo !== "");
+      }
+
+      // Procesar códigos de barras nuevos (Asegurando String y limpieza)
+      if (TrasladoList[i].codigos_barras_nuevas) {
+        codigosNuevos = String(TrasladoList[i].codigos_barras_nuevas)
+          .split("|")
+          .map((codigo) => codigo.trim().toUpperCase())
+          .filter((codigo) => codigo !== "");
+      }
+
+      // Normalizar el código escaneado/ingresado
+      let codbarraBusqueda = codbarra ? codbarra.trim().toUpperCase() : "";
+
+      if (
+        (TrasladoList[i].ARTICULO &&
+          TrasladoList[i].ARTICULO.toUpperCase() === codbarraBusqueda) ||
+        (TrasladoList[i].CODIGO_BARRA &&
+          TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarraBusqueda) ||
+        codigosNuevos.includes(codbarraBusqueda) ||
+        codigosArrayArticulo.includes(codbarraBusqueda)
+      ) {
+        span.textContent = TrasladoList[i].ARTICULO;
+        cantFila.value = 1;
+
+        // Bloquear la celda del código de barras
+        input.setAttribute("readonly", "readonly");
+
+        // Generar nueva fila y guardar
+        crearNuevaFila();
+        guardarTablaEnArray();
+
+        codigoValido = true;
+        break;
+      }
     }
-
-    if (
-      (TrasladoList[i].ARTICULO &&
-        TrasladoList[i].ARTICULO.toUpperCase() === codbarra) ||
-      (TrasladoList[i].CODIGO_BARRA &&
-        TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarra) ||
-      codigosArrayArticulo.includes(codbarra)
-    ) {
-      span.textContent = TrasladoList[i].ARTICULO;
-      cantFila.value = 1;
-
-      // Bloquear la celda del código de barras
-      input.setAttribute("readonly", "readonly");
-
-      // Aquí se genera una fila nueva vacía
-      crearNuevaFila();
-
-      // Llamar función que guarda artículos en la tabla
-      guardarTablaEnArray();
-
-      codigoValido = true;
-      break;
-    }
-  }
 
   if (!codigoValido) {
     // Borrar el contenido de la celda COD
@@ -183,9 +186,7 @@ function validarCodigoBarras(input) {
     });
   }
 }
-
 ///// Funcion que crea la nueva fila en la pestaña lectura ////////////
-
 function crearNuevaFila() {
   const tableBody = document.querySelector("#tblbodyLectura");
 
@@ -215,13 +216,11 @@ function crearNuevaFila() {
     nuevoCodigoBarrasInput.focus();
   }
 }
-
 ///////////vALIDA LO QUE SE LEE CONTRA EL PEDIDO./////////
 function validarCantidadPedida() {
   //Llamado a guardar datos en la variable arrray en el LS
   guardarTablaEnArray();
 }
-
 function guardarTablaEnArray() {
   var dataArray = [];
 
@@ -260,7 +259,6 @@ function guardarTablaEnArray() {
 
   return dataArray;
 }
-
 ///////////////////////FUNCION QUE AGRUPA EL DATA ARRAY CON LAS LECTURAS DEL PEDIDO////////////////////
 function agrupar() {
   // Obtener el arreglo almacenado en localStorage
@@ -298,7 +296,6 @@ function agrupar() {
   // Actualizar el arreglo en localStorage con los resultados consolidados
   localStorage.setItem("dataArray", JSON.stringify(newArray));
 }
-
 // Funcion que elimina filas en la pestaña lectura
 function eliminarFila(icon) {
   var row = icon.closest("tr");
@@ -327,9 +324,7 @@ function eliminarFila(icon) {
 
       // Elimina la fila solo si no está vacía
       if (isEmptyRow) {
-        // // Llamar función que guarda artículos en la tabla
-        // var dataFromTable = guardarTablaEnArray();
-
+        // // Llamar función que guarda artículos en la tabla 
         Swal.fire({
           icon: "warning",
           title: "Está intentando borrar una fila vacia",
@@ -355,7 +350,6 @@ function eliminarFila(icon) {
     }
   });
 }
-
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
 function armarTablaVerificacion(detalleTrasladoList) {
   // Obtener la referencia del cuerpo de la tabla
@@ -392,7 +386,6 @@ function armarTablaVerificacion(detalleTrasladoList) {
     tbody.appendChild(newRow);
   });
 }
-
 //Funcion que limpia el area de mensajes de error
 function limpiarMensajes() {
   localStorage.removeItem("mensajes");
@@ -401,10 +394,8 @@ function limpiarMensajes() {
   // Limpiar la variable 'mensajes' del localStorage
   guardarTablaEnArray();
 }
-
 //FUNCION QUE VERIFICA LAS COINCIDENCIAS,TOMA LOS VALORES DE LAS CANTIDADES
 // POR ARTICULO, COMPARA LO QUE TIENE EL ARRAY DEL LS Y VERIFICA LAS COINCIDENCIAS, PARA MOSTRARLO EN LA PESTAÑA VERIFICACION
-
 function verificacion() {
   var dataArray = JSON.parse(localStorage.getItem("dataArray"));
   // Obtener la tabla por su ID
@@ -549,8 +540,7 @@ function verificacion() {
   });
 
   let procesarHabilitado = todasLasFilasVerificadas();
-  let trasladospreparados =
-    localStorage.getItem("trasladosprocesados") === "true";
+  let trasladospreparados = localStorage.getItem("trasladosprocesados") === "true";
   let guardarParcialHabilitado = activaGuardadoParcial();
 
   const btnGuardar = document.getElementById("btnGuardar");
@@ -558,15 +548,18 @@ function verificacion() {
   const btnRegresar = document.getElementById("btnRegresar");
 
   if (guardarParcialHabilitado) {
+    console.log("activa btn guardar");
     btnGuardar.removeAttribute("hidden");
   } else {
     btnGuardar.setAttribute("hidden", "hidden");
   }
 
   if (procesarHabilitado) {
+    console.log("activa btn procesar");
     btnPreparar.removeAttribute("hidden");
+    btnGuardar.setAttribute("hidden", "hidden");
   } else {
-    btnGuardar.removeAttribute("hidden");
+   // btnGuardar.removeAttribute("hidden");
     btnPreparar.setAttribute("hidden", "hidden");
   }
 
@@ -579,14 +572,11 @@ function verificacion() {
     btnGuardar.setAttribute("hidden", "hidden");
     btnPreparar.setAttribute("hidden", "hidden");
   }
-
   const observacion = document.getElementById("observaciones");
 
   observacion.innerHTML = TrasladoList[0].OBSERVACION;
-  // observacion.innerHTML='comentario';
-  // observacion.innerHTML='comentario '+ TrasladoList[0].OBSERVACION;
+ 
 } //Fin de verificacion
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
 function todasLasFilasVerificadas() {
@@ -613,7 +603,6 @@ function todasLasFilasVerificadas() {
   // Si todas las celdas contienen el ícono "done_all", retornar verdadero
   return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL TRASLADO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
@@ -629,10 +618,8 @@ function activaGuardadoParcial() {
 
     // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
     // if ((parseFloat(celdaCantidadLeida.textContent)>= parseFloat(celdaCantidadPedida.textContent)) && parseFloat(celdaCantidadLeida.textContent) != 0 || parseFloat(celdaCantidadLeida.textContent) == "") {
-    if (
-      parseFloat(celdaCantidadLeida.textContent) >=
-      parseFloat(celdaCantidadPedida.textContent)
-    ) {
+    // if ( parseFloat(celdaCantidadLeida.textContent) >=  parseFloat(celdaCantidadPedida.textContent)
+    if ( parseFloat(celdaCantidadLeida.textContent) >=  0) {
       // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
       return true;
     }
@@ -640,7 +627,6 @@ function activaGuardadoParcial() {
   // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
   return false;
 }
-
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
 function mostrarMensajesLocalStorage() {
@@ -656,7 +642,6 @@ function mostrarMensajesLocalStorage() {
     }
   }
 }
-
 // Llama a la función mostrarMensajesLocalStorage cuando se hace clic en la pestaña "Verificación"
 document
   .querySelector('a[href="#tabla-verificacion"]')
@@ -667,7 +652,6 @@ window.onload = function () {
   //inicializarBotones();
   guardarTablaEnArray();
 };
-
 function mostrarProcesoEnConstruccion() {
   Swal.fire({
     title: "Proceso en Construcción",
@@ -678,7 +662,6 @@ function mostrarProcesoEnConstruccion() {
     //cancelButtonColor: "#6e7881",
   });
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Funcion de confirmación del guardado parcial
 function confirmarGuardadoParcial() {
@@ -697,7 +680,6 @@ function confirmarGuardadoParcial() {
     }
   });
 }
-
 //FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
   let pUsuario = document.getElementById("hUsuario").value;
@@ -741,10 +723,6 @@ function guardaParcialMente() {
     let cantidadLeida =
       row.querySelector("#cantidadLeida").textContent.trim() || 0;
 
-    // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
-    //       cantidadLeida = 0;
-    //   }
-
     // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
     var detalle = {
       ARTICULO: articulo,
@@ -783,12 +761,12 @@ function guardaParcialMente() {
     pAplicacion;
   console.log("PARAMETROS DE GUARDADO");
   console.log(params);
-  fetch(env.API_URL + "wmsguardadopickingtraslado/G" + params, myInit)
+  fetch(env.API_URL + "wmsinsertupdatepickingtraslado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      console.log(result.respuesta[0].Respuesta);
       if (result.msg === "SUCCESS") {
-        if (result.trasladoguardado.length != 0) {
+        if (result.respuesta.length != 0) {
           // Resto del código de éxito
           Swal.fire({
             icon: "success",
@@ -827,8 +805,7 @@ function confirmaPreparar() {
 }
 //FUNCION DE Procesar el traslado
 function preparar() {
-  let pUsuario = document.getElementById("hUsuario").value;
-  // document.getElementById('hUsuario').value;
+  let pUsuario = document.getElementById("hUsuario").value;  
   let pConsecutivo = localStorage.getItem("traslado");
   let pBodega = document.getElementById("bodega").value;
   let pTipoConsecutivo = "S";
@@ -867,11 +844,6 @@ function preparar() {
     // Obtener la cantidad leída
     let cantidadLeida =
       row.querySelector("#cantidadLeida").textContent.trim() || 0;
-
-    // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
-    //       cantidadLeida = 0;
-    //   }
-
     // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
     var detalle = {
       ARTICULO: articulo,
@@ -911,12 +883,12 @@ function preparar() {
     pAplicacion;
   console.log("PARAMETROS DE GUARDADO");
   console.log(params);
-  fetch(env.API_URL + "wmsguardadopickingtraslado/P" + params, myInit)
+  fetch(env.API_URL + "wmsinsertupdatepickingtraslado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      console.log(result.respuesta[0].Respuesta);
       if (result.msg === "SUCCESS") {
-        if (result.trasladopreparado.length != 0) {
+        if (result.respuesta.length != 0) {
           // Resto del código de éxito
           Swal.fire({
             icon: "success",

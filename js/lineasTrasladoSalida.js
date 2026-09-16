@@ -32,56 +32,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function cargarLineasTraslado(documento) {
   mostrarLoader();
-  // Actualizar el label con el documento y pedido
   document.getElementById("documento").innerHTML = "Documento: " + documento;
 
-  // Obtener los parámetros guardados en localStorage
   let parametros = localStorage.getItem("ListParamsDetalle");
-
-  // Parametros adicionales para el detalle del traslado
   const params = parametros + "&Aplicacion=" + documento;
 
-  // Realizar la petición para obtener el detalle de los traslados
-  fetch(env.API_URL + "wmsverificaciontraslados/L" + params, myInit)
+  fetch(env.API_URL + "wmsverificaciontrasladossalida" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
-        
-        if (result.lineastraslados.length !== 0) {
-          // Guardar el detalle del traslado en una variable
-          detalleTrasladoList = result.lineastraslados;
-          console.log("Detalle del traslado:");
-          console.log(detalleTrasladoList);
+        if (result.respuesta && result.respuesta.length !== 0) {
+          detalleTrasladoList = result.respuesta;
+          console.log("Detalle del traslado:", detalleTrasladoList);
 
-          // Guardar la aplicación en localStorage
-          localStorage.setItem(
-            "pAplicacion",
-            detalleTrasladoList[0].APLICACION
-          );
-          localStorage.setItem(
-            "destinoBodegaTraslado",
-            detalleTrasladoList[0].BODEGA_DESTINO
-          );
+          localStorage.setItem("pAplicacion", detalleTrasladoList[0].APLICACION);
+          localStorage.setItem("destinoBodegaTraslado", detalleTrasladoList[0].BODEGA_DESTINO);
+           document.getElementById("bodega_destino").innerHTML = "Bodega destino: " + detalleTrasladoList[0].BODEGA_DESTINO;
 
-          // Llamar a la función para armar la tabla de verificación
+          // 1. Armar tabla de verificación siempre
           armarTablaVerificacion(detalleTrasladoList);
 
-          // Verificar si hay líneas previamente preparadas y si las hay, armar la tabla de lectura
-          const siGuardadoParcial = detalleTrasladoList.some(
-            (detalle) =>
-              detalle.LINEAS_PREPARADAS != null &&
-              detalle.LINEAS_PREPARADAS !== ""
-          );
-          if (siGuardadoParcial) {
+          // 2. Validar si todo el traslado viene con LINEAS_PREPARADAS en 0
+          if (validarSinPreparacionPrevia(detalleTrasladoList)) {
+            bloquearLecturaSinPreparacion();
+          } else {
+            // Flujo normal: arma lectura si hay preparación parcial o completa
             armarTablaLectura(detalleTrasladoList);
           }
         }
 
-        // Limpiar la pantalla de carga
         document.getElementById("carga").innerHTML = "";
       }
     });
-     ocultarLoader();
+  ocultarLoader();
 }
 
 function armarTablaLectura(detalleTrasladoList) {
@@ -220,38 +203,85 @@ function validarCodigoBarras(input) {
   const cantFila = siguienteTd.querySelector(".codigo-barras-input");
 
   var codigoValido = false;
+  
+    for (var i = 0; i < TrasladoList.length; i++) {
+  let codigosArrayArticulo = [];
+  let codigosNuevos = [];
 
-  for (var i = 0; i < TrasladoList.length; i++) {
-    let codigosArrayArticulo = [];
-    if (TrasladoList[i].codigos_barras) {
-      codigosArrayArticulo = TrasladoList[i].codigos_barras
-        .split("|")
-        .map((codigo) => codigo.toUpperCase());
-    }
-
-    if (
-      (TrasladoList[i].ARTICULO &&
-        TrasladoList[i].ARTICULO.toUpperCase() === codbarra) ||
-      (TrasladoList[i].CODIGO_BARRA &&
-        TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarra) ||
-      codigosArrayArticulo.includes(codbarra)
-    ) {
-      span.textContent = TrasladoList[i].ARTICULO;
-      cantFila.value = 1;
-
-      // Bloquear la celda del código de barras
-      input.setAttribute("readonly", "readonly");
-
-      // Aquí se genera una fila nueva vacía
-      crearNuevaFila();
-
-      // Llamar función que guarda artículos en la tabla
-      guardarTablaEnArray();
-
-      codigoValido = true;
-      break;
-    }
+  // Procesar códigos de barras estándar
+  if (TrasladoList[i].codigos_barras) {
+    codigosArrayArticulo = String(TrasladoList[i].codigos_barras)
+      .split("|")
+      .map((codigo) => codigo.trim().toUpperCase())
+      .filter((codigo) => codigo !== "");
   }
+
+  // Procesar códigos de barras nuevos (Asegurando String y limpieza)
+  if (TrasladoList[i].codigos_barras_nuevas) {
+    codigosNuevos = String(TrasladoList[i].codigos_barras_nuevas)
+      .split("|")
+      .map((codigo) => codigo.trim().toUpperCase())
+      .filter((codigo) => codigo !== "");
+  }
+
+  // Normalizar el código escaneado/ingresado
+  let codbarraBusqueda = codbarra ? codbarra.trim().toUpperCase() : "";
+
+  if (
+    (TrasladoList[i].ARTICULO &&
+      TrasladoList[i].ARTICULO.toUpperCase() === codbarraBusqueda) ||
+    (TrasladoList[i].CODIGO_BARRA &&
+      TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarraBusqueda) ||
+    codigosNuevos.includes(codbarraBusqueda) ||
+    codigosArrayArticulo.includes(codbarraBusqueda)
+  ) {
+    span.textContent = TrasladoList[i].ARTICULO;
+    cantFila.value = 1;
+
+    // Bloquear la celda del código de barras
+    input.setAttribute("readonly", "readonly");
+
+    // Generar nueva fila y guardar
+    crearNuevaFila();
+    guardarTablaEnArray();
+
+    codigoValido = true;
+    break;
+  }
+}
+
+
+  // for (var i = 0; i < TrasladoList.length; i++) {
+  //   let codigosArrayArticulo = [];
+  //   if (TrasladoList[i].codigos_barras) {
+  //     codigosArrayArticulo = TrasladoList[i].codigos_barras
+  //       .split("|")
+  //       .map((codigo) => codigo.toUpperCase());
+  //   }
+
+  //   if (
+  //     (TrasladoList[i].ARTICULO &&
+  //       TrasladoList[i].ARTICULO.toUpperCase() === codbarra) ||
+  //     (TrasladoList[i].CODIGO_BARRA &&
+  //       TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarra) ||
+  //     codigosArrayArticulo.includes(codbarra)
+  //   ) {
+  //     span.textContent = TrasladoList[i].ARTICULO;
+  //     cantFila.value = 1;
+
+  //     // Bloquear la celda del código de barras
+  //     input.setAttribute("readonly", "readonly");
+
+  //     // Aquí se genera una fila nueva vacía
+  //     crearNuevaFila();
+
+  //     // Llamar función que guarda artículos en la tabla
+  //     guardarTablaEnArray();
+
+  //     codigoValido = true;
+  //     break;
+  //   }
+  // }
 
   if (!codigoValido) {
     // Borrar el contenido de la celda COD
@@ -273,8 +303,12 @@ function validarCodigoBarras(input) {
 ///// Funcion que crea la nueva fila en la pestaña lectura ////////////
 
 function crearNuevaFila() {
-  const tableBody = document.querySelector("#tblbodyLectura");
+  // Si no hay preparación en el traslado, no permitir crear filas
+  if (validarSinPreparacionPrevia(detalleTrasladoList)) {
+    return;
+  }
 
+  const tableBody = document.querySelector("#tblbodyLectura");
   const nuevaFilaHTML = `<tr>
           <td class="sticky-column" style="user-select: none;"> 
               <span display: inline-block;"></span>
@@ -291,12 +325,10 @@ function crearNuevaFila() {
 
   tableBody.insertAdjacentHTML("beforeend", nuevaFilaHTML);
 
-  // Obtén el último campo de entrada en la columna COD de la nueva fila
   const nuevoCodigoBarrasInput = tableBody.querySelector(
     "tr:last-child .codigo-barras-input"
   );
 
-  // Establece el enfoque en el último campo de entrada
   if (nuevoCodigoBarrasInput) {
     nuevoCodigoBarrasInput.focus();
   }
@@ -472,7 +504,7 @@ function armarTablaVerificacion(detalleTrasladoList) {
                   ? 0
                   : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
               }</td>
-              <td id="cantidadPedida">${
+              <td id="cantidadPreparada">${
                 isNaN(parseFloat(detalle.LINEAS_PREPARADAS))
                   ? 0
                   : parseFloat(detalle.LINEAS_PREPARADAS).toFixed(2)
@@ -639,26 +671,28 @@ function verificacion() {
     }
   });
 
-  let procesarHabilitado = todasLasFilasVerificadas();
-  let trasladospreparados =
-    localStorage.getItem("trasladosprocesados") === "true";
+let procesarHabilitado = todasLasFilasVerificadas();
+  let trasladospreparados = localStorage.getItem("trasladosprocesados") === "false";
   let guardarParcialHabilitado = activaGuardadoParcial();
 
   const btnGuardar = document.getElementById("btnGuardar");
-  const btnProcesar = document.getElementById("btnProcesar");
+  const btnPreparar = document.getElementById("btnPreparar");
   const btnRegresar = document.getElementById("btnRegresar");
 
   if (guardarParcialHabilitado) {
+    console.log("activa btn guardar");
     btnGuardar.removeAttribute("hidden");
   } else {
     btnGuardar.setAttribute("hidden", "hidden");
   }
 
   if (procesarHabilitado) {
-    btnProcesar.removeAttribute("hidden");
+    console.log("activa btn procesar");
+    btnPreparar.removeAttribute("hidden");
+    btnGuardar.setAttribute("hidden", "hidden");
   } else {
-    btnGuardar.removeAttribute("hidden");
-    btnProcesar.setAttribute("hidden", "hidden");
+   // btnGuardar.removeAttribute("hidden");
+    btnPreparar.setAttribute("hidden", "hidden");
   }
 
   if (trasladospreparados) {
@@ -668,7 +702,7 @@ function verificacion() {
     console.log("activa btn regresar");
     btnRegresar.removeAttribute("hidden");
     btnGuardar.setAttribute("hidden", "hidden");
-    btnProcesar.setAttribute("hidden", "hidden");
+    btnPreparar.setAttribute("hidden", "hidden");
   }
 
   const observacion = document.getElementById("observaciones");
@@ -704,7 +738,7 @@ function todasLasFilasVerificadas() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
+//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL TRASLADO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
   // Obtener todas las filas de la tabla de verificación
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
@@ -712,17 +746,13 @@ function activaGuardadoParcial() {
   for (let i = 0; i < filas.length; i++) {
     const fila = filas[i];
 
-    // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual
-    const celdaCantidadPedida = fila.querySelector("td#cantidadPedida");
+    // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual   
     const celdaCantidadLeida = fila.querySelector("td#cantidadLeida");
 
     // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
-    if (
-      (parseFloat(celdaCantidadLeida.textContent) >=
-        parseFloat(celdaCantidadPedida.textContent) &&
-        parseFloat(celdaCantidadLeida.textContent) != 0) ||
-      parseFloat(celdaCantidadLeida.textContent) == ""
-    ) {
+    // if ((parseFloat(celdaCantidadLeida.textContent)>= parseFloat(celdaCantidadPedida.textContent)) && parseFloat(celdaCantidadLeida.textContent) != 0 || parseFloat(celdaCantidadLeida.textContent) == "") {
+    // if ( parseFloat(celdaCantidadLeida.textContent) >=  parseFloat(celdaCantidadPedida.textContent)
+    if ( parseFloat(celdaCantidadLeida.textContent) >=  0) {
       // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
       return true;
     }
@@ -877,12 +907,12 @@ function guardaParcialMente() {
   console.log("Aqui guardamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
   // window.location.href = 'verificacionDeTraslados.html';
-  fetch(env.API_URL + "wmsguardadopickingtraslado/G" + params, myInit)
+  fetch(env.API_URL + "wmsinsertupdatepickingtraslado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      console.log(result.respuesta[0].Respuesta);
       if (result.msg === "SUCCESS") {
-        if (result.trasladoguardado.length != 0) {
+        if (result.respuesta.length != 0) {
           // Resto del código de éxito
           Swal.fire({
             icon: "success",
@@ -1003,17 +1033,17 @@ function procesar() {
   console.log(params);
   console.log("Aqui procesamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
-  window.location.href = "verificacionDeTraslados.html";
-  fetch(env.API_URL + "wmsguardadopickingtraslado/P" + params, myInit)
+  //window.location.href = "verificacionDeTraslados.html";
+  fetch(env.API_URL + "wmsinsertupdatepickingtraslado" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+       console.log(result.respuesta[0].Respuesta);
       if (result.msg === "SUCCESS") {
-        if (result.trasladopreparado.length != 0) {
+        if (result.respuesta.length != 0) {
           // Resto del código de éxito
           Swal.fire({
             icon: "success",
-            title: "Datos guardados correctamente",
+            title: "Datos procesados correctamente",
             confirmButtonText: "Aceptar",
             confirmButtonColor: "#28a745",
             cancelButtonColor: "#6e7881",
@@ -1114,4 +1144,48 @@ function confirmaRegresar() {
   localStorage.removeItem("mensajes");
   //localStorage.clear();
   window.location.href = "verificacionDeTraslados.html";
+}
+// Retorna true si TODAS las líneas tienen LINEAS_PREPARADAS en 0, null o vacío
+function validarSinPreparacionPrevia(lineasList) {
+  if (!Array.isArray(lineasList) || lineasList.length === 0) return true;
+
+  return lineasList.every(function (item) {
+    const cantPrep = parseFloat(item.LINEAS_PREPARADAS);
+    return isNaN(cantPrep) || cantPrep <= 0;
+  });
+}
+
+function bloquearLecturaSinPreparacion() {
+  const tbody = document.getElementById("tblbodyLectura");
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td><span>-</span></td>
+        <td class="codigo-barras-cell">
+          <input type="text" class="codigo-barras-input" disabled placeholder="Lectura bloqueada: Sin preparación previa">
+        </td>
+        <td class="codigo-barras-cell2">
+          <input type="text" class="codigo-barras-input" disabled value="0" style="text-align: center;">
+        </td>
+        <td class="codigo-barras-cell2">
+          <i class="material-icons grey-text" style="cursor: not-allowed;">clear</i>
+        </td>
+      </tr>
+    `;
+  }
+
+  // Limpiar cualquier lectura residual en localStorage y memoria
+  localStorage.removeItem("dataArray");
+
+  // Notificar al operario
+  Swal.fire({
+    icon: "warning",
+    title: "Traslado Sin Preparación",
+    text: "Este traslado no tiene cantidades preparadas (LINEAS_PREPARADAS = 0). La lectura está bloqueada.",
+    confirmButtonColor: "#28a745",
+    confirmButtonText: "Entendido"
+  });
+
+  // Ejecutar verificación para mantener los botones de acción apagados
+  verificacion();
 }

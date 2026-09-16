@@ -144,36 +144,89 @@ function validarCodigoBarras(input) {
   var codigoValido = false;
 
   for (var i = 0; i < TrasladoList.length; i++) {
-    let codigosArrayArticulo = [];
-    if (TrasladoList[i].codigos_barras) {
-      codigosArrayArticulo = TrasladoList[i].codigos_barras
-        .split("|")
-        .map((codigo) => codigo.toUpperCase());
-    }
+  let codigosArrayArticulo = [];
+  let codigosNuevos = [];
 
-    if (
-      (TrasladoList[i].ARTICULO &&
-        TrasladoList[i].ARTICULO.toUpperCase() === codbarra) ||
-      (TrasladoList[i].CODIGO_BARRA &&
-        TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarra) ||
-      codigosArrayArticulo.includes(codbarra)
-    ) {
-      span.textContent = TrasladoList[i].ARTICULO;
-      cantFila.value = 1;
-
-      // Bloquear la celda del código de barras
-      input.setAttribute("readonly", "readonly");
-
-      // Aquí se genera una fila nueva vacía
-      crearNuevaFila();
-
-      // Llamar función que guarda artículos en la tabla
-      guardarTablaEnArray();
-
-      codigoValido = true;
-      break;
-    }
+  // Procesar códigos de barras estándar
+  if (TrasladoList[i].codigos_barras) {
+    codigosArrayArticulo = String(TrasladoList[i].codigos_barras)
+      .split("|")
+      .map((codigo) => codigo.trim().toUpperCase())
+      .filter((codigo) => codigo !== "");
   }
+
+  // Procesar códigos de barras nuevos (Asegurando String y limpieza)
+  if (TrasladoList[i].codigos_barras_nuevas) {
+    codigosNuevos = String(TrasladoList[i].codigos_barras_nuevas)
+      .split("|")
+      .map((codigo) => codigo.trim().toUpperCase())
+      .filter((codigo) => codigo !== "");
+  }
+
+  // Normalizar el código escaneado/ingresado
+  let codbarraBusqueda = codbarra ? codbarra.trim().toUpperCase() : "";
+
+  if (
+    (TrasladoList[i].ARTICULO &&
+      TrasladoList[i].ARTICULO.toUpperCase() === codbarraBusqueda) ||
+    (TrasladoList[i].CODIGO_BARRA &&
+      TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarraBusqueda) ||
+    codigosNuevos.includes(codbarraBusqueda) ||
+    codigosArrayArticulo.includes(codbarraBusqueda)
+  ) {
+    span.textContent = TrasladoList[i].ARTICULO;
+    cantFila.value = 1;
+
+    // Bloquear la celda del código de barras
+    input.setAttribute("readonly", "readonly");
+
+    // Generar nueva fila y guardar
+    crearNuevaFila();
+    guardarTablaEnArray();
+
+    codigoValido = true;
+    break;
+  }
+}
+
+  // for (var i = 0; i < TrasladoList.length; i++) {
+  //   let codigosArrayArticulo = [];
+  //   let codigosNuevos = [];
+  //   if (TrasladoList[i].codigos_barras) {
+  //     codigosArrayArticulo = TrasladoList[i].codigos_barras
+  //       .split("|")
+  //       .map((codigo) => codigo.toUpperCase());
+  //   }
+  //   if(TrasladoList[i].codigos_barras_nuevas){
+  //     codigosNuevos=TrasladoList[i].codigos_barras_nuevas
+  //     .split("|")
+  //     .map((codigo) => codigo.toUpperCase());
+  //   }
+
+  //   if (
+  //     (TrasladoList[i].ARTICULO &&
+  //       TrasladoList[i].ARTICULO.toUpperCase() === codbarra) ||
+  //     (TrasladoList[i].CODIGO_BARRA &&
+  //       TrasladoList[i].CODIGO_BARRA.toUpperCase() === codbarra) ||
+  //       codigosNuevos.includes(codbarra)||
+  //       codigosArrayArticulo.includes(codbarra)
+  //   ) {
+  //     span.textContent = TrasladoList[i].ARTICULO;
+  //     cantFila.value = 1;
+
+  //     // Bloquear la celda del código de barras
+  //     input.setAttribute("readonly", "readonly");
+
+  //     // Aquí se genera una fila nueva vacía
+  //     crearNuevaFila();
+
+  //     // Llamar función que guarda artículos en la tabla
+  //     guardarTablaEnArray();
+
+  //     codigoValido = true;
+  //     break;
+  //   }
+  // }
 
   if (!codigoValido) {
     // Borrar el contenido de la celda COD
@@ -366,44 +419,77 @@ function eliminarFila(icon) {
 
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
 function armarTablaVerificacion(detalleTrasladoList) {
-  // Obtener la referencia del cuerpo de la tabla
   var tbody = document.getElementById("tblbodyVerificacion");
-
-  // Limpiar el contenido actual del cuerpo de la tabla
   tbody.innerHTML = "";
 
-  // Obtener la referencia del label cantidadDeRegistros
   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
-  // Actualizar el texto del label con la cantidad de registros
   cantidadDeRegistrosLabel.textContent =
     "Cantidad de registros: " + detalleTrasladoList.length;
 
-  // Iterar sobre cada elemento en detalleTrasladoList
   detalleTrasladoList.forEach(function (detalle) {
-    // Crear una nueva fila
     var newRow = document.createElement("tr");
 
-    // Construir el contenido de la fila usando variables HTML
     newRow.innerHTML = `
-              <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2">${
-                detalle.ARTICULO
-              }</span></h5><h6>${detalle.DESCRIPCION}</h6></td>
-              <td id="codigoDeBarras">${detalle.CODIGO_BARRA || ""}</td>
-              <td id="cantidadPedida">${
-                isNaN(parseFloat(detalle.CANTIDAD_PEDIDA))
-                  ? 0
-                  : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
-              }</td>
-              <td id="cantidadLeida">${
-                isNaN(parseFloat(detalle.LINEAS_PREPARADAS))
-                  ? 0
-                  : parseFloat(detalle.LINEAS_PREPARADAS).toFixed(2)
-              }</td> <!-- Cantidad leída, inicialmente en blanco -->
-              <td id="verificado"></td>             
-          `;
+      <td class="col-articulo">
+        <h5 class="verifica-articulo"><span class="blue-text text-darken-2">${detalle.ARTICULO}</span></h5>
+        <h6 class="verifica-articulo">${detalle.DESCRIPCION || ''}</h6>
+      </td>
+      <td class="col-codigo">${detalle.CODIGO_BARRA || ""}</td>
+      <td class="col-cant-pedida">${
+        isNaN(parseFloat(detalle.CANTIDAD_PEDIDA))
+          ? 0
+          : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
+      }</td>
+      <td class="col-cant-leida">${
+        isNaN(parseFloat(detalle.LINEAS_PREPARADAS))
+          ? 0
+          : parseFloat(detalle.LINEAS_PREPARADAS).toFixed(2)
+      }</td>
+      <td class="col-verificado"></td>             
+    `;
     tbody.appendChild(newRow);
   });
 }
+
+// function armarTablaVerificacion(detalleTrasladoList) {
+//   // Obtener la referencia del cuerpo de la tabla
+//   var tbody = document.getElementById("tblbodyVerificacion");
+
+//   // Limpiar el contenido actual del cuerpo de la tabla
+//   tbody.innerHTML = "";
+
+//   // Obtener la referencia del label cantidadDeRegistros
+//   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
+//   // Actualizar el texto del label con la cantidad de registros
+//   cantidadDeRegistrosLabel.textContent =
+//     "Cantidad de registros: " + detalleTrasladoList.length;
+
+//   // Iterar sobre cada elemento en detalleTrasladoList
+//   detalleTrasladoList.forEach(function (detalle) {
+//     // Crear una nueva fila
+//     var newRow = document.createElement("tr");
+
+//     // Construir el contenido de la fila usando variables HTML
+//     newRow.innerHTML = `
+//               <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2">${
+//                 detalle.ARTICULO
+//               }</span></h5><h6>${detalle.DESCRIPCION}</h6></td>
+//               <td id="codigoDeBarras">${detalle.CODIGO_BARRA || ""}</td>
+//               <td id="cantidadPedida">${
+//                 isNaN(parseFloat(detalle.CANTIDAD_PEDIDA))
+//                   ? 0
+//                   : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
+//               }</td>
+//               <td id="cantidadLeida">${
+//                 isNaN(parseFloat(detalle.LINEAS_PREPARADAS))
+//                   ? 0
+//                   : parseFloat(detalle.LINEAS_PREPARADAS).toFixed(2)
+//               }</td> <!-- Cantidad leída, inicialmente en blanco -->
+//               <td id="verificado"></td>             
+//           `;
+//     tbody.appendChild(newRow);
+//   });
+// }
 
 //Funcion que limpia el area de mensajes de error
 function limpiarMensajes() {
@@ -416,154 +502,101 @@ function limpiarMensajes() {
 
 //FUNCION QUE VERIFICA LAS COINCIDENCIAS,TOMA LOS VALORES DE LAS CANTIDADES
 // POR ARTICULO, COMPARA LO QUE TIENE EL ARRAY DEL LS Y VERIFICA LAS COINCIDENCIAS, PARA MOSTRARLO EN LA PESTAÑA VERIFICACION
-
 function verificacion() {
-  var dataArray = JSON.parse(localStorage.getItem("dataArray"));
-  // Obtener la tabla por su ID
+  var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
   const tabla = document.getElementById("myTableVerificacion");
 
-  // Verificar si la tabla existe
   if (tabla) {
-    // Obtener el tbody de la tabla
-    const tbody = tabla.querySelector("tbody");
-
-    // Buscar todas las filas (tr) dentro del tbody
-    const filas = tbody.querySelectorAll("tr");
-
-    // Iterar a través de las filas
+    const filas = tabla.querySelectorAll("tbody tr");
     filas.forEach((fila) => {
-      // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
-      const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
-      const verifcheck = fila.querySelector("#verificado");
-      if (cantidadLeidaCell) {
-        cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
-      }
-
-      if (verifcheck) {
-        verifcheck.textContent = ""; // Vacía el contenido de la celda
-      }
+      const cantidadLeidaCell = fila.querySelector("td.col-cant-leida");
+      const verifcheck = fila.querySelector("td.col-verificado");
+      if (cantidadLeidaCell) cantidadLeidaCell.textContent = "";
+      if (verifcheck) verifcheck.textContent = "";
     });
   }
 
+  // Agrupación de items del dataArray
   var cantidadesTotales = {};
   var resultadoArray = [];
   dataArray.forEach(function (item) {
     var articulo = item.ARTICULO;
     var cantidad = item.CANTIDAD_LEIDA;
-
-    if (cantidadesTotales[articulo]) {
-      cantidadesTotales[articulo] += cantidad;
-    } else {
-      cantidadesTotales[articulo] = cantidad;
-    }
-
-    if (cantidadesTotales[articulo] === cantidad) {
-      resultadoArray.push(item);
-      delete cantidadesTotales[articulo];
-    }
+    cantidadesTotales[articulo] = (cantidadesTotales[articulo] || 0) + cantidad;
   });
 
-  for (var articulo in cantidadesTotales) {
-    resultadoArray.push({
-      ARTICULO: articulo,
-      CANTIDAD_LEIDA: cantidadesTotales[articulo],
-    });
+  for (var art in cantidadesTotales) {
+    resultadoArray.push({ ARTICULO: art, CANTIDAD_LEIDA: cantidadesTotales[art] });
   }
 
   var TrasladoList = detalleTrasladoList;
   const mensajesArray = [];
-  let contadorMensajes = 1; // Contador para los mensajes
+  let contadorMensajes = 1;
 
   resultadoArray.forEach((resultado) => {
     const traslado = TrasladoList.find(
-      (traslado) =>
-        traslado.ARTICULO === resultado.ARTICULO &&
-        parseFloat(traslado.CANTIDAD_PEDIDA) ===
-          parseFloat(resultado.CANTIDAD_LEIDA)
+      (t) =>
+        t.ARTICULO === resultado.ARTICULO &&
+        parseFloat(t.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
     );
 
+    const filas = tabla ? tabla.querySelectorAll("tbody tr") : [];
+
     if (traslado) {
-      const tabla = document.getElementById("myTableVerificacion");
-      if (tabla) {
-        const tbody = tabla.querySelector("tbody");
-        const filas = tbody.querySelectorAll("tr");
-
-        filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("h5");
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
-            const celdaVerificado = fila.querySelector("#verificado");
-            if (celdaVerificado) {
-              celdaVerificado.textContent = "";
-              const spanVerificacion = document.createElement("span");
-              spanVerificacion.classList.add("material-icons");
-              spanVerificacion.textContent = "done_all";
-              spanVerificacion.style.color = "green";
-              celdaVerificado.appendChild(spanVerificacion);
-            }
-            const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
-            if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
-            }
+      filas.forEach((fila) => {
+        const celdaARTICULO = fila.querySelector("h5.verifica-articulo");
+        if (celdaARTICULO && celdaARTICULO.textContent.trim() === resultado.ARTICULO) {
+          const celdaVerificado = fila.querySelector("td.col-verificado");
+          if (celdaVerificado) {
+            celdaVerificado.textContent = "";
+            const spanVerificacion = document.createElement("span");
+            spanVerificacion.classList.add("material-icons");
+            spanVerificacion.textContent = "done_all";
+            spanVerificacion.style.color = "green";
+            celdaVerificado.appendChild(spanVerificacion);
           }
-        });
-      }
+          const cantidadVerificadaCell = fila.querySelector("td.col-cant-leida");
+          if (cantidadVerificadaCell) {
+            cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+          }
+        }
+      });
     } else {
-      const tabla = document.getElementById("myTableVerificacion");
-      if (tabla) {
-        const tbody = tabla.querySelector("tbody");
-        const filas = tbody.querySelectorAll("tr");
+      filas.forEach((fila) => {
+        const celdaARTICULO = fila.querySelector("h5.verifica-articulo");
+        if (celdaARTICULO && celdaARTICULO.textContent.trim() === resultado.ARTICULO) {
+          const celdaVerificado = fila.querySelector("td.col-verificado");
+          const cantPedida = fila.querySelector("td.col-cant-pedida");
+          const cantidadVerificadaCell = fila.querySelector("td.col-cant-leida");
 
-        filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("h5");
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
-            const celdaVerificado = fila.querySelector("#verificado");
-            const cantPedida = fila.querySelector("#cantidadPedida");
-            const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+          const valPedida = parseFloat(cantPedida ? cantPedida.textContent : 0);
+          const valLeida = parseFloat(resultado.CANTIDAD_LEIDA);
 
-            if (
-              parseFloat(resultado.CANTIDAD_LEIDA) >
-              parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion =
-                "+" +
-                (
-                  resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-                ).toString();
-              celdaVerificado.textContent = resultadoOperacion;
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
-              mensajesArray.push(mensaje);
-              contadorMensajes++; // Incrementar el contador
-            } else if (
-              resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion = (
-                resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-              ).toString();
-              celdaVerificado.textContent = resultadoOperacion;
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
-              mensajesArray.push(mensaje);
-              contadorMensajes++; // Incrementar el contador
-            }
-            if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
-            }
+          if (valLeida > valPedida) {
+            let resultadoOperacion = "+" + (valLeida - valPedida).toString();
+            if (celdaVerificado) celdaVerificado.textContent = resultadoOperacion;
+            mensajesArray.push(`${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`);
+            contadorMensajes++;
+          } else if (valLeida < valPedida) {
+            let resultadoOperacion = (valLeida - valPedida).toString();
+            if (celdaVerificado) celdaVerificado.textContent = resultadoOperacion;
+            mensajesArray.push(`${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`);
+            contadorMensajes++;
           }
-        });
-        localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
-      }
+
+          if (cantidadVerificadaCell) {
+            cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+          }
+        }
+      });
+      localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
     }
   });
 
+  // Manejo de visibilidad de botones
   let procesarHabilitado = todasLasFilasVerificadas();
-  let trasladospreparados =
-    localStorage.getItem("trasladosprocesados") === "true";
   let guardarParcialHabilitado = activaGuardadoParcial();
+  let trasladospreparados = localStorage.getItem("trasladosprocesados") === "true";
 
   const btnGuardar = document.getElementById("btnGuardar");
   const btnProcesar = document.getElementById("btnProcesar");
@@ -578,80 +611,297 @@ function verificacion() {
   if (procesarHabilitado) {
     btnProcesar.removeAttribute("hidden");
   } else {
-    btnGuardar.removeAttribute("hidden");
     btnProcesar.setAttribute("hidden", "hidden");
   }
 
   if (trasladospreparados) {
     btnRegresar.setAttribute("hidden", "hidden");
   } else {
-    // const btnRegresar = document.getElementById('btnRegresar');
-    console.log("activa btn regresar");
     btnRegresar.removeAttribute("hidden");
-    btnGuardar.setAttribute("hidden", "hidden");
-    btnProcesar.setAttribute("hidden", "hidden");
   }
 
   const observacion = document.getElementById("observaciones");
+  if (observacion && TrasladoList && TrasladoList.length > 0) {
+    observacion.innerHTML = TrasladoList[0].OBSERVACION || "";
+  }
+}
 
-  // observacion.innerHTML='comentario';
-  observacion.innerHTML = TrasladoList[0].OBSERVACION;
-} //Fin de verificacion
+// function verificacion() {
+//   var dataArray = JSON.parse(localStorage.getItem("dataArray"));
+//   // Obtener la tabla por su ID
+//   const tabla = document.getElementById("myTableVerificacion");
+
+//   // Verificar si la tabla existe
+//   if (tabla) {
+//     // Obtener el tbody de la tabla
+//     const tbody = tabla.querySelector("tbody");
+
+//     // Buscar todas las filas (tr) dentro del tbody
+//     const filas = tbody.querySelectorAll("tr");
+
+//     // Iterar a través de las filas
+//     filas.forEach((fila) => {
+//       // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
+//       const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
+//       const verifcheck = fila.querySelector("#verificado");
+//       if (cantidadLeidaCell) {
+//         cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
+//       }
+
+//       if (verifcheck) {
+//         verifcheck.textContent = ""; // Vacía el contenido de la celda
+//       }
+//     });
+//   }
+
+//   var cantidadesTotales = {};
+//   var resultadoArray = [];
+//   dataArray.forEach(function (item) {
+//     var articulo = item.ARTICULO;
+//     var cantidad = item.CANTIDAD_LEIDA;
+
+//     if (cantidadesTotales[articulo]) {
+//       cantidadesTotales[articulo] += cantidad;
+//     } else {
+//       cantidadesTotales[articulo] = cantidad;
+//     }
+
+//     if (cantidadesTotales[articulo] === cantidad) {
+//       resultadoArray.push(item);
+//       delete cantidadesTotales[articulo];
+//     }
+//   });
+
+//   for (var articulo in cantidadesTotales) {
+//     resultadoArray.push({
+//       ARTICULO: articulo,
+//       CANTIDAD_LEIDA: cantidadesTotales[articulo],
+//     });
+//   }
+
+//   var TrasladoList = detalleTrasladoList;
+//   const mensajesArray = [];
+//   let contadorMensajes = 1; // Contador para los mensajes
+
+//   resultadoArray.forEach((resultado) => {
+//     const traslado = TrasladoList.find(
+//       (traslado) =>
+//         traslado.ARTICULO === resultado.ARTICULO &&
+//         parseFloat(traslado.CANTIDAD_PEDIDA) ===
+//           parseFloat(resultado.CANTIDAD_LEIDA)
+//     );
+
+//     if (traslado) {
+//       const tabla = document.getElementById("myTableVerificacion");
+//       if (tabla) {
+//         const tbody = tabla.querySelector("tbody");
+//         const filas = tbody.querySelectorAll("tr");
+
+//         filas.forEach((fila) => {
+//           const celdaARTICULO = fila.querySelector("h5");
+//           if (
+//             celdaARTICULO &&
+//             celdaARTICULO.textContent === resultado.ARTICULO
+//           ) {
+//             const celdaVerificado = fila.querySelector("#verificado");
+//             if (celdaVerificado) {
+//               celdaVerificado.textContent = "";
+//               const spanVerificacion = document.createElement("span");
+//               spanVerificacion.classList.add("material-icons");
+//               spanVerificacion.textContent = "done_all";
+//               spanVerificacion.style.color = "green";
+//               celdaVerificado.appendChild(spanVerificacion);
+//             }
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+//             }
+//           }
+//         });
+//       }
+//     } else {
+//       const tabla = document.getElementById("myTableVerificacion");
+//       if (tabla) {
+//         const tbody = tabla.querySelector("tbody");
+//         const filas = tbody.querySelectorAll("tr");
+
+//         filas.forEach((fila) => {
+//           const celdaARTICULO = fila.querySelector("h5");
+//           if (
+//             celdaARTICULO &&
+//             celdaARTICULO.textContent === resultado.ARTICULO
+//           ) {
+//             const celdaVerificado = fila.querySelector("#verificado");
+//             const cantPedida = fila.querySelector("#cantidadPedida");
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+
+//             if (
+//               parseFloat(resultado.CANTIDAD_LEIDA) >
+//               parseFloat(cantPedida.textContent)
+//             ) {
+//               var resultadoOperacion =
+//                 "+" +
+//                 (
+//                   resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
+//                 ).toString();
+//               celdaVerificado.textContent = resultadoOperacion;
+//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//               contadorMensajes++; // Incrementar el contador
+//             } else if (
+//               resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)
+//             ) {
+//               var resultadoOperacion = (
+//                 resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
+//               ).toString();
+//               celdaVerificado.textContent = resultadoOperacion;
+//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//               contadorMensajes++; // Incrementar el contador
+//             }
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+//             }
+//           }
+//         });
+//         localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//       }
+//     }
+//   });
+
+//   let procesarHabilitado = todasLasFilasVerificadas();
+//   let trasladospreparados =
+//     localStorage.getItem("trasladosprocesados") === "true";
+//   let guardarParcialHabilitado = activaGuardadoParcial();
+
+//   const btnGuardar = document.getElementById("btnGuardar");
+//   const btnProcesar = document.getElementById("btnProcesar");
+//   const btnRegresar = document.getElementById("btnRegresar");
+
+//   if (guardarParcialHabilitado) {
+//     btnGuardar.removeAttribute("hidden");
+//   } else {
+//     btnGuardar.setAttribute("hidden", "hidden");
+//   }
+
+//   if (procesarHabilitado) {
+//     btnProcesar.removeAttribute("hidden");
+//   } else {
+//     btnGuardar.removeAttribute("hidden");
+//     btnProcesar.setAttribute("hidden", "hidden");
+//   }
+
+//   if (trasladospreparados) {
+//     btnRegresar.setAttribute("hidden", "hidden");
+//   } else {
+//     // const btnRegresar = document.getElementById('btnRegresar');
+//     console.log("activa btn regresar");
+//     btnRegresar.removeAttribute("hidden");
+//     btnGuardar.setAttribute("hidden", "hidden");
+//     btnProcesar.setAttribute("hidden", "hidden");
+//   }
+
+//   const observacion = document.getElementById("observaciones");
+
+//   // observacion.innerHTML='comentario';
+//   observacion.innerHTML = TrasladoList[0].OBSERVACION;
+// } //Fin de verificacion
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
 function todasLasFilasVerificadas() {
-  // Obtener todas las filas de la tabla de verificación
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+  
+  if (filas.length === 0) return false;
 
   for (let i = 0; i < filas.length; i++) {
     const fila = filas[i];
+    const celdaVerificado = fila.querySelector("td.col-verificado");
 
-    // Obtener la celda de "CANT VERIF" en la fila actual
-    const celdaCantidadVerif = fila.querySelector("td#verificado");
+    if (!celdaVerificado) return false;
 
-    // Verificar si la celda contiene el ícono "done_all"
-    const iconoVerificacion = celdaCantidadVerif.querySelector(
-      "span.material-icons"
-    );
+    const iconoVerificacion = celdaVerificado.querySelector("span.material-icons");
 
-    // Si no se encuentra el ícono "done_all" en la celda, retornar falso
-    if (!iconoVerificacion || iconoVerificacion.textContent !== "done_all") {
+    // Retorna false si no existe el icono o si no es "done_all"
+    if (!iconoVerificacion || iconoVerificacion.textContent.trim() !== "done_all") {
       return false;
     }
   }
 
-  // Si todas las celdas contienen el ícono "done_all", retornar verdadero
   return true;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
-  // Obtener todas las filas de la tabla de verificación
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
 
   for (let i = 0; i < filas.length; i++) {
     const fila = filas[i];
+    const celdaCantidadLeida = fila.querySelector("td.col-cant-leida");
 
-    // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual
-    const celdaCantidadPedida = fila.querySelector("td#cantidadPedida");
-    const celdaCantidadLeida = fila.querySelector("td#cantidadLeida");
+    if (celdaCantidadLeida) {
+      const valorTxt = celdaCantidadLeida.textContent.trim();
+      const valNum = parseFloat(valorTxt);
 
-    // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
-    if (
-      (parseFloat(celdaCantidadLeida.textContent) >=
-        parseFloat(celdaCantidadPedida.textContent) &&
-        parseFloat(celdaCantidadLeida.textContent) != 0) ||
-      parseFloat(celdaCantidadLeida.textContent) == ""
-    ) {
-      // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
-      return true;
+      // Se activa si se ha leído algo válido y mayor a 0
+      if (valorTxt !== "" && !isNaN(valNum) && valNum > 0) {
+        return true;
+      }
     }
   }
-  // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
   return false;
 }
+// function todasLasFilasVerificadas() {
+//   // Obtener todas las filas de la tabla de verificación
+//   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+
+//   for (let i = 0; i < filas.length; i++) {
+//     const fila = filas[i];
+
+//     // Obtener la celda de "CANT VERIF" en la fila actual
+//     const celdaCantidadVerif = fila.querySelector("td#verificado");
+
+//     // Verificar si la celda contiene el ícono "done_all"
+//     const iconoVerificacion = celdaCantidadVerif.querySelector(
+//       "span.material-icons"
+//     );
+
+//     // Si no se encuentra el ícono "done_all" en la celda, retornar falso
+//     if (!iconoVerificacion || iconoVerificacion.textContent !== "done_all") {
+//       return false;
+//     }
+//   }
+
+//   // Si todas las celdas contienen el ícono "done_all", retornar verdadero
+//   return true;
+// }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
+// function activaGuardadoParcial() {
+//   // Obtener todas las filas de la tabla de verificación
+//   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+
+//   for (let i = 0; i < filas.length; i++) {
+//     const fila = filas[i];
+
+//     // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual
+//     const celdaCantidadPedida = fila.querySelector("td#cantidadPedida");
+//     const celdaCantidadLeida = fila.querySelector("td#cantidadLeida");
+
+//     // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
+//     if (
+//       (parseFloat(celdaCantidadLeida.textContent) >=
+//         parseFloat(celdaCantidadPedida.textContent) &&
+//         parseFloat(celdaCantidadLeida.textContent) != 0) ||
+//       parseFloat(celdaCantidadLeida.textContent) == ""
+//     ) {
+//       // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
+//       return true;
+//     }
+//   }
+//   // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
+//   return false;
+// }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Función para mostrar los mensajes almacenados en el localStorage en el textarea
@@ -735,34 +985,54 @@ function guardaParcialMente() {
   // Obtener la tabla
   let table = document.getElementById("myTableVerificacion");
 
-  // Iterar sobre las filas de la tabla (excluyendo el encabezado)
+  // // Iterar sobre las filas de la tabla (excluyendo el encabezado)
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
 
-    // Obtener el valor del artículo
-    let articulo = row
-      .querySelector("#verifica-articulo span")
-      .textContent.trim();
+    let articuloCell = row.querySelector(".verifica-articulo span");
+    let articulo = articuloCell ? articuloCell.textContent.trim() : "";
 
-    // Obtener la cantidad pedida
-    let cantidadPedida = row
-      .querySelector("#cantidadPedida")
-      .textContent.trim();
+    let cantPedidaCell = row.querySelector(".col-cant-pedida");
+    let cantidadPedida = cantPedidaCell ? cantPedidaCell.textContent.trim() : "0";
 
-    // Obtener la cantidad leída
-    let cantidadLeida =
-      row.querySelector("#cantidadLeida").textContent.trim() || 0;
+    let cantLeidaCell = row.querySelector(".col-cant-leida");
+    let cantidadLeida = cantLeidaCell ? cantLeidaCell.textContent.trim() : "0";
 
-    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
     var detalle = {
       ARTICULO: articulo,
       CANT_CONSEC: cantidadPedida,
       CANT_LEIDA: cantidadLeida,
     };
 
-    // Agregar el objeto al array
     detalles.push(detalle);
   }
+  // for (let i = 1; i < table.rows.length; i++) {
+  //   let row = table.rows[i];
+
+  //   // Obtener el valor del artículo
+  //   let articulo = row
+  //     .querySelector("#verifica-articulo span")
+  //     .textContent.trim();
+
+  //   // Obtener la cantidad pedida
+  //   let cantidadPedida = row
+  //     .querySelector("#cantidadPedida")
+  //     .textContent.trim();
+
+  //   // Obtener la cantidad leída
+  //   let cantidadLeida =
+  //     row.querySelector("#cantidadLeida").textContent.trim() || 0;
+
+  //   // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
+  //   var detalle = {
+  //     ARTICULO: articulo,
+  //     CANT_CONSEC: cantidadPedida,
+  //     CANT_LEIDA: cantidadLeida,
+  //   };
+
+  //   // Agregar el objeto al array
+  //   detalles.push(detalle);
+  // }
 
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = JSON.stringify(detalles);
@@ -798,7 +1068,8 @@ function guardaParcialMente() {
   fetch(env.API_URL + "wmsguardadopickingtraslado/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      console.log("RESULTADOS_API:");
+      console.log(result);
       if (result.msg === "SUCCESS") {
         if (result.trasladoguardado.length != 0) {
           // Resto del código de éxito
@@ -861,39 +1132,63 @@ function procesar() {
   // Iterar sobre todas las filas de la tabla
   // Obtener la tabla
   let table = document.getElementById("myTableVerificacion");
-
   // Iterar sobre las filas de la tabla (excluyendo el encabezado)
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
 
-    // Obtener el valor del artículo
-    let articulo = row
-      .querySelector("#verifica-articulo span")
-      .textContent.trim();
+    // Obtener el artículo buscando el span dentro de la clase .verifica-articulo
+    let articuloCell = row.querySelector(".verifica-articulo span");
+    let articulo = articuloCell ? articuloCell.textContent.trim() : "";
 
-    // Obtener la cantidad pedida
-    let cantidadPedida = row
-      .querySelector("#cantidadPedida")
-      .textContent.trim();
+    // Obtener la cantidad pedida desde la columna .col-cant-pedida
+    let cantPedidaCell = row.querySelector(".col-cant-pedida");
+    let cantidadPedida = cantPedidaCell ? cantPedidaCell.textContent.trim() : "0";
 
-    // Obtener la cantidad leída
-    let cantidadLeida =
-      row.querySelector("#cantidadLeida").textContent.trim() || 0;
+    // Obtener la cantidad leída desde la columna .col-cant-leida
+    let cantLeidaCell = row.querySelector(".col-cant-leida");
+    let cantidadLeida = cantLeidaCell ? cantLeidaCell.textContent.trim() : "0";
 
-    // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
-    //       cantidadLeida = 0;
-    //   }
-
-    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
     var detalle = {
       ARTICULO: articulo,
       CANT_CONSEC: cantidadPedida,
       CANT_LEIDA: cantidadLeida,
     };
 
-    // Agregar el objeto al array
     detalles.push(detalle);
   }
+
+  // // Iterar sobre las filas de la tabla (excluyendo el encabezado)
+  // for (let i = 1; i < table.rows.length; i++) {
+  //   let row = table.rows[i];
+
+  //   // Obtener el valor del artículo
+  //   let articulo = row
+  //     .querySelector("#verifica-articulo span")
+  //     .textContent.trim();
+
+  //   // Obtener la cantidad pedida
+  //   let cantidadPedida = row
+  //     .querySelector("#cantidadPedida")
+  //     .textContent.trim();
+
+  //   // Obtener la cantidad leída
+  //   let cantidadLeida =
+  //     row.querySelector("#cantidadLeida").textContent.trim() || 0;
+
+  //   // if (isNaN(cantidadLeida) || cantidadLeida == undefined || cantidadLeida == null || cantidadLeida == "") {
+  //   //       cantidadLeida = 0;
+  //   //   }
+
+  //   // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
+  //   var detalle = {
+  //     ARTICULO: articulo,
+  //     CANT_CONSEC: cantidadPedida,
+  //     CANT_LEIDA: cantidadLeida,
+  //   };
+
+  //   // Agregar el objeto al array
+  //   detalles.push(detalle);
+  // }
 
   // Convertir el array de objetos a formato JSON
   var jsonDetalles = JSON.stringify(detalles);
@@ -925,7 +1220,7 @@ function procesar() {
   console.log(params);
   console.log("Aqui procesamos los traslados de entrada");
   localStorage.setItem("autoSearchTraslados", "true");
-  window.location.href = "verificacionDeTraslados.html";
+  //window.location.href = "verificacionDeTraslados.html";
   fetch(env.API_URL + "wmsguardadopickingtraslado/P" + params, myInit)
     .then((response) => response.json())
     .then((result) => {

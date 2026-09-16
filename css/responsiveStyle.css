@@ -489,11 +489,12 @@
     text-align: left;
   }
 
-  h6 {
+ h6 {
     font-size: 12px !important;
     line-height: 110%;
     margin: 0;
-  }
+    text-align: left;
+}
 
   .switch label .lever {
     content: "";
