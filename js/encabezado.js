@@ -1,233 +1,136 @@
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
+/**
+ * js/encabezado.js
+ * Componente Web <my-header> con selector de bodega SweetAlert2 y Logout blindado.
+ */
+
+// Garantizar que logout esté disponible globalmente sin depender del orden de scripts
+window.logout = function(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // 1. Limpiar variables de sesión y datos operativos
+  sessionStorage.clear();
+
+  // Conservar únicamente las credenciales guardadas si el usuario seleccionó "Recordar"
+  const keysConservar = ["username", "password", "checkbox", "wms_app_version"];
+  Object.keys(localStorage).forEach(function (key) {
+    if (!keysConservar.includes(key)) {
+      localStorage.removeItem(key);
+    }
+  });
+
+  // 2. Limpiar cookies de sesión si existieran
+  document.cookie.split(";").forEach(function (c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+
+  // 3. Redirección inmediata a index.html (Login) rompiendo caché
+  window.location.replace("index.html?nocache=" + new Date().getTime());
+};
+
 class MyHeader extends HTMLElement {
-  connectedCallback() {
-    /*******************************************************/
-    // ===============================
-    // CONTROL GLOBAL MULTI-PESTAÑAS
-    // ===============================
-    (function initTabControl() {
-      const user = sessionStorage.getItem("user");
-
-      // Si no hay sesión, no activar control
-      if (!user) return;
-
-      const username = JSON.parse(user);
-      const TAB_ID = Date.now() + "_" + Math.random();
-      const channel = new BroadcastChannel("bremen_single_tab_" + username);
-
-      let isMainTab = true;
-
-      // Avisar que esta pestaña quiere ser líder
-      channel.postMessage({ type: "CHECK_ACTIVE", tabId: TAB_ID });
-
-      channel.onmessage = (event) => {
-        const msg = event.data;
-
-        // Si otra pestaña ya es principal → bloquear esta
-        if (msg.type === "TAB_ACTIVE" && msg.tabId !== TAB_ID) {
-          isMainTab = false;
-          blockTab();
-        }
-
-        // Si alguien consulta y esta pestaña es la principal → responder
-        if (msg.type === "CHECK_ACTIVE" && isMainTab) {
-          channel.postMessage({ type: "TAB_ACTIVE", tabId: TAB_ID });
-        }
-      };
-
-      function blockTab() {
-        console.warn("⚠️ Pestaña bloqueada — sesión activa en otra ventana");
-
-        document.body.innerHTML = `
-    <div style="
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      background:linear-gradient(135deg,#f5f5f5,#eeeeee);
-      font-family:'Jura', 'Segoe UI', sans-serif;
-    ">
-      <div style="
-        background:#ffffff;
-        border-radius:16px;
-        padding:35px 40px;
-        max-width:480px;
-        width:90%;
-        text-align:center;
-        box-shadow:0 10px 30px rgba(0,0,0,0.12);
-        animation:fadeIn .35s ease-in-out;
-      ">
-        <div style="
-          font-size:52px;
-          margin-bottom:15px;
-          color:#d32f2f;
-        ">⚠️</div>
-
-        <h2 style="
-          color:#b71c1c;
-          font-weight:700;
-          margin-bottom:12px;
-        ">
-          Sesión activa en otra pestaña
-        </h2>
-
-        <!--p style="
-          color:#444;
-          font-size:15px;
-          line-height:1.6;
-          margin-bottom:8px;
-        ">
-          Esta cuenta ya se encuentra abierta en otra ventana del sistema.
-        </p-->
-
-
-        <button onclick="window.close()" style="
-          margin-top:10px;
-          padding:10px 18px;
-          border-radius:8px;
-          border:none;
-          background:#d32f2f;
-          color:white;
-          font-weight:600;
-          cursor:pointer;
-        ">
-          Cerrar pestaña
-        </button>
-      </div>
-    </div>
-
-    <style>
-      @keyframes fadeIn {
-        from { opacity:0; transform:scale(0.96); }
-        to { opacity:1; transform:scale(1); }
-      }
-    </style>
-  `;
-      }
-    })();
-
-    /*******************************************************/
-
+  connectedCallback() { 
     this.innerHTML = `
 <header id="header" class="page-topbar">
-    <!-- encabezado logo-->
-    <nav class="nav-extended green">
-      <div class="row">
-        <div class="s1 col">
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-        </div>
-        <div class="s8 col center-align">
-          <a href="home.html" class="brand-logo"></a>
-        </div>
+  <!-- 1. BARRA SUPERIOR (NAVBAR) -->
+  <nav class="nav-extended">
+    <div class="row valign-wrapper" style="margin-bottom: 0; min-height: 56px;">
+      <div class="col s2 m1 l1" style="display: flex; align-items: center;">
+        <a href="javascript:void(0);" data-target="mobile-demo" class="sidenav-trigger" style="display: block !important; margin: 0;" title="Abrir Menú">
+          <i class="material-icons" style="color: #ffffff; font-size: 28px;">menu</i>
+        </a>
       </div>
-    </nav>
-    <!-- encabezado logo-->
+      <div class="col s8 m10 l10 center-align">
+        <a href="home.html" class="brand-logo" style="position: static; transform: none;"></a>
+      </div>
+      <div class="col s2 m1 l1"></div>
+    </div>
+  </nav>
 
-     <!--BUSCADOR-->
-            <div class="contenedor-buscador">
-              <div class="row">
-                <div class="col s11">
-                  <div class="row buscador">
-                    <div class="s10 col">
-                      <input class="uil uil-search-alt" data-role="none" id="articulo" placeholder="Buscar" value=""
-                        autocomplete="off">
-                    </div>
-                    <div class="s2 col">                      
-                      <button id="buscado" class="search-action ui-btn" onclick="javascript: preBusqueda()">
-                        <i class="material-icons">search</i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="col s1" style="padding-left: 0;">
-                  <a href="#" onclick="filtrosModal();"><span class=" btn-Filtros-Clase material-symbols-outlined text-black"><i class="material-icons">filter_list</i></span></a>
-                </div>                
-              </div>
-               <div >    
-                <label style="margin-left: 40px; color:#fafafa;">
-                      <input type="checkbox" id="sinExistencias" />
-                      <span>Mostrar busqueda sin existencias </span>
-                    </label>            
-              </div>
-            </div>
-            <!--FIN BUSCADOR-->
+  <!-- 2. CONTENEDOR BUSCADOR UNIFICADO -->
+  <div class="contenedor-buscador">
+    <div class="buscador-unified-wrapper">
+      <div class="buscador-unified-input-box">
+        <input class="uil uil-search-alt custom-search-input" data-role="none" id="articulo" placeholder="Buscar artículo o referencia..." value="" autocomplete="off">
+        <button id="buscado" class="btn-search-unified" type="button" onclick="javascript: preBusqueda()">
+          <i class="material-icons">search</i>
+        </button>
+      </div>
 
-    <!--UBICACION-->
-    <div class="row shop-bodegas">
-      <a>
-        <div class="col location">
-          <div class="img">
-            <img src="img/icon/location.svg?SDdd" alt="">
-          </div>
-        </div>
-        <div class="col s9">
-          <h6 id="bodega-sucursal">Seleccionar Sucursal</h6>
-        </div>
+      <a href="javascript:void(0);" onclick="filtrosModal();" class="btn-filter-unified" title="Filtros avanzados">
+        <i class="material-icons">filter_list</i>
       </a>
-      <input type="hidden" id="bodega" />
-      <input type="hidden" id="txtCategoria" />
     </div>
-    <!--UBICACION-->
 
-    <!--  MODAL DE LAS BODEGAS  -->
-    <div id="bodega_sucursales" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="close-modal">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat green-text">
-              <span class="text">CERRAR</span><span class="material-symbols-outlined right">close</span></a>
-          </div>
-        </div>
-        <h5 class="left-align">Seleccionar Bodega O Sucursal</h5>
-        <!-- AQUI SE CARGAN LA DATA DE LAS BODEGAS -->
-        <div id="carga_more_sucursales"></div>
+    <!-- Checkbox Sin Existencias -->
+    <div class="buscador-options-row">    
+      <label class="check-sin-existencias-label">
+        <input type="checkbox" id="sinExistencias" />
+        <span>Mostrar búsqueda sin existencias</span>
+      </label>            
+    </div>
+  </div>
+
+  <!-- 3. BARRA DE SUCURSAL / UBICACIÓN (Alineados juntos a la izquierda) -->
+  <div class="shop-bodegas">
+    <a href="javascript:void(0);" class="bodega-trigger-link" onclick="abrirSelectorBodegas();" title="Cambiar bodega o sucursal activa">
+      <div class="location-icon">
+        <img src="img/icon/location.svg?SDdd" alt="Ubicación">
+      </div>
+      <h6 id="bodega-sucursal">Seleccionar Sucursal</h6>
+      <i class="material-icons" style="font-size: 16px; color: #cbd5e1; margin-left: 2px;">arrow_drop_down</i>
+    </a>
+    <input type="hidden" id="bodega" />
+    <input type="hidden" id="txtCategoria" />
+  </div>
+
+  <!-- 4. MENU LATERAL IZQUIERDO (SIDENAV) -->
+  <div class="sidenav" id="mobile-demo">
+    <div class="row bordered" style="padding: 14px 12px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
+      
+      <!-- Usuario Activo -->
+      <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+        <a href="home.html">
+          <img src="img/Logo2.png" class="img-circle profile_img" style="width: 42px; height: 42px; margin: 0;" onerror="this.style.display='none'">
+        </a>
+        <span id="usuario" style="color: #ffffff; font-weight: 600; font-size: 13px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Usuario</span>
+        <input type="hidden" id="hUsuario" />
+      </div>
+
+      <!-- Botón Salir / Cerrar Sesión -->
+      <div>
+        <a href="javascript:void(0);" onclick="logout(event);" class="btn-logout-link" title="Cerrar sesión">
+          <span class="material-symbols-outlined" style="font-size: 20px;">power_off</span>
+          <span>Salir</span>
+        </a>
       </div>
     </div>
-    <!-- FIN MODAL DE LAS BODEGAS -->
 
-    <!-- MENU LATERAL IZQUIERDO -->
-    <div class="sidenav" id="mobile-demo">
-      <div class="row bordered">
-        <div class="col s6 m6" style="display: flex; align-items: center;">
-          <a href="home.html">
-          <img src="img/Logo2.png" class="img-circle profile_img" style="max-width: 74%; height: auto;margin-right: 10px;">
+    <!-- Menú Dinámico -->
+    <ul class="collapsible" id="MenuL" style="font-size: 13px;"></ul>
+  </div>
+
+  <!-- 5. PANTALLA FILTRO MODAL -->
+  <div id="modalFiltro" class="modal">
+    <div class="modal-header">
+      <div class="row bordered" style="margin: 0; padding: 5px 10px;">
+        <div class="col s8"></div>
+        <div class="col s4 right-align">
+          <a onclick="cerrarModal()" class="modal-close waves-effect btn-flat" style="color: #2a3f54; font-weight: bold;">
+            CERRAR <i class="material-icons right">close</i>
           </a>
-          <span id="usuario" class="hide-on-med-and-downx" style="color: #000;">Contenido del span</span>
-          <input type="hidden" id="hUsuario" />
-        </div>
-        <div class="col s6 m6">
-          <div class="close-session">
-            <a href="#" onclick="logout();" class="green-text"><span class="material-symbols-outlined green-text right"
-                style="margin-right: 0px;">power_off</span><span class="textclose-sesion">Cerrar sesión</span></a>
-          </div>
-        </div>
-      </div>
-      <ul class="collapsible" id="MenuL" style="font-size: 13px;"></ul>
-    </div>
-    <!-- FIN MENU LATERAL IZQUIERDO -->
-
-    <!--PANTALLA FILTRO MODAL-->
-    <div id="modalFiltro" class="modal">
-      <div class="modal-header">
-        <div class="row bordered">
-          <div class="col s8">
-          </div>
-          <div class="col s4">
-            <div class="close-modal">
-              <a onclick="cerrarModal()" class="modal-close waves-effect waves-green btn-flat green-text">
-                <span class="text">CERRAR</span><span class="material-symbols-outlined right">close</span></a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-content">
-        <div id="divFiltro">
         </div>
       </div>
     </div>
-    <!--FIN PANTALLA FILTRO MODAL-->
-  </header>
+    <div class="modal-content" style="padding: 10px 20px;">
+      <div id="divFiltro"></div>
+    </div>
+  </div>
+</header>
 `;
   }
 }

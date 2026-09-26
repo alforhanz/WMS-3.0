@@ -2,156 +2,256 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-    <!--Import Materialize Icons-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boleta de Inventario General - WMS</title>
 
-    <!-- mis estilos css -->
-    <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-    <!--  -->
-    <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/loadingstyle.css" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/main.css?v2.01" media="screen,projection" />
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
-    <!-- FONTS -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap');
-    </style>
-    <!-- FONTS -->
-    <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="js/encabezadoBoletaDeInventario.js" type="text/javascript"></script>
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
 
-    <!-- <meta name="theme-color" content=""> -->
-    <title>Boleta de Inventario General - WMS</title>
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <script src="js/encabezadoBoletaDeInventario.js" type="text/javascript"></script>
 
+  <style>
+    .action-buttons-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+
+    .btn-action-item {
+      min-width: 170px !important;
+      width: auto !important;
+      box-shadow: none !important;
+      padding: 0 16px !important;
+    }
+
+    .btn-validar {
+      background: #0284c7 !important;
+    }
+
+    .btn-validar:hover:not(:disabled) {
+      background: #0369a1 !important;
+    }
+
+    .btn-crear {
+      background: #1b676b !important;
+    }
+
+    .btn-action-item:disabled {
+      background: #94a3b8 !important;
+      cursor: not-allowed !important;
+      opacity: 0.65;
+      transform: none !important;
+    }
+
+    .btn-export-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .btn-export-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn-export-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-export-pill img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .radio-group-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    @media screen and (max-width: 639px) {
+      .action-buttons-wrapper {
+        flex-direction: column;
+      }
+
+      .btn-action-item {
+        width: 100% !important;
+      }
+
+      .btn-export-group {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .tabla-compacta-movil th,
+      .tabla-compacta-movil td {
+        padding: 6px 4px !important;
+        font-size: 9.5px !important;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
-    <!-- HEADER -->
-    <my-header></my-header>
-    <!--HEADER-->
-    <main>
-        <div id="carga" class="carga-style"></div>
-        <div class="row boleta">
-            <div class="input-field col s3">
-                <select id="fecha_ini" onchange="limpiarTabla()"></select>
-                <label for="fecha_ini" class="inventario-fecha-estilo">Fecha de inventario</label>
-            </div>
-            <div class="input-field col s6">
-                <h5>Búsqueda por:</h5>
-                <div>
-                    <label>
-                        <input type="radio" name="tipoBusqueda" id="soloDiferencias" value="S" checked
-                            onchange="limpiarTabla()" />
-                        <span>Solo Diferencias</span>
-                    </label>
-                    <br />
-                    <label>
-                        <input type="radio" name="tipoBusqueda" id="contIgualaCero" value=""
-                            onchange="limpiarTabla()" />
-                        <span>Conteo igual a cero</span>
-                    </label>
+  <!-- HEADER -->
+  <my-header></my-header>
+
+  <main>
+    <!-- Modal Loader Global -->
+    <div id="contenedorLoader"></div>
+
+    <div class="vista-wrapper">
+
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver</span>
+        </button>
+      </div>
+
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">BOLETA DE INVENTARIO GENERAL</h1>
+
+      <!-- PANEL: CRITERIOS DE BÚSQUEDA -->
+      <div id="tabContentDatosBasicos" class="tab-pane active">
+        <div class="datos-basicos-flex">
+
+          <div class="filter-box filter-box-left" style="flex: 1 1 100%;">
+            <span class="box-title-legend">Criterios de Presentación de Boleta</span>
+
+            <div class="filter-grid-left">
+
+              <!-- Fecha de Inventario -->
+              <div class="input-group-custom">
+                <label for="fecha_ini" class="input-label-custom">Fecha de Inventario</label>
+                <select id="fecha_ini" class="browser-default custom-text-input" onchange="limpiarTabla()" style="cursor: pointer;">
+                  <option value="" disabled selected>Cargando fechas...</option>
+                </select>
+              </div>
+
+              <!-- Tipo de Búsqueda (Radios) -->
+              <div class="input-group-custom">
+                <label class="input-label-custom">Tipo de Consulta</label>
+                <div class="radio-group-container">
+                  <label class="custom-radio-label">
+                    <input type="radio" name="tipoBusqueda" id="soloDiferencias" value="S" checked onchange="limpiarTabla()" />
+                    <span>Solo Diferencias</span>
+                  </label>
+                  <label class="custom-radio-label">
+                    <input type="radio" name="tipoBusqueda" id="contIgualaCero" value="" onchange="limpiarTabla()" />
+                    <span>Conteo igual a cero</span>
+                  </label>
                 </div>
+              </div>
+
             </div>
+          </div>
+
         </div>
-        <div class="row container">
-            <div class="row boleta">
-                <div class="col s3">
-                    <div class="btn-container-boleta">
-                        <button type="button" id="btnPresentar" class="btn-guardar-boleta"
-                            onclick="presentarBoleta()">Presentar</button>
-                    </div>
-                </div>
-                <div class="col s3">
-                    <div class="btn-container-boleta">
-                        <button type="button" id="btnValidarBoleta" class="btn-guardar-boleta" onclick="validarBoleta()"
-                            disabled>Validar
-                            Boleta</button>
-                    </div>
-                </div>
-                <div class="col s3">
-                    <div class="btn-container-boleta">
-                        <button type="button" id="btnCrearBoleta" class="btn-guardar-boleta" onclick="actualizaCostos()"
-                            disabled>Crear Boleta</button>
-                    </div>
-                </div>
-                <div class="col s3">
-                    <div class="btn-descarga-boleta">
-                        <div class="impexcel">
-                            <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
-                                <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
-                            </button>
-                            <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar
-                                Excel</label>
-                        </div>
-                        <div class="imppdf">
-                            <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
-                                <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-                            </button>
-                            <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN PRINCIPALES -->
+      <div class="action-buttons-wrapper">
+        <button type="button" id="btnPresentar" class="btn-buscar-gradient btn-action-item" onclick="presentarBoleta()">
+          <span>Presentar</span>
+          <i class="material-icons right">visibility</i>
+        </button>
+
+        <button type="button" id="btnValidarBoleta" class="btn-buscar-gradient btn-action-item btn-validar" onclick="validarBoleta()" disabled>
+          <span>Validar Boleta</span>
+          <i class="material-icons right">rule</i>
+        </button>
+
+        <button type="button" id="btnCrearBoleta" class="btn-buscar-gradient btn-action-item btn-crear" onclick="actualizaCostos()" disabled>
+          <span>Crear Boleta</span>
+          <i class="material-icons right">done_all</i>
+        </button>
+
+        <!-- Descargas Excel / PDF -->
+        <div class="btn-export-group">
+          <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="descargarExcel()" hidden>
+            <img src="img/excel.png" alt="Excel">
+            <span id="lblExcel">Descargar Excel</span>
+          </button>
+          <button id="btnDescargarPDF" class="btn-export-pill" type="button" onclick="descargarPDF()" hidden>
+            <img src="img/pdf.png" alt="PDF">
+            <span id="lblPDF">Descargar PDF</span>
+          </button>
         </div>
+      </div>
 
-
-        <div class="row">
-            <div id="contenedorLoader"></div>
-            <div class="btn-container-conteo">
-                <div class="row btnReportes">
-
-                    <div class="row">
-                        <label id="cantidadDeRegistros"></label>
-                        <div id="tabla-boleta" class="col s12">
-                            <div class="row">
-                                <div id="resultadoGeneral"></div>
-                                <table id="myTableBoleta">
-                                    <thead>
-                                    </thead>
-                                    <tbody id="tblbodyBoleta">
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="resumen-paginador">
-                            <div id="pagination" class="invPagination"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- BARRA DE RESULTADOS -->
+      <div class="results-control-bar">
+        <div id="resultadoGeneral" class="total-registros-title">
+          <span id="cantidadDeRegistros">Total de registros: 0</span>
         </div>
-    </main>
-    <!-- IMprimir Código de barra -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-    <!-- <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script> -->
-    <!--JavaScript at end of body for optimized loading-->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Incluir la biblioteca de XLSX -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-    <!-- Incluir la biblioteca de jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-    <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-    <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-    <script type="text/javascript" src="js/loader.js?v1.1" defer></script>
-    <script type="text/javascript" src="js/boletaDeInventario.js" defer></script>
+      </div>
 
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="myTableBoleta" class="tabla-transacciones tabla-compacta-movil">
+          <thead>
+            <!-- Cabeceras generadas dinámicamente -->
+          </thead>
+          <tbody id="tblbodyBoleta">
+            <!-- Filas inyectadas por boletaDeInventario.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINADOR SELECT -->
+      <div id="resultadoPaginador"></div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- Scripts Globales & Bibliotecas XLSX / PDF -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/boletaDeInventario.js?v=4.2" defer></script>
 </body>
 
 </html>

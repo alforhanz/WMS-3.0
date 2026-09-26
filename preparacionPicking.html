@@ -4,144 +4,278 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <!--Import Materialize Icons-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-  <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-  <!-- FONTS -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap');
-  </style>
-  <!-- FONTS -->
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="js/encabezado.js" type="text/javascript"></script>
-
-  <!-- <meta name="theme-color" content=""> -->
   <title>Detalle de Picking - WMS</title>
 
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <script src="js/encabezado.js" type="text/javascript"></script>
+
+  <style>
+    .header-info-panel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .header-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .status-badge.active { 
+      background: #dcfce7; 
+      color: #166534; 
+    }
+    
+    .codigo-barras-input {
+      width: 100% !important;
+      height: 32px !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 4px !important;
+      text-align: center;
+      font-size: 13px !important;
+      margin: 0 !important;
+      background-color: #f8fafc !important;
+    }
+
+    .codigo-barras-input:focus {
+      border-color: var(--primary-teal) !important;
+      box-shadow: 0 0 0 2px rgba(27, 103, 107, 0.2) !important;
+    }
+
+    .codigo-barras-input:disabled {
+      background-color: #e2e8f0 !important;
+      color: #94a3b8;
+    }
+
+    .mensajes-caja {
+      width: 100%;
+      min-height: 90px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 10px;
+      color: #991b1b;
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+      margin-top: 15px;
+    }
+    
+    @media screen and (max-width: 639px) {
+      .header-info-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
+
   <main>
     <div id="contenedorLoader"></div>
-    <div id="resultadoBusqueda">
-      <div id="carga"></div>
-      <div class="container">
-        <h2 class="titulo-vista">Detalle de Picking</h2>
-        <div class="row"><label id="documento"></label></div>
-        <div class="row"><label id="pedido"></label></div>
-        <div class="row"><label id="estadoPedido"></label></div>
-        <div class="row">
-          <ul id="tabs-swipe-demo" class="tabs">
-            <!-- <li class="tab col s3"><a class="active" href="#tabla-lectura" >LECTURA</a></li> -->
-            <li class="tab col s3"><a class="active" href="#tabla-lectura" onclick="limpiarMensajes()">LECTURA</a></li>
-            <li class="tab col s3"><a href="#tabla-verificacion" onclick="verificacion()">VERFICACIÓN</a></li>
-          </ul>
-          <div id="tabla-lectura" class="col s12">
-            <div class="row">
-              <div id="resultadoGeneral"></div>
-              <table id="myTableLectura" class="display">
-                <thead>
-                  <tr class="themeColor">
-                    <th style="width: 30%;">Articulo</th>
-                    <th id="codigoBarrasHeader" style="width: 30%;">Cod</th>
-                    <!-- <th id="codigoBarrasHeader" style="width: 30%;">PICK</th> -->
-                    <th style="width: 20%;">Cant</th>
-                    <th style="width: 10%;">CL</th>
-                  </tr>
-                </thead>
-                <tbody id="tblbodyLectura">
-                  <tr>
-                    <td>
-                      <span display: inline-block;"></span>
-                    </td>
-                    <td class="codigo-barras-cell">
-                      <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCodigoBarras(this)" autofocus>
-                    </td>
-                    <!-- <td class="codigo-barras-cell">
-                    <input id="cantidadPicking" type="text" class="codigo-barras-input" value=""  autofocus>                  
-                  </td> -->
-                    <td class="codigo-barras-cell2">
-                      <input id="cant-pedida" type="text" class="codigo-barras-input" value=""
-                        onchange="validarCantidadPedida(this)" style="text-align: center;">
-                    </td>
-                    <td class="codigo-barras-cell2">
-                      <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div id="tabla-verificacion" class="col s12">
-            <label id="cantidadDeRegistros"></label>
-            <div class="row">
 
-              <div id="resultadoGeneral"></div>
-              <table id="myTableVerificacion" class="display centered ">
-                <thead>
-                  <tr class="themeColor">
-                    <th style="width: 20%;">Articulo</th>
-                    <th id="codigoBarrasHeader" style="width: 20%;">Cod.</th>
-                    <th style="width: 10%;">Cant<br>Lect.</th>
-                    <th style="width: 10%;">Cant<br>Prep.</th>
-                    <th style="width: 10%;">VERIF</th>
-                    <th class="width: 10%;" hidden>DEL</th>
-                  </tr>
-                </thead>
-                <tbody id="tblbodyVerificacion">
-                  <tr>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+    <div class="vista-wrapper">
+      
+      <!-- Botón Volver Superior -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="confirmaRegresar()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver a Picking</span>
+        </button>
+      </div>
+
+      <h1 class="titulo-principal">DETALLE DE PICKING (PREPARACIÓN)</h1>
+
+      <!-- Panel de Información de Cabecera -->
+      <div class="header-info-panel">
+        <div class="header-info-item">
+          <span class="info-label">Documento</span>
+          <span class="info-value" id="documento">Cargando...</span>
+        </div>
+        <div class="header-info-item">
+          <span class="info-label">Pedido</span>
+          <span class="info-value" id="pedido">Cargando...</span>
+        </div>
+        <div class="header-info-item">
+          <span class="info-label">Estado</span>
+          <span class="status-badge active" id="estadoPedido">Cargando...</span>
+        </div>
+      </div>
+
+      <!-- Navegación de Pestañas Modernas -->
+      <div class="custom-tabs-nav">
+        <button type="button" id="btnTabLectura" class="custom-tab-btn active" onclick="cambiarPestanaLocal('lectura')">
+          LECTURA
+        </button>
+        <button type="button" id="btnTabVerificacion" class="custom-tab-btn" onclick="cambiarPestanaLocal('verificacion')">
+          VERIFICACIÓN
+        </button>
+      </div>
+
+      <script>
+        function cambiarPestanaLocal(tabName) {
+          const btnLec = document.getElementById("btnTabLectura");
+          const btnVerif = document.getElementById("btnTabVerificacion");
+          const paneLec = document.getElementById("tabContentLectura");
+          const paneVerif = document.getElementById("tabContentVerificacion");
+
+          if (tabName === "lectura") {
+            btnLec.classList.add("active");
+            btnVerif.classList.remove("active");
+            paneLec.classList.add("active");
+            paneVerif.classList.remove("active");
+            limpiarMensajes();
+          } else if (tabName === "verificacion") {
+            btnVerif.classList.add("active");
+            btnLec.classList.remove("active");
+            paneVerif.classList.add("active");
+            paneLec.classList.remove("active");
+            verificacion();
+          }
+        }
+      </script>
+
+      <!-- TABLA 1: LECTURA -->
+      <div id="tabContentLectura" class="tab-pane active">
+        <div class="grid-table-responsive">
+          <table id="myTableLectura" class="tabla-transacciones">
+            <thead>
+              <tr>
+                <th style="width: 35%; text-align: left;">Artículo</th>
+                <th style="width: 35%;">Código de Barras</th>
+                <th style="width: 20%;">Cant.</th>
+                <th style="width: 10%;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tblbodyLectura">
+              <tr>
+                <td class="cell-center">
+                  <span style="font-weight: 600; color: #1e293b;"></span>
+                </td>
+                <td>
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
+                </td>
+                <td>
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)" autocomplete="off">
+                </td>
+                <td class="cell-center">
+                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLA 2: VERIFICACIÓN -->
+      <div id="tabContentVerificacion" class="tab-pane">
+        
+        <div class="results-control-bar" style="margin-top: 5px;">
+          <div class="total-registros-title" id="cantidadDeRegistros">
+            Cantidad de registros: 0
           </div>
         </div>
-        <!-- Tabla de resultados para listado de pedidos -->
-        <!-- Cierre de tabla de resultados para listado de pedidos -->
+
+        <div class="grid-table-responsive">
+          <table id="myTableVerificacion" class="tabla-transacciones">
+            <thead>
+              <tr>
+                <th style="width: 30%; text-align: left;">Artículo</th>
+                <th style="width: 25%;">Código</th>
+                <th style="width: 15%;">Cant. Sol.</th>
+                <th style="width: 15%;">Cant. Prep.</th>
+                <th style="width: 15%;">Verificado</th>
+                <th style="display: none;">DEL</th>
+              </tr>
+            </thead>
+            <tbody id="tblbodyVerificacion">
+              <!-- Filas dinámicas generadas por preparacionDePicking.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div id="contenedorBotones" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+          <!-- <button id="btnRegresar" class="btn-buscar-gradient" style="width: auto; background: #64748b; box-shadow: none;" onclick="confirmaRegresar()" hidden>
+            <i class="material-icons left" style="font-size: 18px;">arrow_back</i> Regresar
+          </button> -->
+          <button id="btnGuardar" class="btn-buscar-gradient" style="width: auto; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()" hidden>
+            <i class="material-icons left" style="font-size: 18px;">save</i> Guardar Picking
+          </button>
+          <button id="btnProcesar" class="btn-buscar-gradient" style="width: auto; box-shadow: none;" onclick="confirmaProcesar()" hidden>
+            <i class="material-icons left" style="font-size: 18px;">check_circle</i> Procesar Preparación
+          </button>
+        </div>
+
+        <!-- Caja de Mensajes -->
+        <div id="mensajes" style="margin-top: 20px;">
+          <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay incidencias registradas..."></textarea>
+        </div>
 
       </div>
+
     </div>
-    <!--Text area para los mensajes-->
-    <div id="mensajes" class="container">
-      <div class="centered col s12">
-        <textarea id="mensajeText"></textarea>
-      </div>
-    </div>
-    <!--Fin Text area para los mensajes-->
   </main>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!-- <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script> -->
-  <!--JavaScript at end of body for optimized loading-->
+
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/preparacionDePicking.js" defer></script>
-  <script type="text/javascript" src="js/loader.js"></script>
-  <!--JavaScript local-->
+  
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+  
+  <script type="text/javascript" src="js/preparacionDePicking.js?v=4.2" defer></script>
 </body>
 
 </html>

@@ -22,7 +22,7 @@ let menuEnlaces = [
 
                     { MODULO: 12, SUBMODULO: 0, ICON: "feature_search", LINK: ""                                      }, // CONSULTAS
                     { MODULO: 12, SUBMODULO: 1, ICON: "",               LINK: "verificacionDeOrdenesDeCompraProcesadas.html" }, //
-                    { MODULO: 12, SUBMODULO: 2, ICON: "",               LINK: "detalleTrasladoVerificados.html"        }, //
+                    { MODULO: 12, SUBMODULO: 2, ICON: "",               LINK: "detalletransaccionesverificados.html"        }, //
                     { MODULO: 12, SUBMODULO: 3, ICON: "",               LINK: "paqueteDeContenedoresVerificados.html"  }, //
 
                     { MODULO: 13, SUBMODULO: 0, ICON: "rocket",         LINK: ""                                      }, // Operacion
@@ -36,6 +36,8 @@ let menuEnlaces = [
                     { MODULO: 4,  SUBMODULO: 0,  ICON: "manage_accounts", LINK: ""                                    }, // ADMINISTRACION
                     { MODULO: 4,  SUBMODULO: 7,  ICON: "",               LINK: "#"                                    }, //
                   ];
+
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 $(document).ready(function () {
@@ -138,16 +140,16 @@ var buildUL = function (items) {
   htm += `<li>
     <div class="collapsible-header" id="expand_morefather">
         <a href="home.html">
-            <span class="margen-pedido" style="color:black;">
-                <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">home</span>
+            <span class="margen-pedido" style="color:#ffffff;">
+                <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:#ffffff;">home</span>
                 INICIO
             </span>
         </a>
     </div>
     <div class="collapsible-header" id="expand_morefather">
         <a href="${url_dalbos}">
-            <span class="margen-pedido" style="color:black;">
-                <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">account_balance</span>
+            <span class="margen-pedido" style="color:#ffffff;">
+                <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:#ffffff;">account_balance</span>
                 DALBOS
             </span>
         </a>
@@ -185,33 +187,6 @@ var buildUL = function (items) {
         </a>
     </div>--> 
 </li>`;
-//htm += `
-//<li>
-//     <div class="collapsible-header" id="expand_morefather">
-//         <a href="home.html">
-//             <span class="margen-pedido" style="color:black;">
-//                 <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">home</span>
-//                 INICIO
-//             </span>
-//         </a>
-//     </div>
-//     <div class="collapsible-header" id="expand_morefather">
-//         <a href="${url_dalbos}">
-//             <span class="margen-pedido" style="color:black;">
-//                 <span id="inicio" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:black;">account_balance</span>
-//                 DALBOS
-//             </span>
-//         </a>
-//     </div>
-//     <div class="collapsible-header" id="expand_morefather">
-//         <a href="home.html">
-//             <span class="margen-pedido" style="">
-//                 <span id="dash1" class="material-symbols-outlined left " style="margin-top: 13px; margin-right: 15px;color:withe;;">bar_chart</span>
-//                 Dashboard 1
-//             </span>
-//         </a>
-//     </div>
-// </li>`;
 
   items.forEach(function (key) {
     const m = menuEnlaces.find(

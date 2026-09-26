@@ -3,141 +3,221 @@
 
 <head>
   <meta charset="UTF-8">
-  <!--Import Materialize Icons-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <!--Import Personalize css-->
-  <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <!-- FONTS -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-  </style>
-  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paquetes de Contenedores Verificados - WMS</title>
+
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <script src="js/encabezado.js" type="text/javascript"></script>
 
-  <title>Paquetes de Contenedores Verificados - WMS</title>
+  <style>
+    .observaciones-caja {
+      width: 100%;
+      min-height: 60px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #1e293b;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+
+    .local-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 4px 12px;
+      max-width: 320px;
+      margin-left: auto;
+    }
+
+    .local-search-input {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      font-size: 13px !important;
+      margin: 0 !important;
+      height: 30px !important;
+      width: 100% !important;
+      background: transparent !important;
+    }
+
+    @media screen and (max-width: 768px) {
+      .results-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .local-search-bar {
+        max-width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
+
   <main>
+    <!-- Modal Loader Global -->
     <div id="contenedorLoader"></div>
-    <div id="resultadoBusqueda">
-      <div id="carga" class="carga-style"></div>
-      <div class="container">
-        <h2 class="titulo-vista">Paquetes de Contenedores Verificados</h2>
-        <div class="row">
-          <div id="menup">
-          </div>
-          <div class="row">
-            <div class="input-field col s12">
-              <input placeholder="Ingrese el consecutivo del paquete" id="Aplicacion" type="text" class="validate">
-              <label for="Aplicacion"></label>
+
+    <div class="vista-wrapper">
+
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver</span>
+        </button>
+      </div>
+
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">PAQUETES DE CONTENEDORES VERIFICADOS</h1>
+
+      <!-- PANEL: CRITERIOS DE BÚSQUEDA -->
+      <div id="tabContentDatosBasicos" class="tab-pane active">
+        <div class="datos-basicos-flex">
+
+          <div class="filter-box filter-box-left" style="flex: 1 1 100%;">
+            <span class="box-title-legend">Criterios de Consulta de Paquetes</span>
+
+            <div class="filter-grid-left">
+
+              <!-- Consecutivo del Paquete -->
+              <div class="input-group-custom">
+                <label for="Aplicacion" class="input-label-custom">Consecutivo del Paquete</label>
+                <input type="text" id="Aplicacion" class="custom-text-input" placeholder="Ingrese el consecutivo..." autocomplete="off">
+              </div>
+
+              <!-- Bodega de Destino -->
+              <div class="input-group-custom">
+                <label for="bodegaSelectPack" class="input-label-custom">Bodega de Destino</label>
+                <select id="bodegaSelectPack" class="browser-default custom-text-input" style="cursor: pointer;">
+                  <option value="" disabled selected>Seleccione una bodega</option>
+                </select>
+              </div>
+
+              <!-- Fecha Inicial -->
+              <div class="input-group-custom">
+                <label for="fecha_ini" class="input-label-custom">Fecha Desde</label>
+                <div class="input-with-icon">
+                  <input type="text" id="fecha_ini" class="datepicker custom-text-input" placeholder="yyyy-mm-dd">
+                  <i class="material-icons input-calendar-icon">event</i>
+                </div>
+              </div>
+
+              <!-- Fecha Final -->
+              <div class="input-group-custom">
+                <label for="fecha_fin" class="input-label-custom">Fecha Hasta</label>
+                <div class="input-with-icon">
+                  <input type="text" id="fecha_fin" class="datepicker custom-text-input" placeholder="yyyy-mm-dd">
+                  <i class="material-icons input-calendar-icon">event</i>
+                </div>
+              </div>
+
+              <!-- Switch: Vista Resumida -->
+              <div class="input-group-custom" style="justify-content: center; padding-top: 10px;">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="vistaResumida">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Vista Resumida</span>
+                </label>
+              </div>
+
             </div>
           </div>
-          <div class="input-field col s6">
-            <input placeholder="Desde" id="fecha_ini" type="text" class="datepicker">
-            <label for="fecha_ini">Fecha Desde</label>
-          </div>
-          <div class="input-field col s6">
-            <input placeholder="Hasta" id="fecha_fin" type="text" class="datepicker">
-            <label for="fecha_fin">Fecha Final</label>
-          </div>
-        </div>
-        <div class="row valign-wrapper" style="margin-bottom: 5px;">
-          <div class="col s12 m4">
-            <label id="lbl_bodega_destino" for="bodegaSelectPack" style="font-size: 0.8rem;">Cambiar bodega de
-              destino</label>
-            <select id="bodegaSelectPack" class="browser-default" style="height: 40px; margin-top: 5px;">
-              <option value="" disabled selected>Seleccione una bodega</option>
-            </select>
-          </div>
 
-          <div class="col s12 m8" style="padding-top: 20px;">
-            <label>
-              <input name="grupoVista" type="checkbox" id="vistaResumida" />
-              <span>Vista Resumida</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top: 20px;">
-          <div class="col s12">
-            <button id="verifica-paquetes" class="btn waves-effect waves-light" type="submit"
-              onclick="cargarParametros()">
-              Mostrar <i class="material-icons right">send</i>
-            </button>
-          </div>
-        </div>
-
-        <div class="row valign-wrapper" style="margin-bottom: 0px; background: #f9f9f9; border-radius: 4px;">
-          <div class="col s12 m4" style="display: flex; align-items: center; padding-left: 15px;">
-            <i class="material-icons"
-              style="margin-right: 8px; color: #757575; font-size: 1.2rem;">format_list_bulleted</i>
-            <label id="cantidadDeRegistros"
-              style="font-size: 1rem; font-weight: bold; color: #424242; margin: 0;">Registros: 0</label>
-          </div>
-
-          <div class="input-field col s12 m8" style="margin: 0 !important; padding-right: 15px;">
-            <i class="material-icons prefix" style="font-size: 1.5rem; top: 0.5rem;">search</i>
-            <input id="txtBuscadorTabla" type="text" placeholder="Filtrar resultados..."
-              style="width: 50%; margin-bottom: 0 !important; height: 2.5rem !important;">
-          </div>
-        </div>
-
-        <div class="row rptPaquetes">
-          <div id="resultadoGeneral"></div>
-          <table id="tblResultados" class="display centered highlight responsive-table">
-            <thead>
-              <tr class="themeColor2"></tr>
-            </thead>
-            <tbody id="tblbodyResultados"></tbody>
-            <tfoot id="tblfootResultados"></tfoot>
-          </table>
-          <div id="resultadoPaginador"></div>
-        </div>
-
-
-        <div class="row" id="observacion">
-          <div class="input-field col s12">
-            <label id="lblObservaciones" for="observaciones">Observaciones</label>
-            <textarea placeholder="Observaciones" id="observaciones" type="text" readonly></textarea>
-          </div>
         </div>
       </div>
+
+      <!-- BOTÓN BUSCAR -->
+      <div class="search-action-container">
+        <button id="verifica-paquetes" class="btn-buscar-gradient" type="button" onclick="cargarParametros()">
+          <span>Mostrar Paquetes</span>
+          <i class="material-icons">send</i>
+        </button>
+      </div>
+
+      <!-- BARRA DE RESULTADOS Y FILTRO LOCAL -->
+      <div class="results-control-bar" style="margin-top: 5px;">
+        <div id="resultadoGeneral" class="total-registros-title">
+          <span id="cantidadDeRegistros">Registros: 0</span>
+        </div>
+
+        <div class="local-search-bar">
+          <i class="material-icons" style="color: #64748b; font-size: 18px;">search</i>
+          <input id="txtBuscadorTabla" type="text" class="local-search-input" placeholder="Filtrar resultados..." autocomplete="off">
+        </div>
+      </div>
+
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="tblResultados" class="tabla-transacciones tabla-compacta-movil">
+          <thead>
+            <tr>
+              <!-- Inyectado dinámicamente -->
+            </tr>
+          </thead>
+          <tbody id="tblbodyResultados">
+            <!-- Filas dinámicas -->
+          </tbody>
+          <tfoot id="tblfootResultados">
+            <!-- Totales calculados -->
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- PAGINADOR SELECT -->
+      <div id="resultadoPaginador"></div>
+
+      <!-- OBSERVACIONES -->
+      <div id="observacion" style="margin-top: 20px;">
+        <label for="observaciones" class="input-label-custom">Observaciones</label>
+        <textarea id="observaciones" class="observaciones-caja" readonly placeholder="Sin observaciones registradas..."></textarea>
+      </div>
+
     </div>
   </main>
 
-  <!-- Incluir la biblioteca de jsPDF -->
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- Bibliotecas PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!--JavaScript at end of body for optimized loading-->
+
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/paquetesDeContenedoresVerificados.js" defer></script>
-  <script type="tex/javascript" src="js/paginacion.js"></script>
-  <script type="text/javascript" src="js/loader.js"></script>
-  <!--JavaScript local-->
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/paquetesDeContenedoresVerificados.js?v=4.2" defer></script>
 </body>
 
 </html>

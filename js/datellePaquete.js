@@ -215,7 +215,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   cargarParametros();
 });
-
 //  function creaJsonPrueba(){
 // const trasladosBase = [
 //     "TRAS81-0000031055", "TRAS81-0000031053", "TRAS81-0000031052", 
@@ -265,10 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
 // console.log("[\n" + dataVerificacion.map(obj => JSON.stringify(obj)).join(",\n") + "\n]");
 
 //  }
-
-
-
-
 function cargarParametros() {
   mostrarLoader();
   const parametros = localStorage.getItem("parametrosBusquedaPaquete");
@@ -335,7 +330,6 @@ function enviarDatosControlador(params) {
     });
   ocultarLoader();
 }
-
 function armarTablaResultados(data, esFiltro = false) {
     if (!esFiltro) dataOriginal = data;
 
@@ -447,7 +441,6 @@ function armarTablaResultados(data, esFiltro = false) {
 
     armaTotales(data, columnas);
 }
-
 // function armarTablaResultados(data, esFiltro = false)
 // function armarTablaResultados(data) {
 
@@ -575,9 +568,6 @@ function armarTablaResultados(data, esFiltro = false) {
 //     });
 //     armaTotales(data, columnas);
 // }
-
-
-
 /**
  * Calcula y renderiza la fila de totales dinámicamente para columnas específicas
  * @param {Array} data - El JSON con los datos
@@ -637,8 +627,6 @@ function armaTotales(data, columnas) {
     tfoot.appendChild(row);
     tabla.appendChild(tfoot);
 }
-
-
 // function armarTablaResultados(detallePaquetesEncabezado) {
 //   const tbody = document.getElementById("tblbodyResultados");
 //   tbody.innerHTML = "";
@@ -662,8 +650,6 @@ function armaTotales(data, columnas) {
 //     tbody.appendChild(newRow);
 //   });
 // }
-
-
 async function imprimirPaqueteReporte() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "pt");
@@ -762,7 +748,6 @@ async function imprimirPaqueteReporte() {
   const nombreArchivo = `Reporte_Detalle_${pPaquete}_${fechaStr.replace(/\//g, "-")}.pdf`;
   doc.save(nombreArchivo);
 }
-
 function exportarExcelPaquete() {
     const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
     // Usamos dataOriginal para asegurar que tenemos todas las propiedades (incluso REFERENCIA)
@@ -824,8 +809,6 @@ function exportarExcelPaquete() {
     const fecha = new Date().toISOString().slice(0, 10);
     XLSX.writeFile(wb, `Detalle_Completo_Paquete_${pPaquete}_${fecha}.xlsx`);
 }
-
-
 // function exportarExcelPaquete() {
 //     const pPaquete = localStorage.getItem("ConsecutivoPaquete") || "N/D";
 //     const dataParaExcel = packagesDataForPDF(); // Reutilizamos la data actual
@@ -976,7 +959,6 @@ function exportarExcelPaquete() {
 //   const nombreArchivo = `Reporte_Detalle_${pPaquete}_${fechaStr.replace(/\//g, "-")}.pdf`;
 //   doc.save(nombreArchivo);
 // }
-
 /**
  * Función auxiliar para obtener la data actual (filtrada o no)
  */
@@ -985,8 +967,6 @@ function packagesDataForPDF() {
     // Si no, retornamos el array global.
     return typeof dataOriginal !== 'undefined' && dataOriginal.length > 0 ? dataOriginal : [];
 }
-
-
 // async function imprimirPaqueteReporte() {
 //   const { jsPDF } = window.jspdf;
 //   const doc = new jsPDF("p", "pt"); // Portrait, puntos
@@ -1169,7 +1149,6 @@ function limpiarResultadoGeneral() {
   localStorage.removeItem("SearchParameterFlag");
   localStorage.removeItem("parametrosBusquedaPaquete");
 }
-
 function regresar(){
   window.location.href = "paqueteDeContenedoresVerificados.html";
 }

@@ -1,8 +1,7 @@
 /*
-
 =============================================================================
 
-SISTEMA DE DISEÑO WMS - ESTILO GLOBAL UNIFICADO (v4.1)
+SISTEMA DE DISEÑO WMS - ESTILO GLOBAL UNIFICADO (v4.2)
 
 Paleta corporativa con Header integrado en #2a3f54
 
@@ -296,8 +295,6 @@ color: #28a745 !important;
   color: #cbd5e1 !important;
   font-size: 13px;
 }
-
-
 
 /* -----------------------------------------------------------------------------
 
@@ -801,6 +798,7 @@ padding: 10px 15px 6px 15px;
 padding: 8px 15px !important;
 }
 
+/* Modificación: Mantiene el contenedor de datos básicos (Documento y Pedido) en fila en móviles */
 .datos-basicos-flex {
 flex-direction: row; 
 flex-wrap: wrap;    
@@ -820,9 +818,9 @@ grid-template-columns: 1fr;
 width: 100%;
 }
 
-/* --- INICIO: MEJORAS PARA TABLAS RESPONSIVAS EN MÓVILES --- /
+/* --- INICIO: MEJORAS PARA TABLAS RESPONSIVAS EN MÓVILES --- */
 .grid-table-responsive {
-/ Mejora el deslizamiento táctil en iOS */
+/* Mejora el deslizamiento táctil en iOS */
 -webkit-overflow-scrolling: touch;
 }
 
@@ -849,103 +847,15 @@ padding: 8px 6px;
 
 .tabla-transacciones td:first-child,
 .tabla-wms-general td:first-child {
-/* Garantiza que la descripción tenga un tamaño decente para leerse bien /
+/* Garantiza que la descripción tenga un tamaño decente para leerse bien */
 min-width: 140px;
 }
-/ --- FIN: MEJORAS PARA TABLAS RESPONSIVAS EN MÓVILES --- */
+/* --- FIN: MEJORAS PARA TABLAS RESPONSIVAS EN MÓVILES --- */
 
 .totales-summary-panel {
 flex-direction: column;
 gap: 8px;
 align-items: flex-start;
 }
-
- /* .header-info-panel {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        } */
 }
-
-/* -----------------------------------------------------------------------------
-   PAGINADOR DESPLEGABLE TIPO SELECT (INDICADOR + SELECT + PREV/NEXT)
------------------------------------------------------------------------------ */
-.custom-pager-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin: 20px 0 35px 0;
-    width: 100%;
-}
-
-.pager-indicator {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1e293b;
-    letter-spacing: 0.5px;
-    text-align: center;
-}
-
-.pager-controls-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-}
-
-.pager-btn-link {
-    background: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #28a745; /* Verde corporativo BREMEN */
-    transition: opacity 0.2s ease, transform 0.1s ease;
-    padding: 6px 10px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.pager-btn-link:hover:not(.disabled) {
-    text-decoration: underline;
-    opacity: 0.85;
-}
-
-.pager-btn-link.prev_link {
-    color: #64748b; /* Gris suave para 'Anterior' */
-}
-
-.pager-btn-link.disabled {
-    color: #cbd5e1 !important;
-    cursor: not-allowed;
-    text-decoration: none !important;
-}
-
-.pager-select-wrapper {
-    min-width: 65px;
-}
-
-.pager-select {
-    width: 100% !important;
-    height: 38px !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 4px !important;
-    background-color: #ffffff !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #1e293b !important;
-    text-align: center;
-    cursor: pointer;
-    padding: 4px 8px !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.pager-select:focus {
-    border-color: #1b676b !important;
-    outline: none !important;
-}
- 
-
+```eof

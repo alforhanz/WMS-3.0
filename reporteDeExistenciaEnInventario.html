@@ -3,208 +3,430 @@
 
 <head>
   <meta charset="UTF-8">
-
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-    
-    /* Pequeño ajuste para asegurar que los divs de los iconos no rompan el flex layout */
-    .btn-container-conteo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .impexcel, .imppdf {
-      display: flex;
-      align-items: center;
-    }
-  </style>
-  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Existencia en Inventario - WMS</title>
+
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <script src="js/encabezado.js" type="text/javascript"></script>
 
-  <title>Reporte de Existencia en Inventario</title>
+  <style>
+    /* Contenedor centralizado para todo el bloque de control y filtros */
+    .filtro-existencias-wrapper {
+      max-width: 780px;
+      margin: 0 auto 15px auto;
+      width: 100%;
+    }
+
+    .busqueda-basica-wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .switches-row-basico {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 6px 0;
+      flex-wrap: wrap;
+    }
+
+    /* Grilla de Clasificaciones: 3 columnas simétricas */
+    .clasificaciones-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px 18px;
+    }
+
+    .clasif-field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .clasif-field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Fila inferior de acciones perfectamente alineada al ancho del panel */
+    .panel-actions-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .panel-actions-bottom .btn-buscar-gradient {
+      margin: 0 !important;
+      min-width: 220px;
+      max-width: 240px;
+    }
+
+    .btn-export-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-export-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn-export-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-export-pill img {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Controles de paginación personalizados */
+    #contenedorPaginacion {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .paginacion-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .paginacion-btn:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .paginacion-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .paginacion-activa {
+      background: var(--primary-teal, #1b676b) !important;
+      color: #ffffff !important;
+      border-color: var(--primary-teal, #1b676b) !important;
+    }
+
+    .paginacion-info {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: 10px;
+    }
+
+    .paginacion-ellipsis {
+      padding: 0 4px;
+      color: #94a3b8;
+    }
+
+    @media screen and (max-width: 768px) {
+      .clasificaciones-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-actions-bottom {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .panel-actions-bottom .btn-buscar-gradient {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .btn-export-group {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .switches-row-basico {
+        gap: 20px;
+      }
+
+      .tabla-compacta-movil th,
+      .tabla-compacta-movil td {
+        padding: 6px 4px !important;
+        font-size: 9.5px !important;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
+  <!-- HEADER GENERAL -->
   <my-header></my-header>
+
   <main>
+    <!-- Modal Loader Global -->
     <div id="contenedorLoader"></div>
 
-    <div id="resultadoBusqueda">
-      <h2 class="titulo-vista">Reporte de Existencia en Inventario</h2>
-      <div id="carga" class="carga-style"></div>
+    <div class="vista-wrapper">
 
-      <div class="container">
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver</span>
+        </button>
+      </div>
 
-        <div class="row">
-          <div class="card-tab col s12 m10 l10 ">
-            <div class="card z-depth-2" id="filtrosCard">
-              <div class="card-content">
-                <span class="card-title">Filtros de búsqueda</span>
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">REPORTE DE EXISTENCIA EN INVENTARIO</h1>
 
-                <ul class="tabs tabs-fixed-width" id="filtrosTabs">
-                  <li class="tab col s6"><a class="active tab-title" href="#tab-basico">Búsqueda</a></li>
-                  <li class="tab col s6"><a class="active tab-title" href="#tab-clasificacion">Clasificación</a></li>
-                </ul>
+      <!-- CONTENEDOR EQUILIBRADO Y CENTRADO -->
+      <div class="filtro-existencias-wrapper">
 
-                <div id="tab-basico" class="col s12" style="padding: 16px 0;">
+        <!-- Pestañas Tipo Pastilla -->
+        <div class="custom-tabs-nav" style="max-width: 380px; margin: 0 auto 15px auto;">
+          <button type="button" id="btnTabBasico" class="custom-tab-btn active" onclick="cambiarPestanaExistencias('basico')">
+            Búsqueda
+          </button>
+          <button type="button" id="btnTabClasificacion" class="custom-tab-btn" onclick="cambiarPestanaExistencias('clasificacion')">
+            Clasificación
+          </button>
+        </div>
 
-                  <div class="input-field">
-                    <i class="material-icons prefix">search</i>
-                    <input id="pArticulo" type="text" class="validate" placeholder="Todos los artículos">
-                    <label for="pArticulo">Artículo</label>
-                  </div>
+        <script>
+          function cambiarPestanaExistencias(tabKey) {
+            const btnBasico = document.getElementById("btnTabBasico");
+            const btnClasif = document.getElementById("btnTabClasificacion");
+            const paneBasico = document.getElementById("tab-basico");
+            const paneClasif = document.getElementById("tab-clasificacion");
 
-                  <div class="row" style="margin-top: 8px; margin-bottom: 0;">
-                    <div class="col s12 m6">
-                      <label>
-                        <input type="checkbox" id="solo-existencias" checked />
-                        <span>Solo Existencias</span>
-                      </label>
-                    </div>
-                    <div class="col s12 m6">
-                      <label>
-                        <input type="checkbox" id="todas-las-bodegas" />
-                        <span>Todas las Bodegas</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
+            if (tabKey === "basico") {
+              btnBasico.classList.add("active");
+              btnClasif.classList.remove("active");
+              paneBasico.classList.add("active");
+              paneClasif.classList.remove("active");
+            } else {
+              btnClasif.classList.add("active");
+              btnBasico.classList.remove("active");
+              paneClasif.classList.add("active");
+              paneBasico.classList.remove("active");
+            }
+          }
+        </script>
 
-                <div id="tab-clasificacion" class="col s12" style="padding: 16px 0;">
+        <!-- Tarjeta de Filtros -->
+        <div class="filter-box">
+          <span class="box-title-legend">Parámetros del Reporte</span>
 
-                  <div class="row" style="margin-bottom: 0;">
-
-                    <div class="input-field col s1">
-                      <label><input type="checkbox" id="clase-todas" checked /><span>Todas</span></label>
-                    </div>
-                    <div class="input-field col s3">
-                      <select id="claseReporte" onchange="cargarClasificacionesMarca()">
-                        <option value="null" disabled selected>Seleccionar</option>
-                      </select>
-                      <label>Clase</label>
-                    </div>
-
-                    <div class="input-field col s1">
-                      <label><input type="checkbox" id="marca-todas" checked /><span>Todas</span></label>
-                    </div>
-                    <div class="input-field col s3">
-                      <select id="marcaReporte" onchange="cargarClasificacionesTipo()">
-                        <option value="" disabled selected>Seleccionar</option>
-                      </select>
-                      <label>Marca</label>
-                    </div>
-
-                    <div class="input-field col s1">
-                      <label><input type="checkbox" id="tipo-todas" checked /><span>Todas</span></label>
-                    </div>
-                    <div class="input-field col s3">
-                      <select id="tipoReporte" onchange="cargarClasificacionesVenta()">
-                        <option value="" disabled selected>Seleccionar</option>
-                      </select>
-                      <label>Tipo</label>
-                    </div>
-
-                  </div>
-
-                  <div class="row" style="margin-bottom: 0;">
-
-                    <div class="input-field col s1">
-                      <label><input type="checkbox" id="ventas-todas" checked /><span>Todas</span></label>
-                    </div>
-                    <div class="input-field col s3">
-                      <select id="ventasReporte" onchange="cargarClasificacionesEnvase()">
-                        <option value="" disabled selected>Seleccionar</option>
-                      </select>
-                      <label>Subtipo 2</label>
-                    </div>
-
-                    <div class="input-field col s1">
-                      <label><input type="checkbox" id="envase-todas" checked /><span>Todas</span></label>
-                    </div>
-                    <div class="input-field col s3">
-                      <select id="envaseReporte">
-                        <option value="" disabled selected>Seleccionar</option>
-                      </select>
-                      <label>Envase</label>
-                    </div>
-
-                  </div>
-                </div>
-                </div><div class="card-action" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                <button type="button" id="btnRptExistencias" class="btn-guardar-existencias"
-                  onclick="validarParametros()">
-                  Mostrar Reporte
-                  <i class="material-icons right">send</i>
-                </button>
-
-                <div class="btn-container-conteo">
-                  <div class="impexcel">
-                    <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
-                      <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
-                    </button>
-                    <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar Excel</label>
-                  </div>
-
-                  <div class="imppdf">
-                    <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
-                      <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-                    </button>
-                    <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
-                  </div>
+          <!-- PANEL 1: BÚSQUEDA BÁSICA -->
+          <div id="tab-basico" class="tab-pane active">
+            <div class="busqueda-basica-wrap">
+              
+              <!-- Input Artículo -->
+              <div class="input-group-custom">
+                <label for="pArticulo" class="input-label-custom">Artículo o Referencia</label>
+                <div class="input-with-icon">
+                  <input id="pArticulo" type="text" class="custom-text-input" placeholder="Todos los artículos (o ingrese código)..." autocomplete="off">
+                  <i class="material-icons input-calendar-icon">search</i>
                 </div>
               </div>
 
-            </div></div>
-        </div>
-        <div class="row reporteExInv">
-          <div class="col s12">
+              <!-- Switches Centrados -->
+              <div class="switches-row-basico">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="solo-existencias" checked>
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Solo Existencias</span>
+                </label>
 
-            <label id="cantidadDeRegistros"></label>
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="todas-las-bodegas">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas las Bodegas</span>
+                </label>
+              </div>
 
-            <table id="tblRptExist">
-              <thead id="htblRptExist"></thead>
-              <tbody id="tblbodyRptExist"></tbody>
-            </table>
-
-            <div id="barraInferior">
-              <div id="contenedorPaginacion"></div>
             </div>
+          </div>
 
+          <!-- PANEL 2: CLASIFICACIONES -->
+          <div id="tab-clasificacion" class="tab-pane">
+            <div class="clasificaciones-grid">
+
+              <!-- Clase -->
+              <div class="clasif-field-item">
+                <div class="clasif-field-header">
+                  <label for="claseReporte" class="input-label-custom">Clase</label>
+                  <label class="custom-radio-label" style="font-size: 11px;">
+                    <input type="checkbox" id="clase-todas" checked />
+                    <span>Todas</span>
+                  </label>
+                </div>
+                <select id="claseReporte" class="browser-default custom-text-input" onchange="cargarClasificacionesMarca()" style="height: 36px;">
+                  <option value="null" disabled selected>Seleccionar</option>
+                </select>
+              </div>
+
+              <!-- Marca -->
+              <div class="clasif-field-item">
+                <div class="clasif-field-header">
+                  <label for="marcaReporte" class="input-label-custom">Marca</label>
+                  <label class="custom-radio-label" style="font-size: 11px;">
+                    <input type="checkbox" id="marca-todas" checked />
+                    <span>Todas</span>
+                  </label>
+                </div>
+                <select id="marcaReporte" class="browser-default custom-text-input" onchange="cargarClasificacionesTipo()" style="height: 36px;">
+                  <option value="" disabled selected>Seleccionar</option>
+                </select>
+              </div>
+
+              <!-- Tipo -->
+              <div class="clasif-field-item">
+                <div class="clasif-field-header">
+                  <label for="tipoReporte" class="input-label-custom">Tipo</label>
+                  <label class="custom-radio-label" style="font-size: 11px;">
+                    <input type="checkbox" id="tipo-todas" checked />
+                    <span>Todas</span>
+                  </label>
+                </div>
+                <select id="tipoReporte" class="browser-default custom-text-input" onchange="cargarClasificacionesVenta()" style="height: 36px;">
+                  <option value="" disabled selected>Seleccionar</option>
+                </select>
+              </div>
+
+              <!-- Subtipo 2 (Ventas) -->
+              <div class="clasif-field-item">
+                <div class="clasif-field-header">
+                  <label for="ventasReporte" class="input-label-custom">Subtipo 2</label>
+                  <label class="custom-radio-label" style="font-size: 11px;">
+                    <input type="checkbox" id="ventas-todas" checked />
+                    <span>Todas</span>
+                  </label>
+                </div>
+                <select id="ventasReporte" class="browser-default custom-text-input" onchange="cargarClasificacionesEnvase()" style="height: 36px;">
+                  <option value="" disabled selected>Seleccionar</option>
+                </select>
+              </div>
+
+              <!-- Envase -->
+              <div class="clasif-field-item">
+                <div class="clasif-field-header">
+                  <label for="envaseReporte" class="input-label-custom">Envase</label>
+                  <label class="custom-radio-label" style="font-size: 11px;">
+                    <input type="checkbox" id="envase-todas" checked />
+                    <span>Todas</span>
+                  </label>
+                </div>
+                <select id="envaseReporte" class="browser-default custom-text-input" style="height: 36px;">
+                  <option value="" disabled selected>Seleccionar</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FILA DE ACCIONES ALINEADA CON EL ANCHO DEL PANEL -->
+        <div class="panel-actions-bottom">
+          <!-- Botón de Consulta alineado a la izquierda -->
+          <button type="button" id="btnRptExistencias" class="btn-buscar-gradient" onclick="validarParametros()">
+            <span>Mostrar Reporte</span>
+            <i class="material-icons right">send</i>
+          </button>
+
+          <!-- Botones de Descarga alineados a la derecha -->
+          <div class="btn-export-group">
+            <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="descargarExcel()" hidden>
+              <img src="img/excel.png" alt="Excel">
+              <span id="lblExcel">Descargar Excel</span>
+            </button>
+            <button id="btnDescargarPDF" class="btn-export-pill" type="button" onclick="descargarPDF()" hidden>
+              <img src="img/pdf.png" alt="PDF">
+              <span id="lblPDF">Descargar PDF</span>
+            </button>
           </div>
         </div>
-        </div><div id="barraInferior">
-        <div id="contenedorPaginacion"></div>
+
       </div>
 
-    </div></main>
+      <!-- BARRA DE INFORMACIÓN DE REGISTROS -->
+      <div class="results-control-bar" style="margin-top: 15px;">
+        <div id="resultadoGeneral" class="total-registros-title">
+          <span id="cantidadDeRegistros"></span>
+        </div>
+      </div>
 
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="tblRptExist" class="tabla-transacciones tabla-compacta-movil">
+          <thead id="htblRptExist"></thead>
+          <tbody id="tblbodyRptExist"></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+
+      <!-- PAGINADOR ESTÁNDAR -->
+      <div id="contenedorPaginacion"></div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- Bibliotecas PDF & Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/reporteDeExistenciaEnInventario.js" defer></script>
-  <!-- <script type="text/javascript" src="js/paginacion.js"></script> -->
-  <script type="text/javascript" src="js/loader.js"></script>
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/reporteDeExistenciaEnInventario.js?v=4.2" defer></script>
 </body>
 
 </html>

@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <link type="text/css" rel="stylesheet" href="css/main.css?v1.02" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="js/encabezado.js" type="text/javascript"></script>
+
+  <title>Detalle de Transacciones Verificadas - WMS</title>
+  <style>
+    :root {
+      --primary-teal: #1b676b;
+      --primary-teal-dark: #134f52;
+      --tab-active-bg: #8ea4a7;
+      --tab-inactive-bg: #e2e4e6;
+      --border-card: #aebbc1;
+      --card-bg: #edf2f4;
+      --header-grid-bg: #59666c;
+      --row-alt-bg: #eeebe7;
+      --origen-red: #a93d39;
+      --articulo-orange: #c85a17;
+    }
+
+    body {
+      background-color: #f7f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      color: #2c3e50;
+      margin: 0;
+      padding: 0;
+    }
+
+    .vista-wrapper {
+      padding: 15px 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Botón Volver superior */
+    .top-action-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .btn-volver {
+      background-color: var(--primary-teal) !important;
+      color: #ffffff !important;
+      text-transform: none !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+      height: 36px !important;
+      line-height: 36px !important;
+      padding: 0 16px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-volver:hover {
+      background-color: var(--primary-teal-dark) !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-volver i {
+      font-size: 18px !important;
+      line-height: 1 !important;
+      margin: 0 !important;
+    }
+
+    /* Título principal centrado */
+    .titulo-principal {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 5px 0 20px 0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Pestañas personalizadas según mockups */
+    .custom-tabs-nav {
+      display: flex;
+      width: 100%;
+      max-width: 460px;
+      margin-bottom: 15px;
+      border-radius: 4px 4px 0 0;
+      overflow: hidden;
+    }
+
+    .custom-tab-btn {
+      flex: 1;
+      padding: 10px 15px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background-color: var(--tab-inactive-bg);
+      color: #4b5563;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .custom-tab-btn.active {
+      background-color: var(--tab-active-bg);
+      color: #0f172a;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Contenedor Flex de la pestaña Datos Básicos - Más compacto */
+    .datos-basicos-flex {
+      display: flex;
+      gap: 15px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+
+    /* Tarjetas con borde redondeado */
+    .filter-box {
+      background-color: var(--card-bg);
+      border: 1.5px solid var(--border-card);
+      border-radius: 12px;
+      padding: 12px 18px;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-box-left {
+      flex: 1 1 66%;
+    }
+
+    .filter-box-right {
+      flex: 1 1 34%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .box-title-legend {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .filter-grid-left {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1.6fr;
+      gap: 8px 14px;
+      align-items: start;
+    }
+
+    .input-group-custom {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+
+    .input-label-custom {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 1px;
+    }
+
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .custom-text-input {
+      width: 100%;
+      height: 34px !important;
+      line-height: 34px !important;
+      background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 6px !important;
+      padding: 0 10px !important;
+      box-sizing: border-box !important;
+      font-size: 13px !important;
+      color: #1e293b !important;
+      outline: none !important;
+      margin: 0 !important;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .custom-text-input:focus {
+      border-color: var(--primary-teal) !important;
+      box-shadow: 0 0 0 2px rgba(27, 103, 107, 0.2) !important;
+    }
+
+    .input-with-icon .custom-text-input {
+      padding-right: 32px !important;
+    }
+
+    .input-calendar-icon {
+      position: absolute;
+      right: 8px;
+      color: #64748b;
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    /* Caja de selección Tipo de Transacción */
+    .tipo-transaccion-container {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 10px;
+      max-height: 90px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .custom-checkbox-row {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .tipo-transaccion-container [type="checkbox"]:not(:checked),
+    .tipo-transaccion-container [type="checkbox"]:checked {
+      position: static !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      width: 15px !important;
+      height: 15px !important;
+      margin: 0 8px 0 0 !important;
+      accent-color: #2b7d8c !important;
+      cursor: pointer !important;
+    }
+
+    .tipo-transaccion-container [type="checkbox"]+span:not(.lever):before,
+    .tipo-transaccion-container [type="checkbox"]+span:not(.lever):after {
+      display: none !important;
+    }
+
+    .tipo-transaccion-container [type="checkbox"]+span:not(.lever) {
+      padding-left: 0 !important;
+      line-height: 16px !important;
+      font-size: 12.5px !important;
+      color: #1f2937 !important;
+      font-weight: 500 !important;
+    }
+
+    /* Tarjeta derecha: Criterio de Búsqueda de Movimientos */
+    .movimientos-instruction {
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .movimientos-options {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .btn-checkbox-mov {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-checkbox-mov input[type="checkbox"] {
+      display: none;
+    }
+
+    .mov-check-square {
+      width: 20px;
+      height: 20px;
+      background-color: #5a9e52;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-checkbox-mov input[type="checkbox"]:not(:checked)+.mov-check-square {
+      background-color: #cbd5e1;
+      color: transparent;
+    }
+
+    .mov-text-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: 0.4px;
+    }
+
+    /* Pestaña Clasificaciones */
+    .clasificaciones-card {
+      background-color: var(--card-bg);
+      border: 1.5px solid var(--border-card);
+      border-radius: 12px;
+      padding: 16px 22px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .clasificaciones-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px 28px;
+    }
+
+    .clasif-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .clasif-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .clasif-toggle-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* NUEVO INTERRUPTOR ON-OFF TIPO SLIDER SIN CONFLICTO CON MATERIALIZE */
+    .clasif-toggle-wrapper [type="checkbox"]:not(:checked),
+    .clasif-toggle-wrapper [type="checkbox"]:checked {
+      position: absolute !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .clasif-toggle-wrapper [type="checkbox"]+span:not(.lever):before,
+    .clasif-toggle-wrapper [type="checkbox"]+span:not(.lever):after {
+      display: none !important;
+      content: none !important;
+    }
+
+    .onoff-switch {
+      position: relative;
+      display: inline-block;
+      width: 38px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .onoff-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      border-radius: 20px;
+      transition: background-color 0.25s ease;
+    }
+
+    .onoff-slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      transition: transform 0.25s ease;
+    }
+
+    .clasif-toggle-wrapper input[type="checkbox"]:checked+.onoff-switch .onoff-slider {
+      background-color: #246d79;
+    }
+
+    .clasif-toggle-wrapper input[type="checkbox"]:checked+.onoff-switch .onoff-slider:before {
+      transform: translateX(18px);
+    }
+
+    .toggle-label-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .clasif-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .clasif-select-custom {
+      display: block !important;
+      width: 100%;
+      height: 34px;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 12.5px;
+      color: #1e293b;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .clasif-select-custom:disabled {
+      background-color: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    /* Botón Buscar central */
+    .search-action-container {
+      display: flex;
+      justify-content: flex-start;
+      margin: 10px 0 25px 0;
+    }
+
+    .btn-buscar-gradient {
+      width: 330px;
+      height: 42px;
+      border-radius: 24px;
+      background: linear-gradient(to right, #387580, #225a66);
+      color: #ffffff;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(34, 90, 102, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-buscar-gradient:hover {
+      background: linear-gradient(to right, #2d636d, #1a4751);
+      box-shadow: 0 4px 12px rgba(34, 90, 102, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-buscar-gradient i {
+      font-size: 20px;
+    }
+
+    /* Barra de Resultados y Descargas */
+    .results-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .total-registros-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .export-buttons-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-exportar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-exportar:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .export-icon-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .export-btn-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    /* Grid de Resultados */
+    .grid-table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #cbd5e1;
+    }
+
+    .tabla-transacciones {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tabla-transacciones thead tr {
+      background-color: var(--header-grid-bg);
+      color: #ffffff;
+    }
+
+    .tabla-transacciones th {
+      padding: 10px 8px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-right: 1px solid #728086;
+      text-align: center;
+    }
+
+    .tabla-transacciones th:last-child {
+      border-right: none;
+    }
+
+    .tabla-transacciones td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+
+    .tabla-transacciones td:last-child {
+      border-right: none;
+    }
+
+    .tabla-transacciones tbody tr:nth-child(even) {
+      background-color: var(--row-alt-bg);
+    }
+
+    .tabla-transacciones tbody tr:hover {
+      background-color: #e5edf0;
+    }
+
+    /* Formato específico para celdas del Grid */
+    .cell-origen {
+      color: var(--origen-red);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .cell-articulo-box {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      text-align: left;
+    }
+
+    .cell-articulo-code {
+      color: var(--articulo-orange);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .cell-articulo-desc {
+      color: #334155;
+      font-size: 11px;
+      white-space: normal;
+      max-width: 250px;
+      line-height: 1.2;
+    }
+
+    .cell-number {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    .cell-center {
+      text-align: left;
+    }
+
+    .cell-date {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    /* Totales y Paginador */
+    .totales-summary-panel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-top: none;
+      padding: 15px 20px;
+      border-radius: 0 0 8px 8px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+      font-size: 13.5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      margin-bottom: 15px;
+    }
+
+    .total-stat-item {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .total-stat-title {
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .total-stat-value {
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .val-entradas {
+      color: #00796b;
+    }
+
+    .val-salidas {
+      color: #d32f2f;
+    }
+
+    .paginador-custom {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+      margin-bottom: 30px;
+    }
+
+    /* ---------------------------------------------------------------------------
+       LOADER -- Se Muestra mientras se carga la información
+       --------------------------------------------------------------------------- */
+    #contenedorLoader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 999999;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease;
+    }
+
+    #contenedorLoader.activo {
+      display: flex !important;
+    }
+
+    .loader-card {
+      background: #ffffff;
+      padding: 32px 42px;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      min-width: 320px;
+      max-width: 90vw;
+      text-align: center;
+      animation: scaleUpLoader 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .loader-spinner-custom {
+      width: 56px;
+      height: 56px;
+      border: 5px solid #e2e8f0;
+      border-top-color: #1b676b;
+      border-right-color: #246d79;
+      border-radius: 50%;
+      animation: spinLoader 0.8s cubic-bezier(0.6, 0.05, 0.4, 1) infinite;
+    }
+
+    .loader-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .loader-subtitle {
+      font-size: 0.88rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    @keyframes spinLoader {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes scaleUpLoader {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .datos-basicos-flex {
+        flex-direction: column;
+      }
+
+      .clasificaciones-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-grid-left {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-buscar-gradient {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body id="home" tabindex="-1">
+  <!-- HEADER -->
+  <my-header></my-header>
+
+  <main>
+    <!-- Modal del Loader -->
+    <div id="contenedorLoader">
+      <div class="loader-card">
+        <div class="loader-spinner-custom"></div>
+        <h4 id="loaderTexto" class="loader-title">Ejecutando consulta...</h4>
+        <p class="loader-subtitle">Por favor espere mientras se obtienen los datos del servidor</p>
+      </div>
+    </div>
+
+
+
+    <div class="vista-wrapper">
+      <!-- Botón Volver -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver</span>
+        </button>
+      </div>
+
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">DETALLE DE TRANSACCIONES VERIFICADAS</h1>
+
+      <!-- Pestañas Personalizadas -->
+      <div class="custom-tabs-nav">
+        <button type="button" id="btnTabDatosBasicos" class="custom-tab-btn active"
+          onclick="cambiarPestana('datos-basicos')">
+          DATOS BÁSICOS
+        </button>
+        <button type="button" id="btnTabClasificaciones" class="custom-tab-btn"
+          onclick="cambiarPestana('clasificaciones')">
+          CLASIFICACIONES
+        </button>
+      </div>
+
+      <script>
+        function cambiarPestana(tabName) {
+          const btnBasicos = document.getElementById("btnTabDatosBasicos");
+          const btnClasif = document.getElementById("btnTabClasificaciones");
+          const paneBasicos = document.getElementById("tabContentDatosBasicos");
+          const paneClasif = document.getElementById("tabContentClasificaciones");
+
+          if (tabName === "datos-basicos") {
+            btnBasicos.classList.add("active");
+            btnClasif.classList.remove("active");
+            paneBasicos.classList.add("active");
+            paneClasif.classList.remove("active");
+          } else if (tabName === "clasificaciones") {
+            btnClasif.classList.add("active");
+            btnBasicos.classList.remove("active");
+            paneClasif.classList.add("active");
+            paneBasicos.classList.remove("active");
+          }
+        }
+      </script>
+
+      <!-- PANEL 1: DATOS BÁSICOS (IMAGEN 1) -->
+      <div id="tabContentDatosBasicos" class="tab-pane active">
+        <div class="datos-basicos-flex">
+          <!-- Caja izquierda: Datos Básicos -->
+          <div class="filter-box filter-box-left">
+
+
+            <div class="filter-grid-left">
+              <!-- Fecha Inicial -->
+              <div class="input-group-custom">
+                <label for="fecha_ini" class="input-label-custom">Fecha Inicial</label>
+                <div class="input-with-icon">
+                  <input type="text" id="fecha_ini" class="datepicker custom-text-input" placeholder="yyyy-mm-dd">
+                  <i class="material-icons input-calendar-icon">event</i>
+                </div>
+              </div>
+
+              <!-- Fecha Final -->
+              <div class="input-group-custom">
+                <label for="fecha_fin" class="input-label-custom">Fecha Final</label>
+                <div class="input-with-icon">
+                  <input type="text" id="fecha_fin" class="datepicker custom-text-input" placeholder="yyyy-mm-dd">
+                  <i class="material-icons input-calendar-icon">event</i>
+                </div>
+              </div>
+
+              <!-- Tipo de Transacción (Checklist) -->
+              <div class="input-group-custom">
+                <label class="input-label-custom">Tipo de Transacción</label>
+                <div class="tipo-transaccion-container">
+                  <label class="custom-checkbox-row">
+                    <input type="checkbox" id="tTraslado" checked />
+                    <span>Traslados</span>
+                  </label>
+                  <label class="custom-checkbox-row">
+                    <input type="checkbox" id="tVenta" checked />
+                    <span>Pedidos/Facturas</span>
+                  </label>
+                  <label class="custom-checkbox-row">
+                    <input type="checkbox" id="tFactura" checked />
+                    <span>Compras</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Nº Documento -->
+              <div class="input-group-custom">
+                <label for="pDocumento" class="input-label-custom">Cod. Articulo</label>
+                <input type="text" id="pDocumento" class="custom-text-input" placeholder="Nº Documento"
+                  onchange="aplicarEstilosTabla()">
+              </div>
+
+              <!-- Nº Traslado -->
+              <div class="input-group-custom">
+                <label for="pTaslado" class="input-label-custom">Nº Traslado</label>
+                <input type="text" id="pTaslado" class="custom-text-input" placeholder="Nº Traslado"
+                  onchange="aplicarEstilosTabla()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Caja derecha: Criterio de Búsqueda de Movimientos -->
+          <div class="filter-box filter-box-right">
+            <span class="box-title-legend">Criterio de Búsqued de Movimientos:</span>
+            <div class="movimientos-instruction">Seleccione el tipo de movirnto a buscar:</div>
+
+            <div class="movimientos-options">
+              <label class="btn-checkbox-mov">
+                <input type="checkbox" id="tEntrada" checked />
+                <div class="mov-check-square">✓</div>
+                <span class="mov-text-label">ENTRADAS</span>
+              </label>
+
+              <label class="btn-checkbox-mov">
+                <input type="checkbox" id="tSalida" checked />
+                <div class="mov-check-square">✓</div>
+                <span class="mov-text-label">SALIDAS</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: CLASIFICACIONES (IMAGEN 2) -->
+      <div id="tabContentClasificaciones" class="tab-pane">
+        <div class="clasificaciones-card">
+
+
+          <div class="clasificaciones-grid">
+            <!-- Fila 1: Clase -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="clase-todas" checked
+                    onchange="habilitaclase(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">Clase</span>
+              </div>
+              <select id="claseReporte" class="browser-default clasif-select-custom"
+                onchange="cargarClasificacionesMarca()">
+                <option value="" disabled selected>Seleccionar Clase</option>
+              </select>
+            </div>
+
+            <!-- Fila 1: Marca -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="marca-todas" checked
+                    onchange="habilitamarca(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">Marca</span>
+              </div>
+              <select id="marcaReporte" class="browser-default clasif-select-custom"
+                onchange="cargarClasificacionesTipo()">
+                <option value="" disabled selected>Seleccionar Marca</option>
+              </select>
+            </div>
+
+            <!-- Fila 1: Tipo -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="tipo-todas" checked onchange="habilitatipo(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">Tipo</span>
+              </div>
+              <select id="tipoReporte" class="browser-default clasif-select-custom"
+                onchange="cargarClasificacionesVenta()">
+                <option value="" disabled selected>Seleccionar Tipo</option>
+              </select>
+            </div>
+
+            <!-- Fila 2: Ventas -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="ventas-todas" checked
+                    onchange="habilitaVenta(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">Ventas</span>
+              </div>
+              <select id="ventasReporte" class="browser-default clasif-select-custom"
+                onchange="cargarClasificacionesEnvase()">
+                <option value="" disabled selected>Seleccionar Ventas</option>
+              </select>
+            </div>
+
+            <!-- Fila 2: Envase -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="envase-todas" checked
+                    onchange="habilitaEnvase(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">Envase</span>
+              </div>
+              <select id="envaseReporte" class="browser-default clasif-select-custom"
+                onchange="cargarClasificacionesSeis()">
+                <option value="" disabled selected>Seleccionar Envase</option>
+              </select>
+            </div>
+
+            <!-- Fila 2: 6 -->
+            <div class="clasif-item">
+              <div class="clasif-header-row">
+                <label class="clasif-toggle-wrapper">
+                  <input type="checkbox" id="seis-todas" checked onchange="habilitaSeis(); limpiarResultadoGeneral();">
+                  <span class="onoff-switch"><span class="onoff-slider"></span></span>
+                  <span class="toggle-label-text">Todas</span>
+                </label>
+                <span class="clasif-name">6</span>
+              </div>
+              <select id="seisReporte" class="browser-default clasif-select-custom">
+                <option value="" disabled selected>Seleccionar 6</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTÓN BUSCAR (CENTRAL/PROMINENTE) -->
+      <div class="search-action-container">
+        <button id="btnBuscar" class="btn-buscar-gradient" type="button" onclick="validaBusqueda()">
+          <span>Buscar</span>
+          <i class="material-icons">search</i>
+        </button>
+      </div>
+
+      <!-- BARRA DE RESULTADOS & EXPORTACIONES -->
+      <div class="results-control-bar">
+        <div class="total-registros-title">
+          Total de Registros: <span id="lblTotalRegistros">0</span>
+        </div>
+
+        <div class="export-buttons-group">
+          <button id="btnDescargarExcel" class="btn-exportar" type="button" onclick="descargarExcel()">
+            <img src="img/excel.png" alt="Excel" class="export-icon-img"
+              onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732220.png'">
+            <span class="export-btn-label">Descargar Excel</span>
+          </button>
+          <button id="btnDescargarPDF" class="btn-exportar" type="button" onclick="descargarPDF()">
+            <img src="img/pdf.png" alt="PDF" class="export-icon-img"
+              onerror="this.src='https://cdn-icons-png.flaticon.com/512/337/337946.png'">
+            <span class="export-btn-label">Descargar PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="tblDetallestrasladosVerif" class="tabla-transacciones">
+          <thead id="theadDetallestrasladosVerif">
+            <!-- Encabezados dinámicos generados a partir de los datos del SP -->
+          </thead>
+          <tbody id="busqueda_result">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PANEL DE TOTALES -->
+      <div id="totalesContainer" class="totales-summary-panel" style="display: none;">
+        <div class="total-stat-item">
+          <span class="total-stat-title">Cant. Contadas:</span>
+          <span id="txtCantContada" class="total-stat-value">0.00</span>
+        </div>
+        <div class="total-stat-item">
+          <span class="total-stat-title">Cant. Verificadas:</span>
+          <span id="txtCantVerificada" class="total-stat-value">0.00</span>
+        </div>
+        <div class="total-stat-item">
+          <span class="total-stat-title">Total Entradas:</span>
+          <span id="txtTotalEntradas" class="total-stat-value val-entradas">0.00</span>
+        </div>
+        <div class="total-stat-item">
+          <span class="total-stat-title">Total Salidas:</span>
+          <span id="txtTotalSalidas" class="total-stat-value val-salidas">0.00</span>
+        </div>
+      </div>
+
+      <!-- PAGINADOR -->
+      <div id="resultadoPaginador" class="paginador-custom"></div>
+    </div>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
+  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
+  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
+  <script type="text/javascript" src="js/detalletransaccionesverificados.js?v2.0"></script>
+</body>
+
+</html>

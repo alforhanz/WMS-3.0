@@ -3,135 +3,215 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-  <!--Import Materialize Icons-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/main.css?v2.01" media="screen,projection" />
-  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-
-  <!-- FONTS -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap');
-  </style>
-  <!-- FONTS -->
-
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen de Conteo de Inventario - WMS</title>
+
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <script src="js/encabezadoconteoinvent.js" type="text/javascript"></script>
 
-  <!-- <meta name="theme-color" content=""> -->
-  <title>Resumen de Conteo de Inventario- WMS</title>
+  <style>
+    /* Contenedor principal del filtro: tamaño compacto y centrado */
+    .filtro-resumen-centrado {
+      max-width: 380px;
+      margin: 0 auto 20px auto;
+      width: 100%;
+    }
 
+    .filtro-resumen-centrado .filter-box {
+      padding: 14px 18px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .observaciones-caja {
+      width: 100%;
+      min-height: 60px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #1e293b;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+
+    .btn-export-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .btn-export-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn-export-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-export-pill img {
+      width: 16px;
+      height: 16px;
+    }
+
+    @media screen and (max-width: 639px) {
+      .filtro-resumen-centrado {
+        max-width: 100%;
+      }
+
+      .results-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .btn-export-group {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+      }
+
+      .tabla-compacta-movil th,
+      .tabla-compacta-movil td {
+        padding: 6px 4px !important;
+        font-size: 9.5px !important;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
+
   <main>
+    <!-- Modal Loader Global -->
     <div id="contenedorLoader"></div>
-    <div id="resultadoBusqueda">
-      <!-- <div id="carga" style="margin-top: -7px;"></div> -->
-      <div id="carga" class="carga-style"></div>
-      <div class="container">
 
-        <!-- Fecha -->
-        <div class="input-field col s4">
-          <select id="fecha_ini">
-          </select>
-          <!-- <label for="fecha_ini" style="color: #4CAF50; top: -36px">Fecha</label> -->
-          <label for="fecha_ini" class="inventario-fecha-estilo">Fecha</label>
-        </div>
+    <div class="vista-wrapper">
 
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver</span>
+        </button>
+      </div>
 
-        <div class="row btnReportes">
-          <!-- Contenedor del botónes -->
-          <div class="btn-container-conteo">
-            <button type="button" id="btnResumenGeneral" class="btn-guardar-conteo" onclick="resumenGeneral()">
-              Mostrar Resumen<i class="material-icons right">send</i></button>
-            <div class="row btnReportes">
-              <div class="col s12">
-                <div class="btn-container-conteo">
-                  <!-- Botón de Excel (ícono en formato PNG) -->
-                  <div class="impexcel">
-                    <button id="btnDescargarExcel" class="btn-descarga" onclick="descargarExcel()" hidden>
-                      <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
-                    </button>
-                    <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel" hidden>Descargar Excel</label>
-                  </div>
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">RESUMEN DE CONTEO DE INVENTARIO</h1>
 
-                  <!-- Botón de PDF (ícono en formato PNG) -->
-                  <div class="imppdf">
-                    <button id="btnDescargarPDF" class="btn-descarga" onclick="descargarPDF()" hidden>
-                      <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-                    </button>
-                    <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf" hidden>Descargar PDF</label>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <!-- PANEL DE FILTRO COMPACTO Y CENTRADO -->
+      <div class="filtro-resumen-centrado">
+        <div class="filter-box">
+          <span class="box-title-legend">Criterios de Consulta</span>
+
+          <!-- Selector de Fecha de Inventario -->
+          <div class="input-group-custom" style="margin-bottom: 0;">
+            <label for="fecha_ini" class="input-label-custom">Fecha de Inventario</label>
+            <select id="fecha_ini" class="browser-default custom-text-input" style="cursor: pointer; height: 38px; width: 100%;">
+              <option value="" disabled selected>Cargando fechas...</option>
+            </select>
           </div>
         </div>
-        <!-- <div id="tabla-resumen" class="col s12" style="overflow: hidden;"> -->
-        <div id="tabla-resumen" class="col s12">
-          <label id="cantidadDeRegistros"></label>
-          <div class="row">
-            <div id="resultadoGeneral"></div>
-            <table id="myTableresumen" class="display centered">
-              <thead></thead>
-              <tbody id="tblbodyRersumen">
-                <tr>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="resumen-paginador">
-          <div id="pagination" class="invPagination"></div>
-          <!-- Los botones de paginación se agregarán aquí dinámicamente -->
+
+        <!-- Botón de Consulta Centrado con llamado a resumen() -->
+        <div class="search-action-container" style="margin-top: 10px; margin-bottom: 5px;">
+          <button type="button" id="btnResumenGeneral" class="btn-buscar-gradient" onclick="resumen()" style="width: 100%; max-width: 100%;">
+            <span>Mostrar Resumen</span>
+            <i class="material-icons right">send</i>
+          </button>
         </div>
       </div>
-    </div>
-    </div>
-    <!-- <div class="row" id="observaciones-container" style="display:none;"> -->
-    <div class="row obs-container" id="observaciones-container">
-      <div class="input-field col s12">
-        <label id="lblObservaciones" for="observaciones">Observaciones</label>
-        <textarea placeholder="Observaciones" id="observaciones" type="text"></textarea>
+
+      <!-- BARRA DE RESULTADOS Y EXPORTACIONES -->
+      <div class="results-control-bar" style="margin-top: 10px;">
+        <div id="resultadoGeneral" class="total-registros-title">
+          <span id="cantidadDeRegistros">Cantidad de registros: 0</span>
+        </div>
+
+        <div class="btn-export-group">
+          <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="resumen_descargarExcel()" hidden>
+            <img src="img/excel.png" alt="Excel">
+            <span id="lblExcel">Descargar Excel</span>
+          </button>
+          <button id="btnDescargarPDF" class="btn-export-pill" type="button" onclick="resumen_descargarPDF()" hidden>
+            <img src="img/pdf.png" alt="PDF">
+            <span id="lblPDF">Descargar PDF</span>
+          </button>
+        </div>
       </div>
+
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="myTableresumen" class="tabla-transacciones tabla-compacta-movil">
+          <thead>
+            <!-- Cabeceras generadas dinámicamente por conteoDeInventario.js -->
+          </thead>
+          <tbody id="tblbodyRersumen">
+            <!-- Filas inyectadas dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINADOR ESTÁNDAR -->
+      <div id="pagination"></div>
+
+      <!-- OBSERVACIONES -->
+      <div id="observaciones-container" style="margin-top: 20px;">
+        <label for="observaciones" class="input-label-custom">Observaciones</label>
+        <textarea placeholder="Ingrese observaciones del resumen..." id="observaciones" class="observaciones-caja"></textarea>
+      </div>
+
     </div>
   </main>
 
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!-- <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script> -->
-  <!--JavaScript at end of body for optimized loading-->
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- Bibliotecas Excel y PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/conteoDeInventario.js" defer></script>
-  <!-- Incluir la biblioteca de XLSX -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-  <!-- Incluir la biblioteca de jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/conteoDeInventario.js?v=4.2" defer></script>
 </body>
 
 </html>

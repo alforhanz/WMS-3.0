@@ -1,11 +1,5 @@
 const Host = localStorage.getItem("Host");
 
-// const env = {
-//   ENVIRONMENT: "development",
-//   API_URL: "http://192.168.3.8:8097/", 
-//   API_IMAGE: "http://192.168.3.8:8097/" + "image",
-// };
-
 const env = {
   ENVIRONMENT: "development",
   API_URL: "http://200.124.12.146:8097/", 

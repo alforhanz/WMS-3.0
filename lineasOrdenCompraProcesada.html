@@ -3,132 +3,274 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-  <!--Import Materialize Icons-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/main.css?v2.01" media="screen,projection" />
-  <!-- FONTS -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&family=Roboto&display=swap');
-  </style>
-  <!-- FONTS -->
-  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Líneas de Orden de Compra Procesada - WMS</title>
+
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
   <script src="js/encabezado.js" type="text/javascript"></script>
 
-  <!-- <meta name="theme-color" content=""> -->
-  <title>Lineas de orden de compras procesadas- WMS</title>
+  <style>
+    /* ========================================================
+       PANELES SUPERIORES COMPACTOS Y CENTRADOS (LAPTOPS / PC)
+       ======================================================== */
+    .top-panels-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      max-width: 920px;
+      margin: 0 auto 20px auto;
+      align-items: stretch;
+    }
 
+    .header-info-panel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      margin-bottom: 0;
+    }
+
+    .header-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info-label {
+      font-size: 10.5px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 13.5px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .filter-box-compact {
+      margin-bottom: 0 !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px 16px !important;
+    }
+
+    .box-cambio-bodega {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .input-bodega-wrap {
+      flex: 1;
+      max-width: 320px; /* Tamaño controlado para evitar que se estire */
+    }
+
+    .observaciones-caja {
+      width: 100%;
+      min-height: 60px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #1e293b;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+
+    .mensajes-caja {
+      width: 100%;
+      min-height: 90px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 10px;
+      color: #991b1b;
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+      margin-top: 15px;
+    }
+
+    .action-buttons-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn-action-item {
+      min-width: 160px !important;
+      width: auto !important;
+      box-shadow: none !important;
+      padding: 0 16px !important;
+      height: 38px !important;
+      line-height: 38px !important;
+    }
+
+    /* Adaptación en caso de abrir en móviles */
+    @media screen and (max-width: 768px) {
+      .top-panels-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+
+      .input-bodega-wrap {
+        max-width: 100%;
+      }
+
+      .box-cambio-bodega {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .action-buttons-wrapper {
+        flex-direction: column;
+      }
+
+      .btn-action-item {
+        width: 100% !important;
+      }
+
+      .tabla-compacta-movil th,
+      .tabla-compacta-movil td {
+        padding: 6px 4px !important;
+        font-size: 9.5px !important;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
+
   <main>
+    <!-- Modal Loader Global -->
     <div id="contenedorLoader"></div>
-    <div id="resultadoBusqueda">
-      <!-- <div id="carga" style="margin-top: -7px;"></div> -->
-      <div id="carga" class="carga-style"></div>
-      <div class="container">
 
-        <!-- <h2 style="text-align:center ; text-transform: uppercase;">Detalle de la orden de compra</h2> -->
-        <h2 class="titulo">Detalle de la orden de compra</h2>
-        <div class="row"><label id="OrdenDeCompra"></label></div>
-        <div class="row"><label id="bodega_solicita"></label></div>
+    <div class="vista-wrapper">
 
-        <!-- Seleccionar la bodega de destino de la OC -->
-        <label id="lbl_bodega_destino" for="bodegaSelectOC">Cambiar bodega de destino</label>
-        <!-- <div class="row" style="display: flex; align-items: center;"> -->
-        <div class=" bodega-destino-container row">
-          <div class="col-md-6">
-            <select id="bodegaSelectOC" class="browser-default">
-              <option value="" disabled selected>Seleccione una bodega</option>
-            </select>
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="confirmaDevolver()">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver a Procesadas</span>
+        </button>
+      </div>
+
+      <h1 class="titulo-principal">DETALLE DE ORDEN DE COMPRA PROCESADA</h1>
+
+      <!-- PANELES SUPERIORES COMPACTOS Y CENTRADOS -->
+      <div class="top-panels-grid">
+        
+        <!-- Panel 1: Info Documento y Embarque -->
+        <div class="header-info-panel">
+          <div class="header-info-item">
+            <span class="info-label">Orden de Compra</span>
+            <span class="info-value" id="OrdenDeCompra">Cargando...</span>
           </div>
-          <!-- <div class="col-md-6" style="margin-left: 1em;"> -->
-          <div class="margen col-md-6">
-            <button class="btn waves-effect waves-light" id="bodegaButtonOC" onclick="validaCambioBodegaDestino()">
-              Aplicar
-              <i class="material-icons right">send</i>
+          <div class="header-info-item">
+            <span class="info-label">Embarque</span>
+            <span class="info-value" id="bodega_solicita">Cargando...</span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Cambiar Bodega de Destino (Ancho Reducido) -->
+        <div class="filter-box filter-box-compact">
+          <span class="box-title-legend">Cambiar Bodega de Destino</span>
+          <div class="box-cambio-bodega">
+            <div class="input-group-custom input-bodega-wrap">
+              <label for="bodegaSelectOC" class="input-label-custom">Seleccione Nueva Bodega</label>
+              <select id="bodegaSelectOC" class="browser-default custom-text-input" style="cursor: pointer; height: 38px;">
+                <option value="" disabled selected>Cargando bodegas...</option>
+              </select>
+            </div>
+            <button id="bodegaButtonOC" class="btn-buscar-gradient btn-action-item" type="button" onclick="validaCambioBodegaDestino()">
+              <span>Aplicar</span>
+              <i class="material-icons right" style="font-size: 18px;">done</i>
             </button>
           </div>
         </div>
-        <div class="row">
-          <ul id="tabs-swipe-demo" class="tabs">
-            <li class="tab col s3"><a class="active" href="#tabla-verificacion">VERFICACIÓN</a></li>
-          </ul>
-          <div id="tabla-verificacion" class="col s12">
-            <label id="cantidadDeRegistros"> Registros:</label>
-            <div class="row">
-              <div id="resultadoGeneral"></div>
-              <table id="myTableVerificacion" class="display centered">
-                <thead>
-                  <tr class="themeColor">
-                    <th>ARTICULO</th>
-                    <th id="codigoBarrasHeader">COD</th>
-                    <th>CANT</th>
-                    <th>CANT LEIDA</th>
-                    <th>VERIF</th>
-                    <th hidden>DEL</th>
-                  </tr>
-                </thead>
-                <tbody id="tblbodyLineasOrdenDeCompra">
-                  <tr>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
 
-        <div class="row" id="observaciones-container">
-          <div class="input-field col s12">
-            <label id="lblObservaciones" for="observaciones">Observaciones</label>
-            <textarea placeholder="Observaciones" id="observaciones" type="text"></textarea>
-          </div>
+      </div>
+
+      <!-- BARRA DE RESULTADOS -->
+      <div class="results-control-bar" style="margin-top: 5px;">
+        <div class="total-registros-title" id="cantidadDeRegistros">
+          Cantidad de registros: 0
         </div>
-        <!-- Tabla de resultados para listado de pedidos -->
-        <!-- Cierre de tabla de resultados para listado de pedidos -->
       </div>
-    </div>
-    <!--Text area para los mensajes-->
-    <div id="mensajes" class="container">
-      <div class="centered col s12">
-        <textarea id="mensajeText"></textarea>
-        <label id="mensaje" for="mensajeText">Mensajes:</label>
+
+      <!-- TABLA DE VERIFICACIÓN -->
+      <div class="grid-table-responsive">
+        <table id="myTableVerificacion" class="tabla-transacciones tabla-compacta-movil">
+          <thead>
+            <tr>
+              <th style="width: 36%; text-align: left;">Artículo</th>
+              <th style="width: 24%;">Código</th>
+              <th style="width: 14%;">Cant. Sol.</th>
+              <th style="width: 14%;">Cant. Verif.</th>
+              <th style="width: 12%;">Estado</th>
+              <th style="display: none;">DEL</th>
+            </tr>
+          </thead>
+          <tbody id="tblbodyLineasOrdenDeCompra">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
       </div>
+
+      <!-- Observaciones -->
+      <div id="observaciones-container" style="margin-top: 20px;">
+        <label for="observaciones" class="input-label-custom">Observaciones</label>
+        <textarea placeholder="Sin observaciones registradas..." id="observaciones" class="observaciones-caja"></textarea>
+      </div>
+      <!-- Mensajes e Incidencias -->
+      <div id="mensajes" style="margin-top: 20px;">
+        <label for="mensajeText" class="input-label-custom">Mensajes del Proceso:</label>
+        <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay incidencias registradas..."></textarea>
+      </div>
+
     </div>
-    <!--Fin Text area para los mensajes-->
   </main>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!-- <script type="text/javascript" src="js/impBarCode.js?v1.1" defer></script> -->
-  <!--JavaScript at end of body for optimized loading-->
+
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/lineasOCProcesadas.js?v1.1" defer></script>
-  <!--JavaScript local-->
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/lineasOCProcesadas.js?v=4.2" defer></script>
 </body>
 
 </html>

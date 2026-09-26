@@ -1,12 +1,12 @@
-﻿/////////////////////////////////////////////////////////////////////
+﻿
+/////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 //Variable global que contiene el detalle del pedido
 var detallePedidoList = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   let usuario = document.getElementById("hUsuario").value;
-  console.log("hUsuario:", usuario);
-  //localStorage.setItem('UserID',usuario);
+  console.log("DOM cargado exitosamente...:", usuario);
   //--------------------------------------------------------------------------
   if (localStorage.getItem("documento")) {
     var documento = localStorage.getItem("documento");
@@ -20,29 +20,47 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location = "index.html";
   }
 });
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function cargarDetallePedido(documento, pedido, estado) {
   // Concatena la variable con texto y asigna el valor al label documento y pedido
-  document.getElementById("documento").innerHTML = "Documento: " + documento;
-  document.getElementById("pedido").innerHTML = "Pedido: " + pedido;
-  document.getElementById("estadoPedido").innerHTML = "Estado: " + estado;
+  const elDocumento = document.getElementById("documento");
+  const elPedido = document.getElementById("pedido");
+  const elEstado = document.getElementById("estadoPedido");
+
+  if(elDocumento) elDocumento.textContent = documento;
+  if(elPedido) elPedido.textContent = pedido;
+  if(elEstado) {
+      elEstado.textContent = estado;
+      // Estilo condicional para el badge de estado
+      if(estado === 'Pendiente' || estado === 'F' || estado === 'Facturado') {
+          elEstado.classList.remove('active');
+          elEstado.style.background = '#fef08a'; // Amarillo claro
+          elEstado.style.color = '#854d0e'; // Texto oscuro
+      }
+  }
 
   const pPedido = pedido; //Se asigna el número del peddido a una variable constante para pasarlo como parametro
   const params = "?pPedido=" + pPedido;
-
+  
+  if (typeof mostrarLoader === "function") mostrarLoader("Cargando detalle...");
+  
   fetch(env.API_URL + "wmsverificacionpedidos/D" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
       if (result.msg === "SUCCESS") {
         if (result.lineaspedido.length != 0) {
+
+          console.log(result);
           detallePedidoList = result.lineaspedido;
           armarTablaVerificacion(detallePedidoList);
           // Verificar si todas las cantidades verificadas tienen un valor
           const siGuardadoParcial = detallePedidoList.some(
             (detalle) =>
               detalle.CANTIDAD_VERIFICADA != null &&
-              detalle.CANTIDAD_VERIFICADA !== ""
+              detalle.CANTIDAD_VERIFICADA !== "" &&
+              parseFloat(detalle.CANTIDAD_VERIFICADA) > 0
           );
 
           if (siGuardadoParcial) {
@@ -50,16 +68,24 @@ function cargarDetallePedido(documento, pedido, estado) {
             armarTablaLectura(detallePedidoList);
           }
         }
-        document.getElementById("carga").innerHTML = "";
+        
+        if (typeof ocultarLoader === "function") ocultarLoader();
       }
+    })
+    .catch((error) => {
+        console.error("Error al cargar detalle:", error);
+        if (typeof ocultarLoader === "function") ocultarLoader();
     });
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function armarTablaLectura(detallePedidoList) {
   var tbody = document.getElementById("tblbodyLectura");
   var estadoPreparacion = localStorage.getItem("EstadoPreparacion");
   var empresa = detallePedidoList[0].CIA; // Supongo que la empresa es la misma para todos los detalles
+
+  if (!tbody) return;
 
   tbody.innerHTML = "";
 
@@ -77,21 +103,21 @@ function armarTablaLectura(detallePedidoList) {
       var onclick = disabled ? "" : 'onclick="eliminarFila(this)"';
 
       newRow.innerHTML = `
+        <td class="cell-center">
+            <span style="font-weight: 600; color: #1e293b;">${detalle.ARTICULO}</span>
+        </td>
         <td>
-            <span>${detalle.ARTICULO}</span>
-        </td>
-        <td class="codigo-barras-cell">
-            <input id="codigo-barras" type="text" class="codigo-barras-input" value="${
+            <input type="text" class="codigo-barras-input" value="${
               detalle.CODIGO_BARRA || ""
-            }" onchange="validarCodigoBarras(this)" autofocus ${disabled}>
+            }" onchange="validarCodigoBarras(this)" autofocus ${disabled} autocomplete="off">
         </td>
-        <td class="codigo-barras-cell2">
-            <input id="cant-pedida" type="text" class="codigo-barras-input" value="${
+        <td>
+            <input type="text" class="codigo-barras-input" value="${
               detalle.CANTIDAD_VERIFICADA || ""
-            }" onchange="guardarTablaEnArray(this)" style="text-align: center;" ${disabled}>
+            }" onchange="guardarTablaEnArray(this)" ${disabled} autocomplete="off">
         </td>
-        <td class="codigo-barras-cell2">
-            <i class="material-icons red-text" style="cursor: ${cursor};" ${onclick}>clear</i>
+        <td class="cell-center">
+            <i class="material-icons" style="cursor: ${cursor}; color: #ef4444; font-size: 20px;" ${onclick}>delete</i>
         </td>
       `;
       tbody.appendChild(newRow);
@@ -101,20 +127,20 @@ function armarTablaLectura(detallePedidoList) {
   guardarTablaEnArray();
   crearNuevaFila();
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 /////////VALIDA EL CODIGO LEIDO EN LA PESTAÑA LECTURA//////////////////
 function validarCodigoBarras(input) {
   var pedidoList = detallePedidoList;
-  console.log("Lineas Pedido");
-  console.log(pedidoList);
-  const codbarra = input.value.toUpperCase(); // Convertir a mayúsculas
+  console.log("Lineas Pedido", pedidoList);
+  const codbarra = input.value.trim().toUpperCase(); // Convertir a mayúsculas
+
+  if(codbarra === "") return;
 
   const row = input.closest("tr");
-  const firstTd = row.querySelector("td:first-child");
-  const span = firstTd.querySelector("span");
-  const siguienteTd = row.querySelector(".codigo-barras-cell2");
-  const cantFila = siguienteTd.querySelector(".codigo-barras-input");
+  const span = row.cells[0].querySelector("span"); 
+  const cantFila = row.cells[2].querySelector("input");
 
   var codigoValido = false;
 
@@ -151,12 +177,8 @@ function validarCodigoBarras(input) {
   }
 
   if (!codigoValido) {
-    // Borrar el contenido de la celda COD
-    const codigoBarrasCell = row.querySelector(".codigo-barras-cell");
-    const codigoBarrasInput = codigoBarrasCell.querySelector(
-      ".codigo-barras-input"
-    );
-    codigoBarrasInput.value = "";
+    // Borrar el contenido de la celda
+    input.value = "";
 
     Swal.fire({
       icon: "warning",
@@ -166,39 +188,41 @@ function validarCodigoBarras(input) {
     });
   }
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 ///// Funcion que crea la nueva fila en la pestaña lectura ////////////
-
 function crearNuevaFila() {
   const tableBody = document.querySelector("#tblbodyLectura");
 
+  if(!tableBody) return;
+
   const nuevaFilaHTML = `<tr>
-        <td class="sticky-column" style="user-select: none;"> 
-            <span display: inline-block;"></span>
+        <td class="cell-center" style="user-select: none;"> 
+            <span style="font-weight: 600; color: #1e293b;"></span>
         </td>
-        <td class="codigo-barras-cell">
-            <input type="text" id="codigo-barras" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus>
+        <td>
+            <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
         </td>
-            <td class="codigo-barras-cell2"><input id="cant-pedida" type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)" style="text-align: center";>
+        <td>
+            <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)" autocomplete="off">
         </td>
-        <td class="codigo-barras-cell2">
-            <i class="material-icons red-text" style="cursor: pointer;" onclick="eliminarFila(this)">clear</i>
+        <td class="cell-center">
+            <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
         </td>
     </tr>`;
 
   tableBody.insertAdjacentHTML("beforeend", nuevaFilaHTML);
 
   // Obtén el último campo de entrada en la columna COD de la nueva fila
-  const nuevoCodigoBarrasInput = tableBody.querySelector(
-    "tr:last-child .codigo-barras-input"
-  );
+  const nuevoCodigoBarrasInput = tableBody.lastElementChild.cells[1].querySelector("input");
 
   // Establece el enfoque en el último campo de entrada
   if (nuevoCodigoBarrasInput) {
     nuevoCodigoBarrasInput.focus();
   }
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 ///////////vALIDA LO QUE SE LEE CONTRA EL PEDIDO./////////
@@ -206,29 +230,34 @@ function validarCantidadPedida() {
   //Llamado a guardar datos en la variable arrray en el LS
   guardarTablaEnArray();
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 function guardarTablaEnArray() {
   var dataArray = [];
 
   var table = document.getElementById("myTableLectura");
+  if(!table) return dataArray;
+  
   var rows = table.getElementsByTagName("tr");
 
   for (var i = 1; i < rows.length; i++) {
     // Comenzamos desde 1 para omitir la fila de encabezado
     var row = rows[i];
-    var cells = row.getElementsByTagName("td");
-    //aqui se seleccionan los elemendos de las columnas de la tabla lectura
+    
+    // Saltamos filas que pudieran estar en mal estado
+    if(row.cells.length < 3) continue;
 
-    var articulo = cells[0].querySelector("span").textContent.trim();
-    var codigoBarraInput = cells[1].querySelector(".codigo-barras-input");
-    var cantidadLeidaInput = cells[2].querySelector(".codigo-barras-input");
+    var spanArticulo = row.cells[0].querySelector("span");
+    var articulo = spanArticulo ? spanArticulo.textContent.trim() : "";
+    
+    var codigoBarraInput = row.cells[1].querySelector("input");
+    var cantidadLeidaInput = row.cells[2].querySelector("input");
 
-    var codigoBarra = codigoBarraInput.value;
-
-    var cantidadLeida = parseFloat(cantidadLeidaInput.value);
+    var codigoBarra = codigoBarraInput ? codigoBarraInput.value : "";
+    var cantidadLeida = cantidadLeidaInput ? parseFloat(cantidadLeidaInput.value) : NaN;
+    
     // Verificar si los valores no son nulos ni vacíos antes de almacenarlos
-
     if (articulo !== null && articulo !== "" && !isNaN(cantidadLeida)) {
       var rowData = {
         ARTICULO: articulo,
@@ -246,6 +275,7 @@ function guardarTablaEnArray() {
 
   return dataArray;
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 ///////////////////////FUNCION QUE AGRUPA EL DATA ARRAY CON LAS LECTURAS DEL PEDIDO////////////////////
@@ -285,12 +315,12 @@ function agrupar() {
   // Actualizar el arreglo en localStorage con los resultados consolidados
   localStorage.setItem("dataArray", JSON.stringify(newArray));
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // Funcion que elimina filas en la pestaña lectura
 function eliminarFila(icon) {
   var row = icon.closest("tr");
-  //var articuloEliminado = row.querySelector('.sticky-column').innerText.trim();
 
   // Mostrar un SweetAlert antes de eliminar la fila
   Swal.fire({
@@ -305,8 +335,8 @@ function eliminarFila(icon) {
     if (result.isConfirmed) {
       // Verificar si la fila está vacía
       var isEmptyRow = true;
-      var cells = row.querySelectorAll(".codigo-barras-input");
-      var artic = row.querySelector;
+      var cells = row.querySelectorAll("input");
+      
       cells.forEach(function (cell) {
         if (cell.value.trim() !== "") {
           isEmptyRow = false;
@@ -315,120 +345,103 @@ function eliminarFila(icon) {
 
       // Elimina la fila solo si no está vacía
       if (isEmptyRow) {
-        // Llamar función que guarda artículos en la tabla
-        var dataFromTable = guardarTablaEnArray();
-
         Swal.fire({
           icon: "warning",
-          title: "Está intentando borrar una fila vacia",
+          title: "Fila Vacía",
+          text: "Está intentando borrar una fila vacía",
           confirmButtonText: "Cerrar",
           confirmButtonColor: "#28a745",
         });
       } else {
         row.remove();
 
-        // Después de eliminar la fila, establecer el enfoque en el último campo de entrada en la columna COD
+        // Después de eliminar la fila, establecer el enfoque en el último campo de entrada
         const tableBody = document.querySelector("#tblbodyLectura");
-        const ultimoCodigoBarrasInput = tableBody.querySelector(
-          "tr:last-child .codigo-barras-input"
-        );
-
-        // Establecer el enfoque en el último campo de entrada
-        if (ultimoCodigoBarrasInput) {
-          ultimoCodigoBarrasInput.focus();
+        if(tableBody && tableBody.lastElementChild) {
+            const ultimoCodigoBarrasInput = tableBody.lastElementChild.cells[1].querySelector("input");
+            if (ultimoCodigoBarrasInput) {
+              ultimoCodigoBarrasInput.focus();
+            }
         }
-        // Llamar a la función para actualizar filas eliminadas con el artículo eliminado como parámetro
+        
+        // Actualizar la memoria
         guardarTablaEnArray();
       }
     }
   });
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 ///FUNCION QUE ARMA LA TABLA DE LA PESTAÑA VERIFICACION
 function armarTablaVerificacion(detallePedidoList) {
-  // Obtener la referencia del cuerpo de la tabla
   var tbody = document.getElementById("tblbodyVerificacion");
 
-  // Limpiar el contenido actual del cuerpo de la tabla
+  if (!tbody) return;
   tbody.innerHTML = "";
 
-  // Obtener la referencia del label cantidadDeRegistros
   var cantidadDeRegistrosLabel = document.getElementById("cantidadDeRegistros");
-  // Actualizar el texto del label con la cantidad de registros
-  cantidadDeRegistrosLabel.textContent =
-    "Cantidad de registros: " + detallePedidoList.length;
+  if(cantidadDeRegistrosLabel) {
+      cantidadDeRegistrosLabel.textContent = "Cantidad de registros: " + detallePedidoList.length;
+  }
 
-  // Iterar sobre cada elemento en detallePedidoList
   detallePedidoList.forEach(function (detalle) {
-    // Crear una nueva fila
     var newRow = document.createElement("tr");
 
-    // Construir el contenido de la fila usando variables HTML
     newRow.innerHTML = `
-            <td id="articulo"><h5 id="verifica-articulo"><span class="blue-text text-darken-2">${
-              detalle.ARTICULO
-            }</span></h5><h6>${detalle.DESCRIPCION}</h6></td>
-            <td id="codigoDeBarras">${detalle.CODIGO_BARRA || ""}</td>
-            <td id="cantidadPedida">${
+            <td id="articulo" style="text-align: left;">
+              <div class="cell-articulo-box">
+                <span id="verifica-articulo" class="cell-articulo-code" style="color: #0284c7;">${detalle.ARTICULO}</span>
+                <span class="cell-articulo-desc">${detalle.DESCRIPCION}</span>
+              </div>
+            </td>
+            <td id="codigoDeBarras" class="cell-center">${detalle.CODIGO_BARRA || ""}</td>
+            <td id="cantidadPedida" class="cell-number">${
               isNaN(parseFloat(detalle.CANTIDAD_PEDIDA))
-                ? 0
+                ? "0.00"
                 : parseFloat(detalle.CANTIDAD_PEDIDA).toFixed(2)
             }</td>
-            <td id="cantidadLeida"></td> <!-- Cantidad leída, inicialmente en blanco -->
-            <td id="verificado"></td> 
-            <td id="articulosEliminado" hidden>${
-              detalle.ARTICULO_ELIMINADO
-            }</td> 
+            <td id="cantidadLeida" class="cell-number"></td>
+            <td id="verificado" class="cell-center"></td> 
+            <td id="articulosEliminado" style="display: none;">${detalle.ARTICULO_ELIMINADO}</td> 
         `;
-    // Agregar la fila al cuerpo de la tabla
     tbody.appendChild(newRow);
   });
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//Funcion que limpia el area de mensajes de error
 function limpiarMensajes() {
   localStorage.removeItem("mensajes");
   const mensajeTextArea = document.getElementById("mensajeText");
-  mensajeTextArea.value = "";
-  // Limpiar la variable 'mensajes' del localStorage
+  if(mensajeTextArea) mensajeTextArea.value = "";
+  
   guardarTablaEnArray();
 }
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//FUNCION QUE VERIFICA LAS COINCIDENCIAS,TOMA LOS VALORES DE LAS CANTIDADES
-// POR ARTICULO, COMPARA LO QUE TIENE EL ARRAY DEL LS Y VERIFICA LAS COINCIDENCIAS, PARA MOSTRARLO EN LA PESTAÑA VERIFICACION
 function verificacion() {
-  var dataArray = JSON.parse(localStorage.getItem("dataArray"));
-  // Obtener la tabla por su ID
+  var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
   const tabla = document.getElementById("myTableVerificacion");
 
-  // Verificar si la tabla existe
   if (tabla) {
-    // Obtener el tbody de la tabla
     const tbody = tabla.querySelector("tbody");
 
-    // Buscar todas las filas (tr) dentro del tbody
-    const filas = tbody.querySelectorAll("tr");
-
-    // Iterar a través de las filas
-    filas.forEach((fila) => {
-      // Encontrar la celda con el id "cantidadLeida" y vaciar su contenido
-      const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
-      const verifcheck = fila.querySelector("#verificado");
-      if (cantidadLeidaCell) {
-        cantidadLeidaCell.textContent = ""; // Vacía el contenido de la celda
-      }
-
-      if (verifcheck) {
-        verifcheck.textContent = ""; // Vacía el contenido de la celda
-      }
-    });
+    if(tbody) {
+        const filas = tbody.querySelectorAll("tr");
+        filas.forEach((fila) => {
+          const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
+          const verifcheck = fila.querySelector("#verificado");
+          if (cantidadLeidaCell) cantidadLeidaCell.textContent = ""; 
+          if (verifcheck) verifcheck.textContent = ""; 
+        });
+    }
   }
 
   var cantidadesTotales = {};
   var resultadoArray = [];
+  
   dataArray.forEach(function (item) {
     var articulo = item.ARTICULO;
     var cantidad = item.CANTIDAD_LEIDA;
@@ -454,14 +467,13 @@ function verificacion() {
 
   var pedidoList = detallePedidoList;
   const mensajesArray = [];
-  let contadorMensajes = 1; // Contador para los mensajes
+  let contadorMensajes = 1; 
 
   resultadoArray.forEach((resultado) => {
     const pedido = pedidoList.find(
       (pedido) =>
         pedido.ARTICULO === resultado.ARTICULO &&
-        parseFloat(pedido.CANTIDAD_PEDIDA) ===
-          parseFloat(resultado.CANTIDAD_LEIDA)
+        parseFloat(pedido.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
     );
 
     if (pedido) {
@@ -471,23 +483,21 @@ function verificacion() {
         const filas = tbody.querySelectorAll("tr");
 
         filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("h5");
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
+          const celdaARTICULO = fila.querySelector("#verifica-articulo");
+          if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
             const celdaVerificado = fila.querySelector("#verificado");
             if (celdaVerificado) {
               celdaVerificado.textContent = "";
               const spanVerificacion = document.createElement("span");
               spanVerificacion.classList.add("material-icons");
               spanVerificacion.textContent = "done_all";
-              spanVerificacion.style.color = "green";
+              spanVerificacion.style.color = "#16a34a"; // Verde moderno
+              spanVerificacion.style.fontSize = "22px";
               celdaVerificado.appendChild(spanVerificacion);
             }
             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
             if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+              cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
             }
           }
         });
@@ -499,41 +509,33 @@ function verificacion() {
         const filas = tbody.querySelectorAll("tr");
 
         filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("h5");
-          if (
-            celdaARTICULO &&
-            celdaARTICULO.textContent === resultado.ARTICULO
-          ) {
+          const celdaARTICULO = fila.querySelector("#verifica-articulo");
+          if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
             const celdaVerificado = fila.querySelector("#verificado");
             const cantPedida = fila.querySelector("#cantidadPedida");
             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
 
-            if (
-              parseFloat(resultado.CANTIDAD_LEIDA) >
-              parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion =
-                "+" +
-                (
-                  resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-                ).toString();
+            if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
+              var resultadoOperacion = "+" + (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
               celdaVerificado.textContent = resultadoOperacion;
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es mayor a la solicitada.`;
+              celdaVerificado.style.color = "#dc2626"; // Rojo alerta
+              celdaVerificado.style.fontWeight = "bold";
+              
+              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MAYOR a la solicitada.`;
               mensajesArray.push(mensaje);
-              contadorMensajes++; // Incrementar el contador
-            } else if (
-              resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)
-            ) {
-              var resultadoOperacion = (
-                resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)
-              ).toString();
+              contadorMensajes++; 
+            } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
+              var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
               celdaVerificado.textContent = resultadoOperacion;
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es menor a la solicitada.`;
+              celdaVerificado.style.color = "#ea580c"; // Naranja alerta
+              celdaVerificado.style.fontWeight = "bold";
+              
+              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MENOR a la solicitada.`;
               mensajesArray.push(mensaje);
-              contadorMensajes++; // Incrementar el contador
+              contadorMensajes++; 
             }
             if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = resultado.CANTIDAD_LEIDA;
+              cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
             }
           }
         });
@@ -541,170 +543,122 @@ function verificacion() {
       }
     }
   });
+  
   activaDevolverArticulo();
-  //inicializarBotones();
 
   const estadoPedidoElement = document.getElementById("estadoPedido");
-  const estadoPedidoText = estadoPedidoElement.textContent;
+  const estadoPedidoText = estadoPedidoElement ? estadoPedidoElement.textContent : "";
   const estadoPedidoParts = estadoPedidoText.split(":");
-  const estadoPedido =
-    estadoPedidoParts.length > 1 ? estadoPedidoParts[1].trim() : "";
+  const estadoPedido = estadoPedidoParts.length > 1 ? estadoPedidoParts[1].trim() : estadoPedidoText.trim();
+    
   const procesarHabilitado = todasLasFilasVerificadas();
   const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
   const guardarParcialHabilitado = activaGuardadoParcial();
-  // const btnGuardar = document.getElementById('btnGuardar');
-  // const btnProcesar = document.getElementById('btnProcesar');
-  // const btnRegresar = document.getElementById('btnRegresar');
 
-  if (pedidofinalizado === "true") {
+  // Controlar Visibilidad de Botones
+  const btnGuardar = document.getElementById("btnGuardar");
+  const btnProcesar = document.getElementById("btnProcesar");
+  const btnRegresar = document.getElementById("btnRegresar");
+
+  if (pedidofinalizado === "true" || pedidofinalizado === true) {
     if (guardarParcialHabilitado) {
-      const btnGuardar = document.getElementById("btnGuardar");
-      console.log("activa bonton guardar");
-      btnGuardar.removeAttribute("hidden");
+      if(btnGuardar) btnGuardar.removeAttribute("hidden");
     } else {
-      btnGuardar.setAttribute("hidden", "hidden");
+      if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
     }
-    if (procesarHabilitado && estadoPedido === "F") {
-      const btnProcesar = document.getElementById("btnProcesar");
-      console.log("activa btn Procesar");
-      btnProcesar.removeAttribute("hidden");
+    
+    if (procesarHabilitado && (estadoPedido === "F" || estadoPedido === "Facturado")) {
+      if(btnProcesar) btnProcesar.removeAttribute("hidden");
     } else {
-      btnGuardar.removeAttribute("hidden");
-      btnProcesar.setAttribute("hidden", "hidden");
+      if(btnGuardar) btnGuardar.removeAttribute("hidden");
+      if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
     }
   } else {
-    const btnRegresar = document.getElementById("btnRegresar");
-    console.log("activa btn regresar");
-    btnRegresar.removeAttribute("hidden");
+    // Modo Solo Lectura/Visualización (Pedidos no finalizados/facturados)
+    if(btnRegresar) btnRegresar.removeAttribute("hidden");
+    if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+    if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
   }
-
-  // if (guardarParcialHabilitado) {
-  //   btnGuardar.setAttribute('hidden', 'hidden');
-  // } else {
-  //   btnGuardar.removeAttribute('hidden');
-  // }
-
-  // if (procesarHabilitado && estadoPedido === 'F') {
-  //   btnProcesar.removeAttribute('hidden');
-  // } else {
-  //   btnProcesar.setAttribute('hidden', 'hidden');
-  // }
-
-  // if (pedidofinalizado) {
-  //   btnRegresar.setAttribute('hidden', 'hidden');
-  // } else {
-  //   btnRegresar.removeAttribute('hidden');
-  // }
-} //Fin de verificacion
+} 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Función para verificar si todas las filas tienen el ícono "fa-check" en la columna "CANT VERIF", Y ACTIVAR EL BOTON DE PROCESAR
+// Función para verificar si todas las filas tienen el ícono "fa-check" 
 function todasLasFilasVerificadas() {
-  // Obtener todas las filas de la tabla de verificación
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
+  
+  if (filas.length === 0) return false;
 
   for (let i = 0; i < filas.length; i++) {
-    const fila = filas[i];
+    const celdaCantidadVerif = filas[i].querySelector("td#verificado");
+    if(!celdaCantidadVerif) return false;
 
-    // Obtener la celda de "CANT VERIF" en la fila actual
-    const celdaCantidadVerif = fila.querySelector("td#verificado");
+    const iconoVerificacion = celdaCantidadVerif.querySelector("span.material-icons");
 
-    // Verificar si la celda contiene el ícono "done_all"
-    const iconoVerificacion = celdaCantidadVerif.querySelector(
-      "span.material-icons"
-    );
-
-    // Si no se encuentra el ícono "done_all" en la celda, retornar falso
     if (!iconoVerificacion || iconoVerificacion.textContent !== "done_all") {
       return false;
     }
   }
-
-  // Si todas las celdas contienen el ícono "done_all", retornar verdadero
   return true;
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//FUNCION QUE VERIFICA LAS CANTIDASDES LEIDAS Y DEL PEDIDO PÁRA ACTIVAR EL BOTON DE GUARDADO PARCIAL
 function activaGuardadoParcial() {
-  // Obtener todas las filas de la tabla de verificación
   const filas = document.querySelectorAll("#myTableVerificacion tbody tr");
 
   for (let i = 0; i < filas.length; i++) {
-    const fila = filas[i];
+    const celdaCantidadPedida = filas[i].querySelector("td#cantidadPedida");
+    const celdaCantidadLeida = filas[i].querySelector("td#cantidadLeida");
 
-    // Obtener las celdas de "CANT PEDIDA" y "CANT LEIDA" en la fila actual
-    const celdaCantidadPedida = fila.querySelector("td#cantidadPedida");
-    const celdaCantidadLeida = fila.querySelector("td#cantidadLeida");
+    if(!celdaCantidadPedida || !celdaCantidadLeida) continue;
 
-    // Verificar si la cantidad leída es mayor que la cantidad pedida en al menos una fila
-    if (
-      parseFloat(celdaCantidadLeida.textContent) >
-      parseFloat(celdaCantidadPedida.textContent)
-    ) {
-      // Si encontramos una fila donde la cantidad leída es mayor, retornamos true
+    const valLeida = parseFloat(celdaCantidadLeida.textContent) || 0;
+    const valPedida = parseFloat(celdaCantidadPedida.textContent) || 0;
+
+    if (valLeida > valPedida) {
       return true;
     }
   }
-  // Si ninguna fila tiene cantidad leída mayor que cantidad pedida, retornamos false
   return false;
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-// //////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Función para mostrar los mensajes almacenados en el localStorage en el textarea
 function mostrarMensajesLocalStorage() {
   const mensajesStorage = localStorage.getItem("mensajes");
+  const textarea = document.getElementById("mensajeText");
+  
+  if(!textarea) return;
+  
+  textarea.value = ""; 
+  
   if (mensajesStorage) {
     const mensajes = JSON.parse(mensajesStorage);
-    const textarea = document.getElementById("mensajeText");
-    // Limpiar el textarea antes de agregar nuevos mensajes
-    textarea.value = "";
-    // Agregar cada mensaje al textarea
     for (let i = 0; i < mensajes.length; i++) {
-      textarea.value += mensajes[i] + "\n"; // Agregar el mensaje y un salto de línea
+      textarea.value += mensajes[i] + "\n"; 
     }
   }
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-// Llama a la función mostrarMensajesLocalStorage cuando se hace clic en la pestaña "Verificación"
-document
-  .querySelector('a[href="#tabla-verificacion"]')
-  .addEventListener("click", mostrarMensajesLocalStorage);
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'btnTabVerificacion') {
+      mostrarMensajesLocalStorage();
+  }
+});
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 window.onload = function () {
-  //inicializarBotones();
   guardarTablaEnArray();
 };
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-function mostrarProcesoEnConstruccion() {
-  Swal.fire({
-    title: "Proceso en Construcción",
-    text: "Esta funcionalidad está en construcción.",
-    icon: "info",
-    confirmButtonText: "Salir",
-    confirmButtonColor: "#28a745",
-    //cancelButtonColor: "#6e7881",
-  });
-}
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Funcion de confirmación del guardado parcial
 function confirmarGuardadoParcial() {
   Swal.fire({
     icon: "info",
-    title: "¿Desea continuar con el guardado parcial del pedido?",
+    title: "¿Desea guardar parcialmente el pedido?",
     showCancelButton: true,
-    confirmButtonText: "Continuar",
+    confirmButtonText: "Guardar",
     cancelButtonText: "Cancelar",
-    confirmButtonColor: "#28a745",
-    //cancelButtonColor: "#6e7881",
+    confirmButtonColor: "#0284c7", // Azul info
   }).then((result) => {
     if (result.isConfirmed) {
       guardaParcialMente();
@@ -714,101 +668,72 @@ function confirmarGuardadoParcial() {
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//FUNCION DE GUARDADO PARCIAL
 function guardaParcialMente() {
-  //var dataArray = JSON.parse(localStorage.getItem('dataArray'));
   let pUsuario = document.getElementById("hUsuario").value;
-  // document.getElementById('hUsuario').value;
   var pConsecutivoPed = localStorage.getItem("pedidoSelect");
-  //var detalleCantidad = parseFloat(document.querySelector('#myTableVerificacion tbody tr:first-child td:nth-child(3)').innerText);
   var pBodega = document.getElementById("bodega").value;
 
-  // Array para almacenar todas las cantidades y artículos
   var detalles = [];
   localStorage.removeItem("mensajes");
-  // Iterar sobre todas las filas de la tabla
 
-  // Obtener la tabla
   let table = document.getElementById("myTableVerificacion");
+  if(!table) return;
 
-  // Iterar sobre las filas de la tabla (excluyendo el encabezado)
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
 
-    // Obtener el valor del artículo
-    let articulo = row
-      .querySelector("#verifica-articulo span")
-      .textContent.trim();
+    let objArticulo = row.querySelector("#verifica-articulo");
+    let articulo = objArticulo ? objArticulo.textContent.trim() : "";
 
-    // Obtener la cantidad pedida
-    let cantidadPedida = row
-      .querySelector("#cantidadPedida")
-      .textContent.trim();
+    let objCantidadPedida = row.querySelector("#cantidadPedida");
+    let cantidadPedida = objCantidadPedida ? objCantidadPedida.textContent.trim() : "0";
 
-    // Obtener la cantidad leída
-    let cantidadLeida =
-      row.querySelector("#cantidadLeida").textContent.trim() || 0;
+    let objCantidadLeida = row.querySelector("#cantidadLeida");
+    let cantidadLeida = objCantidadLeida ? objCantidadLeida.textContent.trim() || 0 : 0;
 
-    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
-    var detalle = {
+    detalles.push({
       ARTICULO: articulo,
       CANT_CONSEC: cantidadPedida,
       CANT_LEIDA: cantidadLeida,
-    };
-
-    // Agregar el objeto al array
-    detalles.push(detalle);
+    });
   }
-  // Convertir el array de objetos a formato JSON
+  
   var jsonDetalles = JSON.stringify(detalles);
 
   const params =
-    "?pUsuario=" +
-    pUsuario +
-    "&pConsecutivoPed=" +
-    pConsecutivoPed +
-    "&jsonDetalles=" +
-    jsonDetalles +
-    "&pBodega=" +
-    pBodega;
+    "?pUsuario=" + pUsuario +
+    "&pConsecutivoPed=" + pConsecutivoPed +
+    "&jsonDetalles=" + jsonDetalles +
+    "&pBodega=" + pBodega;
 
   fetch(env.API_URL + "wmsguardadopedidos/G" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
       if (result.msg === "SUCCESS") {
-        if (result.pedidoguardado.length != 0) {
-          // Resto del código de éxito
           Swal.fire({
             icon: "success",
             title: "Datos guardados correctamente",
             confirmButtonText: "Aceptar",
             confirmButtonColor: "#28a745",
-            //cancelButtonColor: "#6e7881",
           }).then((result) => {
             if (result.isConfirmed) {
-              // Redirecciona a tu otra vista aquí
               localStorage.setItem("autoSearchPedidos", "true");
-              window.location.href = "verificacionDePedidos.html";
+              //window.location.href = "verificacionDePedidos.html";
             }
           });
-        }
-      } else {
       }
     });
-} //fin fn
+}
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//Funcion de confirmación de procesar pedido
 function confirmaProcesar() {
   Swal.fire({
     icon: "warning",
-    title: "¿Desea procesar el pedido?",
+    title: "¿Desea procesar el pedido de manera definitiva?",
     showCancelButton: true,
-    confirmButtonText: "Continuar",
+    confirmButtonText: "Procesar",
     cancelButtonText: "Cancelar",
     confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6e7881",
   }).then((result) => {
     if (result.isConfirmed) {
       procesar();
@@ -817,83 +742,54 @@ function confirmaProcesar() {
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-//FUNCION DE Procesar el pedido
 function procesar() {
   let pUsuario = document.getElementById("hUsuario").value;
-  // document.getElementById('hUsuario').value;
   var pConsecutivoPed = localStorage.getItem("pedidoSelect");
   var pBodega = document.getElementById("bodega").value;
-  // Array para almacenar todas las cantidades y artículos
   var detalles = [];
 
-  // Iterar sobre todas las filas de la tabla
-  // Obtener la tabla
   let table = document.getElementById("myTableVerificacion");
+  if(!table) return;
 
-  // Iterar sobre las filas de la tabla (excluyendo el encabezado)
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
 
-    // Obtener el valor del artículo
-    let articulo = row
-      .querySelector("#verifica-articulo span")
-      .textContent.trim();
+    let objArticulo = row.querySelector("#verifica-articulo");
+    let articulo = objArticulo ? objArticulo.textContent.trim() : "";
 
-    // Obtener la cantidad pedida
-    let cantidadPedida = row
-      .querySelector("#cantidadPedida")
-      .textContent.trim();
+    let objCantidadPedida = row.querySelector("#cantidadPedida");
+    let cantidadPedida = objCantidadPedida ? objCantidadPedida.textContent.trim() : "0";
 
-    // Obtener la cantidad leída
-    let cantidadLeida =
-      row.querySelector("#cantidadLeida").textContent.trim() || 0;
+    let objCantidadLeida = row.querySelector("#cantidadLeida");
+    let cantidadLeida = objCantidadLeida ? objCantidadLeida.textContent.trim() || 0 : 0;
 
-    // Crear un objeto para cada fila con las propiedades ARTICULO y CANTCONSEC
-    var detalle = {
+    detalles.push({
       ARTICULO: articulo,
       CANT_CONSEC: cantidadPedida,
       CANT_LEIDA: cantidadLeida,
-    };
-
-    // Agregar el objeto al array
-    detalles.push(detalle);
+    });
   }
 
-  // Convertir el array de objetos a formato JSON
   var jsonDetalles = JSON.stringify(detalles);
 
   const params =
-    "?pUsuario=" +
-    pUsuario +
-    "&pConsecutivoPed=" +
-    pConsecutivoPed +
-    "&jsonDetalles=" +
-    jsonDetalles +
-    "&pBodega=" +
-    pBodega;
+    "?pUsuario=" + pUsuario +
+    "&pConsecutivoPed=" + pConsecutivoPed +
+    "&jsonDetalles=" + jsonDetalles +
+    "&pBodega=" + pBodega;
 
   fetch(env.API_URL + "wmsguardadopedidos/P" + params, myInit)
     .then((response) => response.json())
     .then((result) => {
-      console.log("RESPUESTA DEL SP\n");
-      console.log(result.pedidoprocesado[0]);
-      console.log(result.pedidoprocesado[0].RegistrosActualizados);
-      console.log(result.pedidoprocesado[0].RegistrosInsertados);
-      console.log(result.pedidoprocesado[0].Respuesta);
-
       if (result.msg === "SUCCESS") {
         Swal.fire({
-          icon: "warning",
-          title: "Procesado con exito",
+          icon: "success", // Cambiado a 'success' para mejor Feedback
+          title: "Procesado con éxito",
           text: `${result.pedidoprocesado[0].Respuesta}`,
-          showCancelButton: true,
-          confirmButtonText: "Continuar",
-          cancelButtonText: "Cancelar",
+          confirmButtonText: "Finalizar",
           confirmButtonColor: "#28a745",
-          cancelButtonColor: "#6e7881",
         }).then((result) => {
           if (result.isConfirmed) {
-            // Redirecciona a tu otra vista aquí
             localStorage.setItem("autoSearchPedidos", "true");
             window.location.href = "verificacionDePedidos.html";
           }
@@ -902,76 +798,51 @@ function procesar() {
         Swal.fire({
           icon: "error",
           title: "Error al procesar el pedido",
-          showCancelButton: true,
-          confirmButtonText: "Continuar",
-          cancelButtonText: "Cancelar",
-          confirmButtonColor: "#28a745",
-          cancelButtonColor: "#6e7881",
+          confirmButtonText: "Cerrar",
+          confirmButtonColor: "#ef4444",
         });
       }
     });
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Función que activa el Ícono para devolver un artículo eliminado del pedido
 function activaDevolverArticulo() {
-  // Obtener la tabla por su ID
   var table = document.getElementById("tblbodyVerificacion");
-  // Iterar a través de las filas de la tabla (ignorando la fila de encabezado)
+  if(!table) return;
   for (var i = 0; i < table.rows.length; i++) {
-    // Obtener el valor de la columna "ARTICULO" en cada fila
-    var articulo = table.rows[i].cells[0]
-      .querySelector("h5#verifica-articulo span")
-      .innerText.trim();
-
-    // Obtener el valor de la columna "articulosEliminado" en cada fila
-    var valorEliminado = table.rows[i].cells[5].innerText.trim(); // Ajuste aquí, acceder a la sexta celda
+    var celdaEliminado = table.rows[i].cells[5];
+    if(!celdaEliminado) continue;
+    
+    var valorEliminado = celdaEliminado.innerText.trim();
 
     if (valorEliminado.toUpperCase() === "S") {
-      // Obtener el valor de la columna "ARTICULO" en cada fila
-      var articulo = table.rows[i].cells[0]
-        .querySelector("h5#verifica-articulo span")
-        .innerText.trim();
-      // Colocar el span con el ícono en la columna "VERIF" con evento onclick
-      // table.rows[i].cells[4].innerHTML = '<span class="material-symbols-outlined" style="cursor: pointer;" onclick="devolverArticulo(\'' + articulo + '\')">reply_all</span>';
+      var objArticulo = table.rows[i].cells[0].querySelector("#verifica-articulo");
+      var articulo = objArticulo ? objArticulo.innerText.trim() : "";
+      
       table.rows[i].cells[4].innerHTML =
-        '<i class="material-icons" style="color: #FF0000; cursor: pointer;" onclick="devolverArticulo(\'' +
+        '<i class="material-icons" style="color: #ef4444; cursor: pointer; font-size: 22px;" onclick="devolverArticulo(\'' +
         articulo +
-        "')\">reply</i>";
-    } else {
-      // Si no ha sido eliminado, puedes realizar alguna otra acción si es necesario
+        "')\">settings_backup_restore</i>";
     }
   }
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Función para devolver un artículo eliminado del pedido
 function devolverArticulo(articulo) {
   let table = document.getElementById("myTableVerificacion");
   let pPedido = localStorage.getItem("pedidoSelect");
   let pArticulo = articulo;
 
-  // Mostrar mensaje con swal.fire
-  swal
-    .fire({
+  swal.fire({
       title: "Devolver Artículo",
-      text:
-        "¿Estás seguro de devolver el artículo " +
-        pArticulo +
-        " del pedido número " +
-        pPedido +
-        "?",
+      text: "¿Estás seguro de devolver el artículo " + pArticulo + " del pedido número " + pPedido + "?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Sí, devolver",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#28a745",
-      cancelButtonColor: "#6e7881",
     })
     .then((result) => {
-      // Si se hace clic en "Sí, devolver"
       if (result.isConfirmed) {
         const params = "?pPedido=" + pPedido + "&pArticulo=" + pArticulo;
 
@@ -981,32 +852,18 @@ function devolverArticulo(articulo) {
             if (result.msg === "SUCCESS") {
               if (result.articulodevuelto.length != 0) {
                 Swal.fire({
-                  icon: "warning",
-                  title: "Articulo Devuelto con exito",
-                  showCancelButton: true,
+                  icon: "success",
+                  title: "Artículo Devuelto con éxito",
                   confirmButtonText: "Continuar",
-                  cancelButtonText: "Cancelar",
                   confirmButtonColor: "#28a745",
-                  cancelButtonColor: "#6e7881",
                 });
-                // Iterar a través de las filas de la tabla (ignorando la fila de encabezado)
                 for (var i = 1; i < table.rows.length; i++) {
-                  var articuloEnFila = table.rows[i].cells[0]
-                    .querySelector("h5#verifica-articulo span")
-                    .innerText.trim();
+                  var objArticuloFila = table.rows[i].cells[0].querySelector("#verifica-articulo");
+                  var articuloEnFila = objArticuloFila ? objArticuloFila.innerText.trim() : "";
 
-                  // Verificar si el artículo en la fila coincide con el artículo a devolver
                   if (articuloEnFila === articulo) {
-                    // Eliminar la fila
                     table.deleteRow(i);
-
-                    // Mostrar mensaje de éxito
-                    swal.fire(
-                      "Éxito",
-                      "Artículo devuelto correctamente.",
-                      "success"
-                    );
-                    break; // Salir del bucle después de eliminar la fila
+                    break; 
                   }
                 }
               }
@@ -1014,11 +871,8 @@ function devolverArticulo(articulo) {
               Swal.fire({
                 icon: "error",
                 title: "Error al procesar el pedido",
-                showCancelButton: true,
-                confirmButtonText: "Continuar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#6e7881",
+                confirmButtonText: "Cerrar",
+                confirmButtonColor: "#ef4444",
               });
             }
           });
@@ -1027,10 +881,8 @@ function devolverArticulo(articulo) {
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-///////FUNCION PARA Retornar a la vista anterior//////
 function confirmaRegresar() {
   localStorage.setItem("autoSearchPedidos", "true");
   localStorage.removeItem("mensajes");
-  //localStorage.clear();
   window.location.href = "verificacionDePedidos.html";
 }

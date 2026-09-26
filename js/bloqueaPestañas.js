@@ -1,6 +1,4 @@
 (function () {
-
-  console.log("Se bloqueo la pestaña")
   // Identificador único para la pestaña actual
   if (!sessionStorage.getItem('tab_instance_id')) {
     sessionStorage.setItem('tab_instance_id', Date.now().toString());
@@ -22,7 +20,6 @@
 
     // Si la respuesta de bloqueo es para esta pestaña, la bloqueamos
     if (type === 'TAB_ALREADY_OPEN' && recipientId === tabId) {
-      window.console("bloqueo")
       bloquearPestana();
     }
   };

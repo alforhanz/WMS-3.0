@@ -1,82 +1,197 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="utf-8"> 
-    <!--Let browser know website is optimized for mobile-->
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Expires" content="0">
   <meta http-equiv="Last-Modified" content="0">
   <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
-  <!--Import Materialize Icons-->
+
+  <!-- Iconos y Fuentes -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">  
-  <!-- custom css -->
-  <link type="text/css" rel="stylesheet" href="css/loginStyle.css" media="screen,projection" />  
-  <link rel="icon" type="image/x-icon" href="./img/wms.ico">  
-  <title>Login-WMS</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <link rel="icon" type="image/x-icon" href="./img/wms.ico">
+  <title>Acceso al Sistema - WMS</title>
+
+  <style>
+    /* Diseño Profesional del Login */
+    body#login {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 0%, #2a3f54 0%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .auth-wrapper {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      z-index: 10;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 40px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-logo img {
+      max-width: 180px;
+      height: auto;
+    }
+
+    .input-field {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .input-field i.prefix {
+      color: #94a3b8;
+      transition: color 0.3s;
+    }
+
+    .input-field input[type=text]:focus+label,
+    .input-field input[type=password]:focus+label {
+      color: #1b676b !important;
+    }
+
+    .input-field input[type=text]:focus,
+    .input-field input[type=password]:focus {
+      border-bottom: 2px solid #1b676b !important;
+      box-shadow: 0 1px 0 0 #1b676b !important;
+    }
+
+    .input-field input:focus~i.prefix {
+      color: #1b676b;
+    }
+
+    .visibility-icon {
+      position: absolute;
+      right: 0;
+      top: 12px;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: color 0.2s;
+    }
+
+    .visibility-icon:hover {
+      color: #1e293b;
+    }
+
+    .remember-container {
+      margin-bottom: 30px;
+    }
+
+    .remember-container label span {
+      color: #475569;
+      font-size: 13px;
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #1b676b 0%, #134f52 100%);
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(27, 103, 107, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(135deg, #165356 0%, #0e3b3d 100%);
+      box-shadow: 0 6px 15px rgba(27, 103, 107, 0.4);
+      transform: translateY(-2px);
+    }
+  </style>
 </head>
 
-<body id="login" class="white" tabindex="-1">
-  <main class="centerMainClass">
-    <!-- <div class="container"> -->
-  <div class="login-box">
-    <div class="respConteClass">
-      <div class="row"> 
-        <form class="login-form">         
-          <div class="row">
-            <div class="input-field col s12 center">
-              <img src="img/Logo2.png" alt="Imagen de encabezado" class="imgLogin">
-            </div>
-          </div>
-          <div class="row margin">
-            <div class="input-field user-box col s12">
-              <i class="material-icons prefix">person</i>
-              <input id="username" type="text" name="username" class="validate" required="required" />
-              <label for="username">Usuario</label>
-            </div>
-          </div>
-          <div class="row margin">
-            <div class="input-field user-box col s12">
-              <i class="material-icons prefix">lock</i>             
-              <input id="password" type="password" name="password" class="validate" required="required" class="relative-position"/>
-              <span><i id="Mostrar" class="material-icons visibility-icon">visibility</i></span>
-              <label for="password">Contraseña</label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s12 m12 l12 login-text">
-              <label id="label-login">
-                <input type="checkbox" name="remember-me" id="remember-me" />
-                <span>Recordar</span>
-              </label>
-            </div>
-          </div>
-          <br>
-          <br>
-          <a href="#" class="login-text" onclick="login()" >
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            INGRESAR
-        </a>      
-        </form>
-      </div>
-    </div>
-  </div>
-  </main>
+<body id="login">
 
-  <!--JavaScript CDN'S-->
-  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js" defer></script> -->
-  <!-- Reemplazar la versión vieja por la versión actualizada -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9" defer></script>
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <img src="img/Logo2.png" alt="WMS Logo" onerror="this.style.display='none'">
+        <h5 style="color: #1e293b; font-weight: 700; margin-top: 10px;">Acceso al WMS</h5>
+      </div>
+
+      <form class="login-form" onsubmit="event.preventDefault(); login();">
+
+        <div class="input-field">
+          <i class="material-icons prefix">person</i>
+          <input id="username" type="text" name="username" required autocomplete="username" />
+          <label for="username">Usuario</label>
+        </div>
+
+        <div class="input-field">
+          <i class="material-icons prefix">lock</i>
+          <input id="password" type="password" name="password" required autocomplete="current-password" />
+          <i id="Mostrar" class="material-icons visibility-icon" title="Mostrar/Ocultar contraseña">visibility</i>
+          <label for="password">Contraseña</label>
+        </div>
+
+        <div class="remember-container">
+          <label>
+            <input type="checkbox" name="remember-me" id="remember-me" class="filled-in" />
+            <span>Recordar mis credenciales</span>
+          </label>
+        </div>
+
+        <button type="button" class="btn-login" onclick="login()">
+          INGRESAR AL SISTEMA
+        </button>
+      </form>
+    </div>
+  </main>
+  
+
   <!-- Scripts -->
-  <script type="text/javascript" src="js/environment.js?v1.0" defer></script>
-  <script type="text/javascript" src="js/master.js?v2.0"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Controladores locales -->
+  <script type="text/javascript" src="js/environment.js?v=4.1"></script>
+  <script type="text/javascript" src="js/master.js?v=4.1"></script>
+  <script src="js/version-checker.js?v=4.1"></script>
+  <!-- Script del Footer -->
+ 
 </body>
+
 </html>

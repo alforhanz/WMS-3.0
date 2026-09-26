@@ -2,181 +2,311 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Import Materialize Icons-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!-- ESTRUCTURA DE LAS PAGINAS -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Operativo - WMS</title>
 
-    <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
-    <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/homestyle.css?v2.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-    <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-    <!-- FONTS -->
-    <script src="js/encabezado.js" type="text/javascript"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
 
-        /* CSS PERSONALIZADO PARA LOOK POWER BI */
-        :root {
-            /* --bg-dark: #d7e1eb; */
-            /* --card-bg: #2a3f54; */
-            --bg-dark: #eaeef3;
-            --card-bg: #2a3f54;
-            --accent-teal: #008080;
-            --text-main: #ffffff;
-            --text-dim: #b4d0f0;
-        }
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
-        }
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
+  <script src="js/encabezado.js?v=4.2" type="text/javascript"></script>
 
-        /* Small only */
-        @media screen and (max-width: 39.9375em) {
-            #bodega_sucursales {
-                width: 80%;
-                top: 20px !important;
-                left: 38px !important;
-                max-height: 100% !important;
-                margin-left: 3px !important;
-            }
-        }
+  <style>
+    /* ========================================================
+       ESTILOS DEL DASHBOARD EMPRESARIAL
+       ======================================================== */
+    .dash-kpis-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
 
-        /* Medium and up */
-        @media screen and (min-width: 40em) {}
+    .kpi-card-modern {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-        /* Medium only */
-        @media screen and (min-width: 40em) and (max-width: 63.9375em) {}
+    .kpi-card-modern:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
 
-        /* Large and up */
-        @media screen and (min-width: 64em) {}
+    .kpi-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
 
-        /* Large only */
-        @media screen and (min-width: 64em) and (max-width: 74.9375em) {}
-    </style>
-    <title>Dash1</title>
+    .kpi-details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .kpi-title {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      color: #1e293b;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* Cuadrículas de Gráficos */
+    .dash-charts-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .dash-charts-grid-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .chart-card-modern {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-card-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1e293b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+
+    .chart-canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 220px;
+      width: 100%;
+    }
+
+    #mapPanama {
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      border-radius: 6px;
+    }
+
+    @media screen and (max-width: 1100px) {
+      .dash-kpis-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dash-charts-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dash-charts-grid-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media screen and (max-width: 639px) {
+      .dash-kpis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dash-charts-grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-canvas-wrap {
+        min-height: 200px;
+      }
+    }
+  </style>
 </head>
 
-<body>
-    <my-header></my-header>
-    <main class="container-fluid dashBody">
-        <div id="contenedorLoader"></div>
-        <div id="resultadoBusqueda">
-            <div class="row">
-                <div class="col s12 m3 l3">
-                    <div class="kpi-card">
-                        <i class="material-icons">assignment</i>
-                        <div class="kpi-title">Pedidos del Día</div>
-                        <div class="kpi-value" id="kpi_pedidos">1.2K</div>
-                    </div>
-                </div>
-                <div class="col s12 m3 l3">
-                    <div class="kpi-card">
-                        <i class="material-icons">assignment</i>
-                        <div class="kpi-title">Pedidos del Día</div>
-                        <div class="kpi-value" id="kpi_pedidos">1.2K</div>
-                    </div>
-                </div>
-                <div class="col s12 m3 l3">
-                    <div class="kpi-card">
-                        <i class="material-icons">speed</i>
-                        <div class="kpi-title">% Eficiencia Picking</div>
-                        <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
-                    </div>
-                </div>
-                <div class="col s12 m3 l3">
-                    <div class="kpi-card">
-                        <i class="material-icons">priority_high</i>
-                        <div class="kpi-title">Pendientes Críticos</div>
-                        <div class="kpi-value" id="kpi_pendientes">128</div>
-                    </div>
-                </div>
-            </div>
+<body id="home" tabindex="-1">
+  <my-header></my-header>
 
+  <main>
+    <div id="contenedorLoader"></div>
 
+    <div class="vista-wrapper" style="max-width: 1380px;">
 
-            <div class="row ">
-                <div class="col s12 m3">
-                    <div class="chart-container">
-                        <div class="chart-title">Estado de Pedidos (Flujo)</div>
-                        <canvas id="chartStatus"></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m3">
-                    <div class="chart-container">
-                        <div class="chart-title">Ocupación de Bodega por Zona</div>
-                        <canvas id="chartZonas"></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m3">
-                    <div class="chart-container">
-                        <div class="chart-title">Traslados</div>
-                        <canvas id="chartProductividad" class="graphProductividad "></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m3">
-                    <div class="chart-container">
-                        <div class="chart-title">Despachos</div>
-                        <canvas id="eficienciaPicking" class="graphProductividad "></canvas>
-                    </div>
-                </div>
-            </div>
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal" style="margin-bottom: 20px;">DASHBOARD OPERATIVO DE BODEGA</h1>
 
-
-
-            <div class="row ">
-                <div class="col s12 m3">
-                    <div class="chart-container avance-pedidos">
-                        <div class="chart-title">Transacciones</div>
-                        <canvas id="chartArticulos" class="graphArticulos "></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m3">
-                    <div class="chart-container avance-contenedores">
-                        <div class="chart-title">Avance de Contenedores</div>
-                        <canvas id="chartContenedores" class="graphContenedores "></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="chart-container mapaSucursales ">
-                        <div class="chart-title">Ubicación de Bodegas y Cobertura Nacional</div>
-                        <div id="mapPanama"></div>
-                    </div>
-                </div>
-            </div>
+      <!-- 1. BLOQUE DE KPIS SUPERIORES -->
+      <div class="dash-kpis-grid">
+        
+        <!-- KPI 1: Pedidos del Día -->
+        <div class="kpi-card-modern">
+          <div class="kpi-icon-circle" style="background: linear-gradient(135deg, #0284c7, #0369a1);">
+            <i class="material-icons">assignment</i>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-title">Pedidos del Día</span>
+            <span class="kpi-value" id="kpi_pedidos">1,240</span>
+          </div>
         </div>
-    </main>
 
+        <!-- KPI 2: Total Unidades / Artículos -->
+        <div class="kpi-card-modern">
+          <div class="kpi-icon-circle" style="background: linear-gradient(135deg, #1b676b, #0e4b4f);">
+            <i class="material-icons">inventory_2</i>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-title">Unidades Picking</span>
+            <span class="kpi-value" id="kpi_items">15,480</span>
+          </div>
+        </div>
 
-    <!-- IMprimir Código de barra -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script type="text/javascript" src="js/dash1.js?v2.1"></script>
-    <script type="text/javascript" src="js/main.js?v2.1" defer></script>
-    <script type="text/javascript" src="js/menu.js?v2.1" defer></script>
-    <script type="text/javascript" src="js/loader.js"></script>
+        <!-- KPI 3: Eficiencia Picking -->
+        <div class="kpi-card-modern">
+          <div class="kpi-icon-circle" style="background: linear-gradient(135deg, #16a34a, #15803d);">
+            <i class="material-icons">speed</i>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-title">Eficiencia Picking</span>
+            <span class="kpi-value" id="kpi_eficiencia">94.2%</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Pendientes Críticos -->
+        <div class="kpi-card-modern">
+          <div class="kpi-icon-circle" style="background: linear-gradient(135deg, #ea580c, #c2410c);">
+            <i class="material-icons">priority_high</i>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-title">Pendientes Críticos</span>
+            <span class="kpi-value" id="kpi_pendientes">128</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. BLOQUE DE 4 GRÁFICAS OPERATIVAS -->
+      <div class="dash-charts-grid-4">
+        
+        <!-- Gráfica 1 -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Flujo de Pedidos</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartStatus"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfica 2 -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Ocupación por Zona</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartZonas"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfica 3 -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Preparación vs Pendiente</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartProductividad"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfica 4 -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Eficiencia de Despacho</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="eficienciaPicking"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3. BLOQUE INFERIOR: TRANSACCIONES + CONTENEDORES + MAPA -->
+      <div class="dash-charts-grid-bottom">
+        
+        <!-- Transacciones por Tipo -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Transacciones WMS</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartArticulos"></canvas>
+          </div>
+        </div>
+
+        <!-- Niveles de Stock -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Niveles por Rack</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartContenedores"></canvas>
+          </div>
+        </div>
+
+        <!-- Mapa de Panamá y Bodegas -->
+        <div class="chart-card-modern">
+          <div class="chart-card-title">Cobertura Nacional y Sucursales</div>
+          <div class="chart-canvas-wrap" style="min-height: 250px;">
+            <div id="mapPanama"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <my-footer></my-footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <script type="text/javascript" src="js/dash1.js?v=4.2" defer></script>
 </body>
 
 </html>
