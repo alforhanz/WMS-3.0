@@ -2,168 +2,592 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Import Materialize Icons-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!-- ESTRUCTURA DE LAS PAGINAS -->
-    <link type="text/css" rel="stylesheet" href="css/main.css?v=4.1" media="screen,projection" />
-    <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-    <!-- FONTS -->
-    <script src="js/encabezado.js" type="text/javascript"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Operativo WMS - Pedidos</title>
 
-        /* CSS PERSONALIZADO PARA LOOK POWER BI */
-        :root {
-            /* --bg-dark: #d7e1eb; */
-            /* --card-bg: #2a3f54; */
-            --bg-dark: #eaeef3;
-            --card-bg: #2a3f54;
-            --accent-teal: #008080;
-            --text-main: #ffffff;
-            --text-dim: #b4d0f0;
-        }
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
-        }
+  <!-- Materialize Base + CSS Maestro Unificado -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link type="text/css" rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+  <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
 
-        /* Small only */
-        @media screen and (max-width: 39.9375em) {
-            #bodega_sucursales {
-                width: 80%;
-                top: 20px !important;
-                left: 38px !important;
-                max-height: 100% !important;
-                margin-left: 3px !important;
-            }
-        }
+  <!-- Header Component -->
+  <script src="js/encabezado.js?v=4.2" type="text/javascript"></script>
 
-        /* Medium and up */
-        @media screen and (min-width: 40em) {}
+  <!-- ESTILOS ESTÁNDAR DASH4 -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Orbitron:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap');
 
-        /* Medium only */
-        @media screen and (min-width: 40em) and (max-width: 63.9375em) {}
+    :root {
+      --bg-dark: #eaeef3;
+      --sidebar-bg: #1e293b;
+      --card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
 
-        /* Large and up */
-        @media screen and (min-width: 64em) {}
+      /* Paleta institucional dash4 */
+      --green-main: #10b981;
+      --green-light: #ecfdf5;
+      --red-main: #ef4444;
+      --red-light: #fef2f2;
+      --blue-main: #3b82f6;
+      --blue-light: #eff6ff;
+      --orange-main: #f59e0b;
+      --orange-light: #fffbeb;
+      --purple-main: #8b5cf6;
+      --purple-light: #f5f3ff;
+      --border-color: #e2e8f0;
+    }
 
-        /* Large only */
-        @media screen and (min-width: 64em) and (max-width: 74.9375em) {}
-    </style>
+    body {
+      background-color: var(--bg-dark) !important;
+      color: var(--text-dark) !important;
+      font-family: 'Outfit', 'Roboto', sans-serif !important;
+    }
+
+    .dashBody {
+      padding: 20px !important;
+    }
+
+    /* Sidebar Filtros */
+    .filter-sidebar {
+      background: var(--sidebar-bg);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+    }
+
+    .filter-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 12px;
+    }
+
+    .clear-filters {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .clear-filters:hover {
+      color: #ffffff;
+    }
+
+    .filter-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+
+    .filter-input,
+    .filter-select {
+      width: 100% !important;
+      background-color: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 8px !important;
+      color: #ffffff !important;
+      padding: 8px 12px !important;
+      box-sizing: border-box !important;
+      height: 38px !important;
+      font-size: 0.88rem !important;
+      outline: none !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .filter-input:focus,
+    .filter-select:focus {
+      border-color: var(--blue-main) !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .btn-aplicar {
+      width: 100%;
+      background-color: var(--blue-main) !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      padding: 10px !important;
+      height: auto !important;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4) !important;
+    }
+
+    /* Cabecera del Dashboard */
+    .dashboard-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .dashboard-main-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 4px 0;
+    }
+
+    .dashboard-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .date-badge {
+      background: #ffffff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .btn-export {
+      background-color: #ffffff !important;
+      color: var(--text-dark) !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      height: 38px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* KPIs Grid */
+    .kpi-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -10px;
+      margin-left: -10px;
+      margin-bottom: 10px;
+    }
+
+    .kpi-col {
+      flex: 1;
+      min-width: 180px;
+      padding-right: 10px;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media screen and (max-width: 1200px) {
+      .kpi-col {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .kpi-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
+    .kpi-card-custom {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid transparent;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .kpi-card-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    .border-blue {
+      border-left-color: var(--blue-main);
+    }
+
+    .border-green {
+      border-left-color: var(--green-main);
+    }
+
+    .border-orange {
+      border-left-color: var(--orange-main);
+    }
+
+    .border-purple {
+      border-left-color: var(--purple-main);
+    }
+
+    .kpi-header-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .kpi-title-custom {
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kpi-value-custom {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 4px 0;
+    }
+
+    .kpi-label-small {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Gráficos y Tablas */
+    .dashboard-chart-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+      box-sizing: border-box;
+    }
+
+    .card-title-custom {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    /* ALTURAS FIJAS PARA EVITAR ESTIRAMIENTO */
+    .chart-canvas-container {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    .chart-canvas-container-gauge {
+      position: relative;
+      height: 160px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .table-custom th {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-custom td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-color);
+      color: #334155;
+    }
+
+    .badge-status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: inline-block;
+    }
+
+    .badge-ready {
+      background-color: var(--green-light);
+      color: var(--green-main);
+    }
+
+    .badge-pending {
+      background-color: var(--red-light);
+      color: var(--red-main);
+    }
+
+    .badge-process {
+      background-color: var(--orange-light);
+      color: var(--orange-main);
+    }
+  </style>
 </head>
 
 <body>
-    <my-header></my-header>
-    <main class="container-fluid dashBody">
-        <div id="contenedorLoader"></div>
-        <div id="resultadoBusqueda">
+  <my-header></my-header>
 
-            <div class="row col s12 graficasDash dash2Style">
-                <div class="col s12 m4 l4">
-                    <div class="chart-container">
-                        <div class="chart-title">Estado de Pedidos (Flujo)</div>
-                        <canvas id="chartStatus"></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m4 l4">
-                    <div class="chart-container">
-                        <div class="chart-title">Ocupación de Bodega por Zona</div>
-                        <canvas id="chartZonas"></canvas>
-                    </div>
-                </div>
-                <div class="col s12 m4 l4">
-                    <div class="row">
-                        <div class="col s12 m6 l6">
-                            <div class="kpi-card">
-                                <i class="material-icons">assignment</i>
-                                <div class="kpi-title">Pedidos del Día</div>
-                                <div class="kpi-value" id="kpi_pedidos">1.2K</div>
-                            </div>
-                        </div>
-                        <div class="col s12 m6 l6">
-                            <div class="kpi-card">
-                                <i class="material-icons">inventory_2</i>
-                                <div class="kpi-title">Articulos Solicitados</div>
-                                <div class="kpi-value" id="kpi_items">45.8K</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s12 m6 l6">
-                            <div class="kpi-card">
-                                <i class="material-icons">speed</i>
-                                <div class="kpi-title">% Eficiencia Picking</div>
-                                <div class="kpi-value" id="kpi_eficiencia">94.2%</div>
-                            </div>
-                        </div>
-                        <div class="col s12 m6 l6">
-                            <div class="kpi-card">
-                                <i class="material-icons">priority_high</i>
-                                <div class="kpi-title">Pendientes Críticos</div>
-                                <div class="kpi-value" id="kpi_pendientes">128</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="card">
-                    <div class="card-content">
-                        <span class="card-title">Listado de Pedidos</span>
-                        <div class="row" style="display: flex; align-items: center; margin-bottom: 20px;">
-                            <div class="input-field" style="margin: 0; flex-grow: 1; max-width: 400px;">
-                                <i class="material-icons prefix">search</i>
-                                <input id="txtBuscadorTabla" type="text" placeholder="Buscar cliente o pedido...">
-                            </div>
-                        </div>
+  <main class="dashBody">
+    <div id="contenedorLoader"></div>
 
-                        <table class="highlight responsive-table" id="tablaPedidos">
-                            <thead id="thPedidos">
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Documento</th>
-                                    <th>Pedido</th>
-                                    <th>Cliente</th>
-                                    <th>Cant.</th>
-                                    <th>Atendido Por</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbodyPedidos">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div id="resultadoBusqueda">
+      <div class="row">
+
+        <!-- SIDEBAR DE FILTROS (DASH4 STYLE) -->
+        <div class="col s12 m12 l3">
+          <div class="filter-sidebar">
+            <div class="filter-title">
+              <span style="display: flex; align-items: center;">
+                <i class="material-icons left">tune</i>Filtros WMS
+              </span>
+              <span class="clear-filters" onclick="limpiarFiltros()">Limpiar</span>
             </div>
+
+            <div>
+              <span class="filter-label">Rango de Fechas</span>
+              <input id="filter_fecha_desde" type="date" class="filter-input">
+              <input id="filter_fecha_hasta" type="date" class="filter-input" style="margin-top: 6px;">
+
+              <span class="filter-label">Bodega Operativa</span>
+              <select id="filter_bodega" class="browser-default filter-select">
+                <option value="" selected>Todas las Bodegas</option>
+                <option value="B-01">01 - Bremen Santiago</option>
+                <option value="B-06">06 - Bremen 24 de Diciembre</option>
+                <option value="B-81">81 - CEDI Pueblo Nuevo</option>
+              </select>
+
+              <span class="filter-label">Estado de Preparación</span>
+              <select id="filter_estado" class="browser-default filter-select">
+                <option value="" selected>Todos los Estados</option>
+                <option value="G">Listos / Verificados</option>
+                <option value="0">Pendientes</option>
+              </select>
+
+              <button type="button" class="btn btn-aplicar waves-effect waves-light" style="margin-top: 20px;"
+                onclick="aplicarFiltros()">
+                Aplicar Criterios
+              </button>
+            </div>
+          </div>
         </div>
-    </main>
-    <my-footer></my-footer>
 
-    <!-- IMprimir Código de barra -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="text/javascript" src="js/environment.js?v=3.0" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script type="text/javascript" src="js/dash2.js?v2.1"></script>
-    <script type="text/javascript" src="js/main.js?v2.1" defer></script>
-    <script type="text/javascript" src="js/menu.js?v2.1" defer></script>
-    <script type="text/javascript" src="js/loader.js?v=3.0"></script>
-    <!-- Script del Footer -->
-    <script type="text/javascript" src="js/footer.js?v=4.1" defer></script>
+        <!-- CONTENIDO PRINCIPAL DASHBOARD -->
+        <div class="col s12 m12 l9">
+
+          <!-- Cabecera Superior -->
+          <div class="dashboard-header-row">
+            <div>
+              <h4 class="dashboard-main-title">Monitor Operativo de Preparación y Pedidos</h4>
+              <p class="dashboard-subtitle">Control en vivo de picking, packing y facturación en almacén</p>
+            </div>
+            <div class="header-actions">
+              <div class="date-badge">
+                <i class="material-icons">event</i>
+                <span id="lbl_periodo_seleccionado">Período Activo: Hoy</span>
+              </div>
+              <button type="button" class="btn btn-export waves-effect waves-light" onclick="exportarExcelPedidos()">
+                <i class="material-icons left">download</i>Exportar
+              </button>
+            </div>
+          </div>
+
+          <!-- FILA DE KPIS -->
+          <div class="kpi-row">
+
+            <!-- KPI 1: Pedidos Totales -->
+            <div class="kpi-col">
+              <div class="kpi-card-custom border-blue">
+                <div class="kpi-header-custom">
+                  <span class="kpi-title-custom text-blue">PEDIDOS DEL DÍA</span>
+                  <div class="kpi-icon-circle" style="background-color: var(--blue-light);">
+                    <i class="material-icons text-blue" style="font-size: 18px;">receipt_long</i>
+                  </div>
+                </div>
+                <span class="kpi-value-custom text-blue" id="kpi_pedidos">0</span>
+                <span class="kpi-label-small">Documentos Recibidos</span>
+              </div>
+            </div>
+
+            <!-- KPI 2: Unidades Solicitadas -->
+            <div class="kpi-col">
+              <div class="kpi-card-custom border-purple">
+                <div class="kpi-header-custom">
+                  <span class="kpi-title-custom text-purple">UNIDADES TOTALES</span>
+                  <div class="kpi-icon-circle" style="background-color: var(--purple-light);">
+                    <i class="material-icons text-purple" style="font-size: 18px;">inventory_2</i>
+                  </div>
+                </div>
+                <span class="kpi-value-custom text-purple" id="kpi_items">0</span>
+                <span class="kpi-label-small">Unidades en Picking</span>
+              </div>
+            </div>
+
+            <!-- KPI 3: Eficiencia Picking -->
+            <div class="kpi-col">
+              <div class="kpi-card-custom border-green">
+                <div class="kpi-header-custom">
+                  <span class="kpi-title-custom text-green">% EFICIENCIA VERIFICADA</span>
+                  <div class="kpi-icon-circle" style="background-color: var(--green-light);">
+                    <i class="material-icons text-green" style="font-size: 18px;">task_alt</i>
+                  </div>
+                </div>
+                <span class="kpi-value-custom text-green" id="kpi_eficiencia">0.0%</span>
+                <span class="kpi-label-small">Lectura vs Solicitado</span>
+              </div>
+            </div>
+
+            <!-- KPI 4: Pendientes Críticos -->
+            <div class="kpi-col">
+              <div class="kpi-card-custom border-orange">
+                <div class="kpi-header-custom">
+                  <span class="kpi-title-custom text-orange">PENDIENTES CRÍTICOS</span>
+                  <div class="kpi-icon-circle" style="background-color: var(--orange-light);">
+                    <i class="material-icons text-orange" style="font-size: 18px;">warning_amber</i>
+                  </div>
+                </div>
+                <span class="kpi-value-custom text-orange" id="kpi_pendientes">0</span>
+                <span class="kpi-label-small">Sin Verificación</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FILA DE GRÁFICOS ANALÍTICOS -->
+          <div class="row">
+
+            <!-- Gráfico 1: Estado de Pedidos -->
+            <div class="col s12 m12 l4">
+              <div class="dashboard-chart-card">
+                <div class="card-title-custom">ESTADO DE PREPARACIÓN (FLUJO)</div>
+                <div class="chart-canvas-container">
+                  <canvas id="chartStatus"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfico 2: Nivel de Avance General (Gauge) -->
+            <div class="col s12 m12 l4">
+              <div class="dashboard-chart-card">
+                <div class="card-title-custom">AVANCE DE CUMPLIMIENTO</div>
+                <div class="chart-canvas-container-gauge">
+                  <canvas id="chartZonas"></canvas>
+                </div>
+                <div style="text-align: center; margin-top: 6px;">
+                  <span id="lblAvanceTexto" style="font-size: 13px; font-weight: 700; color: #1e293b;">0%
+                    Completado</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfico 3: Despacho por Operario (Top Pickers) -->
+            <div class="col s12 m12 l4">
+              <div class="dashboard-chart-card">
+                <div class="card-title-custom">PRODUCTIVIDAD POR OPERADOR</div>
+                <div class="chart-canvas-container">
+                  <canvas id="chartOperarios"></canvas>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TABLA OPERATIVA DE PEDIDOS CON FILTRO RÁPIDO -->
+          <div class="row">
+            <div class="col s12">
+              <div class="dashboard-chart-card" style="padding: 20px;">
+                <div class="card-title-custom"
+                  style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                  <span>DETALLE DE PEDIDOS EN COLA</span>
+
+                  <div style="position: relative; width: 280px; max-width: 100%;">
+                    <input id="txtBuscadorTabla" type="text" class="browser-default custom-text-input"
+                      placeholder="Filtrar por cliente, pedido o doc..."
+                      style="height: 32px !important; font-size: 12px !important; width: 100%;">
+                  </div>
+                </div>
+
+                <div class="grid-table-responsive" style="max-height: 420px; overflow-y: auto;">
+                  <table class="table-custom highlight" id="tablaPedidos">
+                    <thead>
+                      <tr>
+                        <th style="width: 6%;">Item</th>
+                        <th style="width: 16%;">Documento</th>
+                        <th style="width: 14%;">Pedido</th>
+                        <th style="width: 32%;">Cliente</th>
+                        <th style="width: 10%; text-align: right;">Cant.</th>
+                        <th style="width: 12%;">Atendido Por</th>
+                        <th style="width: 10%; text-align: center;">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbodyPedidos">
+                      <!-- Render dinámico -->
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <my-footer></my-footer>
+
+  <!-- SCRIPTS EN ORDEN CORRECTO -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Globales WMS -->
+  <script type="text/javascript" src="js/environment.js?v=4.2"></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/loader.js?v=4.2"></script>
+  <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
+
+  <!-- Controlador Dashboard -->
+  <script type="text/javascript" src="js/dash2.js?v=4.2" defer></script>
 </body>
 
 </html>

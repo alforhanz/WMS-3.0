@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -42,13 +43,48 @@
       }
 
       /* Distribución balanceada al 100% */
-      #tblordendecompra thead th:nth-child(1), #tblordendecompra tbody td:nth-child(1) { width: 25% !important; } /* Orden/Emb. */
-      #tblordendecompra thead th:nth-child(2), #tblordendecompra tbody td:nth-child(2) { width: 10% !important; } /* Destino */
-      #tblordendecompra thead th:nth-child(3), #tblordendecompra tbody td:nth-child(3) { width: 26% !important; } /* Proveedor */
-      #tblordendecompra thead th:nth-child(4), #tblordendecompra tbody td:nth-child(4) { width: 10% !important; } /* Sol. */
-      #tblordendecompra thead th:nth-child(5), #tblordendecompra tbody td:nth-child(5) { width: 10% !important; } /* Ver. */
-      #tblordendecompra thead th:nth-child(6), #tblordendecompra tbody td:nth-child(6) { width: 10% !important; } /* Emb. */
-      #tblordendecompra thead th:nth-child(7), #tblordendecompra tbody td:nth-child(7) { width: 9% !important; }  /* Estado */
+      #tblordendecompra thead th:nth-child(1),
+      #tblordendecompra tbody td:nth-child(1) {
+        width: 25% !important;
+      }
+
+      /* Orden/Emb. */
+      #tblordendecompra thead th:nth-child(2),
+      #tblordendecompra tbody td:nth-child(2) {
+        width: 10% !important;
+      }
+
+      /* Destino */
+      #tblordendecompra thead th:nth-child(3),
+      #tblordendecompra tbody td:nth-child(3) {
+        width: 26% !important;
+      }
+
+      /* Proveedor */
+      #tblordendecompra thead th:nth-child(4),
+      #tblordendecompra tbody td:nth-child(4) {
+        width: 10% !important;
+      }
+
+      /* Sol. */
+      #tblordendecompra thead th:nth-child(5),
+      #tblordendecompra tbody td:nth-child(5) {
+        width: 10% !important;
+      }
+
+      /* Ver. */
+      #tblordendecompra thead th:nth-child(6),
+      #tblordendecompra tbody td:nth-child(6) {
+        width: 10% !important;
+      }
+
+      /* Emb. */
+      #tblordendecompra thead th:nth-child(7),
+      #tblordendecompra tbody td:nth-child(7) {
+        width: 9% !important;
+      }
+
+      /* Estado */
 
       .cell-articulo-box .cell-articulo-code {
         font-size: 9.5px !important;
@@ -94,7 +130,7 @@
 
       <!-- Barra Superior de Acciones -->
       <div class="top-action-bar">
-        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
           <i class="material-icons">arrow_back</i>
           <span>Volver</span>
         </button>
@@ -115,7 +151,8 @@
               <!-- Número de Orden de Compra / Proveedor -->
               <div class="input-group-custom">
                 <label for="pOrden" class="input-label-custom">N° Orden / Proveedor</label>
-                <input type="text" id="pOrden" class="custom-text-input" placeholder="Ingrese número de orden o proveedor" autocomplete="off">
+                <input type="text" id="pOrden" class="custom-text-input"
+                  placeholder="Ingrese número de orden o proveedor" autocomplete="off">
               </div>
 
               <!-- Checkbox: Habilitar Rango de Fechas -->
@@ -131,7 +168,8 @@
               <div class="input-group-custom">
                 <label for="fecha_ini" class="input-label-custom">Fecha Inicial</label>
                 <div class="input-with-icon">
-                  <input type="text" id="fecha_ini" class="datepicker custom-text-input" placeholder="yyyy-mm-dd" disabled>
+                  <input type="text" id="fecha_ini" class="datepicker custom-text-input" placeholder="yyyy-mm-dd"
+                    disabled>
                   <i class="material-icons input-calendar-icon">event</i>
                 </div>
               </div>
@@ -140,7 +178,8 @@
               <div class="input-group-custom">
                 <label for="fecha_fin" class="input-label-custom">Fecha Final</label>
                 <div class="input-with-icon">
-                  <input type="text" id="fecha_fin" class="datepicker custom-text-input" placeholder="yyyy-mm-dd" disabled>
+                  <input type="text" id="fecha_fin" class="datepicker custom-text-input" placeholder="yyyy-mm-dd"
+                    disabled>
                   <i class="material-icons input-calendar-icon">event</i>
                 </div>
               </div>
@@ -222,7 +261,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>

@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -36,7 +37,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       transition: all 0.2s ease;
     }
 
@@ -172,13 +173,48 @@
 
       /* Distribución calculada para las 7 columnas visibles */
       #tblcontenedores colgroup,
-      #tblcontenedores thead th:nth-child(1), #tblcontenedores tbody td:nth-child(1) { width: 17% !important; } /* Contenedor */
-      #tblcontenedores thead th:nth-child(2), #tblcontenedores tbody td:nth-child(2) { width: 27% !important; } /* Artículo */
-      #tblcontenedores thead th:nth-child(3), #tblcontenedores tbody td:nth-child(3) { width: 11% !important; } /* Ped. */
-      #tblcontenedores thead th:nth-child(4), #tblcontenedores tbody td:nth-child(4) { width: 11% !important; } /* Prep. */
-      #tblcontenedores thead th:nth-child(5), #tblcontenedores tbody td:nth-child(5) { width: 11% !important; } /* Desp. */
-      #tblcontenedores thead th:nth-child(6), #tblcontenedores tbody td:nth-child(6) { width: 12% !important; } /* Verif. */
-      #tblcontenedores thead th:nth-child(7), #tblcontenedores tbody td:nth-child(7) { width: 11% !important; } /* Dev. */
+      #tblcontenedores thead th:nth-child(1),
+      #tblcontenedores tbody td:nth-child(1) {
+        width: 17% !important;
+      }
+
+      /* Contenedor */
+      #tblcontenedores thead th:nth-child(2),
+      #tblcontenedores tbody td:nth-child(2) {
+        width: 27% !important;
+      }
+
+      /* Artículo */
+      #tblcontenedores thead th:nth-child(3),
+      #tblcontenedores tbody td:nth-child(3) {
+        width: 11% !important;
+      }
+
+      /* Ped. */
+      #tblcontenedores thead th:nth-child(4),
+      #tblcontenedores tbody td:nth-child(4) {
+        width: 11% !important;
+      }
+
+      /* Prep. */
+      #tblcontenedores thead th:nth-child(5),
+      #tblcontenedores tbody td:nth-child(5) {
+        width: 11% !important;
+      }
+
+      /* Desp. */
+      #tblcontenedores thead th:nth-child(6),
+      #tblcontenedores tbody td:nth-child(6) {
+        width: 12% !important;
+      }
+
+      /* Verif. */
+      #tblcontenedores thead th:nth-child(7),
+      #tblcontenedores tbody td:nth-child(7) {
+        width: 11% !important;
+      }
+
+      /* Dev. */
 
       .cell-articulo-code {
         font-size: 9.5px !important;
@@ -232,7 +268,7 @@
 
       <!-- Barra Superior de Acciones -->
       <div class="top-action-bar">
-        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
           <i class="material-icons">arrow_back</i>
           <span>Volver</span>
         </button>
@@ -260,7 +296,8 @@
               <!-- Número de Contenedor -->
               <div class="input-group-custom">
                 <label for="pContenedor" class="input-label-custom">N° de Contenedor</label>
-                <input type="text" id="pContenedor" class="custom-text-input" placeholder="Ingrese N° de contenedor" autocomplete="off">
+                <input type="text" id="pContenedor" class="custom-text-input" placeholder="Ingrese N° de contenedor"
+                  autocomplete="off">
               </div>
 
               <!-- Fecha Desde -->
@@ -311,7 +348,8 @@
 
       <!-- BOTÓN BUSCAR -->
       <div class="search-action-container">
-        <button id="verifica-contenedores" class="btn-buscar-gradient" type="button" onclick="validarBusquedaContenedor()">
+        <button id="verifica-contenedores" class="btn-buscar-gradient" type="button"
+          onclick="validarBusquedaContenedor()">
           <span>Cargar Líneas de Contenedores</span>
           <i class="material-icons">send</i>
         </button>
@@ -322,7 +360,8 @@
         <button type="button" id="btnTabLectura" class="custom-tab-btn active" onclick="cambiarPestanaLocal('lectura')">
           LECTURA
         </button>
-        <button type="button" id="btnTabVerificacion" class="custom-tab-btn" onclick="cambiarPestanaLocal('verificacion')">
+        <button type="button" id="btnTabVerificacion" class="custom-tab-btn"
+          onclick="cambiarPestanaLocal('verificacion')">
           VERIFICACIÓN
         </button>
       </div>
@@ -375,13 +414,16 @@
                   <span style="font-weight: 600; color: #1e293b;"></span>
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus
+                    autocomplete="off">
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="actualizaLectura(this)" autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="actualizaLectura(this)"
+                    autocomplete="off">
                 </td>
                 <td class="cell-center">
-                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
+                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;"
+                    onclick="eliminarFila(this)">delete</i>
                 </td>
               </tr>
             </tbody>
@@ -390,7 +432,8 @@
 
         <!-- Acciones en Lectura -->
         <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-          <button id="btnGuardarLectura" class="btn-buscar-gradient" style="width: auto; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()" disabled>
+          <button id="btnGuardarLectura" class="btn-buscar-gradient"
+            style="width: auto; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()" disabled>
             <i class="material-icons left" style="font-size: 18px;">save</i> Guardar Lectura
           </button>
         </div>
@@ -406,7 +449,9 @@
             Cantidad de registros: 0
           </div>
           <div style="min-width: 240px; max-width: 360px; width: 100%;">
-            <input type="text" id="filtrarArticuloVerif" class="custom-text-input" placeholder="Filtrar por Contenedor o Artículo..." oninput="filtrarTablaVerificacion()" autocomplete="off">
+            <input type="text" id="filtrarArticuloVerif" class="custom-text-input"
+              placeholder="Filtrar por Contenedor o Artículo..." oninput="filtrarTablaVerificacion()"
+              autocomplete="off">
           </div>
         </div>
 
@@ -436,22 +481,26 @@
         <!-- Observaciones -->
         <div style="margin-top: 20px;">
           <label for="observaciones" class="input-label-custom">Observaciones Generales</label>
-          <textarea id="observaciones" class="observaciones-caja" placeholder="Escriba comentarios o notas del despacho..."></textarea>
+          <textarea id="observaciones" class="observaciones-caja"
+            placeholder="Escriba comentarios o notas del despacho..."></textarea>
         </div>
 
         <!-- Botones de Acción de Verificación -->
         <div id="contenedorBotones" class="action-buttons-wrapper">
-          <button id="btnGuardarVerificacion" class="btn-buscar-gradient btn-action-item btn-guardar" type="button" onclick="confirmarGuardadoParcial()" disabled>
+          <button id="btnGuardarVerificacion" class="btn-buscar-gradient btn-action-item btn-guardar" type="button"
+            onclick="confirmarGuardadoParcial()" disabled>
             <i class="material-icons left">save</i> Guardar Avance
           </button>
-          <button id="btnCrearPaqueteContenedor" class="btn-buscar-gradient btn-action-item btn-procesar" type="button" onclick="guardaPaquete()" disabled>
+          <button id="btnCrearPaqueteContenedor" class="btn-buscar-gradient btn-action-item btn-procesar" type="button"
+            onclick="guardaPaquete()" disabled>
             <i class="material-icons left">local_shipping</i> Crear Paquete
           </button>
         </div>
 
         <!-- Caja de Mensajes -->
         <div id="mensajes" style="margin-top: 20px;">
-          <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay discrepancias registradas..."></textarea>
+          <textarea id="mensajeText" class="mensajes-caja" readonly
+            placeholder="No hay discrepancias registradas..."></textarea>
         </div>
 
       </div>
@@ -472,7 +521,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>

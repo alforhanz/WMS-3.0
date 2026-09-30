@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -40,7 +41,7 @@
       flex-direction: column;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       margin-bottom: 0;
     }
 
@@ -80,7 +81,8 @@
 
     .input-bodega-wrap {
       flex: 1;
-      max-width: 320px; /* Tamaño controlado para evitar que se estire */
+      max-width: 320px;
+      /* Tamaño controlado para evitar que se estire */
     }
 
     .observaciones-caja {
@@ -183,7 +185,7 @@
 
       <!-- PANELES SUPERIORES COMPACTOS Y CENTRADOS -->
       <div class="top-panels-grid">
-        
+
         <!-- Panel 1: Info Documento y Embarque -->
         <div class="header-info-panel">
           <div class="header-info-item">
@@ -202,11 +204,13 @@
           <div class="box-cambio-bodega">
             <div class="input-group-custom input-bodega-wrap">
               <label for="bodegaSelectOC" class="input-label-custom">Seleccione Nueva Bodega</label>
-              <select id="bodegaSelectOC" class="browser-default custom-text-input" style="cursor: pointer; height: 38px;">
+              <select id="bodegaSelectOC" class="browser-default custom-text-input"
+                style="cursor: pointer; height: 38px;">
                 <option value="" disabled selected>Cargando bodegas...</option>
               </select>
             </div>
-            <button id="bodegaButtonOC" class="btn-buscar-gradient btn-action-item" type="button" onclick="validaCambioBodegaDestino()">
+            <button id="bodegaButtonOC" class="btn-buscar-gradient btn-action-item" type="button"
+              onclick="validaCambioBodegaDestino()">
               <span>Aplicar</span>
               <i class="material-icons right" style="font-size: 18px;">done</i>
             </button>
@@ -244,12 +248,14 @@
       <!-- Observaciones -->
       <div id="observaciones-container" style="margin-top: 20px;">
         <label for="observaciones" class="input-label-custom">Observaciones</label>
-        <textarea placeholder="Sin observaciones registradas..." id="observaciones" class="observaciones-caja"></textarea>
+        <textarea placeholder="Sin observaciones registradas..." id="observaciones"
+          class="observaciones-caja"></textarea>
       </div>
       <!-- Mensajes e Incidencias -->
       <div id="mensajes" style="margin-top: 20px;">
         <label for="mensajeText" class="input-label-custom">Mensajes del Proceso:</label>
-        <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay incidencias registradas..."></textarea>
+        <textarea id="mensajeText" class="mensajes-caja" readonly
+          placeholder="No hay incidencias registradas..."></textarea>
       </div>
 
     </div>
@@ -264,7 +270,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>
   <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>

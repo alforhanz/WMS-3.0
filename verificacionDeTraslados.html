@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -50,7 +51,7 @@
 
       <!-- Barra Superior de Acciones -->
       <div class="top-action-bar">
-        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
           <i class="material-icons">arrow_back</i>
           <span>Volver</span>
         </button>
@@ -71,13 +72,13 @@
               <!-- Switch: Tipo de Traslado (Salida / Entrada con Badges) -->
               <div class="input-group-custom" style="justify-content: center; padding-top: 10px;">
                 <label class="clasif-toggle-wrapper">
-                
-                   <span class="toggle-label-text">
+
+                  <span class="toggle-label-text">
                     Entrada <span id="lblCantEntradas" class="badge-conteo">0</span>
                   </span>
                   <input type="checkbox" id="trasladosSwitch" checked="false">
                   <span class="onoff-switch"><span class="onoff-slider"></span></span>
-                   <span class="toggle-label-text">
+                  <span class="toggle-label-text">
                     Salida <span id="lblCantSalidas" class="badge-conteo">0</span>
                   </span>
                 </label>
@@ -86,7 +87,8 @@
               <!-- Número de Traslado -->
               <div class="input-group-custom">
                 <label for="pContenedor" class="input-label-custom">Número de Traslado</label>
-                <input type="text" id="pContenedor" class="custom-text-input" placeholder="Ingrese número de traslado" autocomplete="off">
+                <input type="text" id="pContenedor" class="custom-text-input" placeholder="Ingrese número de traslado"
+                  autocomplete="off">
               </div>
 
               <!-- Fecha Inicial -->
@@ -145,7 +147,7 @@
               <th style="width: 22%;">Traslado</th>
               <th id="thBodega" style="width: 26%;">Bodega Destino</th>
               <th style="width: 16%;">Cant. Prep.</th>
-              <th style="width: 16%;">Cant. Verif.</th>              
+              <th style="width: 16%;">Cant. Verif.</th>
               <th style="width: 20%;">Fecha</th>
             </tr>
           </thead>
@@ -170,7 +172,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>

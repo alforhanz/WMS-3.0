@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -28,7 +29,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
 
     .header-info-item {
@@ -68,7 +69,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       transition: all 0.2s ease;
     }
 
@@ -182,7 +183,7 @@
     <div id="contenedorLoader"></div>
 
     <div class="vista-wrapper">
-      
+
       <!-- Barra Superior de Acciones -->
       <div class="top-action-bar">
         <button type="button" class="btn btn-volver" onclick="retornarVistaAnterior()">
@@ -223,7 +224,8 @@
         <button type="button" id="btnTabLectura" class="custom-tab-btn active" onclick="cambiarPestanaLocal('lectura')">
           LECTURA
         </button>
-        <button type="button" id="btnTabVerificacion" class="custom-tab-btn" onclick="cambiarPestanaLocal('verificacion')">
+        <button type="button" id="btnTabVerificacion" class="custom-tab-btn"
+          onclick="cambiarPestanaLocal('verificacion')">
           VERIFICACIÓN
         </button>
       </div>
@@ -270,30 +272,34 @@
                   <span style="font-weight: 600; color: #1e293b;"></span>
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus
+                    autocomplete="off">
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)" autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)"
+                    autocomplete="off">
                 </td>
                 <td class="cell-center">
-                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
+                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;"
+                    onclick="eliminarFila(this)">delete</i>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Acciones en Lectura -->
+     <!-- Acciones en Lectura -->
         <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-          <button id="btnGuardarLectura" class="btn-buscar-gradient" style="width: auto; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()">
+          <button id="btnGuardarLectura" class="btn-buscar-gradient"
+            style="width: auto; background: #0284c7; box-shadow: none; display: none;" onclick="confirmarGuardadoParcial()">
             <i class="material-icons left" style="font-size: 18px;">save</i> Guardar Avance
           </button>
         </div>
-      </div>
+        </div>
 
       <!-- TABLA 2: VERIFICACIÓN -->
       <div id="tabContentVerificacion" class="tab-pane">
-        
+
         <div class="results-control-bar" style="margin-top: 5px;">
           <div class="total-registros-title" id="cantidadDeRegistros">
             Cantidad de registros: 0
@@ -320,19 +326,22 @@
           </table>
         </div>
 
-        <!-- Botones de Acción de Verificación (sin botón Retornar duplicado) -->
-        <div id="contenedorBotones" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-          <button id="btnGuardar" class="btn-buscar-gradient" style="width: 25%; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()">
+     <!-- Botones de Acción de Verificación (sin botón Retornar duplicado) -->
+        <div id="contenedorBotones" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; align-items: flex-end;">
+          <button id="btnGuardar" class="btn-buscar-gradient" style="width: auto; background: #0284c7; box-shadow: none; display: none;"
+            onclick="confirmarGuardadoParcial()">
             <i class="material-icons left" style="font-size: 18px;">save</i> Guardar Contenedor
           </button>
-          <button id="btnProcesar" class="btn-buscar-gradient" style="width: 25%; box-shadow: none;" onclick="confirmaProcesar()">
+          <button id="btnProcesar" class="btn-buscar-gradient" style="width: auto; background: #28a745; box-shadow: none; display: none;"
+            onclick="confirmaProcesar()">
             <i class="material-icons left" style="font-size: 18px;">check_circle</i> Procesar Contenedor
           </button>
         </div>
 
         <!-- Caja de Mensajes -->
         <div id="mensajes" style="margin-top: 20px;">
-          <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay incidencias registradas en este contenedor..."></textarea>
+          <textarea id="mensajeText" class="mensajes-caja" readonly
+            placeholder="No hay incidencias registradas en este contenedor..."></textarea>
         </div>
 
       </div>
@@ -347,14 +356,14 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>
   <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
-  
+
   <script type="text/javascript" src="js/lineasContenedor.js?v=4.2" defer></script>
 </body>
 

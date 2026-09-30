@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -28,10 +29,10 @@
     <div id="contenedorLoader"></div>
 
     <div class="vista-wrapper">
-      
+
       <!-- Botón Volver Superior -->
       <div class="top-action-bar">
-        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
           <i class="material-icons">arrow_back</i>
           <span>Volver</span>
         </button>
@@ -43,16 +44,17 @@
       <!-- PANEL: DATOS BÁSICOS -->
       <div id="tabContentDatosBasicos" class="tab-pane active">
         <div class="datos-basicos-flex">
-          
+
           <div class="filter-box filter-box-left" style="flex: 1 1 100%;">
             <span class="box-title-legend">Criterios de Búsqueda de Picking</span>
-            
+
             <div class="filter-grid-left">
-              
+
               <!-- Número de Pedido -->
               <div class="input-group-custom">
                 <label for="pPedido" class="input-label-custom">Número de Pedido</label>
-                <input type="text" id="pPedido" class="custom-text-input" placeholder="Ingrese N° de pedido" autocomplete="off">
+                <input type="text" id="pPedido" class="custom-text-input" placeholder="Ingrese N° de pedido"
+                  autocomplete="off">
               </div>
 
               <!-- Fecha Inicial -->
@@ -99,7 +101,7 @@
       <!-- BARRA DE RESULTADOS -->
       <div class="results-control-bar">
         <div id="resultadoGeneral" class="total-registros-title">
-           <!-- Aquí se inyecta dinámicamente: Total de Registros: X -->
+          <!-- Aquí se inyecta dinámicamente: Total de Registros: X -->
         </div>
       </div>
 
@@ -134,12 +136,12 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>  
-  <!-- Lógica y Paginación --> 
-  <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>  
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
+  <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
+  <!-- Lógica y Paginación -->
+  <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>
   <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/verificacionDePicking.js?v=4.2" defer></script>

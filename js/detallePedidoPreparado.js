@@ -331,6 +331,124 @@ function limpiarMensajes() {
   guardarTablaEnArray();
 }
 
+// function verificacion() {
+//   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   const tabla = document.getElementById("myTableVerificacion");
+
+//   if (tabla) {
+//     const tbody = tabla.querySelector("tbody");
+//     if (tbody) {
+//       tbody.querySelectorAll("tr").forEach((fila) => {
+//         const celdaLeida = fila.querySelector("#cantidadLeida");
+//         const verifcheck = fila.querySelector("#verificado");
+//         if (celdaLeida) celdaLeida.textContent = "";
+//         if (verifcheck) verifcheck.textContent = "";
+//       });
+//     }
+//   }
+
+//   var cantidadesTotales = {};
+//   dataArray.forEach(function (item) {
+//     cantidadesTotales[item.ARTICULO] = (cantidadesTotales[item.ARTICULO] || 0) + item.CANTIDAD_LEIDA;
+//   });
+
+//   var resultadoArray = [];
+//   for (var articulo in cantidadesTotales) {
+//     resultadoArray.push({
+//       ARTICULO: articulo,
+//       CANTIDAD_LEIDA: cantidadesTotales[articulo]
+//     });
+//   }
+
+//   var pedidoList = detallePedidoList;
+//   const mensajesArray = [];
+//   let contadorMensajes = 1;
+
+//   resultadoArray.forEach((resultado) => {
+//     const pedido = pedidoList.find(
+//       (p) =>
+//         p.ARTICULO === resultado.ARTICULO &&
+//         parseFloat(p.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
+//     );
+
+//     const filas = tabla ? tabla.querySelectorAll("tbody tr") : [];
+
+//     if (pedido) {
+//       filas.forEach((fila) => {
+//         const celdaArt = fila.querySelector("#verifica-articulo");
+//         if (celdaArt && celdaArt.textContent === resultado.ARTICULO) {
+//           const celdaVerif = fila.querySelector("#verificado");
+//           if (celdaVerif) {
+//             celdaVerif.innerHTML = `<i class="material-icons" style="color: #28a745 !important; font-size: 22px; vertical-align: middle;">done_all</i>`;
+//           }
+//           const celdaLeida = fila.querySelector("#cantidadLeida");
+//           if (celdaLeida) celdaLeida.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
+//         }
+//       });
+//     } else {
+//       filas.forEach((fila) => {
+//         const celdaArt = fila.querySelector("#verifica-articulo");
+//         if (celdaArt && celdaArt.textContent === resultado.ARTICULO) {
+//           const celdaVerif = fila.querySelector("#verificado");
+//           const cantPedida = fila.querySelector("#cantidadPedida");
+//           const celdaLeida = fila.querySelector("#cantidadLeida");
+
+//           const pedVal = parseFloat(cantPedida.textContent) || 0;
+//           const leiVal = parseFloat(resultado.CANTIDAD_LEIDA) || 0;
+
+//           if (leiVal > pedVal) {
+//             celdaVerif.textContent = "+" + (leiVal - pedVal).toFixed(2);
+//             celdaVerif.style.color = "#dc2626";
+//             celdaVerif.style.fontWeight = "bold";
+//             mensajesArray.push(`${contadorMensajes}. La cantidad verificada de ${resultado.ARTICULO} es MAYOR a la solicitada.`);
+//             contadorMensajes++;
+//           } else if (leiVal < pedVal) {
+//             celdaVerif.textContent = (leiVal - pedVal).toFixed(2);
+//             celdaVerif.style.color = "#ea580c";
+//             celdaVerif.style.fontWeight = "bold";
+//             mensajesArray.push(`${contadorMensajes}. La cantidad verificada de ${resultado.ARTICULO} es MENOR a la solicitada.`);
+//             contadorMensajes++;
+//           }
+//           if (celdaLeida) celdaLeida.textContent = leiVal.toFixed(2);
+//         }
+//       });
+//       localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//     }
+//   });
+
+//   const estadoPedidoEl = document.getElementById("estadoPedido");
+//   const estadoPedidoText = estadoPedidoEl ? estadoPedidoEl.textContent.trim() : "";
+//   const estadoPedido = estadoPedidoText.includes(":") ? estadoPedidoText.split(":")[1].trim() : estadoPedidoText;
+
+//   const procesarHabilitado = todasLasFilasVerificadas();
+//   const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
+//   const guardarParcialHabilitado = activaGuardadoParcial();
+
+//   const btnGuardar = document.getElementById("btnGuardar");
+//   const btnProcesar = document.getElementById("btnProcesar");
+//   const btnRegresar = document.getElementById("btnRegresar");
+
+//   if (pedidofinalizado === "true" || pedidofinalizado === true) {
+//     if (guardarParcialHabilitado) {
+//       if (btnGuardar) btnGuardar.removeAttribute("hidden");
+//     } else {
+//       if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+//     }
+
+//     if (procesarHabilitado && (estadoPedido === "F" || estadoPedido === "Facturado")) {
+//       if (btnProcesar) btnProcesar.removeAttribute("hidden");
+//     } else {
+//       if (btnGuardar) btnGuardar.removeAttribute("hidden");
+//       if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
+//     }
+//   } else {
+//     if (btnRegresar) btnRegresar.removeAttribute("hidden");
+//     if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+//     if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
+//   }
+
+//   activaDevolverArticulo();
+// }
 function verificacion() {
   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
   const tabla = document.getElementById("myTableVerificacion");
@@ -379,7 +497,7 @@ function verificacion() {
         if (celdaArt && celdaArt.textContent === resultado.ARTICULO) {
           const celdaVerif = fila.querySelector("#verificado");
           if (celdaVerif) {
-            celdaVerif.innerHTML = `<i class="material-icons" style="color: #28a745 !important; font-size: 22px; vertical-align: middle;">done_all</i>`;
+            celdaVerif.innerHTML = `<span class="material-icons" style="color: #28a745 !important; font-size: 22px; vertical-align: middle;">done_all</span>`;
           }
           const celdaLeida = fila.querySelector("#cantidadLeida");
           if (celdaLeida) celdaLeida.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
@@ -400,13 +518,13 @@ function verificacion() {
             celdaVerif.textContent = "+" + (leiVal - pedVal).toFixed(2);
             celdaVerif.style.color = "#dc2626";
             celdaVerif.style.fontWeight = "bold";
-            mensajesArray.push(`${contadorMensajes}. La cantidad verificada de ${resultado.ARTICULO} es MAYOR a la solicitada.`);
+            mensajesArray.push(`${contadorMensajes}. La cantidad preparada de ${resultado.ARTICULO} es MAYOR a la solicitada.`);
             contadorMensajes++;
           } else if (leiVal < pedVal) {
             celdaVerif.textContent = (leiVal - pedVal).toFixed(2);
             celdaVerif.style.color = "#ea580c";
             celdaVerif.style.fontWeight = "bold";
-            mensajesArray.push(`${contadorMensajes}. La cantidad verificada de ${resultado.ARTICULO} es MENOR a la solicitada.`);
+            mensajesArray.push(`${contadorMensajes}. La cantidad preparada de ${resultado.ARTICULO} es MENOR a la solicitada.`);
             contadorMensajes++;
           }
           if (celdaLeida) celdaLeida.textContent = leiVal.toFixed(2);
@@ -416,38 +534,66 @@ function verificacion() {
     }
   });
 
+  // Habilitación de botones
+  verificarEstadoBotones();
+  activaDevolverArticulo();
+}
+
+function verificarEstadoBotones() {
+  const tablaVerificacion = document.getElementById("myTableVerificacion");
+  if (!tablaVerificacion) return;
+
+  const filas = tablaVerificacion.querySelectorAll("tbody tr");
+  
+  let hayAlMenosUnaLectura = false;
+  let todasCompletadasSuficientes = true;
+
+  if (filas.length === 0) {
+    todasCompletadasSuficientes = false;
+  }
+
+  filas.forEach((fila) => {
+    const cantPedida = parseFloat(fila.querySelector("#cantidadPedida")?.textContent) || 0;
+    const celdaLeida = fila.querySelector("#cantidadLeida");
+    const cantLeida = celdaLeida && celdaLeida.textContent.trim() !== "" ? parseFloat(celdaLeida.textContent) : 0;
+
+    if (cantLeida > 0) {
+      hayAlMenosUnaLectura = true;
+    }
+    if (cantLeida < cantPedida) {
+      todasCompletadasSuficientes = false;
+    }
+  });
+
   const estadoPedidoEl = document.getElementById("estadoPedido");
   const estadoPedidoText = estadoPedidoEl ? estadoPedidoEl.textContent.trim() : "";
   const estadoPedido = estadoPedidoText.includes(":") ? estadoPedidoText.split(":")[1].trim() : estadoPedidoText;
-
-  const procesarHabilitado = todasLasFilasVerificadas();
-  const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
-  const guardarParcialHabilitado = activaGuardadoParcial();
+  
+  const esPedidoValido = estadoPedido === "F" || estadoPedido === "Facturado" || estadoPedido === "Pendiente";
 
   const btnGuardar = document.getElementById("btnGuardar");
   const btnProcesar = document.getElementById("btnProcesar");
-  const btnRegresar = document.getElementById("btnRegresar");
 
-  if (pedidofinalizado === "true" || pedidofinalizado === true) {
-    if (guardarParcialHabilitado) {
-      if (btnGuardar) btnGuardar.removeAttribute("hidden");
+  if (btnGuardar) {
+    if (hayAlMenosUnaLectura) {
+      btnGuardar.style.display = "inline-flex";
     } else {
-      if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+      btnGuardar.style.display = "none";
     }
-
-    if (procesarHabilitado && (estadoPedido === "F" || estadoPedido === "Facturado")) {
-      if (btnProcesar) btnProcesar.removeAttribute("hidden");
-    } else {
-      if (btnGuardar) btnGuardar.removeAttribute("hidden");
-      if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
-    }
-  } else {
-    if (btnRegresar) btnRegresar.removeAttribute("hidden");
-    if (btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
-    if (btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
   }
 
-  activaDevolverArticulo();
+  if (btnProcesar) {
+    if (todasCompletadasSuficientes && esPedidoValido) {
+      btnProcesar.style.display = "inline-flex";
+    } else {
+      btnProcesar.style.display = "none";
+    }
+  }
+}
+
+function validarCantidadPedida() {
+  guardarTablaEnArray();
+  verificacion();
 }
 
 function todasLasFilasVerificadas() {

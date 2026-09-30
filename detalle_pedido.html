@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -29,7 +30,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
 
     .header-info-item {
@@ -61,8 +62,11 @@
       color: #475569;
     }
 
-    .status-badge.active { background: #dcfce7; color: #166534; }
-    
+    .status-badge.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
     .codigo-barras-input {
       width: 100% !important;
       height: 32px !important;
@@ -97,8 +101,7 @@
       font-size: 12px;
       resize: vertical;
       margin-top: 15px;
-    }   
-  
+    }
   </style>
 </head>
 
@@ -110,7 +113,7 @@
     <div id="contenedorLoader"></div>
 
     <div class="vista-wrapper">
-      
+
       <!-- Acción Superior -->
       <div class="top-action-bar">
         <button type="button" class="btn btn-volver" onclick="confirmaRegresar()">
@@ -120,6 +123,8 @@
       </div>
 
       <h1 class="titulo-principal">DETALLES DEL PEDIDO</h1>
+
+      <!-- Panel de Información de Cabecera -->
       <div class="header-info-panel">
         <div class="header-info-item">
           <span class="info-label">Documento</span>
@@ -133,14 +138,15 @@
           <span class="info-label">Estado</span>
           <span class="status-badge active" id="estadoPedido">Cargando...</span>
         </div>
-      </div> 
+      </div>
 
       <!-- Navegación de Pestañas Modernas -->
       <div class="custom-tabs-nav">
         <button type="button" id="btnTabLectura" class="custom-tab-btn active" onclick="cambiarPestanaLocal('lectura')">
           LECTURA
         </button>
-        <button type="button" id="btnTabVerificacion" class="custom-tab-btn" onclick="cambiarPestanaLocal('verificacion')">
+        <button type="button" id="btnTabVerificacion" class="custom-tab-btn"
+          onclick="cambiarPestanaLocal('verificacion')">
           VERIFICACIÓN
         </button>
       </div>
@@ -157,20 +163,18 @@
             btnVerif.classList.remove("active");
             paneLec.classList.add("active");
             paneVerif.classList.remove("active");
-            limpiarMensajes(); // Dispara la función desde detallePedido.js
+            limpiarMensajes(); 
           } else if (tabName === "verificacion") {
             btnVerif.classList.add("active");
             btnLec.classList.remove("active");
             paneVerif.classList.add("active");
             paneLec.classList.remove("active");
-            verificacion(); // Dispara la función desde detallePedido.js
+            verificacion(); 
           }
         }
       </script>
 
-      <!-- ==========================================
-           TABLA 1: LECTURA
-      =============================================== -->
+      <!-- TABLA 1: LECTURA -->
       <div id="tabContentLectura" class="tab-pane active">
         <div class="grid-table-responsive">
           <table id="myTableLectura" class="tabla-transacciones">
@@ -188,13 +192,16 @@
                   <span style="font-weight: 600; color: #1e293b;"></span>
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus
+                    autocomplete="off">
                 </td>
                 <td>
-                  <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)" autocomplete="off">
+                  <input type="text" class="codigo-barras-input" value="" onchange="validarCantidadPedida(this)"
+                    autocomplete="off">
                 </td>
                 <td class="cell-center">
-                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
+                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;"
+                    onclick="eliminarFila(this)">delete</i>
                 </td>
               </tr>
             </tbody>
@@ -202,11 +209,9 @@
         </div>
       </div>
 
-      <!-- ==========================================
-           TABLA 2: VERIFICACIÓN
-      =============================================== -->
+      <!-- TABLA 2: VERIFICACIÓN -->
       <div id="tabContentVerificacion" class="tab-pane">
-        
+
         <div class="results-control-bar" style="margin-top: 5px;">
           <div class="total-registros-title" id="cantidadDeRegistros">
             Cantidad de registros: 0
@@ -219,7 +224,7 @@
               <tr>
                 <th style="width: 30%; text-align: left;">Artículo</th>
                 <th style="width: 25%;">Código</th>
-                <th style="width: 15%;">Cant. Pedida</th>
+                <th style="width: 15%;">Cant. Sol.</th>
                 <th style="width: 15%;">Cant. Leída</th>
                 <th style="width: 15%;">Verificado</th>
                 <th style="display: none;">DEL</th>
@@ -231,19 +236,23 @@
           </table>
         </div>
 
-        <!-- Botones de Acción de Verificación -->
-        <div id="contenedorBotones" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-          <button id="btnGuardar" class="btn-buscar-gradient" style="width: auto; background: #0284c7; box-shadow: none;" onclick="confirmarGuardadoParcial()" hidden>
+        <!-- Botones de Acción de Verificación (Eliminado btnRegresar) -->
+        <div id="contenedorBotones"
+          style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+          <button id="btnGuardar" class="btn-buscar-gradient"
+            style="width: auto; background: #0284c7; box-shadow: none; display: none;" onclick="confirmarGuardadoParcial()">
             <i class="material-icons left" style="font-size: 18px;">save</i> Guardar Parcial
           </button>
-          <button id="btnProcesar" class="btn-buscar-gradient" style="width: auto; box-shadow: none;" onclick="confirmaProcesar()" hidden>
+          <button id="btnProcesar" class="btn-buscar-gradient" 
+            style="width: auto; background: #28a745; box-shadow: none; display: none;" onclick="confirmaProcesar()">
             <i class="material-icons left" style="font-size: 18px;">check_circle</i> Procesar Pedido
           </button>
         </div>
 
         <!-- Caja de Mensajes -->
         <div id="mensajes" style="margin-top: 20px;">
-          <textarea id="mensajeText" class="mensajes-caja" readonly placeholder="No hay mensajes de error..."></textarea>
+          <textarea id="mensajeText" class="mensajes-caja" readonly
+            placeholder="No hay mensajes de error..."></textarea>
         </div>
 
       </div> <!-- Cierre Tab Verificación -->
@@ -258,16 +267,16 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
   <!-- Scripts Globales -->
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>
   <script type="text/javascript" src="js/footer.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/version-checker.js?v=4.2"></script>
-  
-  <!-- Lógica y Generador de Códigos de Barras -->
+
+  <!-- Controlador -->
   <script type="text/javascript" src="js/detallePedido.js?v=4.2" defer></script>
 </body>
 

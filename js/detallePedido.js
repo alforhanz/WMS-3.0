@@ -421,165 +421,311 @@ function limpiarMensajes() {
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
+// function verificacion() {
+//   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
+//   const tabla = document.getElementById("myTableVerificacion");
+
+//   if (tabla) {
+//     const tbody = tabla.querySelector("tbody");
+
+//     if(tbody) {
+//         const filas = tbody.querySelectorAll("tr");
+//         filas.forEach((fila) => {
+//           const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
+//           const verifcheck = fila.querySelector("#verificado");
+//           if (cantidadLeidaCell) cantidadLeidaCell.textContent = ""; 
+//           if (verifcheck) verifcheck.textContent = ""; 
+//         });
+//     }
+//   }
+
+//   var cantidadesTotales = {};
+//   var resultadoArray = [];
+  
+//   dataArray.forEach(function (item) {
+//     var articulo = item.ARTICULO;
+//     var cantidad = item.CANTIDAD_LEIDA;
+
+//     if (cantidadesTotales[articulo]) {
+//       cantidadesTotales[articulo] += cantidad;
+//     } else {
+//       cantidadesTotales[articulo] = cantidad;
+//     }
+
+//     if (cantidadesTotales[articulo] === cantidad) {
+//       resultadoArray.push(item);
+//       delete cantidadesTotales[articulo];
+//     }
+//   });
+
+//   for (var articulo in cantidadesTotales) {
+//     resultadoArray.push({
+//       ARTICULO: articulo,
+//       CANTIDAD_LEIDA: cantidadesTotales[articulo],
+//     });
+//   }
+
+//   var pedidoList = detallePedidoList;
+//   const mensajesArray = [];
+//   let contadorMensajes = 1; 
+
+//   resultadoArray.forEach((resultado) => {
+//     const pedido = pedidoList.find(
+//       (pedido) =>
+//         pedido.ARTICULO === resultado.ARTICULO &&
+//         parseFloat(pedido.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
+//     );
+
+//     if (pedido) {
+//       const tabla = document.getElementById("myTableVerificacion");
+//       if (tabla) {
+//         const tbody = tabla.querySelector("tbody");
+//         const filas = tbody.querySelectorAll("tr");
+
+//         filas.forEach((fila) => {
+//           const celdaARTICULO = fila.querySelector("#verifica-articulo");
+//           if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
+//             const celdaVerificado = fila.querySelector("#verificado");
+//             if (celdaVerificado) {
+//               celdaVerificado.textContent = "";
+//               const spanVerificacion = document.createElement("span");
+//               spanVerificacion.classList.add("material-icons");
+//               spanVerificacion.textContent = "done_all";
+//               spanVerificacion.style.color = "#16a34a"; // Verde moderno
+//               spanVerificacion.style.fontSize = "22px";
+//               celdaVerificado.appendChild(spanVerificacion);
+//             }
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
+//             }
+//           }
+//         });
+//       }
+//     } else {
+//       const tabla = document.getElementById("myTableVerificacion");
+//       if (tabla) {
+//         const tbody = tabla.querySelector("tbody");
+//         const filas = tbody.querySelectorAll("tr");
+
+//         filas.forEach((fila) => {
+//           const celdaARTICULO = fila.querySelector("#verifica-articulo");
+//           if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
+//             const celdaVerificado = fila.querySelector("#verificado");
+//             const cantPedida = fila.querySelector("#cantidadPedida");
+//             const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+
+//             if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
+//               var resultadoOperacion = "+" + (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
+//               celdaVerificado.textContent = resultadoOperacion;
+//               celdaVerificado.style.color = "#dc2626"; // Rojo alerta
+//               celdaVerificado.style.fontWeight = "bold";
+              
+//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MAYOR a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//               contadorMensajes++; 
+//             } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
+//               var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
+//               celdaVerificado.textContent = resultadoOperacion;
+//               celdaVerificado.style.color = "#ea580c"; // Naranja alerta
+//               celdaVerificado.style.fontWeight = "bold";
+              
+//               const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MENOR a la solicitada.`;
+//               mensajesArray.push(mensaje);
+//               contadorMensajes++; 
+//             }
+//             if (cantidadVerificadaCell) {
+//               cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
+//             }
+//           }
+//         });
+//         localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
+//       }
+//     }
+//   });
+  
+//   activaDevolverArticulo();
+
+//   const estadoPedidoElement = document.getElementById("estadoPedido");
+//   const estadoPedidoText = estadoPedidoElement ? estadoPedidoElement.textContent : "";
+//   const estadoPedidoParts = estadoPedidoText.split(":");
+//   const estadoPedido = estadoPedidoParts.length > 1 ? estadoPedidoParts[1].trim() : estadoPedidoText.trim();
+    
+//   const procesarHabilitado = todasLasFilasVerificadas();
+//   const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
+//   const guardarParcialHabilitado = activaGuardadoParcial();
+
+//   // Controlar Visibilidad de Botones
+//   const btnGuardar = document.getElementById("btnGuardar");
+//   const btnProcesar = document.getElementById("btnProcesar");
+//   const btnRegresar = document.getElementById("btnRegresar");
+
+//   if (pedidofinalizado === "true" || pedidofinalizado === true) {
+//     if (guardarParcialHabilitado) {
+//       if(btnGuardar) btnGuardar.removeAttribute("hidden");
+//     } else {
+//       if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+//     }
+    
+//     if (procesarHabilitado && (estadoPedido === "F" || estadoPedido === "Facturado")) {
+//       if(btnProcesar) btnProcesar.removeAttribute("hidden");
+//     } else {
+//       if(btnGuardar) btnGuardar.removeAttribute("hidden");
+//       if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
+//     }
+//   } else {
+//     // Modo Solo Lectura/Visualización (Pedidos no finalizados/facturados)
+//     if(btnRegresar) btnRegresar.removeAttribute("hidden");
+//     if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+//     if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
+//   }
+// } 
 function verificacion() {
   var dataArray = JSON.parse(localStorage.getItem("dataArray")) || [];
   const tabla = document.getElementById("myTableVerificacion");
 
   if (tabla) {
     const tbody = tabla.querySelector("tbody");
-
-    if(tbody) {
-        const filas = tbody.querySelectorAll("tr");
-        filas.forEach((fila) => {
-          const cantidadLeidaCell = fila.querySelector("#cantidadLeida");
-          const verifcheck = fila.querySelector("#verificado");
-          if (cantidadLeidaCell) cantidadLeidaCell.textContent = ""; 
-          if (verifcheck) verifcheck.textContent = ""; 
-        });
+    if (tbody) {
+      tbody.querySelectorAll("tr").forEach((fila) => {
+        const celdaLeida = fila.querySelector("#cantidadLeida");
+        const verifcheck = fila.querySelector("#verificado");
+        if (celdaLeida) celdaLeida.textContent = "";
+        if (verifcheck) verifcheck.textContent = "";
+      });
     }
   }
 
   var cantidadesTotales = {};
-  var resultadoArray = [];
-  
   dataArray.forEach(function (item) {
-    var articulo = item.ARTICULO;
-    var cantidad = item.CANTIDAD_LEIDA;
-
-    if (cantidadesTotales[articulo]) {
-      cantidadesTotales[articulo] += cantidad;
-    } else {
-      cantidadesTotales[articulo] = cantidad;
-    }
-
-    if (cantidadesTotales[articulo] === cantidad) {
-      resultadoArray.push(item);
-      delete cantidadesTotales[articulo];
-    }
+    cantidadesTotales[item.ARTICULO] = (cantidadesTotales[item.ARTICULO] || 0) + item.CANTIDAD_LEIDA;
   });
 
+  var resultadoArray = [];
   for (var articulo in cantidadesTotales) {
     resultadoArray.push({
       ARTICULO: articulo,
-      CANTIDAD_LEIDA: cantidadesTotales[articulo],
+      CANTIDAD_LEIDA: cantidadesTotales[articulo]
     });
   }
 
   var pedidoList = detallePedidoList;
   const mensajesArray = [];
-  let contadorMensajes = 1; 
+  let contadorMensajes = 1;
 
   resultadoArray.forEach((resultado) => {
     const pedido = pedidoList.find(
-      (pedido) =>
-        pedido.ARTICULO === resultado.ARTICULO &&
-        parseFloat(pedido.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
+      (p) =>
+        p.ARTICULO === resultado.ARTICULO &&
+        parseFloat(p.CANTIDAD_PEDIDA) === parseFloat(resultado.CANTIDAD_LEIDA)
     );
 
+    const filas = tabla ? tabla.querySelectorAll("tbody tr") : [];
+
     if (pedido) {
-      const tabla = document.getElementById("myTableVerificacion");
-      if (tabla) {
-        const tbody = tabla.querySelector("tbody");
-        const filas = tbody.querySelectorAll("tr");
-
-        filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("#verifica-articulo");
-          if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
-            const celdaVerificado = fila.querySelector("#verificado");
-            if (celdaVerificado) {
-              celdaVerificado.textContent = "";
-              const spanVerificacion = document.createElement("span");
-              spanVerificacion.classList.add("material-icons");
-              spanVerificacion.textContent = "done_all";
-              spanVerificacion.style.color = "#16a34a"; // Verde moderno
-              spanVerificacion.style.fontSize = "22px";
-              celdaVerificado.appendChild(spanVerificacion);
-            }
-            const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
-            if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
-            }
+      filas.forEach((fila) => {
+        const celdaArt = fila.querySelector("#verifica-articulo");
+        if (celdaArt && celdaArt.textContent === resultado.ARTICULO) {
+          const celdaVerif = fila.querySelector("#verificado");
+          if (celdaVerif) {
+            celdaVerif.innerHTML = `<span class="material-icons" style="color: #28a745 !important; font-size: 22px; vertical-align: middle;">done_all</span>`;
           }
-        });
-      }
+          const celdaLeida = fila.querySelector("#cantidadLeida");
+          if (celdaLeida) celdaLeida.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
+        }
+      });
     } else {
-      const tabla = document.getElementById("myTableVerificacion");
-      if (tabla) {
-        const tbody = tabla.querySelector("tbody");
-        const filas = tbody.querySelectorAll("tr");
+      filas.forEach((fila) => {
+        const celdaArt = fila.querySelector("#verifica-articulo");
+        if (celdaArt && celdaArt.textContent === resultado.ARTICULO) {
+          const celdaVerif = fila.querySelector("#verificado");
+          const cantPedida = fila.querySelector("#cantidadPedida");
+          const celdaLeida = fila.querySelector("#cantidadLeida");
 
-        filas.forEach((fila) => {
-          const celdaARTICULO = fila.querySelector("#verifica-articulo");
-          if (celdaARTICULO && celdaARTICULO.textContent === resultado.ARTICULO) {
-            const celdaVerificado = fila.querySelector("#verificado");
-            const cantPedida = fila.querySelector("#cantidadPedida");
-            const cantidadVerificadaCell = fila.querySelector("#cantidadLeida");
+          const pedVal = parseFloat(cantPedida.textContent) || 0;
+          const leiVal = parseFloat(resultado.CANTIDAD_LEIDA) || 0;
 
-            if (parseFloat(resultado.CANTIDAD_LEIDA) > parseFloat(cantPedida.textContent)) {
-              var resultadoOperacion = "+" + (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
-              celdaVerificado.textContent = resultadoOperacion;
-              celdaVerificado.style.color = "#dc2626"; // Rojo alerta
-              celdaVerificado.style.fontWeight = "bold";
-              
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MAYOR a la solicitada.`;
-              mensajesArray.push(mensaje);
-              contadorMensajes++; 
-            } else if (resultado.CANTIDAD_LEIDA < parseFloat(cantPedida.textContent)) {
-              var resultadoOperacion = (resultado.CANTIDAD_LEIDA - parseFloat(cantPedida.textContent)).toFixed(2);
-              celdaVerificado.textContent = resultadoOperacion;
-              celdaVerificado.style.color = "#ea580c"; // Naranja alerta
-              celdaVerificado.style.fontWeight = "bold";
-              
-              const mensaje = `${contadorMensajes}. La cantidad verificada del artículo ${resultado.ARTICULO} es MENOR a la solicitada.`;
-              mensajesArray.push(mensaje);
-              contadorMensajes++; 
-            }
-            if (cantidadVerificadaCell) {
-              cantidadVerificadaCell.textContent = parseFloat(resultado.CANTIDAD_LEIDA).toFixed(2);
-            }
+          if (leiVal > pedVal) {
+            celdaVerif.textContent = "+" + (leiVal - pedVal).toFixed(2);
+            celdaVerif.style.color = "#dc2626";
+            celdaVerif.style.fontWeight = "bold";
+            mensajesArray.push(`${contadorMensajes}. La cantidad leída de ${resultado.ARTICULO} es MAYOR a la solicitada.`);
+            contadorMensajes++;
+          } else if (leiVal < pedVal) {
+            celdaVerif.textContent = (leiVal - pedVal).toFixed(2);
+            celdaVerif.style.color = "#ea580c";
+            celdaVerif.style.fontWeight = "bold";
+            mensajesArray.push(`${contadorMensajes}. La cantidad leída de ${resultado.ARTICULO} es MENOR a la solicitada.`);
+            contadorMensajes++;
           }
-        });
-        localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
-      }
+          if (celdaLeida) celdaLeida.textContent = leiVal.toFixed(2);
+        }
+      });
+      localStorage.setItem("mensajes", JSON.stringify(mensajesArray));
     }
   });
-  
+
+  // Habilitación de botones
+  verificarEstadoBotones();
   activaDevolverArticulo();
+}
 
-  const estadoPedidoElement = document.getElementById("estadoPedido");
-  const estadoPedidoText = estadoPedidoElement ? estadoPedidoElement.textContent : "";
-  const estadoPedidoParts = estadoPedidoText.split(":");
-  const estadoPedido = estadoPedidoParts.length > 1 ? estadoPedidoParts[1].trim() : estadoPedidoText.trim();
-    
-  const procesarHabilitado = todasLasFilasVerificadas();
-  const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
-  const guardarParcialHabilitado = activaGuardadoParcial();
+function verificarEstadoBotones() {
+  const tablaVerificacion = document.getElementById("myTableVerificacion");
+  if (!tablaVerificacion) return;
 
-  // Controlar Visibilidad de Botones
+  const filas = tablaVerificacion.querySelectorAll("tbody tr");
+  
+  let hayAlMenosUnaLectura = false;
+  let todasCompletadasSuficientes = true;
+
+  if (filas.length === 0) {
+    todasCompletadasSuficientes = false;
+  }
+
+  filas.forEach((fila) => {
+    const cantPedida = parseFloat(fila.querySelector("#cantidadPedida")?.textContent) || 0;
+    const celdaLeida = fila.querySelector("#cantidadLeida");
+    const cantLeida = celdaLeida && celdaLeida.textContent.trim() !== "" ? parseFloat(celdaLeida.textContent) : 0;
+
+    if (cantLeida > 0) {
+      hayAlMenosUnaLectura = true;
+    }
+    if (cantLeida < cantPedida) {
+      todasCompletadasSuficientes = false;
+    }
+  });
+
+  const estadoPedidoEl = document.getElementById("estadoPedido");
+  const estadoPedidoText = estadoPedidoEl ? estadoPedidoEl.textContent.trim() : "";
+  const estadoPedido = estadoPedidoText.includes(":") ? estadoPedidoText.split(":")[1].trim() : estadoPedidoText;
+  
+  const esPedidoValido = estadoPedido === "F" || estadoPedido === "Facturado" || estadoPedido === "Pendiente";
+
   const btnGuardar = document.getElementById("btnGuardar");
   const btnProcesar = document.getElementById("btnProcesar");
-  const btnRegresar = document.getElementById("btnRegresar");
 
-  if (pedidofinalizado === "true" || pedidofinalizado === true) {
-    if (guardarParcialHabilitado) {
-      if(btnGuardar) btnGuardar.removeAttribute("hidden");
+  if (btnGuardar) {
+    if (hayAlMenosUnaLectura) {
+      btnGuardar.style.display = "inline-flex";
     } else {
-      if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
+      btnGuardar.style.display = "none";
     }
-    
-    if (procesarHabilitado && (estadoPedido === "F" || estadoPedido === "Facturado")) {
-      if(btnProcesar) btnProcesar.removeAttribute("hidden");
-    } else {
-      if(btnGuardar) btnGuardar.removeAttribute("hidden");
-      if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
-    }
-  } else {
-    // Modo Solo Lectura/Visualización (Pedidos no finalizados/facturados)
-    if(btnRegresar) btnRegresar.removeAttribute("hidden");
-    if(btnGuardar) btnGuardar.setAttribute("hidden", "hidden");
-    if(btnProcesar) btnProcesar.setAttribute("hidden", "hidden");
   }
-} 
+
+  if (btnProcesar) {
+    if (todasCompletadasSuficientes && esPedidoValido) {
+      btnProcesar.style.display = "inline-flex";
+    } else {
+      btnProcesar.style.display = "none";
+    }
+  }
+}
+
+function validarCantidadPedida() {
+  guardarTablaEnArray();
+  verificacion();
+}
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // Función para verificar si todas las filas tienen el ícono "fa-check" 

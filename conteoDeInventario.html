@@ -9,7 +9,8 @@
 
   <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
   <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -85,7 +86,7 @@
       font-weight: 700;
       color: #1e293b;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .btn-export-pill:hover {
@@ -132,7 +133,7 @@
 
       <!-- Barra Superior de Acciones -->
       <div class="top-action-bar">
-        <button type="button" class="btn btn-volver" onclick="window.history.back()">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
           <i class="material-icons">arrow_back</i>
           <span>Volver</span>
         </button>
@@ -160,7 +161,8 @@
               <!-- Ubicación -->
               <div class="input-group-custom">
                 <label for="ubicacion" class="input-label-custom">Ubicación / Estante</label>
-                <input id="ubicacion" type="text" class="custom-text-input" placeholder="Ej: PASILLO-01, EST-A" autocomplete="off">
+                <input id="ubicacion" type="text" class="custom-text-input" placeholder="Ej: PASILLO-01, EST-A"
+                  autocomplete="off">
               </div>
 
             </div>
@@ -221,13 +223,16 @@
                   <span style="font-weight: 600; color: #1e293b;"></span>
                 </td>
                 <td>
-                  <input id="codigo-barras" type="text" class="codigo-barras-input" value="" onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
+                  <input id="codigo-barras" type="text" class="codigo-barras-input" value=""
+                    onchange="validarCodigoBarras(this)" autofocus autocomplete="off">
                 </td>
                 <td>
-                  <input id="cant-leida" type="text" class="codigo-barras-input" value="" onchange="validarCantidades(this)" autocomplete="off">
+                  <input id="cant-leida" type="text" class="codigo-barras-input" value=""
+                    onchange="validarCantidades(this)" autocomplete="off">
                 </td>
                 <td class="cell-center">
-                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;" onclick="eliminarFila(this)">delete</i>
+                  <i class="material-icons" style="cursor: pointer; color: #ef4444; font-size: 20px;"
+                    onclick="eliminarFila(this)">delete</i>
                 </td>
               </tr>
             </tbody>
@@ -236,7 +241,8 @@
 
         <!-- Acciones en Lectura -->
         <div class="action-buttons-wrapper">
-          <button id="btnGuardaConteo" class="btn-buscar-gradient btn-action-item" type="button" onclick="confirmarGuardadoParcialLectura()">
+          <button id="btnGuardaConteo" class="btn-buscar-gradient btn-action-item" type="button"
+            onclick="confirmarGuardadoParcialLectura()">
             <span>Guardar Conteo</span>
             <i class="material-icons right">save</i>
           </button>
@@ -255,7 +261,8 @@
           </div>
 
           <div class="btn-export-group">
-            <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="resumen_descargarExcel()" hidden>
+            <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="resumen_descargarExcel()"
+              hidden>
               <img src="img/excel.png" alt="Excel">
               <span>Descargar Excel</span>
             </button>
@@ -282,7 +289,8 @@
 
         <!-- Acciones en Resumen -->
         <div class="action-buttons-wrapper">
-          <button id="btnFinalizar" class="btn-buscar-gradient btn-action-item" style="background: #0284c7; box-shadow: none;" type="button" onclick="confirmaFinalizar()" hidden>
+          <button id="btnFinalizar" class="btn-buscar-gradient btn-action-item"
+            style="background: #0284c7; box-shadow: none;" type="button" onclick="confirmaFinalizar()" hidden>
             <span>Finalizar Inventario</span>
             <i class="material-icons right">check_circle</i>
           </button>
@@ -292,7 +300,8 @@
       <!-- Observaciones -->
       <div id="observaciones-container" style="margin-top: 20px;">
         <label for="observaciones" class="input-label-custom">Observaciones del Conteo</label>
-        <textarea placeholder="Ingrese notas adicionales del conteo..." id="observaciones" class="observaciones-caja"></textarea>
+        <textarea placeholder="Ingrese notas adicionales del conteo..." id="observaciones"
+          class="observaciones-caja"></textarea>
       </div>
 
     </div>
@@ -312,7 +321,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script type="text/javascript" src="js/environment.js?v=4.2" defer></script>
-  <script type="text/javascript" src="js/main.js?v=4.2" defer></script>
+  <script type="text/javascript" src="js/main.js?v=4.3" defer></script>
   <script type="text/javascript" src="js/menu.js?v=4.2" defer></script>
   <script type="text/javascript" src="js/paginacion.js?v=4.2"></script>
   <script type="text/javascript" src="js/loader.js?v=4.2"></script>
