@@ -516,21 +516,8 @@ function verificacion() {
   });
   const guardarParcialHabilitado = activaGuardadoParcial();
 
-  //activaDevolverArticulo();
-  //inicializarBotones();
-
-  //     // const estadoPedidoElement = document.getElementById("estadoPedido");
-  //     // const estadoPedidoText = estadoPedidoElement.textContent;
-  //     // const estadoPedidoParts = estadoPedidoText.split(':');
-  //     // const estadoPedido = estadoPedidoParts.length > 1 ? estadoPedidoParts[1].trim() : '';
   const procesarHabilitado = todasLasFilasVerificadas();
-  //     const pedidofinalizado = localStorage.getItem("pedidos_finalizados");
-  //     const guardarParcialHabilitado = activaGuardadoParcial();
-  //     // const btnGuardar = document.getElementById('btnGuardar');
-  //     // const btnProcesar = document.getElementById('btnProcesar');
-  //     // const btnRegresar = document.getElementById('btnRegresar');
-
-  //    if(pedidofinalizado==="true"){
+ 
 
   if (guardarParcialHabilitado) {
     const btnGuardar = document.getElementById("btnGuardar");
@@ -548,12 +535,7 @@ function verificacion() {
   } else {
     btnGuardar.removeAttribute("hidden");
     btnProcesar.setAttribute("hidden", "hidden");
-  }
-  //    }else{
-  //         const btnRegresar = document.getElementById('btnRegresar');
-  //         console.log("activa btn regresar");
-  //         btnRegresar.removeAttribute('hidden');
-  //    }
+  } 
 } //Fin de verificacion
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -951,10 +933,3 @@ function devolverArticulo(articulo) {
     });
 }
 
-///////FUNCION PARA Retornar a la vista anterior//////
-function confirmaRegresar() {
-  localStorage.setItem("autoSearchPedidos", "true");
-  localStorage.removeItem("mensajes");
-  //localStorage.clear();
-  // window.location.href = 'verificacionDePedidos.html';
-}

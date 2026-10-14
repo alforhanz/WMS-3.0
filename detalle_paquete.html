@@ -3,109 +3,243 @@
 
 <head>
   <meta charset="UTF-8">
-  <!--Import Materialize Icons-->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalles de Paquetes Creados - WMS</title>
+
+  <!-- Fuentes e Íconos -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!--Import materialize.css-->
+
+  <!-- Materialize Base + CSS Maestro Unificado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <!--Import Personalize css-->
-  <link type="text/css" rel="stylesheet" href="css/main.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/header.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/menu.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/location.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/buscador.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/custom.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/homestyle.css" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/responsiveStyle.css?v1.01" media="screen,projection" />
-  <link type="text/css" rel="stylesheet" href="css/themecolor.css" media="screen,projection" />
-  <!-- FONTS -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jura&family=Orbitron&family=Oswald&display=swap');
-  </style>
+  <link rel="stylesheet" href="css/main.css?v=4.2" media="screen,projection" />
+
   <link rel="icon" type="image/x-icon" href="/img/wms.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/encabezado.js" type="text/javascript"></script>
 
-  <title>Paquetes de Contenedores Verificados - WMS</title>
+  <style>
+    .header-info-panel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .header-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .observaciones-caja {
+      width: 100%;
+      min-height: 60px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #1e293b;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+
+    .btn-export-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .btn-export-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-export-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-export-pill img {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Filas estilizadas de totales */
+    #tblResultados tfoot tr td {
+      background-color: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
+      border-top: 2px solid #cbd5e1;
+    }
+
+    @media screen and (max-width: 639px) {
+      .header-info-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .results-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .btn-export-group {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+      }
+
+      .tabla-compacta-movil th,
+      .tabla-compacta-movil td {
+        padding: 6px 4px !important;
+        font-size: 9.5px !important;
+      }
+    }
+  </style>
 </head>
 
 <body id="home" tabindex="-1">
   <!-- HEADER -->
   <my-header></my-header>
-  <!--HEADER-->
+
   <main>
+    <!-- Modal Loader Global -->
     <div id="contenedorLoader"></div>
-    <div id="resultadoBusqueda">
-      <div id="carga" class="carga-style"></div>
-      <div class="container">
 
-        <div class="row">
-          <button id="btnRegresar" class="btn-descarga" onclick="regresar()">
-            <img src="img/icon/return-up.svg" alt="" class="retorno">
-            <label for="btnRegresar" id="lblRegresar">Regresar</label>
-          </button>
-        </div>
+    <div class="vista-wrapper">
 
-        <h2 class="titulo-vista">Detalles de Paquetes Creados</h2>
-        <div class="row"><label id="documento"></label></div>
-        <div id="menup"></div>
-        <div class="row">
-          <label id="cantidadDeRegistros"> Registros:</label>
-        </div>
-        <div class="imppdf">
-          <button id="btnDescargarPDF" class="btn-descarga" onclick="imprimirPaqueteReporte()">
-            <img src="img/pdf.png" alt="Descargar PDF" class="btn-icon">
-          </button>
-          <label id="lblPDF" for="btnDescargarPDF" class="btnimppdf">Descargar reporte en PDF</label>
-        </div>
-        <div class="impexcel">
-          <button id="btnDescargarExcel" class="btn-descarga" onclick="exportarExcelPaquete()">
-            <img src="img/excel.png" alt="Descargar Excel" class="btn-icon">
-          </button>
-          <label id="lblExcel" for="btnDescargarExcel" class="btnimpexcel">Descargar Excel</label>
-        </div>
-
-
-
-        <div class="row rptPaquetes">
-          <div id="resultadoGeneral"></div>
-          <table id="tblResultados" class="display centered highlight responsive-table">
-            <thead>
-              <tr class="themeColor2"></tr>
-            </thead>
-            <tbody id="tblbodyResultados"></tbody>
-            <tfoot id="tblfootResultados"></tfoot>
-          </table>
-          <div id="resultadoPaginador"></div>
-        </div>
-        <div class="row" id="observacion">
-          <div class="input-field col s12">
-            <label id="lblObservaciones" for="observaciones">Observaciones</label>
-            <textarea placeholder="Observaciones" id="observaciones" type="text" readonly></textarea>
-          </div>
-        </div>
-
+      <!-- Barra Superior de Acciones -->
+      <div class="top-action-bar">
+        <button type="button" class="btn btn-volver" onclick="volverAtras(event)">
+          <i class="material-icons">arrow_back</i>
+          <span>Volver a Paquetes</span>
+        </button>
       </div>
+
+      <!-- Título de la Vista -->
+      <h1 class="titulo-principal">DETALLES DE PAQUETES CREADOS</h1>
+
+      <div id="carga" class="carga-style"></div>
+
+      <!-- Panel de Información de Cabecera -->
+      <div class="header-info-panel">
+        <div class="header-info-item">
+          <span class="info-label">Documento</span>
+          <span class="info-value" id="documento">Cargando...</span>
+        </div>
+      </div>
+
+      <!-- BARRA DE RESULTADOS Y EXPORTACIONES -->
+      <div class="results-control-bar" style="margin-top: 10px;">
+        <div id="resultadoGeneral" class="total-registros-title">
+          <span id="cantidadDeRegistros">Registros: 0</span>
+        </div>
+
+        <div class="btn-export-group">
+          <button id="btnDescargarExcel" class="btn-export-pill" type="button" onclick="exportarExcelPaquete()">
+            <img src="img/excel.png" alt="Excel">
+            <span id="lblExcel">Descargar Excel</span>
+          </button>
+          <button id="btnDescargarPDF" class="btn-export-pill" type="button" onclick="imprimirPaqueteReporte()">
+            <img src="img/pdf.png" alt="PDF">
+            <span id="lblPDF">Descargar PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID DE RESULTADOS -->
+      <div class="grid-table-responsive">
+        <table id="tblResultados" class="tabla-transacciones tabla-compacta-movil">
+          <thead>
+            <tr>
+              <!-- Inyectado dinámicamente por JS -->
+            </tr>
+          </thead>
+          <tbody id="tblbodyResultados">
+            <!-- Filas dinámicas inyectadas por JS -->
+          </tbody>
+          <tfoot id="tblfootResultados">
+            <!-- Totales calculados inyectados por JS -->
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- PAGINADOR -->
+      <div id="resultadoPaginador"></div>
+
+      <!-- OBSERVACIONES -->
+      <div id="observacion" style="margin-top: 20px;">
+        <label for="observaciones" class="input-label-custom">Observaciones / Referencias</label>
+        <textarea id="observaciones" class="observaciones-caja" readonly
+          placeholder="Sin observaciones registradas..."></textarea>
+      </div>
+
+    </div>
   </main>
 
+  <!-- FOOTER -->
+  <my-footer></my-footer>
+
+  <!-- Bibliotecas PDF & Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Incluir la biblioteca de jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <!-- IMprimir Código de barra -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script> -->
-  <!--JavaScript at end of body for optimized loading-->
+
+  <!-- SCRIPTS BÁSICOS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="text/javascript" src="js/environment.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/main.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/menu.js?v1.1" defer></script>
-  <script type="text/javascript" src="js/datellePaquete.js" defer></script>
-  <script type="tex/javascript" src="js/paginacion.js"></script>
-  <script type="text/javascript" src="js/loader.js"></script>
-  <!--JavaScript local-->
+
+  <!-- INYECCIÓN DINÁMICA DE SCRIPTS WMS CON CACHE BUSTING -->
+  <script>
+    var v = localStorage.getItem("wms_app_version") || new Date().getTime();
+    document.write('<script src="js/environment.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/main.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/menu.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/paginacion.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/loader.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/footer.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/version-checker.js?v=4.5" defer><\\/script>');
+    document.write('<script src="js/datellePaquete.js?v=4.5" defer><\\/script>');
+  </script>
 </body>
 
 </html>

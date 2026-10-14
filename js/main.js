@@ -1,3 +1,128 @@
+// =============================================================================
+// CONTROL DE INSTANCIA ÚNICA (BLOQUEO DE MÚLTIPLES PESTAÑAS)
+// =============================================================================
+(function iniciarControlPestanaUnica() {
+  const LOCK_KEY = "WMS_ACTIVE_TAB_LOCK";
+  const CHANNEL_NAME = "wms_single_tab_channel";
+  const HEARTBEAT_INTERVAL = 1500;
+  const TIMEOUT_TOLERANCE = 3500; 
+
+  if (!sessionStorage.getItem("WMS_TAB_ID")) {
+    sessionStorage.setItem("WMS_TAB_ID", "tab_" + Date.now() + "_" + Math.random().toString(36).substring(2, 9));
+  }
+  const MI_TAB_ID = sessionStorage.getItem("WMS_TAB_ID");
+
+  let canal = null;
+  if (typeof BroadcastChannel !== "undefined") {
+    canal = new BroadcastChannel(CHANNEL_NAME);
+  }
+
+  let heartbeatTimer = null;
+  let bloqueado = false;
+
+  function renderizarPantallaBloqueo() {
+    if (bloqueado) return;
+    bloqueado = true;
+
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    if (canal) canal.close();
+
+    console.warn("⚠️ Pestaña duplicada detectada. Bloqueando vista...");
+    try { window.stop(); } catch (e) {}
+
+    const aplicarHtml = () => {
+      document.body.innerHTML = `
+        <div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f1f5f9; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; padding:20px; box-sizing:border-box;">
+          <div style="background:#ffffff; border-radius:12px; padding:32px 24px; max-width:440px; width:100%; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #cbd5e1;">
+            <div style="font-size:48px; color:#dc2626; line-height:1; margin-bottom:12px;">⚠️</div>
+            <h2 style="font-size:20px; font-weight:700; color:#1e293b; margin:0 0 10px 0;">Sesión Activa en Otra Pestaña</h2>
+            <p style="font-size:13.5px; color:#64748b; line-height:1.5; margin:0 0 16px 0;">
+              El sistema WMS no permite operar con múltiples pestañas simultáneas para evitar inconsistencias en parámetros de búsqueda, conteos y existencias.
+            </p>
+            <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:10px; margin-bottom:20px;">
+              <span style="font-size:12px; font-weight:600; color:#991b1b;">
+                Cierre esta pestaña y continúe en la ventana principal.
+              </span>
+            </div>
+            <button type="button" onclick="window.close()" style="width:100%; height:40px; border-radius:6px; border:none; background:#1b676b; color:#ffffff; font-size:14px; font-weight:600; cursor:pointer;">
+              Cerrar esta pestaña
+            </button>
+          </div>
+        </div>
+      `;
+    };
+
+    if (document.body) {
+      aplicarHtml();
+    } else {
+      document.addEventListener("DOMContentLoaded", aplicarHtml);
+    }
+  }
+
+  function actualizarHeartbeat() {
+    localStorage.setItem(LOCK_KEY, JSON.stringify({
+      tabId: MI_TAB_ID,
+      timestamp: Date.now()
+    }));
+  }
+
+  const lockDataRaw = localStorage.getItem(LOCK_KEY);
+  const ahora = Date.now();
+
+  if (lockDataRaw) {
+    try {
+      const lockData = JSON.parse(lockDataRaw);
+      if (lockData.tabId && lockData.tabId !== MI_TAB_ID && (ahora - lockData.timestamp < TIMEOUT_TOLERANCE)) {
+        renderizarPantallaBloqueo();
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem(LOCK_KEY);
+    }
+  }
+
+  actualizarHeartbeat();
+  heartbeatTimer = setInterval(actualizarHeartbeat, HEARTBEAT_INTERVAL);
+
+  if (canal) {
+    canal.onmessage = function (e) {
+      const msg = e.data;
+      if (!msg) return;
+
+      if (msg.type === "NUEVA_PESTANA_ABIERTA" && msg.tabId !== MI_TAB_ID) {
+        canal.postMessage({ type: "LIDER_PRESENTE", tabId: MI_TAB_ID });
+      }
+
+      if (msg.type === "LIDER_PRESENTE" && msg.tabId !== MI_TAB_ID) {
+        const lockCheck = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
+        if (lockCheck.tabId === msg.tabId) {
+          renderizarPantallaBloqueo();
+        }
+      }
+    };
+    canal.postMessage({ type: "NUEVA_PESTANA_ABIERTA", tabId: MI_TAB_ID });
+  }
+
+  window.addEventListener("storage", function (e) {
+    if (e.key === LOCK_KEY && e.newValue) {
+      try {
+        const data = JSON.parse(e.newValue);
+        if (data.tabId && data.tabId !== MI_TAB_ID) {
+          renderizarPantallaBloqueo();
+        }
+      } catch (err) {}
+    }
+  });
+
+  window.addEventListener("pagehide", function () {
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    if (canal) canal.close();
+  });
+})();
+
+// =============================================================================
+// VARIABLES GLOBALES Y FUNCIONES BASE
+// =============================================================================
 var ArrayData = new Array();
 var ArrayData2 = new Array();
 var ArrayDataFiltrado = new Array();
@@ -11,621 +136,399 @@ var itemsToDelete = "";
 var itemsToDelete_NoProm = "";
 var promoToDelete = "";
 let acumToDelete = JSON.parse(sessionStorage.getItem("itemsToDelete"));
-//-----------------------------------------------------------------------------------
+
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM cargado...");
-  // Cargar JsBarcode dinámicamente
   cargarJsBarcode();
-  //--------------------------------------------------
   validate_login();
   existeBodega();
+
   localStorage.setItem("sinExistencias", "false");
   const checkbox = document.getElementById("sinExistencias");
   if (checkbox) {
     checkbox.addEventListener("change", () => {
-      if (checkbox.checked) {
-        localStorage.setItem("sinExistencias", "true");
-      } else {
-        localStorage.setItem("sinExistencias", "false");
+      localStorage.setItem("sinExistencias", checkbox.checked ? "true" : "false");
+    });
+  }
+
+  const elemsDate = document.querySelectorAll('.datepicker');
+  if (elemsDate.length > 0) {
+    M.Datepicker.init(elemsDate, {
+      format: 'yyyy-mm-dd',
+      autoClose: true,
+      showClearBtn: true,
+      defaultDate: new Date(),
+      setDefaultDate: true,
+      i18n: {
+        cancel: 'Cancelar',
+        clear: 'Limpiar',
+        done: 'Ok',
+        months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+        weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+        weekdaysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+        weekdaysAbbrev: ["D", "L", "M", "M", "J", "V", "S"]
       }
     });
   }
 });
-//-----------------------------------------------------------------------------------
-// Función para inyectar el CDN
+
 function cargarJsBarcode() {
-  // Verificamos si ya existe para no duplicarlo
   if (!document.getElementById("jsbarcode-cdn")) {
     const script = document.createElement("script");
     script.id = "jsbarcode-cdn";
-    script.src =
-      "https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js";
-    script.async = true; // No detiene la carga de la página
-
-    script.onload = function () {
-      console.log("✅ JsBarcode cargado y listo para usar.");
-    };
-
+    script.src = "https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js";
+    script.async = true;
     document.head.appendChild(script);
   }
 }
 
-//-----------------------------------------------------------------------------------
 function validate_login() {
   const user = sessionStorage.getItem("user");
   if (user) {
     const usuario = existe_Usuario();
-    document.getElementById("usuario").innerHTML = usuario;
-    document.getElementById("hUsuario").value = usuario;
+    const userEl = document.getElementById("usuario");
+    const hUserEl = document.getElementById("hUsuario");
+    if (userEl) userEl.innerHTML = usuario;
+    if (hUserEl) hUserEl.value = usuario;
   } else {
     window.location = "index.html";
   }
 }
-//-----------------------------------------------------------------------------------
+
 function existe_Usuario() {
   const usuario = sessionStorage.getItem("user");
   return JSON.parse(usuario) || [];
 }
-$(document).ready(function () {
-  $("#bodega-sucursal").click(function () {
-    const usuario = existe_Usuario();
-    let htm = "";
-    fetch(env.API_URL + "Tiendas?user=" + usuario, {
-      method: "GET", // *GET, POST, PUT, DELETE, etc.
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+
+function existeBodega() {
+  const bodegaStorage = sessionStorage.getItem("bodega");
+  if (!bodegaStorage) return;
+
+  try {
+    const bodega = JSON.parse(bodegaStorage);
+    if (Array.isArray(bodega) && bodega.length > 0) {
+      const lblSucursal = document.getElementById("bodega-sucursal");
+      const inputBodega = document.getElementById("bodega");
+      if (lblSucursal) lblSucursal.innerHTML = bodega[0].NOMBRE;
+      if (inputBodega) inputBodega.value = bodega[0].BODEGA;
+    }
+  } catch (e) {
+    console.error("Error al leer bodega de sessionStorage:", e);
+  }
+}
+
+async function abrirSelectorBodegas() {
+  const usuario = existe_Usuario();
+  if (!usuario || usuario.length === 0) {
+    Swal.fire({
+      icon: "warning",
+      title: "Sesión no válida",
+      text: "Por favor inicie sesión nuevamente.",
+      confirmButtonColor: "#28a745"
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: "Cargando sucursales...",
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  try {
+    const response = await fetch(env.API_URL + "Tiendas?user=" + encodeURIComponent(usuario), {
+      method: "GET",
+      cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.msg === "SUCCESS") {
-          if (result.tiendas.length != 0) {
-            $("#bodega_sucursales").modal({ dismissible: false });
-            $("#bodega_sucursales").modal("open");
-            result.tiendas.forEach(function (key, index) {
-              htm += `<!-- CONTENEDOR SUCURSALES -->
-                        <div class="sucursal">
-                              <h3 class="header-sucursal">${key.NOMBRE}</h3>
-                              <div class="description-sucursal">
-                                <h5 class="left-align">Dirección</h5>
-                                <h6>${key.DIRECCION}</h6>
-                                <h6><b>Teléfono:</b> ${key.TELEFONO}</h6>
-                                <h5 class="left-align">Horario</h5>
-                                <h6>Lunes - Viernes <strong> 8:00am - 5:00pm</strong></h6>
-                                <h6>Sábado <strong>8:00am - 1:00pm</strong></h6>
-                                <h6>Domingo <strong>Cerrada</strong></h6>
-                                <a href="javascript:void(0);" onclick="sucursalbremen('${key.NOMBRE}', '${key.BODEGA}');" class="ui-btn">Elegir esta tienda</a>
-                              </div>
-                        </div>
-                        <!-- CONTENEDOR SUCURSALES -->
-                      `;
-            });
-            document.getElementById("carga_more_sucursales").innerHTML = htm;
-          } else {
-            alert("Else de condición");
-          }
-        } else {
-        }
-      });
-  });
-});
-
-/////////////////////////////////////// LOGOUT //////////////////////////-------------
-//------------------------------------------------------------------------------------
-function logout() {
-  // 1. Limpiar Storage
-  localStorage.clear();
-  sessionStorage.clear();
-
-  // 2. Limpiar cookies (Opcional pero recomendado para seguridad)
-  document.cookie.split(";").forEach(function (c) {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-  });
-
-  // 3. Redirigir al Login agregando un "Timestamp" para evitar que cargue el index desde caché
-  window.location.href = "index.html?nocache=" + new Date().getTime();
-}
-
-// function logout() {
-//   // Eliminar todas las variables de sessionStorage
-//   Object.keys(sessionStorage).forEach(function (key) {
-//     sessionStorage.removeItem(key);
-//   });
-
-//   // Eliminar todas las variables de localStorage
-//   Object.keys(localStorage).forEach(function (key) {
-//     localStorage.removeItem(key);
-//   });
-
-//   // Redirigir al usuario a la página de inicio
-//   window.location.href = "index.html";
-
-// }
-//-----------------------------------------------------------------------------------
-function enlace(link) {
-  window.location.href = link;
-}
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-function existeBodega() {
-  const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-  if (bodega) {
-    document.getElementById("bodega-sucursal").innerHTML = bodega[0].NOMBRE;
-    document.getElementById("bodega").value = bodega[0].BODEGA;
-  }
-}
-//--------------------FILTROS MODAL DEL BUSCADOR-------------------------------------
-function filtrosModal() {
-  let htm = "",
-    IDCategoria = "1055";
-  let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
-
-  if (elem.style.display === "none") {
-    instance.open();
-  } else {
-    instance.open();
-    localStorage.removeItem("claseSelect");
-    htm = ` <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>CLASE</div>
-                  <div class="collapsible-body">
-                    <div id="filtroclase" style="padding-left: 10px"></div>
-                      <input type="hidden" value="" id="txtClaseV" name="txtClaseV">
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>MARCA</div>
-                  <div class="collapsible-body">
-                      <div id="filtromarca" style="padding-left: 10px"></div>
-                        <input type="hidden" value="" id="txtMarcaV" name="txtMarcaV" >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>TIPO</div>
-                  <div class="collapsible-body">
-                      <div id="filtrotipo" style="padding-left: 10px"></div>
-                        <input type="hidden" value="" id="txtTipo" name="txtTipo" >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPO</div>
-                  <div class="collapsible-body">
-                      <div id="filtrosubtipo" style="padding-left: 10px"></div>
-                        <input type="hidden" value="" id="txtSubtipo" name="txtSubtipo" >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPO2</div>
-                  <div class="collapsible-body">
-                      <div id="filtrosubtipo2" style="padding-left: 10px"></div>
-                        <input type="hidden" value="" id="txtSubtipo2" name="txtSubtipo2" >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header"><i class="material-icons">add</i>ENVASE</div>
-                  <div class="collapsible-body">
-                      <div id="filtroenvase" style="padding-left: 10px"></div>
-                        <input type="hidden" value="" id="txtEnvase" name="txtEnvase" >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>`;
-    htm += `<div class="row">
-          <div class="col s6">
-            <a onclick="preBusqueda();" class="btn  btn-filtros-result ">
-              <i class="material-icons left">check</i>
-              Aceptar
-            </a>
-          </div>
-          <div class="col s6">
-            <a onclick="LimpiarFiltroPre();" class="btn btn-filtros-result ">
-              <i class="material-icons left">update</i>
-              Limpiar
-            </a>
-          </div>
-        </div>`;
-    console.log(htm);
-    document.getElementById("divFiltro").innerHTML = htm;
-    // Llamar las marcas por API
-    getFiltros()
-      .then(() => {
-        // Una vez que los datos estén listos, llamamos a MostrarClases()
-        document.getElementById("filtroclase").innerHTML = MostrarClases(1);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    $(".collapsible").collapsible();
-  }
-}
-//----------------------------Filtros Pre Busqueda-----------------------------------
-function getFiltros(clase, marca, tipo, subtipo, subtipo2, envase) {
-  clase = clase !== undefined ? clase : "";
-  marca = marca !== undefined ? marca : "";
-  tipo = tipo !== undefined ? tipo : "";
-  subtipo = subtipo !== undefined ? subtipo : "";
-  subtipo2 = subtipo2 !== undefined ? subtipo2 : "";
-  envase = envase !== undefined ? envase : "";
-
-  params =
-    "?clase=" +
-    clase +
-    "&marca=" +
-    marca +
-    "&tipo=" +
-    tipo +
-    "&subtipo=" +
-    subtipo +
-    "&subtipo2=" +
-    subtipo2 +
-    "&envase=" +
-    envase;
-
-  return fetch(env.API_URL + "filtroswms" + params, myInit)
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.msg === "SUCCESS") {
-        if (result.filtros.length > 0) {
-          ArrayData = formatData(result.filtros);
-          console.log("Datos formateados:", ArrayData);
-          if (
-            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_2"))
-          ) {
-            localStorage.setItem("claseSelect", clase);
-            localStorage.removeItem("marcaSelect");
-            localStorage.removeItem("tipoSelect");
-            localStorage.removeItem("subtipoSelect");
-            localStorage.removeItem("subtipo2Select");
-            localStorage.removeItem("envaseSelect");
-            document.getElementById("filtromarca").innerHTML = MostrarMarcas(1);
-          } else if (
-            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_3"))
-          ) {
-            localStorage.setItem("marcaSelect", marca);
-            localStorage.removeItem("tipoSelect");
-            localStorage.removeItem("subtipoSelect");
-            localStorage.removeItem("subtipo2Select");
-            localStorage.removeItem("envaseSelect");
-            document.getElementById("filtrotipo").innerHTML = MostrarTipos(1);
-          } else if (
-            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_4"))
-          ) {
-            localStorage.setItem("tipoSelect", tipo);
-            localStorage.removeItem("subtipoSelect");
-            localStorage.removeItem("subtipo2Select");
-            localStorage.removeItem("envaseSelect");
-            document.getElementById("filtrosubtipo").innerHTML =
-              MostrarSubTipos(1);
-          } else if (
-            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_5"))
-          ) {
-            localStorage.setItem("subtipoSelect", subtipo);
-            localStorage.removeItem("subtipo2Select");
-            localStorage.removeItem("envaseSelect");
-            document.getElementById("filtrosubtipo2").innerHTML =
-              MostrarSubTipos2(1);
-          } else if (
-            ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_6"))
-          ) {
-            localStorage.setItem("subtipo2Select", subtipo2);
-            localStorage.removeItem("envaseSelect");
-            // localStorage.setItem('envaseSelect', envase);
-            document.getElementById("filtroenvase").innerHTML =
-              MostrarEnvases(1);
-          }
-        } else {
-          Swal.fire({
-            icon: "warning",
-            title: "Información",
-            text: "No hay resultado de la consulta",
-            confirmButtonColor: "#f90f00",
-          });
-          document.getElementById("carga").innerHTML = "";
-          return []; // Devolver un arreglo vacío en caso de que no haya resultados
-        }
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      throw error; // Rechazar la promesa con el error
     });
-}
-//-----------------------------------------------------------------------------------
-function formatData(data) {
-  return data.map((item) => {
-    // Verificar si el objeto item tiene la columna DESCRIPCION
-    if ("DESCRIPCION" in item) {
-      // Inicializar la bandera para determinar si se ha encontrado una clasificación válida
-      let foundClassification = false;
 
-      // Verificar las columnas de clasificación y actuar en consecuencia
-      if ("CLASIFICACION_1" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_1: item.CLASIFICACION_1,
-          CLASE: item.DESCRIPCION,
-        };
-      }
-      if ("CLASIFICACION_2" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_2: item.CLASIFICACION_2,
-          MARCA: item.DESCRIPCION,
-        };
-      }
-      if ("CLASIFICACION_3" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_3: item.CLASIFICACION_3,
-          TIPO: item.DESCRIPCION,
-        };
-      }
-      if ("CLASIFICACION_4" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_4: item.CLASIFICACION_4,
-          SUBTIPO: item.DESCRIPCION,
-        };
-      }
-      if ("CLASIFICACION_5" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_5: item.CLASIFICACION_5,
-          SUBTIPO2: item.DESCRIPCION,
-        };
-      }
-      if ("CLASIFICACION_6" in item) {
-        foundClassification = true;
-        return {
-          CLASIFICACION_6: item.CLASIFICACION_6,
-          ENVASE: item.DESCRIPCION,
-        };
-      }
+    const result = await response.json();
+    console.log("==== RESPUESTA DEL API (Bodegas) ====", result);
 
-      // Si no se ha encontrado ninguna clasificación válida, retornar solo la DESCRIPCION
-      if (!foundClassification) {
-        return {};
+    if (result.msg === "SUCCESS" && Array.isArray(result.tiendas) && result.tiendas.length > 0) {
+      const inputOptions = {};
+      const mapaNombres = {};
+      const bodegaActual = document.getElementById("bodega")?.value || "";
+
+      result.tiendas.forEach((item) => {
+        inputOptions[item.BODEGA] = `${item.BODEGA} - ${item.NOMBRE}`;
+        mapaNombres[item.BODEGA] = item.NOMBRE;
+      });
+
+      const { value: bodegaSeleccionada } = await Swal.fire({
+        title: "Seleccionar Bodega o Sucursal",
+        input: "select",
+        inputOptions: inputOptions,
+        inputValue: bodegaActual,
+        inputPlaceholder: "Elija una sucursal...",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Cambiar sucursal",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#6e7881",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Debe seleccionar una bodega";
+          }
+        },
+      });
+
+      if (bodegaSeleccionada) {
+        const nombreTienda = mapaNombres[bodegaSeleccionada] || bodegaSeleccionada;
+        sucursalbremen(nombreTienda, bodegaSeleccionada);
       }
     } else {
-      // Si no tiene la columna DESCRIPCION, retornar un objeto vacío
-      return {};
+      Swal.fire({
+        icon: "info",
+        title: "Sin sucursales",
+        text: "No se encontraron sucursales asignadas para este usuario.",
+        confirmButtonColor: "#28a745",
+      });
     }
+  } catch (error) {
+    console.error("Error cargando sucursales:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error de conexión",
+      text: "No se pudieron obtener las sucursales disponibles.",
+      confirmButtonColor: "#d33",
+    });
+  }
+}
+
+function sucursalbremen(tienda, id_tienda) {
+  console.log("Tienda seleccionada: " + tienda + " (ID: " + id_tienda + ")");
+
+  const lblSucursal = document.getElementById("bodega-sucursal");
+  const inputBodega = document.getElementById("bodega");
+
+  if (lblSucursal) lblSucursal.innerHTML = tienda;
+  if (inputBodega) {
+    inputBodega.value = id_tienda;
+    inputBodega.dispatchEvent(new Event("change"));
+  }
+
+  let perfilActual = "OPERADOR";
+  try {
+    const bodegaGuardada = JSON.parse(sessionStorage.getItem("bodega"));
+    if (Array.isArray(bodegaGuardada) && bodegaGuardada[0]?.PERFIL) {
+      perfilActual = bodegaGuardada[0].PERFIL;
+    }
+  } catch (e) {}
+
+  const newbodega = [
+    {
+      BODEGA: id_tienda,
+      NOMBRE: tienda,
+      PERFIL: perfilActual,
+    },
+  ];
+  sessionStorage.setItem("bodega", JSON.stringify(newbodega));
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 1800,
+    timerProgressBar: true,
   });
+
+  Toast.fire({
+    icon: "success",
+    title: `Sucursal activa: ${tienda}`,
+  });
+
+  if (typeof fechasDeInventario === "function") {
+    fechasDeInventario();
+  }
+  if (typeof limpiarResultadoGeneral === "function") {
+    limpiarResultadoGeneral();
+  }
 }
-//-----------------------------------------------------------------------------------
-function cerrarModal() {
-  let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
-  instance.close();
+
+function enlace(link) {
+  if (link && link !== "#") {
+    window.location.href = link;
+  }
 }
+
 //-----------------------------------------------------------------------------------
+// BUSCADOR GENERAL (CATÁLOGO / BÚSQUEDA) E INYECCIÓN DINÁMICA
+//-----------------------------------------------------------------------------------
+
 $("#articulo").on("keypress", function (e) {
-  if (e.keyCode == 13 || e.keyCode == 9) {
+  if (e.keyCode === 13 || e.keyCode === 9) {
     e.preventDefault();
     preBusqueda();
   }
 });
-//-----------------------------------------------------------------------------------
-$("#txtRuc").on("keypress", function (e) {
-  if (e.keyCode == 13 || e.keyCode == 9) {
-    e.preventDefault();
-  }
-});
-//-----------------------------------------------------------------------------------
-$(document).ready(function () {
-  $(".sidenav").sidenav();
+
+$(document).ready(function () {$(".sidenav").sidenav();
   $(".tabs").tabs();
   $(".collapsible").collapsible();
   $(".modal").modal();
   $("select").formSelect();
   $(".dropdown-trigger").dropdown();
-  $(".datepicker").datepicker({
-    firstDay: true,
-    format: "yyyy-mm-dd",
-    maxDate: new Date(), //DESABILITA LAS FECHAS FUTURAS
-    i18n: {
-      months: [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
-      ],
-      monthsShort: [
-        "Ene",
-        "Feb",
-        "Mar",
-        "Abr",
-        "May",
-        "Jun",
-        "Jul",
-        "Ago",
-        "Sept",
-        "Oct",
-        "Nov",
-        "Dic",
-      ],
-      weekdays: [
-        "Domingo",
-        "Lunes",
-        "Martes",
-        "Miércoles",
-        "Jueves",
-        "Viernes",
-        "Sábado",
-      ],
-      weekdaysShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
-      weekdaysAbbrev: ["D", "L", "M", "M", "J", "V", "S"],
-      cancel: "Cancelar",
-      clear: "Limpiar",
-    },
-  });
-  var myDate = new Date();
-  var date =
-    myDate.getFullYear() +
-    "-" +
-    (myDate.getMonth() + 1) +
-    "-" +
-    myDate.getDate();
-  $("#fecha_ini").val(date);
-  $("#fecha_fin").val(date);
 });
 //-----------------------------------------------------------------------------------
-//-----------------BUSQUEDA REGULAR -------------------------------------------------
+// BUSQUEDA DE ARTICULOS
 //-----------------------------------------------------------------------------------
 function preBusqueda() {
-  // let nPag = 0;
   let pag = 1;
-
-  let articulo = document.getElementById("articulo").value.trim();
-
-  localStorage.removeItem("mostrarEnBodega");
+  let articulo = document.getElementById("articulo")?.value.trim() || "";
   const art = encodeURIComponent(articulo);
-  let bodega = document.getElementById("bodega").value;
+  let bodega = document.getElementById("bodega")?.value || "";
   let clase = localStorage.getItem("claseSelect") || "";
   let marca = localStorage.getItem("marcaSelect") || "";
   let tipo = localStorage.getItem("tipoSelect") || "";
   let envase = localStorage.getItem("envaseSelect") || "";
+
   const checkbox = document.getElementById("sinExistencias");
-  const sinExistencias = checkbox ? checkbox.checked : false;
-  // localStorage.setItem("sinExistencias",sinExistencias);
-  let existenciaBusqueda = "";
+  const existenciaBusqueda = checkbox?.checked ? "N" : "S";
 
-  if (sinExistencias) {
-    console.log("Buscando con ítems sin existencias...");
-    existenciaBusqueda = "N";
-  } else {
-    console.log("Buscando solo ítems con existencias...");
-    existenciaBusqueda = "S";
-  }
-  const params =
-    "?pActivos=" +
-    "S" +
-    "&pExistencia=" +
-    existenciaBusqueda +
-    "&pArticulo=" +
-    art +
-    "&pClase=" +
-    clase +
-    "&pMarca=" +
-    marca +
-    "&pUso=" +
-    tipo +
-    "&pEnvase=" +
-    envase +
-    "&pBodega=" +
-    bodega +
-    "&pTipoBodega=" +
-    0;
-  mostrarLoader();
+  const params = `?pActivos=S&pExistencia=${existenciaBusqueda}&pArticulo=${art}&pClase=${clase}&pMarca=${marca}&pUso=${tipo}&pEnvase=${envase}&pBodega=${bodega}&pTipoBodega=0`;
+
+  if (typeof mostrarLoader === "function") mostrarLoader("Buscando artículos...");
+
   fetch(env.API_URL + "wmsbusquedaarticulos/1" + params, myInit)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Error en la respuesta de la API");
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo conectar con la API. Por favor, intenta de nuevo.",
-        confirmButtonColor: "#28a745",
-      });
-      ocultarLoader();
-    })
+    .then((response) => response.json())
     .then((result) => {
-      if (result && result.msg === "SUCCESS") {
-        console.log("Cantidad de Registros: ", result.data.length);
-        console.log(result.data);
+      if (typeof ocultarLoader === "function") ocultarLoader();
 
-        if (result.data.length > 0) {
+      console.log("==== RESPUESTA DEL API (Búsqueda General) ====", result);
+
+      if (result && result.msg === "SUCCESS") {
+        if (result.data && result.data.length > 0) {
           ArrayData = result.data;
           ArrayDataFiltrado = result.data;
           ArrayData2 = result.data;
           localStorage.setItem("articulo-Busqueda", JSON.stringify(ArrayData));
 
-          console.log("DATA DE BUSQUEDA...", ArrayData);
           let totales = ArrayDataFiltrado.length;
-          nPag = Math.ceil(totales / xPag);
+          let nPag = Math.ceil(totales / xPag);
           LimpiarFiltroPre(1);
+
           mostrarResultadosBusqueda(nPag, pag);
-          ocultarLoader();
         } else {
           Swal.fire({
             icon: "info",
-            title: "Información",
+            title: "Sin resultados",
             text: "No hay resultado para la búsqueda: " + articulo,
             confirmButtonColor: "#28a745",
           });
-          ocultarLoader();
           LimpiarFiltroPre(1);
         }
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Respuesta inválida de la API.",
-          confirmButtonColor: "#28a745",
-        });
-        ocultarLoader();
+         Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al consultar el servicio.",
+            confirmButtonColor: "#d33",
+          });
       }
+    })
+    .catch((error) => {
+      if (typeof ocultarLoader === "function") ocultarLoader();
+      console.error("Error en búsqueda:", error);
     });
 }
 //-----------------------------------------------------------------------------------
+// function inyectarYMostrarBuscador
+//-----------------------------------------------------------------------------------
+function inyectarYMostrarBuscador(htm) {
+  let resContainer = document.getElementById("resultadoBusqueda");
+  
+  // 1. Si no existe, lo inyectamos dinámicamente dentro del main
+  if (!resContainer) {
+    resContainer = document.createElement("div");
+    resContainer.id = "resultadoBusqueda";
+    resContainer.className = "vista-wrapper"; 
+    
+    const mainEl = document.querySelector("main");
+    if (mainEl) {
+      mainEl.appendChild(resContainer);
+    } else {
+      document.body.appendChild(resContainer);
+    }
+  }
+
+  // 2. Ocultar el resto de la vista operativa para que el buscador ocupe la pantalla
+  document.querySelectorAll(".vista-wrapper").forEach(vw => {
+    if(vw.id !== "resultadoBusqueda") {
+      vw.style.display = "none";
+    }
+  });
+
+  // 3. Renderizar el HTML dinámico
+  resContainer.style.display = "block";
+  resContainer.innerHTML = htm;
+
+  $("html, body").animate({ scrollTop: 0 }, 500);
+
+  if (typeof M !== "undefined") {
+    if (M.FormSelect) M.FormSelect.init(resContainer.querySelectorAll("select"));
+    if (M.Dropdown) M.Dropdown.init(resContainer.querySelectorAll(".dropdown-trigger"));
+  }
+}
+
+window.cerrarBusquedaGlobal = function() {
+  const resContainer = document.getElementById("resultadoBusqueda");
+  if (resContainer) {
+    resContainer.style.display = "none";
+    resContainer.innerHTML = "";
+  }
+  
+  // Restaurar la visibilidad de la vista operativa
+  document.querySelectorAll(".vista-wrapper").forEach(vw => {
+    if(vw.id !== "resultadoBusqueda") {
+      vw.style.display = ""; 
+    }
+  });
+
+  const artInput = document.getElementById("articulo");
+  if(artInput) artInput.value = "";
+};
+
+// function mostrarResultadosBusqueda(nPag, pag) {
+//   let htm = "";
+//   let desde = (pag - 1) * xPag;
+//   let hasta = Math.min(pag * xPag, ArrayDataFiltrado.length);
+
+//   if (desde >= ArrayDataFiltrado.length) {
+//     desde = 0;
+//     hasta = Math.min(xPag, ArrayDataFiltrado.length);
+//     pag = 1;
+//   }
+
+//   htm = mostrarResultados(desde, hasta);
+//   htm += paginador(nPag, pag);
+  
+//   inyectarYMostrarBuscador(htm);
+// }
+
+//-----------------------------------------------------------------------------------
+// Variable global para recordar qué vista prefiere el usuario
+window.vistaActualBuscador = 'mosaico';
+
 function mostrarResultadosBusqueda(nPag, pag) {
+  // ENRUTADOR: Si el usuario estaba en vista lista, lo devolvemos a esa vista en la página solicitada
+  if (window.vistaActualBuscador === 'lista') {
+    cambiarVistaLista(pag);
+    return;
+  }
+
+  window.vistaActualBuscador = 'mosaico';
   let htm = "";
   let desde = (pag - 1) * xPag;
   let hasta = Math.min(pag * xPag, ArrayDataFiltrado.length);
 
-  // Asegurar que desde y hasta estén dentro de los límites
   if (desde >= ArrayDataFiltrado.length) {
     desde = 0;
     hasta = Math.min(xPag, ArrayDataFiltrado.length);
@@ -634,2190 +537,551 @@ function mostrarResultadosBusqueda(nPag, pag) {
 
   htm = mostrarResultados(desde, hasta);
   htm += paginador(nPag, pag);
-  document.getElementById("resultadoBusqueda").innerHTML = htm;
-  $("html, body").animate(
-    {
-      scrollTop: $("#resultadoBusqueda").offset().top - 140,
-    },
-    1000,
-  );
-  $("select").formSelect();
-  $(".dropdown-trigger").dropdown();
+  
+  inyectarYMostrarBuscador(htm);
 }
-//-----------------------------------------------------------------------------------
+
+
 function mostrarResultados(desde, hasta) {
   let htm = "";
   let bodegaLabel = "";
   let url = "";
 
-  const checkbox = document.getElementById("sinExistencias");
-  if (checkbox) {
-    let esistencias = localStorage.getItem("sinExistencias") === "true";
-    if (esistencias) {
-      checkbox.checked = true;
-    } else {
-      checkbox.checked = false;
-    }
-  }
+  htm += `<style>
+            .custom-grid-5 {
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 15px;
+              margin-top: 20px;
+            }
+            .custom-grid-5 .container-img {
+              background: #ffffff;
+              border: 1px solid #cbd5e1;
+              border-radius: 8px;
+              padding: 10px;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+              transition: transform 0.2s ease;
+            }
+            .custom-grid-5 .container-img:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            .custom-grid-5 #envoltorio {
+              position: relative;
+              width: 100%;
+              text-align: center;
+              margin-bottom: 10px;
+            }
+            
+            /* ALTURA POR DEFECTO: PC / MONITORES */
+            .custom-grid-5 #envoltorio > a > img {
+              width: 100%;
+              height: 290px; 
+              object-fit: contain; 
+            }
+            
+            .custom-grid-5 .flotante-acciones {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 15px;
+              padding: 6px;
+              border-radius: 6px;
+              margin-top: 10px;
+            }
+            
+            .custom-grid-5 .flotante-acciones a {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+            }
+
+            .custom-grid-5 .flotante-acciones img {
+              width: 22px !important;
+              height: 22px !important;
+              object-fit: contain;
+            }
+
+            .custom-grid-5 .articulo-titulo {
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--primary-teal);
+              margin: 5px 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .custom-grid-5 h4 {
+              font-size: 11px;
+              color: #475569;
+              margin: 2px 0;
+              line-height: 1.3;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+            
+            /* Responsividad para pantallas más pequeñas */
+            @media (max-width: 1200px) { .custom-grid-5 { grid-template-columns: repeat(4, 1fr); } }
+            @media (max-width: 992px) { 
+              .custom-grid-5 { grid-template-columns: repeat(3, 1fr); }
+              .custom-grid-5 #envoltorio > a > img { height: 220px; } /* Ajuste intermedio para Tablets */
+            }
+            @media (max-width: 600px) { 
+              .custom-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 10px; } 
+              /* ALTURA PARA MÓVILES */
+              .custom-grid-5 #envoltorio > a > img { height: 165px; }
+            }
+          </style>`;
+
+  htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+              <i class="material-icons">close</i>
+              <span>Cerrar Búsqueda</span>
+            </button>
+          </div>`;
 
   htm += '<div id="lista-articulo">';
   htm += `<div class="col s12">
-            <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
-          </div>
-          
-          `;
+            <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+          </div>`;
 
-  htm += `<div class="row" id="totalregistrosBusqueda">        
+  htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">        
           <div class="col s6 valign-wrapper">
             <label>
               <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
               <span>Mostrar En Bodega</span>
             </label>
           </div>
-            <div class="col s6 valign-wrapper">
-            <span>Total de Registros:  </span>
-            <span>${ArrayDataFiltrado.length}</span>
+          <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+            <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+            <span style="font-size: 16px; color: var(--primary-teal);">${ArrayDataFiltrado.length}</span>
           </div>
         </div>
         
-        <div class="row" id="vistabusqueda">
-          <div class="col s6">
-            <a class="btn btn-resultados-busca-articulos browser-default" href="javascript:void(0);" onclick="cambiarVistaLista();">
-              <i class="material-icons right">list</i>
-              VISTA
-            </a>
+        <div class="row" id="vistabusqueda" style="display: flex; gap: 10px;">
+          <div class="col s6" style="padding: 0;">
+            <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px;" onclick="cambiarVistaLista();">
+              <i class="material-icons left">list</i> VISTA LISTA
+            </button>
           </div>
-          <div class="col s6">
-            <a class="btn btn-resultados-busca-articulos browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
-              <i class="material-icons right">filter_list</i>
-              FILTRAR
-            </a>
+          <div class="col s6" style="padding: 0;">
+            <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px;" onclick="FiltrarModal();">
+              <i class="material-icons left">filter_list</i> FILTRAR
+            </button>
           </div>
         </div>`;
 
-  htm += '<div class="grid-container">'; // Contenedor de la cuadrícula
+  htm += '<div class="custom-grid-5">'; 
 
   for (let i = desde; i < hasta; i++) {
     if (ArrayDataFiltrado[i]) {
       let DArticulo = ArrayDataFiltrado[i].ARTICULO.replace("/", "-");
-      const cantBodega =
-        parseFloat(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA) || 0;
+      const cantBodega = parseFloat(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA) || 0;
 
-      // Etiqueta de bodega
-      bodegaLabel =
-        cantBodega > 0
-          ? `<span class="mi-tienda">En Bodega</span>`
-          : `<span></span>`;
+      bodegaLabel = cantBodega > 0 ? `<span class="mi-tienda">En Bodega</span>` : ``;
+      url = `href="javascript:void(0);"`;
 
-      // URL de la imagen (manejo de FOTO = "S" o "N")
-      const imagenUrl =
-        ArrayDataFiltrado[i].FOTO === "S"
-          ? `${env.API_IMAGE}/${DArticulo}`
-          : "https://via.placeholder.com/150?text=Sin+Imagen"; // Imagen por defecto si FOTO = "N"
-
-      url = `href="#"`;
-
-      // Reglas de color
       let colorReorden = "";
-      if (ArrayDataFiltrado[i].color === "R") {
-        colorReorden = "red accent-4";
-      } else if (ArrayDataFiltrado[i].color === "A") {
-        colorReorden = "light-blue darken-1";
-      } else if (ArrayDataFiltrado[i].color === "N") {
-        colorReorden = "deep-orange accent-3";
-      } else if (ArrayDataFiltrado[i].color === "V") {
-        colorReorden = "green darken-1";
-      }
+      if (ArrayDataFiltrado[i].color === "R") colorReorden = "red accent-4";
+      else if (ArrayDataFiltrado[i].color === "A") colorReorden = "light-blue darken-1";
+      else if (ArrayDataFiltrado[i].color === "N") colorReorden = "deep-orange accent-3";
+      else if (ArrayDataFiltrado[i].color === "V") colorReorden = "green darken-1";
+
       htm += `<div class="container-img">
                  <div id="envoltorio">
-               <a ${url}>                
-                 <img src="${
-                   env.API_IMAGE
-                 }/${DArticulo}" width="100%" data-src="' + site + 'image/displayimage/' + varArt + '" alt="' + ArrayData[i].ARTICULO + '">
-                  ${bodegaLabel}
-               </a>
-               <div class="flotante-acciones ${colorReorden}">
-                  <div class="link-flotante-acciones-forklift " >
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="mostrarExistencias('${
-                     ArrayDataFiltrado[i].ARTICULO
-                   }')">
-                     <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" tabindex="1">
-                   </a>             
+                   <a ${url}>                
+                     <img src="${env.API_IMAGE}/${DArticulo}" alt="${ArrayDataFiltrado[i].ARTICULO}">
+                     ${bodegaLabel}
+                   </a>
+                   <div class="flotante-acciones ${colorReorden}">
+                      <div class="link-flotante-acciones-forklift">
+                       <a onclick="mostrarExistencias('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}')">
+                         <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                      <div class="link-flotante-acciones-bar-code">
+                       <a onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                       <img src="./img/icon/bar-code.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                        <div class="link-flotante-acciones-information">
+                       <a onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+                       <img src="./img/icon/information.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                   </div>          
                  </div>
-                  <div class="link-flotante-acciones-bar-code ">
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="impCodBar('${
-                     ArrayDataFiltrado[i].ARTICULO
-                   }','${ArrayDataFiltrado[i].DESCRIPCION}')">
-                   <img src="./img/icon/bar-code.svg"  width="22" height="22">
-                   </a>             
+                 <div class="info-articulo">
+                    <h3 class="articulo-titulo">${ArrayDataFiltrado[i].ARTICULO}</h3>
+                    <h4>${ArrayDataFiltrado[i].DESCRIPCION}</h4>
+                    <h4 style="font-weight:bold; color:#1e293b; margin-top:5px;">Cant: ${cantBodega.toFixed(2)}</h4>
                  </div>
-                    <div class="link-flotante-acciones-information " >
-                   <a id="dropbtn${i}" class="dropbtn2x" onclick="information('${
-                     ArrayDataFiltrado[i].ARTICULO
-                   }','${ArrayDataFiltrado[i].DESCRIPCION}')">
-                   <img src="./img/icon/information.svg"  width="22" height="22">
-                   </a>             
-                 </div>
-               </div>          
-             </div>
-          <h3 class="articulo-titulo">Nombre: ${
-            ArrayDataFiltrado[i].ARTICULO
-          }</h3>
-          <h4>Descripción: ${ArrayDataFiltrado[i].DESCRIPCION}</h4>
-          <h4>Cantidad: ${cantBodega.toFixed(2)}</h4>
-        </div>`;
+              </div>`;
     }
   }
-  htm += "</div>"; // Cierra grid-container
-  htm += "</div>"; // Cierra lista-articulo
+  htm += "</div>"; 
+  htm += "</div>"; 
   return htm;
 }
-//------------------------------------------------------------------------------------
-function paginador(nPag, pag) {
-  //MUESTRA LA CANTIDAD DE PAGINA
-  let selected = "";
-  sel = `<select class="browser-default" onchange="mostrarResultadosBusqueda(${nPag}, this.value)">
-        <option value="" disabled>Páginas</option>`;
-  for (var i = 0; i < nPag; i++) {
-    if (i + 1 == pag) {
-      selected = "selected";
-    } else {
-      selected = "";
-    }
-    if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
-        parseInt(i) + 1
-      }</option>`;
-    }
-  }
-  sel += `</select>`;
-
-  if (pag <= 1) btnAtras = `<a style="color: #aba7a7;">❮ Anterior</a>`;
-  else
-    btnAtras = `<a onclick="mostrarResultadosBusqueda(${nPag} , ${
-      parseInt(pag) - 1
-    });">❮ Anterior</a>`;
-
-  if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
-  else
-    btnSig = `<a onclick="mostrarResultadosBusqueda(${nPag},${
-      parseInt(pag) + 1
-    })">Siguiente ❯</a>`;
-
-  return `<div id="paginador">
-        <div class="row">
-          <div class="col s4"></div>
-          <div class="col s4" style="text-align: center">${pag}/${nPag}</div>
-          <div class="col s4"></div>
-        </div>
-        <div class="row" style="width:fit-content !important;">
-            <div class="col s4" id="btnAtras" style="width:fit-content !important;">
-              ${btnAtras}
-            </div>
-          <div class="col s4">
-            ${sel}
-          </div>
-          <div class="col s4" id="btnSig" style="width:fit-content !important;">
-            ${btnSig}
-          </div>
-        </div>
-      </div><br>`;
-}
-//-----------------------------------------------------------------------------------
-function expand(id) {
-  let ids = document.getElementById(id);
-  if (ids.style.display === "none") ids.style.display = "table-row-group";
-  else ids.style.display = "none";
-}
-//-----------------------------------------------------------------------------------
-function closetooltips() {
-  document.querySelectorAll(".tooltips-luciano").forEach(function (el) {
-    el.style.display = "none";
-  });
-}
-//-----------------------------------------------------------------------------------
-// function CerrarModal(key) {
-//   console.log(key);
-//   elem = document.getElementById(key);
-//   let instance = M.Modal.getInstance(elem);
-//   instance.close();
-// }
-//-----------------------------------------------------------------------------------
-function ordenarDescripcion(data) {
-  return data.sort(function (a, b) {
-    if (a.DESCRIPCION > b.DESCRIPCION) {
-      return 1;
-    }
-    if (a.DESCRIPCION < b.DESCRIPCION) {
-      return -1;
-    }
-    return 0;
-  });
-}
-//-----------------------------------------------------------------------------------
-//--------------------FILTROS SOBRE LOS RESULTADOS-----------------------------------
-//-----------------------------------------------------------------------------------
-function FiltrarModal(IDCategoria, seccion) {
-  let htm = "";
-  let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
-  instance.open();
-  switch (IDCategoria) {
-    case "1055":
-      htm = `<div class="row">
-                  <div class="col s12">
-                    <fieldset style="    border: 0;
-                      text-shadow: none !important;
-                      font-weight: normal !important;
-                      background-color: transparent !important;
-                      color: #000 !important;
-                      border: solid 1px #c1bcbc;margin: 0.5em 0;">
-                      <label>
-                        <input type="checkbox" id="rematetxt" value="R"/>
-                        <span>Solo artículos de remate </span><span id="cantRemate" style="font-size: 15px;">0</span>
-                      </label>
-                    </fieldset>
-                    <fieldset style="border: 0;
-                      text-shadow: none !important;
-                      font-weight: normal !important;
-                      background-color: transparent !important;
-                      color: #000 !important;
-                      border: solid 1px #c1bcbc;margin: 0.5em 0;">
-                      <label>
-                        <input type="checkbox" id="incompletotxt" value="I" />
-                        <span>Solo artículos incompletos </span><span id="cantIncompleto" style="font-size: 15px;">0</span>
-                      </label>
-                    </fieldset>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>MARCAS</div>
-                        <div class="collapsible-body">
-                          <div id="filtromarcas" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtMarcasV" name="txtMarcasV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>ANCHOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtroanchos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtAnchosV" name="txtAnchosV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>CENTER BORE(CB)</div>
-                        <div class="collapsible-body">
-                            <div id="filtrocenter" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtCBV" name="txtCBV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>OFFSET (ET)</div>
-                        <div class="collapsible-body">
-                            <div id="filtrooffset" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtETV" name="txtETV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>`;
-      break;
-    default:
-      htm = `   <div class="row">                
-                  </div>    
-                  <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>CLASES</div>
-                        <div class="collapsible-body">
-                          <div id="filtroclases" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtClasesV" name="txtClasesV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>MARCAS</div>
-                        <div class="collapsible-body">
-                          <div id="filtromarcas" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtMarcasV" name="txtMarcasV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>TIPOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtrotipos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtTiposV" name="txtTiposV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtrosubtipos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtSubTiposV" name="txtSubTiposV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPOS2</div>
-                        <div class="collapsible-body">
-                            <div id="filtrosubtipos2" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtSubTipos2V" name="txtSubTipos2V" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>ENVASES</div>
-                        <div class="collapsible-body">
-                            <div id="filtroenvases" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtEnvasesV" name="txtEnvasesV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>`;
-      break;
-  }
-  htm += `<div class="row">
-          <div class="col s6">
-            <a onclick="Filtrar(${IDCategoria},${seccion});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
-              <i class="material-icons left">filter_list</i>
-              Aceptar
-            </a>
-          </div>
-          <div class="col s6">
-            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
-              <i class="material-icons left">update</i>
-              Limpiar
-            </a>
-          </div>
-        </div>`;
-  document.getElementById("divFiltro").innerHTML = htm;
-  document.getElementById("filtroclases").innerHTML = MostrarClases();
-  document.getElementById("filtromarcas").innerHTML = MostrarMarcas();
-  document.getElementById("filtrotipos").innerHTML = MostrarTipos();
-  document.getElementById("filtrosubtipos").innerHTML = MostrarSubTipos();
-  document.getElementById("filtrosubtipos2").innerHTML = MostrarSubTipos2();
-  document.getElementById("filtroenvases").innerHTML = MostrarEnvases();
-  $(".collapsible").collapsible();
-  // const estado = localStorage.getItem("mostrarEnBodega");
-  // if (estado === "1") {
-  //     document.getElementById("miCheckbox").checked = true;
-  // } else {
-  //     document.getElementById("miCheckbox").checked = false;
-  // }
-}
-//--------------------------------Mostrar Marcas-------------------------------------
-function MostrarMarcas(opt) {
-  const result = [];
-  const map = new Map();
-  let marcaHTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.MARCA)) {
-          map.set(item.MARCA, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_2,
-            DESCRIPCION: item.MARCA,
-          });
-        }
-        marcaHTML = mostrarFiltro(result, "txtMarca", 2);
-        break;
-      default:
-        if (!map.has(item.MARCA)) {
-          map.set(item.MARCA, true); // set any value to Map
-          result.push({
-            VALOR: item.MARCA,
-            DESCRIPCION: item.MARCA,
-          });
-        }
-        marcaHTML = mostrarFiltro(result, "txtMarca");
-        break;
-    }
-  }
-  return marcaHTML;
-}
-//--------------------------------Mostrar Clases-------------------------------------
-function MostrarClases(opt) {
-  const result = [];
-  const map = new Map();
-  let claseHTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.CLASE)) {
-          map.set(item.CLASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_1,
-            DESCRIPCION: item.CLASE,
-          });
-        }
-        claseHTML = mostrarFiltro(result, "txtClase", opt);
-        break;
-      default:
-        if (!map.has(item.CLASE)) {
-          map.set(item.CLASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASE,
-            DESCRIPCION: item.CLASE,
-          });
-        }
-        claseHTML = mostrarFiltro(result, "txtClase");
-        break;
-    }
-  }
-  return claseHTML;
-}
-//--------------------------------Mostrar Tipos--------------------------------------
-function MostrarTipos(opt) {
-  const result = [];
-  const map = new Map();
-  let tipoHTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.TIPO)) {
-          map.set(item.TIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_3,
-            DESCRIPCION: item.TIPO,
-          });
-        }
-        tipoHTML = mostrarFiltro(result, "txtTipo", 3);
-        break;
-      default:
-        if (!map.has(item.TIPO)) {
-          map.set(item.TIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.TIPO,
-            DESCRIPCION: item.TIPO,
-          });
-        }
-        tipoHTML = mostrarFiltro(result, "txtTipo");
-        break;
-    }
-  }
-  return tipoHTML;
-}
-//--------------------------------Mostrar SubTipos-----------------------------------
-function MostrarSubTipos(opt) {
-  const result = [];
-  const map = new Map();
-  let subtipoHTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.SUBTIPO)) {
-          map.set(item.SUBTIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_4,
-            DESCRIPCION: item.SUBTIPO,
-          });
-        }
-        subtipoHTML = mostrarFiltro(result, "txtSubTipo", 4);
-        break;
-      default:
-        if (!map.has(item.SUBTIPO)) {
-          map.set(item.SUBTIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.SUBTIPO,
-            DESCRIPCION: item.SUBTIPO,
-          });
-        }
-        subtipoHTML = mostrarFiltro(result, "txtSubTipo");
-        break;
-    }
-  }
-  return subtipoHTML;
-}
-//--------------------------------Mostrar SubTipos2----------------------------------
-function MostrarSubTipos2(opt) {
-  const result = [];
-  const map = new Map();
-  let subtipo2HTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.SUBTIPO2)) {
-          map.set(item.SUBTIPO2, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_5,
-            DESCRIPCION: item.SUBTIPO2,
-          });
-        }
-        subtipo2HTML = mostrarFiltro(result, "txtSubTipo2", 5);
-        break;
-      default:
-        if (!map.has(item.SUBTIPO2)) {
-          map.set(item.SUBTIPO2, true); // set any value to Map
-          result.push({
-            VALOR: item.SUBTIPO2,
-            DESCRIPCION: item.SUBTIPO2,
-          });
-        }
-        subtipo2HTML = mostrarFiltro(result, "txtSubTipo2");
-        break;
-    }
-  }
-  return subtipo2HTML;
-}
-//--------------------------------Mostrar Envases------------------------------------
-function MostrarEnvases(opt) {
-  const result = [];
-  const map = new Map();
-  let envaseHTML = "";
-  for (const item of ArrayData) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.ENVASE)) {
-          map.set(item.ENVASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_6,
-            DESCRIPCION: item.ENVASE,
-          });
-        }
-        envaseHTML = mostrarFiltro(result, "txtEnvase", 6);
-        break;
-      default:
-        if (!map.has(item.ENVASE)) {
-          map.set(item.ENVASE, true); // set any value to Map
-          result.push({
-            VALOR: item.ENVASE,
-            DESCRIPCION: item.ENVASE,
-          });
-        }
-        envaseHTML = mostrarFiltro(result, "txtEnvase");
-        break;
-    }
-  }
-  return envaseHTML;
-}
-//-----------------------------------------------------------------------------------
-function mostrarFiltro(data, id, opt) {
-  data = ordenarDescripcion(data);
-  let claseSelect, marcaSelect, tipoSelect, subtipoSelect, subtipo2Select;
-  claseSelect = localStorage.getItem("claseSelect");
-  var htm = "";
-  var i = parseInt(1);
-  if (data.length > 0) {
-    data.forEach(function (key, index) {
-      if (key.VALOR != null && key.DESCRIPCION != null) {
-        switch (opt) {
-          //Clase
-          case 1:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
-                    key.VALOR
-                  }');">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //Marca
-          case 2:
-            claseSelect = localStorage.getItem("claseSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //Tipo
-          case 3:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //SubTipo
-          case 4:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            tipoSelect = localStorage.getItem("tipoSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          case 5:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            tipoSelect = localStorage.getItem("tipoSelect");
-            subtipoSelect = localStorage.getItem("subtipoSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          case 6:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="guardarEnvaseSelect(${key.VALOR});">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          default:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltro('${id}','${id + i}');">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-        }
-        i = i + 1;
-      }
-    });
-    return htm;
-  } else return "<label >Filtro no existe</label>";
-}
-//--------------------------Guardar Envase Seleccionado------------------------------
-function guardarEnvaseSelect(envaseSelect) {
-  localStorage.setItem("envaseSelect", envaseSelect);
-}
-//-----------------------------------------------------------------------------------
-function getFiltro(id, txtInput) {
-  let valorM = "",
-    valorC = "",
-    valorT = "",
-    valorST = "",
-    valorST2 = "",
-    valorE = "";
-
-  let chk = "";
-  //-------------------Marca-------------------------------------
-  if (id == "txtMarca") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let marcaID = $("#" + txtInput).val();
-      let marcaH = $("#txtMarcasV").val();
-      console.log(marcaH);
-      if (marcaH.length > 0) {
-        valorM += marcaH + "," + marcaID;
-      } else {
-        valorM += marcaID;
-      }
-      $("#txtMarcasV").val(valorM);
-    } else {
-      var marcaID = $("#" + txtInput).val();
-      var marcaH = $("#txtMarcasV").val();
-      if (marcaH.length > 0) {
-        valorMH = BuscarBorrar(marcaH, marcaID);
-      } else {
-        valorMH += "";
-      }
-      $("#txtMarcasV").val(valorMH);
-    }
-  }
-  //-------------------Clase-------------------------------------
-  if (id == "txtClase") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let claseID = $("#" + txtInput).val();
-      let claseH = $("#txtClasesV").val();
-      console.log(claseH);
-      if (claseH.length > 0) {
-        valorC += claseH + "," + claseID;
-      } else {
-        valorC += claseID;
-      }
-      $("#txtClasesV").val(valorC);
-    } else {
-      var claseID = $("#" + txtInput).val();
-      var claseH = $("#txtMarcasV").val();
-      if (claseH.length > 0) {
-        valorC = BuscarBorrar(claseH, claseID);
-      } else {
-        valorC += "";
-      }
-      $("#txtClasesV").val(valorC);
-    }
-  }
-  //-------------------Tipo-------------------------------------
-  if (id == "txtTipo") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let tipoID = $("#" + txtInput).val();
-      let tipoH = $("#txtTiposV").val();
-      console.log(tipoH);
-      if (tipoH.length > 0) {
-        valorT += tipoH + "," + tipoID;
-      } else {
-        valorT += tipoID;
-      }
-      $("#txtTiposV").val(valorT);
-    } else {
-      var tipoID = $("#" + txtInput).val();
-      var tipoH = $("#txtTiposV").val();
-      if (tipoH.length > 0) {
-        valorT = BuscarBorrar(tipoH, tipoID);
-      } else {
-        valorT += "";
-      }
-      $("#txtTiposV").val(valorT);
-    }
-  }
-  //-------------------SubTipo-------------------------------------
-  if (id == "txtSubTipo") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let subtipoID = $("#" + txtInput).val();
-      let subtipoH = $("#txtSubTiposV").val();
-      console.log(subtipoH);
-      if (subtipoH.length > 0) {
-        valorST += subtipoH + "," + subtipoID;
-      } else {
-        valorST += subtipoID;
-      }
-      $("#txtSubTiposV").val(valorST);
-    } else {
-      var subtipoID = $("#" + txtInput).val();
-      var subtipoH = $("#txtSubTiposV").val();
-      if (subtipoH.length > 0) {
-        valorST = BuscarBorrar(subtipoH, subtipoID);
-      } else {
-        valorST += "";
-      }
-      $("#txtSubTiposV").val(valorST);
-    }
-  }
-  //-------------------SubTipo2-------------------------------------
-  if (id == "txtSubTipo2") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let subtipo2ID = $("#" + txtInput).val();
-      let subtipo2H = $("#txtSubTipos2V").val();
-      console.log(subtipo2H);
-      if (subtipo2H.length > 0) {
-        valorST2 += subtipo2H + "," + subtipo2ID;
-      } else {
-        valorST2 += subtipo2ID;
-      }
-      $("#txtSubTipos2V").val(valorST2);
-    } else {
-      var subtipo2ID = $("#" + txtInput).val();
-      var subtipo2H = $("#txtSubTipos2V").val();
-      if (subtipo2H.length > 0) {
-        valorST2 = BuscarBorrar(subtipo2H, subtipo2ID);
-      } else {
-        valorST2 += "";
-      }
-      $("#txtSubTipos2V").val(valorST2);
-    }
-  }
-  //-------------------Envase-------------------------------------
-  if (id == "txtEnvase") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      let envaseID = $("#" + txtInput).val();
-      let envaseH = $("#txtEnvasesV").val();
-      console.log(envaseH);
-      if (envaseH.length > 0) {
-        valorE += envaseH + "," + envaseID;
-      } else {
-        valorE += envaseID;
-      }
-      $("#txtEnvasesV").val(valorE);
-    } else {
-      var envaseID = $("#" + txtInput).val();
-      var envaseH = $("#txtEnvasesV").val();
-      if (envaseH.length > 0) {
-        valorE = BuscarBorrar(envaseH, envaseID);
-      } else {
-        valorE += "";
-      }
-      $("#txtEnvasesV").val(valorE);
-    }
-  }
-  //-------------------Ancho-------------------------------------
-  console.log(id);
-  if (id == "txtAncho") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      var anchoID = $("#" + txtInput).val();
-      var anchoH = $("#txtAnchosV").val();
-      if (anchoH.length > 0) {
-        valorAH += anchoH + "," + anchoID;
-      } else {
-        valorAH += anchoID;
-      }
-      $("#txtAnchosV").val(valorAH);
-    } else {
-      var anchoID = $("#" + txtInput).val();
-      var anchoH = $("#txtAnchosV").val();
-      if (anchoH.length > 0) {
-        valorAH = BuscarBorrar(anchoH, anchoID);
-      } else {
-        valorAH += "";
-      }
-      $("#txtAnchosV").val(valorAH);
-    }
-  }
-  //-----------------------CB---------------------------------
-  if (id == "txtCenter") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      var cbID = $("#" + txtInput).val();
-      var cbH = $("#txtCBV").val();
-      if (cbH.length > 0) {
-        valorCBH += cbH + "," + cbID;
-      } else {
-        valorCBH += cbID;
-      }
-      $("#txtCBV").val(valorCBH);
-    } else {
-      var cbID = $("#" + txtInput).val();
-      var cbH = $("#txtCBV").val();
-      if (cbH.length > 0) {
-        valorCBH = BuscarBorrar(cbH, cbID);
-      } else {
-        valorCBH += "";
-      }
-      $("#txtCBV").val(valorCBH);
-    }
-  }
-  //------------------------ET--------------------------------
-  if (id == "txtOffset") {
-    chk = $("#" + txtInput).is(":checked");
-    if (chk == true) {
-      var etID = $("#" + txtInput).val();
-      var etH = $("#txtETV").val();
-      if (etH.length > 0) {
-        valorETH += etH + "," + etID;
-      } else {
-        valorETH += etID;
-      }
-      $("#txtETV").val(valorETH);
-    } else {
-      var etID = $("#" + txtInput).val();
-      var etH = $("#txtETV").val();
-      if (etH.length > 0) {
-        valorETH = BuscarBorrar(etH, etID);
-      } else {
-        valorETH += "";
-      }
-      $("#txtETV").val(valorETH);
-    }
-  }
-}
-//-----------------------------------------------------------------------------------
-function BuscarBorrar(cadena, value) {
-  var arreglo = cadena.split(",");
-  $.each(arreglo, function (index, result) {
-    if (arreglo[index] == value) {
-      arreglo.splice(index, 1);
-    }
-  });
-  return arreglo.toString();
-}
-//------------------------------Filtrado Post Busqueda para los resultados-----------
-function Filtrar(IDCategoria, seccion) {
-  let pag = 1;
-  idCat = document.getElementById("txtCategoria").value;
-  let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
-  instance.close();
-  let r = $("#rematetxt").is(":checked");
-  let i = $("#incompletotxt").is(":checked");
-  console.log("Valor de i: " + i);
-  // console.log(ArrayData);
-  let clase = document.getElementById("txtClasesV").value;
-  let marca = document.getElementById("txtMarcasV").value;
-  let tipo = document.getElementById("txtTiposV").value;
-  let subtipo = document.getElementById("txtSubTiposV").value;
-  let subtipo2 = document.getElementById("txtSubTipos2V").value;
-  let envase = document.getElementById("txtEnvasesV").value;
-  let filtradoPor = new Array();
-
-  if (clase.length > 0) {
-    clasesArray = clase.split(",");
-  } else {
-    clasesArray = "";
-  }
-  if (marca.length > 0) {
-    marcasArray = marca.split(",");
-  } else {
-    marcasArray = "";
-  }
-  if (tipo.length > 0) {
-    tiposArray = tipo.split(",");
-  } else {
-    tiposArray = "";
-  }
-  if (subtipo.length > 0) {
-    subtiposArray = subtipo.split(",");
-  } else {
-    subtiposArray = "";
-  }
-  if (subtipo2.length > 0) {
-    subtipos2Array = subtipo2.split(",");
-  } else {
-    subtipos2Array = "";
-  }
-  if (envase.length > 0) {
-    envasesArray = envase.split(",");
-  } else {
-    envasesArray = "";
-  }
-
-  filtradoPor = {
-    CLASE: clasesArray,
-    MARCA: marcasArray,
-    TIPO: tiposArray,
-    SUBTIPO: subtiposArray,
-    SUBTIPO2: subtipos2Array,
-    ENVASE: envasesArray,
-  };
-
-  if (filtradoPor.CLASE === "") {
-    delete filtradoPor.CLASE;
-  }
-  if (filtradoPor.MARCA === "") {
-    delete filtradoPor.MARCA;
-  }
-  if (filtradoPor.TIPO === "") {
-    delete filtradoPor.TIPO;
-  }
-  if (filtradoPor.SUBTIPO === "") {
-    delete filtradoPor.SUBTIPO;
-  }
-  if (filtradoPor.SUBTIPO2 === "") {
-    delete filtradoPor.SUBTIPO2;
-  }
-  if (filtradoPor.ENVASE === "") {
-    delete filtradoPor.ENVASE;
-  }
-
-  ArrayDataFiltrado = getFiltrarResultado(filtradoPor);
-
-  if (
-    ArrayDataFiltrado.length > 0 &&
-    filtradoPor.INCOMPLETO == "I" &&
-    clearFiltros == false
-  ) {
-    viewImcompletos = true;
-  }
-  console.log(ArrayDataFiltrado);
-  let totales = ArrayDataFiltrado.length;
-  nPag = Math.ceil(totales / xPag);
-  if (totales > 0) {
-    console.log(IDCategoria + "-" + seccion);
-    if (IDCategoria == "1030" && seccion != 0) {
-      if (seccion == 1) {
-        mostrarResultadosFiltrosReferencia(nPag, pag, idCat);
-        console.log("Esta pasando por aqui");
-      }
-      if (seccion == 2) {
-        mostrarResultadosFiltrosIntercambio(nPag, pag, idCat);
-      }
-    } else {
-      mostrarResultadosBusqueda(nPag, 1, IDCategoria, "");
-    }
-  } else {
-    Swal.fire({
-      icon: "info",
-      title: "Filtrar busqueda",
-      text: "No hay artículos para el filtro selecccionado.",
-      confirmButtonColor: "#000",
-    });
-    return false;
-  }
-}
-//-----------------------------------------------------------------------------------
-function getFiltrarResultado(filtradoPor) {
-  console.log("Estas pasando por getFiltrarResultado");
-  console.log(ArrayData);
-  console.log(filtradoPor);
-  if (
-    filtradoPor.INCOMPLETO &&
-    filtradoPor.INCOMPLETO.length > 0 &&
-    filtradoPor.INCOMPLETO[0] === "I"
-  ) {
-    //ESTABA AQUI
-    resultados = ArrayData.filter(
-      (item) =>
-        item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4,
-    );
-  } else {
-    resultados = ArrayData.filter(function (o) {
-      return Object.keys(filtradoPor).every(function (k) {
-        return filtradoPor[k].some(function (f) {
-          return o[k] === f;
-        });
-      });
-    });
-  }
-
-  return resultados;
-}
-//------------------------Limpiar Filtros Pre Busqueda-------------------------------
-function LimpiarFiltroPre(opt) {
-  if (opt == 1) {
-    //Vaciar valor seleccionado
-    $("#txtClasesV").val("");
-    $("#txtMarcasV").val("");
-    $("#txtTiposV").val("");
-    $("#txtSubTiposV").val("");
-    $("#txtSubTipos2V").val("");
-    $("#txtEnvasesV").val("");
-    //Vaciar contenedor de categorias
-    $("#filtromarca").empty();
-    $("#filtrotipo").empty();
-    $("#filtrosubtipo").empty();
-    $("#filtrosubtipo2").empty();
-    $("#filtroenvase").empty();
-    //Quitar check en categorias
-    $("input[type='checkbox']").prop("checked", false);
-    //Vaciar localStorage
-    localStorage.removeItem("claseSelect");
-    localStorage.removeItem("marcaSelect");
-    localStorage.removeItem("tipoSelect");
-    localStorage.removeItem("subtipoSelect");
-    localStorage.removeItem("subtipo2Select");
-    localStorage.removeItem("envaseSelect");
-    clearFiltros = true;
-    cerrarModal();
-  } else {
-    Swal.fire({
-      title: "¿Deseas limpiar toda la información?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#28a745",
-      cancelButtonColor: "#6e7881",
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.value) {
-        //Vaciar valor seleccionado
-        $("#txtClasesV").val("");
-        $("#txtMarcasV").val("");
-        $("#txtTiposV").val("");
-        $("#txtSubTiposV").val("");
-        $("#txtSubTipos2V").val("");
-        $("#txtEnvasesV").val("");
-        //Vaciar contenedor de categorias
-        $("#filtromarca").empty();
-        $("#filtrotipo").empty();
-        $("#filtrosubtipo").empty();
-        $("#filtrosubtipo2").empty();
-        $("#filtroenvase").empty();
-        //Quitar check en categorias
-        $("input[type='checkbox']").prop("checked", false);
-        //Vaciar localStorage
-        localStorage.removeItem("claseSelect");
-        localStorage.removeItem("marcaSelect");
-        localStorage.removeItem("tipoSelect");
-        localStorage.removeItem("subtipoSelect");
-        localStorage.removeItem("subtipo2Select");
-        localStorage.removeItem("envaseSelect");
-        clearFiltros = true;
-      }
-    });
-  }
-}
-//------------------------Limpiar Filtros Post Busqueda------------------------------
-function LimpiarFiltro(IDCategoria) {
-  Swal.fire({
-    title: "¿Deseas limpiar toda la información?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6e7881",
-    confirmButtonText: "Confirmar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.value) {
-      $("#txtClasesV").val("");
-      $("#txtMarcasV").val("");
-      $("#txtTiposV").val("");
-      $("#txtSubTiposV").val("");
-      $("#txtSubTipos2V").val("");
-      $("#txtEnvasesV").val("");
-
-      $("input[type='checkbox']").prop("checked", false);
-      clearFiltros = true;
-      Filtrar(IDCategoria);
-    }
-  });
-}
-//------------------Mostrar el loading antes de enviar la solicitud-------------------
-function mostrarLoading() {
-  $(".loading").show();
-  document.querySelector(".loading").style.display = "block";
-}
-
-//---------------FUNCION PAGINADOR PARA BUSQUEDA PEDIDOS/COTIZACIONES-----------------
-function paginadorPedidos(nPag, pag, IDCategoria) {
-  console.log("desde: " + (pag - 1) * xPag + " hasta: " + pag * xPag);
-  console.log("nPag:" + nPag + "- pag:" + pag);
-  //MUESTRA LA CANTIDAD DE PAGINA
-  let selected = "";
-  sel = `<select class="browser-default" onchange="mostrarResultadosBusquedaPedidos(${nPag}, this.value,${IDCategoria})">
-        <option value="" disabled>Páginas</option>`;
-  for (var i = 0; i < nPag; i++) {
-    if (i + 1 == pag) {
-      selected = "selected";
-    } else {
-      selected = "";
-    }
-    if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
-        parseInt(i) + 1
-      }</option>`;
-    }
-  }
-  sel += `</select>`;
-
-  if (pag <= 1) btnAtras = `<a style="color:#aba7a7;">❮ Anterior</a>`;
-  else
-    btnAtras = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag} , ${
-      parseInt(pag) - 1
-    }, ${IDCategoria});">❮ Anterior</a>`;
-
-  if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
-  else
-    btnSig = `<a onclick="mostrarResultadosBusquedaPedidos(${nPag},${
-      parseInt(pag) + 1
-    },${IDCategoria})">Siguiente ❯</a>`;
-
-  return `
-          <div id="paginador">
-        <div class="row">
-          <div class="col s4"></div>
-          <div class="col s4" style="text-align: center">${pag}/${nPag}</div>
-          <div class="col s4"></div>
-        </div>
-        <div class="row" style="width:fit-content !important;">
-            <div class="col s4" id="btnAtras" style="width:fit-content !important;">
-              ${btnAtras}
-            </div>
-          <div class="col s4">
-            ${sel}
-          </div>
-          <div class="col s4" id="btnSig" style="width:fit-content !important;">
-            ${btnSig}
-          </div>
-        </div>
-      </div><br>`;
-}
-//-----------------------------------------------------------------------------------
-//---------------------- cambio de vista      ---------------------------------------
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
 function cambiarVistaMosaico() {
+  window.vistaActualBuscador = 'mosaico';
   let totales = ArrayDataFiltrado.length;
-  nPag = Math.ceil(totales / xPag);
+  let nPag = Math.ceil(totales / xPag);
   mostrarResultadosBusqueda(nPag, 1);
 }
-//-----------------------------------------------------------------------------------
-function cambiarVistaLista() {
+
+// function cambiarVistaLista() {
+//   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
+//   let bodegaCod = bodega ? bodega[0].BODEGA : "";
+//   let totalRegistros = ArrayDataFiltrado.length;
+//   let pag = 1; 
+//   let desde = (pag - 1) * xPag;
+//   let hasta = Math.min(pag * xPag, totalRegistros);
+//   let nPag = Math.ceil(totalRegistros / xPag);
+//   let htm = "";
+
+//   htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+//             <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+//               <i class="material-icons">close</i>
+//               <span>Cerrar Búsqueda</span>
+//             </button>
+//           </div>`;
+
+//   htm += '<div id="lista-articulo">';
+//   htm += `<div class="col s12">
+//           <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+//           </div>`;
+
+//   htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">          
+//             <div class="col s6 valign-wrapper">
+//               <label>
+//                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
+//                 <span>Mostrar En Bodega</span>
+//               </label>
+//             </div>
+//             <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+//               <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+//               <span style="font-size: 16px; color: var(--primary-teal);">${totalRegistros}</span>
+//             </div>
+//           </div>
+//           <div class="row" style="display: flex; gap: 10px;">
+//             <div class="col s6" style="padding: 0;">
+//                 <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px;" onclick="cambiarVistaMosaico();">
+//               <i class="material-icons left">apps</i> VISTA MOSAICO </button>
+//             </div>
+//             <div class="col s6" style="padding: 0;">
+//               <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px;" onclick="FiltrarModal();">
+//               <i class="material-icons left">filter_list</i> FILTRAR </button>
+//             </div>
+//           </div>`;
+
+//   htm += `<div class="grid-table-responsive" style="margin-top: 20px; overflow-x: auto;">
+//             <table class="tabla-transacciones" style="min-width: 600px;">
+//             <thead>
+//               <tr>
+//                 <th style="width:30%; text-align: left;">Código / Desc.</th>
+//                 <th style="width:30%;">Código de Barras</th>
+//                 <th style="width:10%;">En ${bodegaCod}</th>
+//                 <th style="width:30%; text-align: center;">Opc.</th>
+//               </tr>
+//             </thead>
+//             <tbody>`;
+
+//   for (let i = desde; i < hasta; i++) {
+//     if (ArrayDataFiltrado[i]) {
+//       htm += `<tr>`;
+//       htm += `<td style="text-align: left;">
+//                 <div class="cell-articulo-box">
+//                   <span class="cell-articulo-code" style="color: var(--articulo-orange);">${ArrayDataFiltrado[i].ARTICULO}</span>
+//                   <span class="cell-articulo-desc">${ArrayDataFiltrado[i].DESCRIPCION}</span>
+//                 </div>
+//               </td>
+//               <td class="cell-center">${ArrayDataFiltrado[i].CODIGO_BARRAS_INVT ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT : ""}</td>
+//               <td class="cell-number">${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
+//               <td class="cell-center" style="white-space: nowrap;">
+//                 <i class="material-symbols-outlined" style="cursor: pointer; color: #64748b; margin: 0 4px; vertical-align: middle;" onclick="mostrarImagen('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}', '${ArrayDataFiltrado[i].DESCRIPCION}')">visibility</i>              
+//                 <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="mostrarExistencias('${encodeURIComponent(ArrayDataFiltrado[i].ARTICULO)}')">                
+//                 <img src="./img/icon/bar-code.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="impCodBar('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+//                 <img src="./img/icon/information.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="information('${ArrayDataFiltrado[i].ARTICULO}','${ArrayDataFiltrado[i].DESCRIPCION}')">
+//               </td>`;
+//       htm += `</tr>`;
+//     }
+//   }
+
+//   htm += `</tbody></table></div>`;
+
+//   htm += `<div id="resultadoPaginador" style="margin-top: 20px;">`;
+//   htm += paginador(nPag, pag); // Utilizar el paginador global para Vista Lista
+//   htm += `</div></div>`;
+
+//   inyectarYMostrarBuscador(htm);
+// }
+
+
+
+
+
+//------------------------------------------------------------------------------------
+// PAGINADOR UNIFICADO PARA RESULTADOS DE BÚSQUEDA (GRID / MOSAICO)
+//------------------------------------------------------------------------------------
+// Ahora la función recibe la página a la que queremos ir (pagIngresada)
+function cambiarVistaLista(pagIngresada) {
+  window.vistaActualBuscador = 'lista';
   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-  let bodegaCod = bodega[0].BODEGA;
+  let bodegaCod = bodega ? bodega[0].BODEGA : "";
   let totalRegistros = ArrayDataFiltrado.length;
-  let pag = 1; // Página inicial
+  
+  // Respetar la página solicitada
+  let pag = pagIngresada || 1; 
+  
   let desde = (pag - 1) * xPag;
   let hasta = Math.min(pag * xPag, totalRegistros);
   let nPag = Math.ceil(totalRegistros / xPag);
   let htm = "";
 
-  htm += '<div id="lista-articulo">';
-  htm += `<div class="col s12">
-          <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
+  htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+              <i class="material-icons">close</i>
+              <span>Cerrar Búsqueda</span>
+            </button>
           </div>`;
 
-  htm += `<div class="row" id="totalregistrosBusqueda">          
+  htm += '<div id="lista-articulo">';
+  htm += `<div class="col s12">
+          <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+          </div>`;
+
+  htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">          
             <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
                 <span>Mostrar En Bodega</span>
               </label>
             </div>
-            <div class="col s6 valign-wrapper">
-              <span>Total de Registros: </span>
-              <span>${totalRegistros}</span>
+            <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+              <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+              <span style="font-size: 16px; color: var(--primary-teal);">${totalRegistros}</span>
             </div>
           </div>
-          <div class="row">
-            <div class="col s6">
-                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico();">
-              <i class="material-icons right">apps</i>
-              VISTA </a>
+          <div class="row" style="display: flex; gap: 10px;">
+            <div class="col s6" style="padding: 0;">
+                <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px;" onclick="cambiarVistaMosaico();">
+              <i class="material-icons left">apps</i> VISTA MOSAICO </button>
             </div>
-            <div class="col s6">
-              <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
-              <i class="material-icons right">filter_list</i>
-              FILTRAR </a>
+            <div class="col s6" style="padding: 0;">
+              <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px;" onclick="FiltrarModal();">
+              <i class="material-icons left">filter_list</i> FILTRAR </button>
             </div>
           </div>`;
 
-  htm += `<table class="striped centered" style="margin-top:5%;">
-  <thead style="background:#28a745;color:white;">
-    <tr>
-      <th style="width:30%;">Código</th>
-      <th style="width:30%;">Código<br>de Barras</th>
-      <th style="width:10%;">En ${bodegaCod}</th>
-      <th style="width:30%;">Opc.</th>
-    </tr>
-  </thead>
-  <tbody>`;
+  htm += `<div class="grid-table-responsive" style="margin-top: 20px; overflow-x: auto;">
+            <table class="tabla-transacciones" style="min-width: 800px;">
+            <thead>
+              <tr>
+                <th style="width:25%; text-align: left;">Código / Desc.</th>
+                <th style="width:15%;">Cód. Barras</th>
+                <th style="width:10%;">Disponible</th>
+                <th style="width:10%;">Remitida</th>
+                <th style="width:10%;">Reservada</th>
+                <th style="width:20%; text-align: center;">Opc.</th>
+              </tr>
+            </thead>
+            <tbody>`;
 
   for (let i = desde; i < hasta; i++) {
     if (ArrayDataFiltrado[i]) {
+      const item = ArrayDataFiltrado[i];
+      const disponible = Math.floor(parseFloat(item.TOTAL_CANTIDAD_BODEGA) || 0);
+      
+      let remitida = 0;
+      let reservada = 0;
+      Object.keys(item).forEach(k => {
+        if (k.toUpperCase().includes("REMITIDA")) remitida = parseFloat(item[k]) || 0;
+        if (k.toUpperCase().includes("RESERVADA")) reservada = parseFloat(item[k]) || 0;
+      });
+
       htm += `<tr>`;
-      //cambiar mostrar existencias
-      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${
-        ArrayDataFiltrado[i].ARTICULO
-      }</h5><h6 style="font-size: 10px; text-align: left;">${
-        ArrayDataFiltrado[i].DESCRIPCION
-      }</td>
-              <td>${
-                ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
-                  ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
-                  : ""
-              }</td>
-              <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
-              <td>
-                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO,
-                )}', '${
-                  ArrayDataFiltrado[i].DESCRIPCION
-                }')">visibility</i>              
-                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO,
-                )}')" tabindex="1">                
-               <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${
-                 ArrayDataFiltrado[i].ARTICULO
-               }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-               <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${
-                 ArrayDataFiltrado[i].ARTICULO
-               }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
+      htm += `<td style="text-align: left;">
+                <div class="cell-articulo-box">
+                  <span class="cell-articulo-code" style="color: var(--articulo-orange);">${item.ARTICULO}</span>
+                  <span class="cell-articulo-desc">${item.DESCRIPCION}</span>
+                </div>
+              </td>
+              <td class="cell-center">${item.CODIGO_BARRAS_INVT ? item.CODIGO_BARRAS_INVT : ""}</td>
+              <td class="cell-number" style="font-weight: bold;">${disponible}</td>
+              <td class="cell-number">${remitida}</td>
+              <td class="cell-number">${reservada}</td>
+              <td class="cell-center" style="white-space: nowrap;">
+                <i class="material-symbols-outlined" style="cursor: pointer; color: #64748b; margin: 0 4px; vertical-align: middle;" onclick="mostrarImagen('${encodeURIComponent(item.ARTICULO)}', '${item.DESCRIPCION}')">visibility</i>              
+                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="mostrarExistencias('${encodeURIComponent(item.ARTICULO)}')">                
+                <img src="./img/icon/bar-code.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="impCodBar('${item.ARTICULO}','${item.DESCRIPCION}')">
+                <img src="./img/icon/information.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="information('${item.ARTICULO}','${item.DESCRIPCION}')">
               </td>`;
       htm += `</tr>`;
     }
   }
 
-  htm += `</tbody>
-          </table>`;
+  htm += `</tbody></table></div>`;
 
-  htm += `<div id="resultadoPaginador">`;
-  htm += paginadorTablas(nPag, pag, "mostrarResultadosVistaLista");
-  htm += `</div>`;
+  htm += `<div id="resultadoPaginador" style="margin-top: 20px;">`;
+  htm += paginador(nPag, pag); 
+  htm += `</div></div>`;
 
-  htm += "</div>";
-
-  document.getElementById("resultadoBusqueda").innerHTML = htm;
-  $("html, body").animate(
-    {
-      scrollTop: $("#resultadoBusqueda").offset().top - 140,
-    },
-    1000,
-  );
+  inyectarYMostrarBuscador(htm);
 }
-//-----------------------------------------------------------------------------------
-function mostrarResultadosVistaLista(nPag, pag) {
-  let htm = "";
-  let desde = (pag - 1) * xPag;
-  let hasta = pag * xPag;
 
-  resultadosVistaLista(desde, hasta);
-  htm += paginadorTablas(nPag, pag, "mostrarResultadosVistaLista");
-  document.getElementById("resultadoPaginador").innerHTML = htm;
-}
-//-----------------------------------------------------------------------------------
-function resultadosVistaLista(desde, hasta) {
-  const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-  let bodegaCod = bodega[0].BODEGA;
-  let totalRegistros = 0,
-    htm = "";
-  totalRegistros = ArrayDataFiltrado.length;
-  // let nPag = Math.ceil(totalRegistros / xPag);
 
-  htm += '<div id="lista-articulo">';
-  htm += `<div class="col s12">
-          <h2 style="text-align:center ; text-transform: uppercase;">Resultados de la Búsqueda</h2>
-          </div>`;
-
-  htm += `<div class="row" id="totalregistrosBusqueda">           
-             <div class="col s6 valign-wrapper">
-              <label>
-                <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
-                <span>Mostrar En Bodega</span>
-              </label>
-            </div>
-             <div class="col s6 valign-wrapper">
-              <span>Total de Registros: </span>
-              <span>${totalRegistros}</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s6">
-                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaico(${desde},${hasta});">
-              <i class="material-icons right">apps</i>
-              VISTA </a>
-            </div>
-            <div class="col s6">
-              <a class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModal();">
-              <i class="material-icons right">filter_list</i>
-              FILTRAR </a>
-            </div>
-          </div>`;
-
-  htm += `<table class="striped centered" style="margin-top:5%;">
-  <thead style="background:#28a745;color:white;">
-    <tr>
-      <th style="width:30%;">CODIGO</th>
-      <th style="width:30%;">CODIGO DE BARRAS</th>
-      <th style="width:10%;">EN ${bodegaCod}</th>
-      <th style="width:30%;">ACTION</th>
-    </tr>
-  </thead>
-  <tbody>`;
-
-  for (let i = desde; i < hasta; i++) {
-    if (ArrayDataFiltrado[i]) {
-      htm += `<tr>`;
-      htm += `<td class="sticky-column text-align:center"><h5 style="font-size:12px; text-align:left; color:orangered;">${
-        ArrayDataFiltrado[i].ARTICULO
-      }</h5><h6 style="font-size: 10px; text-align: left;">${
-        ArrayDataFiltrado[i].DESCRIPCION
-      }</td>
-              <td>${
-                ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
-                  ? ArrayDataFiltrado[i].CODIGO_BARRAS_INVT
-                  : ""
-              }</td>
-              <td>${Math.floor(ArrayDataFiltrado[i].TOTAL_CANTIDAD_BODEGA)}</td>
-              <td>
-                <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-                  ArrayDataFiltrado[i].ARTICULO,
-                )}', '${
-                  ArrayDataFiltrado[i].DESCRIPCION
-                }')">visibility</i>              
-                <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${
-                  ArrayDataFiltrado[i].ARTICULO
-                }')" tabindex="1">
-                <img src="./img/icon/bar-code.svg"  width="22" height="22"  onclick="impCodBar('${
-                  ArrayDataFiltrado[i].ARTICULO
-                }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-                <img src="./img/icon/information.svg"  width="22" height="22"  onclick="information('${
-                  ArrayDataFiltrado[i].ARTICULO
-                }','${ArrayDataFiltrado[i].DESCRIPCION}')" tabindex="1">
-              </td>`; // Puedes poner aquí el botón de acción que desees
-      htm += `</tr>`;
-    }
-  }
-
-  htm += `</tbody>
-          </table>`;
-
-  htm += `<div id="resultadoPaginador">`;
-  htm += `</div>`;
-  htm += "</div>";
-
-  document.getElementById("resultadoBusqueda").innerHTML = htm;
-  $("html, body").animate(
-    {
-      scrollTop: $("#resultadoBusqueda").offset().top - 140,
-    },
-    1000,
-  );
-}
-//------------------------------------------------------------------------------------
-function paginadorTablas(nPag, pag, dynamicFunction) {
-  // Generar el select con las páginas
+function paginador(nPag, pag) {
   let selected = "";
-  let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
+  let sel = `<select class="browser-default paginador-select" onchange="mostrarResultadosBusqueda(${nPag}, this.value)">
               <option value="" disabled>Páginas</option>`;
 
-  for (var i = 0; i < nPag; i++) {
-    if (i + 1 == pag) {
-      selected = "selected";
-    } else {
-      selected = "";
-    }
+  for (let i = 0; i < nPag; i++) {
+    selected = (i + 1 == pag) ? "selected" : "";
     if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
-        parseInt(i) + 1
-      }</option>`;
+      sel += `<option value="${i + 1}" ${selected}>Pág ${i + 1}</option>`;
     }
   }
-  // for (let i = 0; i < nPag; i++) {
-  //   selected = i + 1 === pag ? "selected" : "";
-  //   if (nPag !== 1) {
-  //     sel += `<option value="${i + 1}" ${selected}>${i + 1}</option>`;
-  //   }
-  // }
   sel += `</select>`;
 
-  // Botones de navegación
-  const btnAtras =
-    pag <= 1
+  const btnAtras = pag <= 1
       ? `<a class="paginador-btn disabled">❮ Anterior</a>`
-      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
-          pag - 1
-        })">❮ Anterior</a>`;
+      : `<a class="paginador-btn" onclick="mostrarResultadosBusqueda(${nPag}, ${parseInt(pag) - 1})">❮ Anterior</a>`;
 
-  const btnSig =
-    pag >= nPag
+  const btnSig = pag >= nPag
       ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
-      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
-          pag + 1
-        })">Siguiente ❯</a>`;
+      : `<a class="paginador-btn" onclick="mostrarResultadosBusqueda(${nPag}, ${parseInt(pag) + 1})">Siguiente ❯</a>`;
 
-  // Retornar el HTML con clases en lugar de estilos inline
   return `
-    <div id="paginador" class="paginador-container">
-      <div class="row paginador-info">
-        <div class="col s12 center-align">${pag}/${nPag}</div>
+    <div class="paginador-container" style="margin-top: 20px;">
+      <div class="row paginador-info" style="margin-bottom: 5px;">
+        <div class="col s12 center-align" style="font-weight: bold; color: #475569; font-size: 13px;">
+          Página ${pag} de ${nPag}
+        </div>
       </div>
-      <div class="row paginador-controls">
-        <div class="col s4 paginador-btn-container">${btnAtras}</div>
-        <div class="col s4 paginador-select-container">${sel}</div>
-        <div class="col s4 paginador-btn-container">${btnSig}</div>
+      <div class="row paginador-controls" style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+        <div class="paginador-btn-container">${btnAtras}</div>
+        <div class="paginador-select-container" style="min-width: 110px;">${sel}</div>
+        <div class="paginador-btn-container">${btnSig}</div>
       </div>
     </div>
   `;
 }
 
-//-----------------------------------------------------------------------------------
-//---------------------- Otras funcionalidades     ----------------------------------
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-function mostrarImagen(codigo, descripcion) {
-  let code;
-  try {
-    code = decodeURIComponent(codigo); // Decodificar para el título
-  } catch (e) {
-    console.error("Error decodificando código:", e);
-    code = codigo; // Usar codificado como respaldo
-  }
-  console.log(env.API_IMAGE + "/" + code.replace("/", "-"));
-  Swal.fire({
-    confirmButtonColor: "#28a745",
-    html: `
-      <div>
-        <h3>${code}</h3>
-        <img src="${env.API_IMAGE}/${code.replace(
-          "/",
-          "-",
-        )}" alt="Imagen" width="200" height="200">
-        <p>${descripcion}</p>
-      </div>
-    `,
-    customClass: {
-      title: "img-tamaño-articulo",
-    },
-  });
-}
-//-----------------------------------------------------------------------------------
-function mostrarExistencias(p_Articulo) {
-  let code;
-  try {
-    code = decodeURIComponent(p_Articulo); // Decodificar para el título y API
-  } catch (e) {
-    console.error("Error decodificando código:", e);
-    code = p_Articulo; // Usar codificado como respaldo
-  }
+//------------------------------------------------------------------------------------
+// PAGINADOR UNIFICADO PARA VISTA DE TABLA (LISTA)
+//------------------------------------------------------------------------------------
+function paginadorTablas(nPag, pag, dynamicFunction) {
+  let selected = "";
+  let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
+              <option value="" disabled>Páginas</option>`;
 
-  // Mostrar el loading antes de abrir la ventana emergente
-  Swal.fire({
-    title: "Cargando Registros....",
-    allowOutsideClick: false,
-    showConfirmButton: false,
-    didOpen: function () {
-      Swal.showLoading();
-    },
-  });
-
-  // Ruta del API
-  const apiUrl = env.API_URL + "wmsexistenciaarticulosporbodega/1";
-
-  // Parámetros de la solicitud
-  const params = `?p_Articulo=${encodeURIComponent(code)}`;
-
-  fetch(apiUrl + params, {
-    method: "GET",
-    cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("La solicitud no fue exitosa");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Existencias");
-      console.log(data.reporte);
-      console.log("cant registros:", data.reporte.length);
-      if (data.reporte.length > 0) {
-        var existenciaArticulos = data.reporte; // Accede a la propiedad 'reporte'
-        var tablaHtml =
-          '<table style="border-collapse: collapse; width: 100%;">' +
-          "<thead>" +
-          '<tr style="border-bottom: 1px solid #ddd;">' +
-          '<th style="text-align: left; padding: 8px;"> Bodega </th>' +
-          '<th style="text-align: center; padding: 8px;"> Cantidad </th>' +
-          "</tr>" +
-          "</thead>" +
-          "<tbody>";
-
-        existenciaArticulos.forEach((articulo) => {
-          tablaHtml +=
-            '<tr style="border-bottom: 1px solid #ddd;">' +
-            '<td style="text-align: left; padding: 8px;">' +
-            articulo.NOMBRE +
-            "</td>" +
-            '<td style="text-align: center; padding: 8px;">' +
-            parseFloat(articulo.CANTIDAD).toFixed(2) +
-            "</td>" +
-            "</tr>";
-        });
-
-        tablaHtml += "</tbody>" + "</table>";
-
-        Swal.fire({
-          title: "Artículo: " + code, // Usar decodificado
-          html: tablaHtml,
-          confirmButtonText: "Aceptar",
-          confirmButtonColor: "#55b251",
-        });
-      } else {
-        Swal.fire({
-          title: "Artículo: " + code, // Usar decodificado
-          text: "Sin existencias",
-          confirmButtonText: "Aceptar",
-          confirmButtonColor: "#55b251",
-        });
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Ocurrió un error al obtener los registros de existencia",
-        icon: "error",
-        confirmButtonColor: "#55b251",
-      });
-    });
-}
-//-----------------------------------------------------------------------------------
-function sucursalbremen(tienda, id_tienda) {
-  console.log("Tienda: " + tienda + " " + "Id: " + id_tienda);
-  document.getElementById("bodega-sucursal").innerHTML = tienda;
-  document.getElementById("bodega").value = id_tienda;
-  const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-  $("#bodega_sucursales").modal("close");
-  //JSON
-  let newbodega = [
-    {
-      BODEGA: id_tienda,
-      NOMBRE: tienda,
-      PERFIL: bodega[0].PERFIL,
-    },
-  ];
-  sessionStorage.setItem("bodega", JSON.stringify(newbodega));
-
-  const bodegaChange = document.getElementById("bodega");
-
-  if (bodegaChange) {
-    // Verificar si fechasDeInventario está definida antes de llamarla
-    if (typeof fechasDeInventario === "function") {
-      bodegaChange.addEventListener("change", function () {
-        fechasDeInventario(); // Llamar solo si existe
-      });
-      fechasDeInventario(); // Llamada inicial solo si existe
+  for (let i = 0; i < nPag; i++) {
+    selected = (i + 1 == pag) ? "selected" : "";
+    if (nPag != 1) {
+      sel += `<option value="${i + 1}" ${selected}>Pág ${i + 1}</option>`;
     }
   }
-}
-//-----------------------------------------------------------------------------------
-function impCodBar(p_Articulo, p_Descripcion) {
-  localStorage.setItem("impCodeBar", p_Articulo);
-  localStorage.setItem("descripcionImpCode", p_Descripcion);
-  //window.location.href = 'barcodeGen.html';
-  mostrarModalGeneradorCodigoBarras();
-}
-//-----------------------------------------------------------------------------------
-function mostrarModalGeneradorCodigoBarras() {
-  const esPantallaPequena = window.matchMedia("(max-width: 600px)").matches;
+  sel += `</select>`;
 
-  Swal.fire({
-    title: "Generador de Códigos de Barras",
-    width: esPantallaPequena ? "100%" : "60%",
-    padding: "2em",
-    showConfirmButton: false,
-    showCloseButton: true,
-    html: `
-      <style>
-        .container {
-          text-align: center;
-          background: white;
-          padding: 20px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        label {
-          margin: 10px 0 5px 0;
-          font-weight: bold;
-        }
-        input, select {
-          margin-bottom: 15px;
-          padding: 10px;
-          width: 100%;
-          max-width: 300px;
-          text-align: center;
-        }
-        #barcode {
-          margin-top: 20px;
-          display: flex;
-          justify-content: center;
-        }
-        #printBarcode {
-          width: 35%;
-        }
-          /* Small only */
-        @media screen and (max-width: 39.9375em) {
-        
-         #printBarcode {
-          width: 100%!important;
-        }
-        }   
-      </style>            
-      <div class="container">
-        <label for="symbology">Elija la simbología de código de barras:</label>
-        <select id="symbology">
-          <option value="CODE128">Código 128</option>
-          <option value="QR">Código QR</option>
-        </select>
+  const btnAtras = pag <= 1
+      ? `<a class="paginador-btn disabled">❮ Anterior</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${parseInt(pag) - 1})">❮ Anterior</a>`;
 
-        <label for="data" hidden>Ingrese el código del artículo:</label>
-        <input type="text" id="data" placeholder="Ingrese aquí">
+  const btnSig = pag >= nPag
+      ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
+      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${parseInt(pag) + 1})">Siguiente ❯</a>`;
 
-        <label for="size">Seleccione el tamaño:</label>
-        <select id="size">
-          <option value="0.75" selected>75%</option>
-          <option value="1">100%</option>
-          <option value="2">200%</option>
-        </select>
-
-        <div id="barcode"></div>
-        <button id="printBarcode" class="btn waves-effect waves-light">
-          <i class="material-icons left">print</i>Imprimir Código
-        </button>
+  return `
+    <div class="paginador-container">
+      <div class="row paginador-info" style="margin-bottom: 5px;">
+        <div class="col s12 center-align" style="font-weight: bold; color: #475569; font-size: 13px;">
+          Página ${pag} de ${nPag}
+        </div>
       </div>
-    `,
-
-    didOpen: () => {
-      // Cargar script QRCode dinámicamente
-      const script = document.createElement("script");
-      script.src =
-        "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
-      script.onload = () => {
-        inicializarGenerador(); // solo inicializa después que el script esté listo
-      };
-      document.body.appendChild(script);
-    },
-  });
+      <div class="row paginador-controls" style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+        <div class="paginador-btn-container">${btnAtras}</div>
+        <div class="paginador-select-container" style="min-width: 110px;">${sel}</div>
+        <div class="paginador-btn-container">${btnSig}</div>
+      </div>
+    </div>
+  `;
 }
 //-----------------------------------------------------------------------------------
-function inicializarGenerador() {
-  const codigo = localStorage.getItem("impCodeBar");
-  //const descripcion = localStorage.getItem('descripcionImpCode');
-
-  const inputData = document.getElementById("data");
-  const descripcionElement = document.createElement("p");
-  descripcionElement.style.marginTop = "10px";
-  descripcionElement.style.fontSize = "16px";
-  descripcionElement.style.fontFamily = "Arial, sans-serif";
-
-  if (codigo && inputData) {
-    inputData.value = codigo;
-    generateBarcode();
-  }
-
-  document
-    .getElementById("symbology")
-    .addEventListener("change", generateBarcode);
-  document.getElementById("data").addEventListener("input", generateBarcode);
-  document.getElementById("size").addEventListener("change", generateBarcode);
-
-  document
-    .getElementById("printBarcode")
-    .addEventListener("click", imprimeCodigo);
-  M.FormSelect.init(document.querySelectorAll("select"));
-}
+// FILTRADO DE RESULTADOS EN BODEGA
 //-----------------------------------------------------------------------------------
-function generateBarcode() {
-  const symbology = document.getElementById("symbology").value;
-  const data = document.getElementById("data").value;
-  const size = parseFloat(document.getElementById("size").value);
-  const descripcion = localStorage.getItem("descripcionImpCode"); // Obtener descripción directamente
-
-  const barcodeContainer = document.getElementById("barcode");
-  barcodeContainer.innerHTML = "";
-
-  if (data.trim() === "") {
-    return;
-  }
-
-  const wrapper = document.createElement("div");
-  wrapper.style.textAlign = "center";
-
-  if (symbology === "QR") {
-    generateQRCode(data, size, wrapper);
-  } else if (symbology === "CODE128") {
-    generate1DBarcode(symbology, data, size, wrapper);
-  }
-
-  // Agregar la descripción debajo del código
-  if (descripcion) {
-    const descElement = document.createElement("p");
-    descElement.textContent = descripcion;
-    descElement.style.marginTop = "10px";
-    descElement.style.fontSize = "16px";
-    descElement.style.fontFamily = "Arial, sans-serif";
-    wrapper.appendChild(descElement);
-  }
-
-  barcodeContainer.appendChild(wrapper);
-}
-//-----------------------------------------------------------------------------------
-function generate1DBarcode(format, data, size, container) {
-  const canvas = document.createElement("canvas");
-  JsBarcode(canvas, data, {
-    format: format,
-    width: 2 * size,
-    height: 100 * size,
-    displayValue: true,
-  });
-  container.appendChild(canvas);
-}
-//-----------------------------------------------------------------------------------
-function generateQRCode(data, size, container) {
-  const qrContainer = document.createElement("div");
-  new QRCode(qrContainer, {
-    text: data,
-    width: 150 * size,
-    height: 150 * size,
-  });
-  container.appendChild(qrContainer);
-}
-//-----------------------------------------------------------------------------------
-function imprimeCodigo() {
-  const data = document.getElementById("data").value;
-  const symbology = document.getElementById("symbology").value;
-  const size = parseFloat(document.getElementById("size").value);
-  const descripcion = localStorage.getItem("descripcionImpCode");
-
-  if (!data.trim()) {
-    Swal.fire({
-      icon: "warning",
-      title: "Sin datos",
-      text: "Por favor, ingrese un valor para generar el código de barras antes de imprimir.",
-      confirmButtonText: "Aceptar",
-      confirmButtonColor: "#55b251",
-    });
-    return;
-  }
-
-  // Obtenemos la fecha actual del sistema en formato YYYY-MM-DD
-  const hoy = new Date();
-  const fechaSistema = hoy.getFullYear() + "-" + 
-    String(hoy.getMonth() + 1).padStart(2, '0') + "-" + 
-    String(hoy.getDate()).padStart(2, '0') + " " +
-    String(hoy.getHours()).padStart(2, '0') + ":" +
-    String(hoy.getMinutes()).padStart(2, '0') + ":" +
-    String(hoy.getSeconds()).padStart(2, '0');
-
-  // Crear una nueva ventana para imprimir
-  const printWindow = window.open("", "_blank");
-  printWindow.document.write(`
-        <html>
-        <head>
-            <title>Imprimir Código de Barras</title>
-            <style>
-                @page {
-                    size: auto;   /* Se adapta automáticamente al papel de la impresora */
-                    margin: 0mm;  /* Elimina márgenes de página por defecto */
-                }
-                body { 
-                    display: flex; 
-                    flex-direction: column; 
-                    justify-content: center; 
-                    align-items: center; 
-                    margin: 0; 
-                    padding: 5px;
-                    font-family: Arial, sans-serif; 
-                    box-sizing: border-box;
-                }
-                #printBarcode {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                }
-                .barcode-wrapper {
-                    text-align: center;
-                    max-width: 100%;
-                }
-                canvas, img { 
-                    max-width: 100% !important; /* Escala la imagen al ancho disponible */
-                    height: auto !important; 
-                    margin: 0 auto; 
-                }
-                .fecha {
-                    font-size: 11px;
-                    font-weight: bold;
-                    margin-bottom: 4px;
-                    text-align: center;
-                }
-                .descripcion {
-                    margin-top: 6px;
-                    font-size: 10px;
-                    text-align: center;
-                    word-wrap: break-word;
-                }
-            </style>
-        </head>
-        <body>
-            <div id="printBarcode"></div>
-            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-            <script>
-                function generateBarcodeForPrint() {
-                    const data = "${data}";
-                    const size = ${size};
-                    const symbology = "${symbology}";
-                    const descripcion = "${descripcion || ""}";
-                    const fecha = "${fechaSistema}";
-                    const printContainer = document.getElementById('printBarcode');
-                    
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'barcode-wrapper';
-
-                    // 1. Agregar la fecha en la parte superior
-                    const fechaElement = document.createElement('p');
-                    fechaElement.className = 'fecha';
-                    fechaElement.textContent = "Fecha: " + fecha;
-                    wrapper.appendChild(fechaElement);
-                    
-                    // 2. Generar el código según el tipo
-                    if (symbology === 'QR') {
-                        const qrContainer = document.createElement('div');
-                        new QRCode(qrContainer, {
-                            text: data,
-                            width: 150 * size,
-                            height: 150 * size
-                        });
-                        wrapper.appendChild(qrContainer);
-                    } else if (symbology === 'CODE128') {
-                        const canvas = document.createElement('canvas');
-                        JsBarcode(canvas, data, {
-                            format: symbology,
-                            width: 2 * size,
-                            height: 100 * size,
-                            displayValue: true
-                        });
-                        wrapper.appendChild(canvas);
-                    }
-
-                    // 3. Agregar la descripción en la parte inferior
-                    if (descripcion) {
-                        const descElement = document.createElement('p');
-                        descElement.className = 'descripcion';
-                        descElement.textContent = descripcion;
-                        wrapper.appendChild(descElement);
-                    }
-
-                    printContainer.appendChild(wrapper);
-                }
-                generateBarcodeForPrint();
-                window.onload = function() {
-                    window.print();
-                    window.onafterprint = function() {
-                        window.close();
-                    };
-                };
-            </script>
-        </body>
-        </html>
-    `);
-  printWindow.document.close();
-
-  // Mostrar notificación de impresión
-  Swal.fire({
-    icon: "info",
-    title: "Imprimiendo",
-    text: "Imprimiendo código...",
-    confirmButtonText: "Aceptar",
-    confirmButtonColor: "#55b251",
-  });
-}
-// function imprimeCodigo() {
-//   const data = document.getElementById("data").value;
-//   const symbology = document.getElementById("symbology").value;
-//   const size = parseFloat(document.getElementById("size").value);
-//   const descripcion = localStorage.getItem("descripcionImpCode");
-
-//   if (!data.trim()) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "Sin datos",
-//       text: "Por favor, ingrese un valor para generar el código de barras antes de imprimir.",
-//       confirmButtonText: "Aceptar",
-//       confirmButtonColor: "#55b251",
-//     });
-//     return;
-//   }
-
-//   // Crear una nueva ventana para imprimir
-//   const printWindow = window.open("", "_blank");
-//   printWindow.document.write(`
-//         <html>
-//         <head>
-//             <title>Imprimir Código de Barras</title>
-//             <style>
-//                 body { 
-//                     display: flex; 
-//                     flex-direction: column; 
-//                     justify-content: center; 
-//                     align-items: center; 
-//                     height: 100vh; 
-//                     margin: 0; 
-//                     font-family: Arial, sans-serif; 
-//                 }
-//                 canvas, div { 
-//                     margin: 0 auto; 
-//                 }
-//                 p {
-//                     margin-top: 10px;
-//                     font-size: 10px;
-//                     text-align: center;
-//                 }
-//             </style>
-//         </head>
-//         <body>
-//             <div id="printBarcode"></div>
-//             <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-//             <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-//             <script>
-//                 function generateBarcodeForPrint() {
-//                     const data = "${data}";
-//                     const size = ${size};
-//                     const symbology = "${symbology}";
-//                     const descripcion = "${descripcion || ""}";
-//                     const printContainer = document.getElementById('printBarcode');
-//                     const wrapper = document.createElement('div');
-//                     wrapper.style.textAlign = 'center';
-                    
-//                     if (symbology === 'QR') {
-//                         const qrContainer = document.createElement('div');
-//                         new QRCode(qrContainer, {
-//                             text: data,
-//                             width: 150 * size,
-//                             height: 150 * size
-//                         });
-//                         wrapper.appendChild(qrContainer);
-//                     } else if (symbology === 'CODE128') {
-//                         const canvas = document.createElement('canvas');
-//                         JsBarcode(canvas, data, {
-//                             format: symbology,
-//                             width: 2 * size,
-//                             height: 100 * size,
-//                             displayValue: true
-//                         });
-//                         wrapper.appendChild(canvas);
-//                     }
-
-//                     if (descripcion) {
-//                         const descElement = document.createElement('p');
-//                         descElement.textContent = descripcion;
-//                         wrapper.appendChild(descElement);
-//                     }
-
-//                     printContainer.appendChild(wrapper);
-//                 }
-//                 generateBarcodeForPrint();
-//                 window.onload = function() {
-//                     window.print();
-//                     window.onafterprint = function() {
-//                         window.close();
-//                     };
-//                 };
-//             </script>
-//         </body>
-//         </html>
-//     `);
-//   printWindow.document.close();
-
-//   // Mostrar notificación de impresión
-//   Swal.fire({
-//     icon: "info",
-//     title: "Imprimiendo",
-//     text: "Imprimiendo código...",
-//     confirmButtonText: "Aceptar",
-//     confirmButtonColor: "#55b251",
-//   });
-// }
-
-//-----------------------------------------------------------------------------------
-function information(codeArticulo, descripcion) {
-  let pUsuario = document.getElementById("hUsuario").value;
-  const params = "?pUsuario=" + pUsuario + "&pCodigo=" + codeArticulo;
-
-  // Realizar la petición para obtener el detalle de los traslados
-  fetch(env.API_URL + "detallearticulo" + params, myInit)
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.msg === "SUCCESS") {
-        if (result.resultado.length !== 0) {
-          console.log("Detalle del traslado:", result.resultado[0].NOTAS);
-          Swal.fire({
-            title: "Artículo: " + codeArticulo,
-            html: `
-                  <div style="text-align: left;">Descripción:
-                    ${descripcion}<br><br>
-                    El color <span style="color:red; font-weight:bold;">rojo</span> indica existencias por debajo del punto de reorden, se recomienda hacer solicitud de este artículo o referencia.<br><br>
-                    El color <span style="color:green; font-weight:bold;">verde</span> indica que el punto de reorden es estable.
-                    <br><br>
-                    <h5>DETALLE</h5>
-                    <p style="text-align: justify;">${result.resultado[0].NOTAS}</p>
-                  </div>
-                `,
-            confirmButtonText: "Aceptar",
-            confirmButtonColor: "#55b251",
-          });
-        }
-      }
-    });
-}
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////
-// //////////////////////////MOSTRAR RESULTADOS EN BODEGA ////////////////////////////////////////
-// ///////////////////////////////////////////////////////////////////////////////////////////////
-// //-----------------------------------------------------------------------------------
 var articulosConExistencia = new Array();
-// //-----------------------------Filtros sobre el resultado de la búsqueda--------------
-// // Evento de cambio del checkbox
+
 function toggleMostrarEnBodega() {
   const check = document.getElementById("miCheckbox");
   const isChecked = check.checked;
 
-  // Guardar el estado en localStorage
   localStorage.setItem("mostrarEnBodega", isChecked ? "1" : "0");
 
   if (isChecked) {
-    // Filtrar artículos con existencia en bodega > 0
+    // Filtrar solo artículos con existencia real en bodega > 0
     articulosConExistencia = ArrayData2.filter(
-      (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0,
+      (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
     );
+    
     let nPag = Math.ceil(articulosConExistencia.length / xPag);
     let pag = 1;
 
     mostrarResultadosBusquedaEnBodega(nPag, pag);
-    ocultarLoader();
-    //FiltrarModalEnBodega();
   } else {
+    // Restaurar a todos los resultados
     let pag = 1;
     let totales = ArrayDataFiltrado.length;
     let nPag = Math.ceil(totales / xPag);
-    LimpiarFiltroPre(1);
+    
     mostrarResultadosBusqueda(nPag, pag);
-    ocultarLoader();
-    // FiltrarModal();
   }
 }
-// //-----------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------
+// RENDERIZADO CUADRÍCULA EN BODEGA
+//-----------------------------------------------------------------------------------
+// function mostrarResultadosBusquedaEnBodega(nPag, pag) {
+//   let htm = "";
+//   let desde = (pag - 1) * xPag;
+//   let data = articulosConExistencia;
+//   let hasta = Math.min(pag * xPag, data.length);
+
+//   if (desde >= data.length) {
+//     desde = 0;
+//     hasta = Math.min(xPag, data.length);
+//     pag = 1;
+//   }
+
+//   htm = mostrarResultadosEnBodega(desde, hasta, data);
+//   htm += paginadorEnBodega(nPag, pag);
+
+//   inyectarYMostrarBuscador(htm);
+
+//   setTimeout(() => {
+//     const checkElement = document.getElementById("miCheckbox");
+//     if (checkElement) {
+//       checkElement.checked = localStorage.getItem("mostrarEnBodega") === "1";
+//     }
+//   }, 100);
+// }
+
+//-----------------------------------------------------------------------------------
+// RENDERIZADO CUADRÍCULA EN BODEGA
+//-----------------------------------------------------------------------------------
 function mostrarResultadosBusquedaEnBodega(nPag, pag) {
+  // ENRUTADOR: Intercepta y rutea hacia la lista si estábamos ahí
+  if (window.vistaActualBuscador === 'lista') {
+    cambiarVistaListaEnBodega(pag);
+    return;
+  }
+
+  window.vistaActualBuscador = 'mosaico';
   let htm = "";
   let desde = (pag - 1) * xPag;
   let data = articulosConExistencia;
@@ -2832,68 +1096,155 @@ function mostrarResultadosBusquedaEnBodega(nPag, pag) {
   htm = mostrarResultadosEnBodega(desde, hasta, data);
   htm += paginadorEnBodega(nPag, pag);
 
-  document.getElementById("resultadoBusqueda").innerHTML = htm;
-  $("html, body").animate(
-    { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000,
-  );
-  $("select").formSelect();
-  $(".dropdown-trigger").dropdown();
+  inyectarYMostrarBuscador(htm);
 
-  const estado = localStorage.getItem("mostrarEnBodega");
-  if (estado === "1") {
-    document.getElementById("miCheckbox").checked = true;
-  } else {
-    document.getElementById("miCheckbox").checked = false;
-  }
+  setTimeout(() => {
+    const checkElement = document.getElementById("miCheckbox");
+    if (checkElement) {
+      checkElement.checked = localStorage.getItem("mostrarEnBodega") === "1";
+    }
+  }, 100);
 }
-// //-----------------------------------------------------------------------------------
 function mostrarResultadosEnBodega(desde, hasta, data) {
   let htm = "";
   let bodegaLabel = "";
+  let url = "";
+
+  htm += `<style>
+            .custom-grid-5 {
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 15px;
+              margin-top: 20px;
+            }
+            .custom-grid-5 .container-img {
+              background: #ffffff;
+              border: 1px solid #cbd5e1;
+              border-radius: 8px;
+              padding: 10px;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+              transition: transform 0.2s ease;
+            }
+            .custom-grid-5 .container-img:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            .custom-grid-5 #envoltorio {
+              position: relative;
+              width: 100%;
+              text-align: center;
+              margin-bottom: 10px;
+            }
+            
+            /* ALTURA POR DEFECTO: PC / MONITORES */
+            .custom-grid-5 #envoltorio > a > img {
+              width: 100%;
+              height: 290px; 
+              object-fit: contain; 
+            }
+            
+            .custom-grid-5 .flotante-acciones {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 15px;
+              padding: 6px;
+              border-radius: 6px;
+              margin-top: 10px;
+            }
+            .custom-grid-5 .flotante-acciones a {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+            }
+            .custom-grid-5 .flotante-acciones img {
+              width: 22px !important;
+              height: 22px !important;
+              object-fit: contain;
+            }
+            .custom-grid-5 .articulo-titulo {
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--primary-teal);
+              margin: 5px 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .custom-grid-5 h4 {
+              font-size: 11px;
+              color: #475569;
+              margin: 2px 0;
+              line-height: 1.3;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+            
+            /* Responsividad para pantallas más pequeñas */
+            @media (max-width: 1200px) { .custom-grid-5 { grid-template-columns: repeat(4, 1fr); } }
+            @media (max-width: 992px) { 
+              .custom-grid-5 { grid-template-columns: repeat(3, 1fr); }
+              .custom-grid-5 #envoltorio > a > img { height: 220px; } /* Ajuste intermedio para Tablets */
+            }
+            @media (max-width: 600px) { 
+              .custom-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 10px; } 
+              /* ALTURA PARA MÓVILES */
+              .custom-grid-5 #envoltorio > a > img { height: 165px; }
+            }
+          </style>`;
+
+  htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+              <i class="material-icons">close</i>
+              <span>Cerrar Búsqueda</span>
+            </button>
+          </div>`;
 
   htm += '<div id="lista-articulo">';
   htm += `<div class="col s12">
-              <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
-            </div>           
-                         
-            `;
+            <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+          </div>`;
 
-  htm += `<div class="row" id="totalregistrosBusqueda">              
-              <div class="col s6 valign-wrapper">
-              <label>
-                <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
-                <span>Mostrar En Bodega</span>
-              </label>
-            </div>   
-            <div class="col s6 valign-wrapper">
-                <span>Total de Registros: </span>
-                <span>${data.length}</span>
-              </div>
-            </div>            
-            <div class="row" id="vistabusqueda">
-              <div class="col s6">
-                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaListaEnBodega();">
-                  <i class="material-icons right">list</i>
-                  VISTA
-                </a>
-              </div>
-              <div class="col s6">
-                <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
-                  <i class="material-icons right">filter_list</i>
-                  FILTRAR
-                </a>
-              </div>
-            </div>`;
+  htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">        
+          <div class="col s6 valign-wrapper">
+            <label>
+              <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
+              <span>Mostrar En Bodega</span>
+            </label>
+          </div>
+          <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+            <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+            <span style="font-size: 16px; color: var(--primary-teal);">${data.length}</span>
+          </div>
+        </div>
+        
+        <div class="row" id="vistabusqueda" style="display: flex; gap: 10px;">
+          <div class="col s6" style="padding: 0;">
+            <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px;" onclick="cambiarVistaListaEnBodega();">
+              <i class="material-icons left">list</i> VISTA LISTA
+            </button>
+          </div>
+          <div class="col s6" style="padding: 0;">
+            <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px;" onclick="FiltrarModal();">
+              <i class="material-icons left">filter_list</i> FILTRAR
+            </button>
+          </div>
+        </div>`;
 
-  htm += '<div class="grid-container">';
+  htm += '<div class="custom-grid-5">'; 
 
   for (let i = desde; i < hasta; i++) {
     if (data[i]) {
       let DArticulo = data[i].ARTICULO.replace("/", "-");
-      let cantBodega = parseFloat(data[i].TOTAL_CANTIDAD_BODEGA) || 0;
+      const cantBodega = parseFloat(data[i].TOTAL_CANTIDAD_BODEGA) || 0;
 
       bodegaLabel = `<span class="mi-tienda">En Bodega</span>`;
+      url = `href="javascript:void(0);"`;
 
       let colorReorden = "";
       if (data[i].color === "R") colorReorden = "red accent-4";
@@ -2901,233 +1252,226 @@ function mostrarResultadosEnBodega(desde, hasta, data) {
       else if (data[i].color === "N") colorReorden = "deep-orange accent-3";
       else if (data[i].color === "V") colorReorden = "green darken-1";
 
-      htm += `
-            <div class="container-img">
-              <div id="envoltorio">
-                <a href="#">                
-                  <img src="${env.API_IMAGE}/${DArticulo}" width="100%" alt="${
-                    data[i].ARTICULO
-                  }">
-                  ${bodegaLabel}
-                </a>
-                <div class="flotante-acciones ${colorReorden}">
-                  <div class="link-flotante-acciones-forklift">
-                    <a onclick="mostrarExistencias('${data[i].ARTICULO}')">
-                      <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22">
-                    </a>             
-                  </div>
-                  <div class="link-flotante-acciones-bar-code">
-                    <a onclick="impCodBar('${data[i].ARTICULO}','${
-                      data[i].DESCRIPCION
-                    }')">
-                      <img src="./img/icon/bar-code.svg" width="22" height="22">
-                    </a>             
-                  </div>
-                  <div class="link-flotante-acciones-information">
-                    <a onclick="information('${data[i].ARTICULO}','${
-                      data[i].DESCRIPCION
-                    }')">
-                      <img src="./img/icon/information.svg" width="22" height="22">
-                    </a>             
-                  </div>
-                </div>          
-              </div>
-              <h3 class="articulo-titulo">Nombre: ${data[i].ARTICULO}</h3>
-              <h4>Descripción: ${data[i].DESCRIPCION}</h4>
-              <h4>Cantidad: ${cantBodega.toFixed(2)}</h4>
-            </div>`;
+      htm += `<div class="container-img">
+                 <div id="envoltorio">
+                   <a ${url}>                
+                     <img src="${env.API_IMAGE}/${DArticulo}" alt="${data[i].ARTICULO}">
+                     ${bodegaLabel}
+                   </a>
+                   <div class="flotante-acciones ${colorReorden}">
+                      <div class="link-flotante-acciones-forklift">
+                       <a onclick="mostrarExistencias('${encodeURIComponent(data[i].ARTICULO)}')">
+                         <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                      <div class="link-flotante-acciones-bar-code">
+                       <a onclick="impCodBar('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+                       <img src="./img/icon/bar-code.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                        <div class="link-flotante-acciones-information">
+                       <a onclick="information('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+                       <img src="./img/icon/information.svg" width="22" height="22">
+                       </a>             
+                     </div>
+                   </div>          
+                 </div>
+                 <div class="info-articulo">
+                    <h3 class="articulo-titulo">${data[i].ARTICULO}</h3>
+                    <h4>${data[i].DESCRIPCION}</h4>
+                    <h4 style="font-weight:bold; color:#1e293b; margin-top:5px;">Cant: ${cantBodega.toFixed(2)}</h4>
+                 </div>
+              </div>`;
     }
   }
-  // const estado = localStorage.getItem("mostrarEnBodega");
-  //   if (estado === "1") {
-  //       document.getElementById("miCheckbox").checked = true;
-  //   } else {
-  //       document.getElementById("miCheckbox").checked = false;
-  //   }
-  htm += "</div></div>";
-
+  htm += "</div>"; 
+  htm += "</div>"; 
   return htm;
 }
-//-----------------------------------------------------------------------------------
-function paginadorEnBodega(nPag, pag) {
-  //MUESTRA LA CANTIDAD DE PAGINA
-  let selected = "";
-  sel = `<select class="browser-default" onchange="mostrarResultadosBusquedaEnBodega(${nPag}, this.value)">
-        <option value="" disabled>Páginas</option>`;
-  for (var i = 0; i < nPag; i++) {
-    if (i + 1 == pag) {
-      selected = "selected";
-    } else {
-      selected = "";
-    }
-    if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
-        parseInt(i) + 1
-      }</option>`;
-    }
-  }
-  sel += `</select>`;
 
-  if (pag <= 1) btnAtras = `<a style="color: #aba7a7;">❮ Anterior</a>`;
-  else
-    btnAtras = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag} , ${
-      parseInt(pag) - 1
-    });">❮ Anterior</a>`;
-
-  if (pag >= nPag) btnSig = `<a style="color: #aba7a7;"> Siguiente ❯ </a>`;
-  else
-    btnSig = `<a onclick="mostrarResultadosBusquedaEnBodega(${nPag},${
-      parseInt(pag) + 1
-    })">Siguiente ❯</a>`;
-
-  return `<div id="paginador">
-        <div class="row">
-          <div class="col s4"></div>
-          <div class="col s4" style="text-align: center">${pag}/${nPag}</div>
-          <div class="col s4"></div>
-        </div>
-        <div class="row" style="width:fit-content !important;">
-            <div class="col s4" id="btnAtras" style="width:fit-content !important;">
-              ${btnAtras}
-            </div>
-          <div class="col s4">
-            ${sel}
-          </div>
-          <div class="col s4" id="btnSig" style="width:fit-content !important;">
-            ${btnSig}
-          </div>
-        </div>
-      </div><br>`;
-}
-// ////////////////////////////////////////////////////////////////////////////////////////////////
-// //////////////////////////MOSTRAR RESULTADOS Tabla lista  EN BODEGA ////////////////////////////////////////
-// ///////////////////////////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------------------
+// function cambiarVistaMosaicoEnBodega() {
+//   let totales = articulosConExistencia.length;
+//   let nPag = Math.ceil(totales / xPag);
+//   mostrarResultadosBusquedaEnBodega(nPag, 1);
+// }
 function cambiarVistaMosaicoEnBodega() {
+  window.vistaActualBuscador = 'mosaico';
   let totales = articulosConExistencia.length;
-  nPag = Math.ceil(totales / xPag);
+  let nPag = Math.ceil(totales / xPag);
   mostrarResultadosBusquedaEnBodega(nPag, 1);
 }
 
-//-----------------------------------------------------------------------------------
-function cambiarVistaListaEnBodega() {
-  const bodega = JSON.parse(sessionStorage.getItem("bodega"));
-  let bodegaCod = bodega[0].BODEGA;
 
-  // Filtrar solo artículos con existencia en bodega
-  const articulosConExistencia = ArrayDataFiltrado.filter(
-    (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0,
+// function cambiarVistaListaEnBodega() {
+//   const bodega = JSON.parse(sessionStorage.getItem("bodega"));
+//   let bodegaCod = bodega ? bodega[0].BODEGA : "";
+
+//   window.ArticulosBodegaFiltrados = ArrayDataFiltrado.filter(
+//     (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
+//   );
+
+//   let totalRegistros = window.ArticulosBodegaFiltrados.length;
+//   let pag = 1; 
+//   let desde = (pag - 1) * xPag;
+//   let hasta = Math.min(pag * xPag, totalRegistros);
+//   let nPag = Math.ceil(totalRegistros / xPag);
+//   let htm = "";
+
+//   htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+//             <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+//               <i class="material-icons">close</i>
+//               <span>Cerrar Búsqueda</span>
+//             </button>
+//           </div>`;
+
+//   htm += '<div id="lista-articulo">';
+//   htm += `<div class="col s12">
+//           <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+//           </div>`;
+
+//   htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">          
+//             <div class="col s6 valign-wrapper">
+//               <label>
+//                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
+//                 <span>Mostrar En Bodega</span>
+//               </label>
+//             </div>
+//             <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+//               <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+//               <span style="font-size: 16px; color: var(--primary-teal);">${totalRegistros}</span>
+//             </div>
+//           </div>
+//           <div class="row" style="display: flex; gap: 10px;">
+//             <div class="col s6" style="padding: 0;">
+//                 <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px;" onclick="cambiarVistaMosaicoEnBodega();">
+//               <i class="material-icons left">apps</i> VISTA MOSAICO </button>
+//             </div>
+//             <div class="col s6" style="padding: 0;">
+//               <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px;" onclick="FiltrarModal();">
+//               <i class="material-icons left">filter_list</i> FILTRAR </button>
+//             </div>
+//           </div>`;
+
+//   htm += `<div class="grid-table-responsive" style="margin-top: 20px; overflow-x: auto;">
+//             <table class="tabla-transacciones" style="min-width: 600px;">
+//             <thead>
+//               <tr>
+//                 <th style="width:30%; text-align: left;">Código / Desc.</th>
+//                 <th style="width:30%;">Código de Barras</th>
+//                 <th style="width:10%;">En ${bodegaCod}</th>
+//                 <th style="width:30%; text-align: center;">Opc.</th>
+//               </tr>
+//             </thead>
+//             <tbody id="tablaBodyEnBodega">`;
+
+//   htm += _generarFilasTablaBodega(desde, hasta);
+
+//   htm += `</tbody></table></div>`;
+
+//   htm += `<div id="resultadoPaginador" style="margin-top: 20px;">`;
+//   htm += paginadorEnBodega(nPag, pag, "mostrarResultadosVistaListaEnBodega");
+//   htm += `</div></div>`;
+
+//   inyectarYMostrarBuscador(htm);
+
+//   setTimeout(() => {
+//     const checkElement = document.getElementById("miCheckbox");
+//     if (checkElement) {
+//       checkElement.checked = localStorage.getItem("mostrarEnBodega") === "1";
+//     }
+//   }, 100);
+// }
+// Recibe parámetro de paginación
+function cambiarVistaListaEnBodega(pagIngresada) {
+  window.vistaActualBuscador = 'lista';
+  const bodega = JSON.parse(sessionStorage.getItem("bodega"));
+  let bodegaCod = bodega ? bodega[0].BODEGA : "";
+
+  window.ArticulosBodegaFiltrados = ArrayDataFiltrado.filter(
+    (item) => parseFloat(item.TOTAL_CANTIDAD_BODEGA) > 0
   );
 
-  let totalRegistros = articulosConExistencia.length;
-  let pag = 1; // Página inicial
+  let totalRegistros = window.ArticulosBodegaFiltrados.length;
+  
+  // Respetar la página ingresada
+  let pag = pagIngresada || 1; 
+  
   let desde = (pag - 1) * xPag;
   let hasta = Math.min(pag * xPag, totalRegistros);
   let nPag = Math.ceil(totalRegistros / xPag);
   let htm = "";
 
-  htm += '<div id="lista-articulo">';
-  htm += `<div class="col s12">
-          <h2 style="text-align:center; text-transform: uppercase;">Resultados de la Búsqueda</h2>
+  htm += `<div class="top-action-bar" style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-volver" onclick="cerrarBusquedaGlobal()">
+              <i class="material-icons">close</i>
+              <span>Cerrar Búsqueda</span>
+            </button>
           </div>`;
 
-  htm += `<div class="row" id="totalregistrosBusqueda">           
+  htm += '<div id="lista-articulo">';
+  htm += `<div class="col s12">
+          <h1 class="titulo-principal" style="font-size: 20px;">RESULTADOS DE LA BÚSQUEDA</h1>
+          </div>`;
+
+  htm += `<div class="row" id="totalregistrosBusqueda" style="margin-bottom: 20px;">          
             <div class="col s6 valign-wrapper">
               <label>
                 <input type="checkbox" id="miCheckbox" onchange="toggleMostrarEnBodega()">
                 <span>Mostrar En Bodega</span>
               </label>
             </div>
-            <div class="col s6 valign-wrapper">
-              <span>Total de Registros: </span>
-              <span>${totalRegistros}</span>
+            <div class="col s6 valign-wrapper" style="justify-content: flex-end;">
+              <span style="font-weight: bold; margin-right: 5px;">Total de Registros: </span>
+              <span style="font-size: 16px; color: var(--primary-teal);">${totalRegistros}</span>
             </div>
           </div>
-          <div class="row">
-            <div class="col s6">
-              <a style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="cambiarVistaMosaicoEnBodega();">
-                <i class="material-icons right">apps</i>
-                VISTA
-              </a>
+          
+          <div class="row" style="display: flex; gap: 10px;">
+            <div class="col s4" style="padding: 0;">
+                <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 38px; font-size: 11.5px; padding: 0;" onclick="cambiarVistaMosaicoEnBodega();">
+              <i class="material-icons left" style="margin-right: 5px;">apps</i> MOSAICO </button>
             </div>
-            <div class="col s6">
-              <a  style="background: #535162 !important;" class="btn btn-resultados-busca-articulos browser-default browser-default" href="javascript:void(0);" onclick="FiltrarModalEnBodega();">
-                <i class="material-icons right">filter_list</i>
-                FILTRAR
-              </a>
+            <div class="col s4" style="padding: 0;">
+              <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 38px; font-size: 11.5px; padding: 0;" onclick="FiltrarModal();">
+              <i class="material-icons left" style="margin-right: 5px;">filter_list</i> FILTRAR </button>
+            </div>
+            <div class="col s4" style="padding: 0;">
+              <button class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #0284c7; height: 38px; font-size: 11.5px; padding: 0;" onclick="imprimirReporteExistencias();">
+              <i class="material-icons left" style="margin-right: 5px;">print</i> IMPRIMIR </button>
             </div>
           </div>`;
 
-  htm += `<table class="striped centered" style="margin-top:5%;">
-  <thead style="background:#28a745;color:white;">
-    <tr>
-      <th style="width:30%;">Código</th>
-      <th style="width:30%;">Código <br> de Barras</th>
-      <th style="width:10%;">En ${bodegaCod}</th>
-      <th style="width:30%;">Opc.</th>
-    </tr>
-  </thead>
-  <tbody id="tablaBodyEnBodega">`;
+  htm += `<div class="grid-table-responsive" style="margin-top: 20px; overflow-x: auto;">
+            <table class="tabla-transacciones" style="min-width: 800px;">
+            <thead>
+              <tr>
+                <th style="width:25%; text-align: left;">Código / Desc.</th>
+                <th style="width:15%;">Cód. Barras</th>
+                <th style="width:10%;">Disponible</th>
+                <th style="width:10%;">Remitida</th>
+                <th style="width:10%;">Reservada</th>
+                <th style="width:20%; text-align: center;">Opc.</th>
+              </tr>
+            </thead>
+            <tbody id="tablaBodyEnBodega">`;
 
-  for (let i = desde; i < hasta; i++) {
-    if (articulosConExistencia[i]) {
-      htm += `<tr>
-        <td class="sticky-column text-align:center">
-          <h5 style="font-size:12px; text-align:left; color:orangered;">${
-            articulosConExistencia[i].ARTICULO
-          }</h5>
-          <h6 style="font-size: 10px; text-align: left;">${
-            articulosConExistencia[i].DESCRIPCION
-          }</h6>
-        </td>
-        <td>${articulosConExistencia[i].CODIGO_BARRAS_INVT || ""}</td>
-        <td>${Math.floor(articulosConExistencia[i].TOTAL_CANTIDAD_BODEGA)}</td>
-        <td>
-          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-            articulosConExistencia[i].ARTICULO,
-          )}', '${articulosConExistencia[i].DESCRIPCION}')">visibility</i>
-          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-            articulosConExistencia[i].ARTICULO,
-          )}')" tabindex="1">
-          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
-            articulosConExistencia[i].ARTICULO
-          }','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
-          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${
-            articulosConExistencia[i].ARTICULO
-          }','${articulosConExistencia[i].DESCRIPCION}')" tabindex="1">
-        </td>
-      </tr>`;
-    }
-  }
+  htm += _generarFilasTablaBodega(desde, hasta);
 
-  htm += `</tbody></table>`;
-  htm += `<div id="resultadoPaginador">`;
-  htm += paginadorTablasEnBodega(
-    nPag,
-    pag,
-    "mostrarResultadosVistaListaEnBodega",
-  );
+  htm += `</tbody></table></div>`;
+
+  htm += `<div id="resultadoPaginador" style="margin-top: 20px;">`;
+  htm += paginadorEnBodega(nPag, pag, "mostrarResultadosVistaListaEnBodega");
   htm += `</div></div>`;
 
-  document.getElementById("resultadoBusqueda").innerHTML = htm;
-  $("html, body").animate(
-    { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000,
-  );
+  inyectarYMostrarBuscador(htm);
 
-  const estado = localStorage.getItem("mostrarEnBodega");
-  if (estado === "1") {
-    document.getElementById("miCheckbox").checked = true;
-  } else {
-    document.getElementById("miCheckbox").checked = false;
-  }
-
-  // Guardar array filtrado para la paginación
-  window.ArticulosBodegaFiltrados = articulosConExistencia;
+  setTimeout(() => {
+    const checkElement = document.getElementById("miCheckbox");
+    if (checkElement) {
+      checkElement.checked = localStorage.getItem("mostrarEnBodega") === "1";
+    }
+  }, 100);
 }
-
-//-----------------------------------------------------------------------------------
 function mostrarResultadosVistaListaEnBodega(nPag, pag) {
   let desde = (pag - 1) * xPag;
   const data = window.ArticulosBodegaFiltrados || [];
@@ -3139,791 +1483,1156 @@ function mostrarResultadosVistaListaEnBodega(nPag, pag) {
     pag = 1;
   }
 
-  // Actualizar el cuerpo de la tabla
-  resultadosVistaListaEnBodega(desde, hasta);
+  const tablaBody = document.getElementById("tablaBodyEnBodega");
+  if (tablaBody) {
+    tablaBody.innerHTML = _generarFilasTablaBodega(desde, hasta);
+  }
 
-  // Actualizar la paginación
-  const paginadorHtml = paginadorTablasEnBodega(
-    nPag,
-    pag,
-    "mostrarResultadosVistaListaEnBodega",
-  );
+  const paginadorHtml = paginadorEnBodega(nPag, pag, "mostrarResultadosVistaListaEnBodega");
   const paginadorElement = document.getElementById("resultadoPaginador");
   if (paginadorElement) {
     paginadorElement.innerHTML = paginadorHtml;
-  } else {
-    console.error("Elemento 'resultadoPaginador' no encontrado en el DOM");
-    // Opcional: Crear el elemento si no existe
-    const nuevoPaginador = document.createElement("div");
-    nuevoPaginador.id = "resultadoPaginador";
-    nuevoPaginador.innerHTML = paginadorHtml;
-    document.getElementById("lista-articulo").appendChild(nuevoPaginador);
   }
 
-  $("html, body").animate(
-    { scrollTop: $("#resultadoBusqueda").offset().top - 140 },
-    1000,
-  );
+  $("html, body").animate({ scrollTop: 0 }, 500);
 }
 
-//-----------------------------------------------------------------------------------
-function resultadosVistaListaEnBodega(desde, hasta) {
+function _generarFilasTablaBodega(desde, hasta) {
   const data = window.ArticulosBodegaFiltrados || [];
   let rows = "";
 
   for (let i = desde; i < hasta; i++) {
     if (data[i]) {
+      const item = data[i];
+      const disponible = Math.floor(parseFloat(item.TOTAL_CANTIDAD_BODEGA) || 0);
+      
+      // Búsqueda dinámica de las llaves Remitida y Reservada
+      let remitida = 0;
+      let reservada = 0;
+      Object.keys(item).forEach(k => {
+        if (k.toUpperCase().includes("REMITIDA")) remitida = parseFloat(item[k]) || 0;
+        if (k.toUpperCase().includes("RESERVADA")) reservada = parseFloat(item[k]) || 0;
+      });
+
       rows += `<tr>
-        <td class="sticky-column text-align:center">
-          <h5 style="font-size:12px; text-align:left; color:orangered;">${
-            data[i].ARTICULO
-          }</h5>
-          <h6 style="font-size: 10px; text-align: left;">${
-            data[i].DESCRIPCION
-          }</h6>
+        <td style="text-align: left;">
+          <div class="cell-articulo-box">
+            <span class="cell-articulo-code" style="color: var(--articulo-orange);">${item.ARTICULO}</span>
+            <span class="cell-articulo-desc">${item.DESCRIPCION}</span>
+          </div>
         </td>
-        <td>${data[i].CODIGO_BARRAS_INVT || ""}</td>
-        <td>${Math.floor(data[i].TOTAL_CANTIDAD_BODEGA)}</td>
-        <td>
-          <i class="material-symbols-outlined" onclick="mostrarImagen('${encodeURIComponent(
-            data[i].ARTICULO,
-          )}', '${data[i].DESCRIPCION}')">visibility</i>
-          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" onclick="mostrarExistencias('${encodeURIComponent(
-            data[i].ARTICULO,
-          )}')" tabindex="1">
-          <img src="./img/icon/bar-code.svg" width="22" height="22" onclick="impCodBar('${
-            data[i].ARTICULO
-          }','${data[i].DESCRIPCION}')" tabindex="1">
-          <img src="./img/icon/information.svg" width="22" height="22" onclick="information('${
-            data[i].ARTICULO
-          }','${data[i].DESCRIPCION}')" tabindex="1">
+        <td class="cell-center">${item.CODIGO_BARRAS_INVT || ""}</td>
+        <td class="cell-number" style="font-weight: bold;">${disponible}</td>
+        <td class="cell-number">${remitida}</td>
+        <td class="cell-number">${reservada}</td>
+        <td class="cell-center" style="white-space: nowrap;">
+          <i class="material-symbols-outlined" style="cursor: pointer; color: #64748b; margin: 0 4px; vertical-align: middle;" onclick="mostrarImagen('${encodeURIComponent(item.ARTICULO)}', '${item.DESCRIPCION}')">visibility</i>
+          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="mostrarExistencias('${encodeURIComponent(item.ARTICULO)}')">
+          <img src="./img/icon/bar-code.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="impCodBar('${item.ARTICULO}','${item.DESCRIPCION}')">
+          <img src="./img/icon/information.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="information('${item.ARTICULO}','${item.DESCRIPCION}')">
         </td>
       </tr>`;
     }
   }
-
-  const tablaBody = document.getElementById("tablaBodyEnBodega");
-  if (tablaBody) {
-    tablaBody.innerHTML = rows;
-  } else {
-    console.error("Elemento 'tablaBodyEnBodega' no encontrado en el DOM");
-  }
+  return rows;
 }
 
-//-----------------------------------------------------------------------------------
-function paginadorTablasEnBodega(nPag, pag, dynamicFunction) {
+//------------------------------------------------------------------------------------
+// PAGINADOR UNIFICADO PARA BODEGA (SE USA TANTO EN MOSAICO COMO EN LISTA)
+//------------------------------------------------------------------------------------
+function paginadorEnBodega(nPag, pag, funcionDinamica = "mostrarResultadosBusquedaEnBodega") {
   let selected = "";
-  let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
+  let sel = `<select class="browser-default paginador-select" onchange="${funcionDinamica}(${nPag}, this.value)">
               <option value="" disabled>Páginas</option>`;
 
-  for (var i = 0; i < nPag; i++) {
-    if (i + 1 == pag) {
-      selected = "selected";
-    } else {
-      selected = "";
-    }
+  for (let i = 0; i < nPag; i++) {
+    selected = (i + 1 == pag) ? "selected" : "";
     if (nPag != 1) {
-      sel += `<option  value="${parseInt(i) + 1}" ${selected}> ${
-        parseInt(i) + 1
-      }</option>`;
+      sel += `<option value="${i + 1}" ${selected}>Pág ${i + 1}</option>`;
     }
   }
   sel += `</select>`;
 
-  // let sel = `<select class="browser-default paginador-select" onchange="${dynamicFunction}(${nPag}, this.value)">
-  //             <option value="" disabled>Páginas</option>`;
-
-  // for (let i = 0; i < nPag; i++) {
-  //   if (i + 1 === pag) {
-  //     selected = "selected";
-  //   } else {
-  //     selected = "";
-  //   }
-  //   if (nPag !== 1) {
-  //     sel += `<option value="${i + 1}" ${selected}>${i + 1}</option>`;
-  //   }
-  // }
-  // sel += `</select>`;
-
-  const btnAtras =
-    pag <= 1
+  const btnAtras = pag <= 1
       ? `<a class="paginador-btn disabled">❮ Anterior</a>`
-      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
-          pag - 1
-        })">❮ Anterior</a>`;
+      : `<a class="paginador-btn" onclick="${funcionDinamica}(${nPag}, ${parseInt(pag) - 1})">❮ Anterior</a>`;
 
-  const btnSig =
-    pag >= nPag
+  const btnSig = pag >= nPag
       ? `<a class="paginador-btn disabled">Siguiente ❯</a>`
-      : `<a class="paginador-btn" onclick="${dynamicFunction}(${nPag}, ${
-          pag + 1
-        })">Siguiente ❯</a>`;
+      : `<a class="paginador-btn" onclick="${funcionDinamica}(${nPag}, ${parseInt(pag) + 1})">Siguiente ❯</a>`;
 
   return `
-    <div id="paginador" class="paginador-container">
-      <div class="row paginador-info">
-        <div class="col s12 center-align">${pag}/${nPag}</div>
+    <div class="paginador-container" style="margin-top: 20px;">
+      <div class="row paginador-info" style="margin-bottom: 5px;">
+        <div class="col s12 center-align" style="font-weight: bold; color: #475569; font-size: 13px;">
+          Página ${pag} de ${nPag}
+        </div>
       </div>
-      <div class="row paginador-controls">
-        <div class="col s4 paginador-btn-container">${btnAtras}</div>
-        <div class="col s4 paginador-select-container">${sel}</div>
-        <div class="col s4 paginador-btn-container">${btnSig}</div>
+      <div class="row paginador-controls" style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+        <div class="paginador-btn-container">${btnAtras}</div>
+        <div class="paginador-select-container" style="min-width: 110px;">${sel}</div>
+        <div class="paginador-btn-container">${btnSig}</div>
       </div>
     </div>
   `;
 }
 
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-//-----------------------------  FILTROS --------------------------------------------
-function FiltrarModalEnBodega(IDCategoria, seccion) {
-  let htm = "";
+// =============================================================================
+// MODAL DE FILTROS AVANZADOS (BUSCADOR GLOBAL)
+// =============================================================================
+function filtrosModal() {
   let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
+  if(!elem) return;
+  
+  let instance = M.Modal.getInstance(elem) || M.Modal.init(elem);
   instance.open();
-  switch (IDCategoria) {
-    case "1055":
-      htm = `<div class="row">
-                  <div class="col s12">
-                    <fieldset style="    border: 0;
-                      text-shadow: none !important;
-                      font-weight: normal !important;
-                      background-color: transparent !important;
-                      color: #000 !important;
-                      border: solid 1px #c1bcbc;margin: 0.5em 0;">
-                      <label>
-                        <input type="checkbox" id="rematetxt" value="R"/>
-                        <span>Solo artículos de remate </span><span id="cantRemate" style="font-size: 15px;">0</span>
-                      </label>
-                    </fieldset>
-                    <fieldset style="border: 0;
-                      text-shadow: none !important;
-                      font-weight: normal !important;
-                      background-color: transparent !important;
-                      color: #000 !important;
-                      border: solid 1px #c1bcbc;margin: 0.5em 0;">
-                      <label>
-                        <input type="checkbox" id="incompletotxt" value="I" />
-                        <span>Solo artículos incompletos </span><span id="cantIncompleto" style="font-size: 15px;">0</span>
-                      </label>
-                    </fieldset>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>MARCAS</div>
-                        <div class="collapsible-body">
-                          <div id="filtromarcas" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtMarcasV" name="txtMarcasV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>ANCHOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtroanchos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtAnchosV" name="txtAnchosV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>CENTER BORE(CB)</div>
-                        <div class="collapsible-body">
-                            <div id="filtrocenter" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtCBV" name="txtCBV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>OFFSET (ET)</div>
-                        <div class="collapsible-body">
-                            <div id="filtrooffset" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtETV" name="txtETV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>`;
-      break;
-    default:
-      htm = `     
-                  <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>CLASES</div>
-                        <div class="collapsible-body">
-                          <div id="filtroclases" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtClasesV" name="txtClasesV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>MARCAS</div>
-                        <div class="collapsible-body">
-                          <div id="filtromarcas" style="padding-left: 10px"></div>
-                            <input type="hidden" value="" id="txtMarcasV" name="txtMarcasV">
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>TIPOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtrotipos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtTiposV" name="txtTiposV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPOS</div>
-                        <div class="collapsible-body">
-                            <div id="filtrosubtipos" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtSubTiposV" name="txtSubTiposV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPOS2</div>
-                        <div class="collapsible-body">
-                            <div id="filtrosubtipos2" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtSubTipos2V" name="txtSubTipos2V" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collapsible">
-                      <li>
-                        <div class="collapsible-header"><i class="material-icons">add</i>ENVASES</div>
-                        <div class="collapsible-body">
-                            <div id="filtroenvases" style="padding-left: 10px"></div>
-                              <input type="hidden" value="" id="txtEnvasesV" name="txtEnvasesV" >
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>`;
-      break;
-  }
-  htm += `<div class="row">
-          <div class="col s6">
-            <a onclick="FiltrarEnBodega(${IDCategoria},${seccion});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
-              <i class="material-icons left">filter_list</i>
-              Aceptar
-            </a>
-          </div>
-          <div class="col s6">
-            <a onclick="LimpiarFiltro(${IDCategoria});" class="btn btn-filtros-result waves-light green darken-4 expand-car">
-              <i class="material-icons left">update</i>
-              Limpiar
-            </a>
-          </div>
-        </div>`;
+
+  localStorage.removeItem("claseSelect");
+  
+  // Inyectamos el HTML con estilos locales para forzar los colores oscuros y el tamaño compacto
+  let htm = `
+    <style>
+      /* Controlar el tamaño del modal */
+      #modalFiltro {
+        width: 90% !important;
+        max-width: 480px !important; /* Más angosto y manejable */
+        border-radius: 12px;
+      }
+      
+      /* Forzar el color del texto a oscuro en las cabeceras */
+      #modalFiltro .collapsible-header {
+        color: #1e293b !important;
+        font-weight: 600;
+        background-color: #f8fafc;
+        border-bottom: 1px solid #cbd5e1;
+        padding: 10px 15px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+      
+      /* Color del ícono de las cabeceras */
+      #modalFiltro .collapsible-header i {
+        color: #0284c7 !important;
+        margin-right: 12px;
+      }
+      
+      /* Forzar color oscuro en las opciones (checkboxes) */
+      #modalFiltro .collapsible-body label span {
+        color: #334155 !important;
+        font-size: 13px !important;
+        font-weight: 500;
+      }
+
+      /* Estilizar la lista para que sea compacta */
+      #modalFiltro .collapsible {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 0;
+        box-shadow: none;
+      }
+      
+      #modalFiltro .collapsible-body {
+        padding: 15px;
+        background-color: #ffffff;
+      }
+    </style>
+
+    <!-- Agrupamos todo en UNA SOLA lista collapsible -->
+    <ul class="collapsible">
+      <li>
+        <div class="collapsible-header"><i class="material-icons">category</i> CLASE</div>
+        <div class="collapsible-body">
+          <div id="filtroclase" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtClaseV" name="txtClaseV">
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header"><i class="material-icons">branding_watermark</i> MARCA</div>
+        <div class="collapsible-body">
+          <div id="filtromarca" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtMarcaV" name="txtMarcaV">
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header"><i class="material-icons">merge_type</i> TIPO</div>
+        <div class="collapsible-body">
+          <div id="filtrotipo" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtTipo" name="txtTipo">
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header"><i class="material-icons">subject</i> SUBTIPO</div>
+        <div class="collapsible-body">
+          <div id="filtrosubtipo" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtSubtipo" name="txtSubtipo">
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header"><i class="material-icons">segment</i> SUBTIPO 2</div>
+        <div class="collapsible-body">
+          <div id="filtrosubtipo2" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtSubtipo2" name="txtSubtipo2">
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header"><i class="material-icons">inventory_2</i> ENVASE</div>
+        <div class="collapsible-body">
+          <div id="filtroenvase" style="padding-left: 5px;"></div>
+          <input type="hidden" value="" id="txtEnvase" name="txtEnvase">
+        </div>
+      </li>
+    </ul>
+
+    <!-- Botones de Acción -->
+    <div class="row" style="margin-top:20px; display: flex; gap: 10px; margin-bottom: 5px;">
+      <div class="col s6" style="padding: 0;">
+        <a onclick="preBusqueda();" class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; height: 42px; line-height: 42px; padding: 0;">
+          <i class="material-icons left" style="line-height: 42px; margin-right: 5px;">check</i> Aceptar
+        </a>
+      </div>
+      <div class="col s6" style="padding: 0;">
+        <a onclick="LimpiarFiltroPre(1);" class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b; height: 42px; line-height: 42px; padding: 0;">
+          <i class="material-icons left" style="line-height: 42px; margin-right: 5px;">update</i> Limpiar
+        </a>
+      </div>
+    </div>`;
+
   document.getElementById("divFiltro").innerHTML = htm;
-  document.getElementById("filtroclases").innerHTML = MostrarClasesEnBodega();
-  document.getElementById("filtromarcas").innerHTML = MostrarMarcasEnBodega();
-  document.getElementById("filtrotipos").innerHTML = MostrarTiposEnBodega();
-  document.getElementById("filtrosubtipos").innerHTML =
-    MostrarSubTiposEnBodega();
-  document.getElementById("filtrosubtipos2").innerHTML =
-    MostrarSubTipos2EnBodega();
-  document.getElementById("filtroenvases").innerHTML = MostrarEnvasesEnBodega();
-  $(".collapsible").collapsible();
 
-  const estado = localStorage.getItem("mostrarEnBodega");
-  if (estado === "1") {
-    document.getElementById("miCheckbox").checked = true;
-  } else {
-    document.getElementById("miCheckbox").checked = false;
-  }
-}
-function FiltrarEnBodega(IDCategoria, seccion) {
-  let pag = 1;
-  idCat = document.getElementById("txtCategoria").value;
-  let elem = document.getElementById("modalFiltro");
-  let instance = M.Modal.getInstance(elem);
-  instance.close();
-  let r = $("#rematetxt").is(":checked");
-  let i = $("#incompletotxt").is(":checked");
-  console.log("Valor de i: " + i);
-  // console.log(articulosConExistencia);
-  let clase = document.getElementById("txtClasesV").value;
-  let marca = document.getElementById("txtMarcasV").value;
-  let tipo = document.getElementById("txtTiposV").value;
-  let subtipo = document.getElementById("txtSubTiposV").value;
-  let subtipo2 = document.getElementById("txtSubTipos2V").value;
-  let envase = document.getElementById("txtEnvasesV").value;
-  let filtradoPor = new Array();
-
-  if (clase.length > 0) {
-    clasesArray = clase.split(",");
-  } else {
-    clasesArray = "";
-  }
-  if (marca.length > 0) {
-    marcasArray = marca.split(",");
-  } else {
-    marcasArray = "";
-  }
-  if (tipo.length > 0) {
-    tiposArray = tipo.split(",");
-  } else {
-    tiposArray = "";
-  }
-  if (subtipo.length > 0) {
-    subtiposArray = subtipo.split(",");
-  } else {
-    subtiposArray = "";
-  }
-  if (subtipo2.length > 0) {
-    subtipos2Array = subtipo2.split(",");
-  } else {
-    subtipos2Array = "";
-  }
-  if (envase.length > 0) {
-    envasesArray = envase.split(",");
-  } else {
-    envasesArray = "";
-  }
-
-  filtradoPor = {
-    CLASE: clasesArray,
-    MARCA: marcasArray,
-    TIPO: tiposArray,
-    SUBTIPO: subtiposArray,
-    SUBTIPO2: subtipos2Array,
-    ENVASE: envasesArray,
-  };
-
-  if (filtradoPor.CLASE === "") {
-    delete filtradoPor.CLASE;
-  }
-  if (filtradoPor.MARCA === "") {
-    delete filtradoPor.MARCA;
-  }
-  if (filtradoPor.TIPO === "") {
-    delete filtradoPor.TIPO;
-  }
-  if (filtradoPor.SUBTIPO === "") {
-    delete filtradoPor.SUBTIPO;
-  }
-  if (filtradoPor.SUBTIPO2 === "") {
-    delete filtradoPor.SUBTIPO2;
-  }
-  if (filtradoPor.ENVASE === "") {
-    delete filtradoPor.ENVASE;
-  }
-
-  articulosConExistencia = getFiltrarResultadoEnBodega(filtradoPor);
-
-  if (
-    articulosConExistencia.length > 0 &&
-    filtradoPor.INCOMPLETO == "I" &&
-    clearFiltros == false
-  ) {
-    viewImcompletos = true;
-  }
-  console.log(articulosConExistencia);
-  let totales = articulosConExistencia.length;
-  nPag = Math.ceil(totales / xPag);
-  if (totales > 0) {
-    console.log(IDCategoria + "-" + seccion);
-    if (IDCategoria == "1030" && seccion != 0) {
-      if (seccion == 1) {
-        mostrarResultadosFiltrosReferencia(nPag, pag, idCat);
-        console.log("Esta pasando por aqui");
-      }
-      if (seccion == 2) {
-        mostrarResultadosFiltrosIntercambio(nPag, pag, idCat);
-      }
-    } else {
-      mostrarResultadosBusquedaEnBodega(nPag, 1, articulosConExistencia);
-    }
-  } else {
-    Swal.fire({
-      icon: "info",
-      title: "Filtrar busqueda",
-      text: "No hay artículos para el filtro selecccionado.",
-      confirmButtonColor: "#000",
+  // Cargar lista base
+  getFiltros()
+    .then(() => {
+      document.getElementById("filtroclase").innerHTML = MostrarClases(1);
+    })
+    .catch((error) => {
+      console.error("Error cargando filtros:", error);
     });
-    return false;
+
+  // Inicializar menú acordeón
+  if (typeof M !== "undefined") {
+    M.Collapsible.init(document.querySelectorAll('#modalFiltro .collapsible'));
   }
 }
-function getFiltrarResultadoEnBodega(filtradoPor) {
-  console.log("Estas pasando por getFiltrarResultadoEnBodega");
-  console.log(articulosConExistencia);
-  console.log(filtradoPor);
-  if (
-    filtradoPor.INCOMPLETO &&
-    filtradoPor.INCOMPLETO.length > 0 &&
-    filtradoPor.INCOMPLETO[0] === "I"
-  ) {
-    //ESTABA AQUI
-    resultados = articulosConExistencia.filter(
-      (item) =>
-        item.ID_CLASE === "1055" && parseFloat(item.CANT_DISPONIBLE) < 4,
-    );
-  } else {
-    resultados = articulosConExistencia.filter(function (o) {
-      return Object.keys(filtradoPor).every(function (k) {
-        return filtradoPor[k].some(function (f) {
-          return o[k] === f;
+
+// // =============================================================================
+// // UTILIDADES, FILTROS Y OTROS MODALES
+// // =============================================================================
+// function filtrosModal() {
+//   let htm = "", IDCategoria = "1055";
+//   let elem = document.getElementById("modalFiltro");
+//   if(!elem) return;
+  
+//   let instance = M.Modal.getInstance(elem) || M.Modal.init(elem);
+//   instance.open();
+
+//   localStorage.removeItem("claseSelect");
+//   htm = ` <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>CLASE</div>
+//                 <div class="collapsible-body">
+//                   <div id="filtroclase" style="padding-left: 10px"></div>
+//                     <input type="hidden" value="" id="txtClaseV" name="txtClaseV">
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>MARCA</div>
+//                 <div class="collapsible-body">
+//                     <div id="filtromarca" style="padding-left: 10px"></div>
+//                       <input type="hidden" value="" id="txtMarcaV" name="txtMarcaV" >
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>TIPO</div>
+//                 <div class="collapsible-body">
+//                     <div id="filtrotipo" style="padding-left: 10px"></div>
+//                       <input type="hidden" value="" id="txtTipo" name="txtTipo" >
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPO</div>
+//                 <div class="collapsible-body">
+//                     <div id="filtrosubtipo" style="padding-left: 10px"></div>
+//                       <input type="hidden" value="" id="txtSubtipo" name="txtSubtipo" >
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>SUBTIPO2</div>
+//                 <div class="collapsible-body">
+//                     <div id="filtrosubtipo2" style="padding-left: 10px"></div>
+//                       <input type="hidden" value="" id="txtSubtipo2" name="txtSubtipo2" >
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row">
+//           <div class="col s12">
+//             <ul class="collapsible">
+//               <li>
+//                 <div class="collapsible-header"><i class="material-icons">add</i>ENVASE</div>
+//                 <div class="collapsible-body">
+//                     <div id="filtroenvase" style="padding-left: 10px"></div>
+//                       <input type="hidden" value="" id="txtEnvase" name="txtEnvase" >
+//                 </div>
+//               </li>
+//             </ul>
+//           </div>
+//         </div>
+//         <div class="row" style="margin-top:20px; display: flex; gap: 10px;">
+//           <div class="col s6" style="padding: 0;">
+//             <a onclick="preBusqueda();" class="btn-buscar-gradient" style="width: 100%; border-radius: 8px;">
+//               <i class="material-icons left">check</i> Aceptar
+//             </a>
+//           </div>
+//           <div class="col s6" style="padding: 0;">
+//             <a onclick="LimpiarFiltroPre(1);" class="btn-buscar-gradient" style="width: 100%; border-radius: 8px; background: #64748b;">
+//               <i class="material-icons left">update</i> Limpiar
+//             </a>
+//           </div>
+//         </div>`;
+
+//   document.getElementById("divFiltro").innerHTML = htm;
+
+//   getFiltros()
+//     .then(() => {
+//       document.getElementById("filtroclase").innerHTML = MostrarClases(1);
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+
+//   if (typeof M !== "undefined") {
+//     M.Collapsible.init(document.querySelectorAll('.collapsible'));
+//   }
+// }
+
+function getFiltros(clase = "", marca = "", tipo = "", subtipo = "", subtipo2 = "", envase = "") {
+  const params = `?clase=${encodeURIComponent(clase)}&marca=${encodeURIComponent(marca)}&tipo=${encodeURIComponent(tipo)}&subtipo=${encodeURIComponent(subtipo)}&subtipo2=${encodeURIComponent(subtipo2)}&envase=${encodeURIComponent(envase)}`;
+
+  return fetch(env.API_URL + "filtroswms" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.msg === "SUCCESS" && result.filtros?.length > 0) {
+        ArrayData = formatData(result.filtros);
+
+        if (ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_2"))) {
+          localStorage.setItem("claseSelect", clase);
+          document.getElementById("filtromarca").innerHTML = MostrarMarcas(1);
+        } else if (ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_3"))) {
+          localStorage.setItem("marcaSelect", marca);
+          document.getElementById("filtrotipo").innerHTML = MostrarTipos(1);
+        } else if (ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_4"))) {
+          localStorage.setItem("tipoSelect", tipo);
+          document.getElementById("filtrosubtipo").innerHTML = MostrarSubTipos(1);
+        } else if (ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_5"))) {
+          localStorage.setItem("subtipoSelect", subtipo);
+          document.getElementById("filtrosubtipo2").innerHTML = MostrarSubTipos2(1);
+        } else if (ArrayData.some((item) => item.hasOwnProperty("CLASIFICACION_6"))) {
+          localStorage.setItem("subtipo2Select", subtipo2);
+          document.getElementById("filtroenvase").innerHTML = MostrarEnvases(1);
+        }
+      }
+    });
+}
+
+function formatData(data) {
+  return data.map((item) => {
+    if ("DESCRIPCION" in item) {
+      if ("CLASIFICACION_1" in item) return { CLASIFICACION_1: item.CLASIFICACION_1, CLASE: item.DESCRIPCION };
+      if ("CLASIFICACION_2" in item) return { CLASIFICACION_2: item.CLASIFICACION_2, MARCA: item.DESCRIPCION };
+      if ("CLASIFICACION_3" in item) return { CLASIFICACION_3: item.CLASIFICACION_3, TIPO: item.DESCRIPCION };
+      if ("CLASIFICACION_4" in item) return { CLASIFICACION_4: item.CLASIFICACION_4, SUBTIPO: item.DESCRIPCION };
+      if ("CLASIFICACION_5" in item) return { CLASIFICACION_5: item.CLASIFICACION_5, SUBTIPO2: item.DESCRIPCION };
+      if ("CLASIFICACION_6" in item) return { CLASIFICACION_6: item.CLASIFICACION_6, ENVASE: item.DESCRIPCION };
+    }
+    return {};
+  });
+}
+
+function cerrarModal() {
+  let elem = document.getElementById("modalFiltro");
+  if (elem) {
+    let instance = M.Modal.getInstance(elem);
+    if (instance) instance.close();
+  }
+}
+
+function LimpiarFiltroPre(opt) {
+  $("#txtClasesV").val("");
+  $("#txtMarcasV").val("");
+  $("#txtTiposV").val("");
+  $("#txtSubTiposV").val("");
+  $("#txtSubTipos2V").val("");
+  $("#txtEnvasesV").val("");
+  $("#filtromarca").empty();
+  $("#filtrotipo").empty();
+  $("#filtrosubtipo").empty();
+  $("#filtrosubtipo2").empty();
+  $("#filtroenvase").empty();
+  $("input[type='checkbox']").prop("checked", false);
+  localStorage.removeItem("claseSelect");
+  localStorage.removeItem("marcaSelect");
+  localStorage.removeItem("tipoSelect");
+  localStorage.removeItem("subtipoSelect");
+  localStorage.removeItem("subtipo2Select");
+  localStorage.removeItem("envaseSelect");
+  clearFiltros = true;
+  if (opt === 1) cerrarModal();
+}
+
+function cambiarPestana(paneId, btnClicked) {
+  const navContainer = btnClicked.closest('.custom-tabs-nav');
+  if (navContainer) {
+    navContainer.querySelectorAll('.custom-tab-btn').forEach(btn => btn.classList.remove('active'));
+  }
+  btnClicked.classList.add('active');
+
+  const vista = btnClicked.closest('.vista-wrapper');
+  if (vista) {
+    vista.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    const targetPane = vista.querySelector(`#tabContent${paneId.charAt(0).toUpperCase() + paneId.slice(1)}`) 
+                    || vista.querySelector(`#tabContent${paneId}`);
+    if (targetPane) targetPane.classList.add('active');
+  }
+}
+
+// Utilidades Generales
+function mostrarImagen(codigo, descripcion) {
+  let code;
+  try {
+    code = decodeURIComponent(codigo); 
+  } catch (e) {
+    console.error("Error decodificando código:", e);
+    code = codigo; 
+  }
+  Swal.fire({
+    confirmButtonColor: "#28a745",
+    html: `
+      <div>
+        <h3 style="font-size: 18px; margin-bottom: 10px;">${code}</h3>
+        <img src="${env.API_IMAGE}/${code.replace("/", "-")}" alt="Imagen" style="width:100%; max-width: 200px; border-radius: 8px;">
+        <p style="font-size: 14px; margin-top: 10px;">${descripcion}</p>
+      </div>
+    `,
+    customClass: { title: "img-tamaño-articulo" },
+  });
+}
+
+function mostrarExistencias(p_Articulo) {
+  let code;
+  try {
+    code = decodeURIComponent(p_Articulo); 
+  } catch (e) {
+    code = p_Articulo; 
+  }
+
+  Swal.fire({
+    title: "Cargando Registros....",
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    didOpen: function () {
+      Swal.showLoading();
+    },
+  });
+
+  const apiUrl = env.API_URL + "wmsexistenciaarticulosporbodega/1";
+  const params = `?p_Articulo=${encodeURIComponent(code)}`;
+
+  fetch(apiUrl + params, {
+    method: "GET",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("==== RESPUESTA DEL API (Existencias) ====", data);
+      if (data.reporte && data.reporte.length > 0) {
+        var existenciaArticulos = data.reporte; 
+        var tablaHtml =
+          '<table style="border-collapse: collapse; width: 100%; margin-top: 10px;">' +
+          '<thead style="background: #f1f5f9;">' +
+          '<tr style="border-bottom: 2px solid #cbd5e1;">' +
+          '<th style="text-align: left; padding: 8px; font-size: 13px;"> Bodega </th>' +
+          '<th style="text-align: center; padding: 8px; font-size: 13px;"> Cantidad </th>' +
+          "</tr>" +
+          "</thead>" +
+          "<tbody>";
+
+        existenciaArticulos.forEach((articulo) => {
+          tablaHtml +=
+            '<tr style="border-bottom: 1px solid #e2e8f0;">' +
+            '<td style="text-align: left; padding: 8px; font-size: 13px;">' + articulo.NOMBRE + "</td>" +
+            '<td style="text-align: center; padding: 8px; font-weight: bold; color: #0f172a;">' + parseFloat(articulo.CANTIDAD).toFixed(2) + "</td>" +
+            "</tr>";
         });
+        tablaHtml += "</tbody></table>";
+
+        Swal.fire({
+          title: "Existencia: " + code, 
+          html: tablaHtml,
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#28a745",
+        });
+      } else {
+        Swal.fire({
+          title: "Artículo: " + code, 
+          text: "Sin existencias registradas.",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#28a745",
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Ocurrió un error al obtener los registros de existencia",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
       });
     });
-  }
+}
 
-  return resultados;
-}
-//--------------------------------Mostrar Clases---------------------------------------
-function MostrarClasesEnBodega(opt) {
-  const result = [];
-  const map = new Map();
-  let claseHTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.CLASE)) {
-          map.set(item.CLASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_1,
-            DESCRIPCION: item.CLASE,
-          });
-        }
-        claseHTML = mostrarFiltroEnBodega(result, "txtClase", opt);
-        break;
-      default:
-        if (!map.has(item.CLASE)) {
-          map.set(item.CLASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASE,
-            DESCRIPCION: item.CLASE,
-          });
-        }
-        claseHTML = mostrarFiltroEnBodega(result, "txtClase");
-        break;
-    }
-  }
-  return claseHTML;
-}
-//--------------------------------Mostrar Marcas---------------------------------------
-function MostrarMarcasEnBodega(opt) {
+// Filtros y Renderizados Auxiliares de Catálogo
+function MostrarMarcas(opt) {
   const result = [];
   const map = new Map();
   let marcaHTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.MARCA)) {
-          map.set(item.MARCA, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_2,
-            DESCRIPCION: item.MARCA,
-          });
-        }
-        marcaHTML = mostrarFiltroEnBodega(result, "txtMarca", 2);
-        break;
-      default:
-        if (!map.has(item.MARCA)) {
-          map.set(item.MARCA, true); // set any value to Map
-          result.push({
-            VALOR: item.MARCA,
-            DESCRIPCION: item.MARCA,
-          });
-        }
-        marcaHTML = mostrarFiltroEnBodega(result, "txtMarca");
-        break;
+  for (const item of ArrayData) {
+    if (!map.has(item.MARCA)) {
+      map.set(item.MARCA, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_2 : item.MARCA, DESCRIPCION: item.MARCA });
     }
+    marcaHTML = mostrarFiltro(result, "txtMarca", opt === 1 ? 2 : undefined);
   }
   return marcaHTML;
 }
-//--------------------------------Mostrar Tipos----------------------------------------
-function MostrarTiposEnBodega(opt) {
+
+function MostrarClases(opt) {
+  const result = [];
+  const map = new Map();
+  let claseHTML = "";
+  for (const item of ArrayData) {
+    if (!map.has(item.CLASE)) {
+      map.set(item.CLASE, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_1 : item.CLASE, DESCRIPCION: item.CLASE });
+    }
+    claseHTML = mostrarFiltro(result, "txtClase", opt === 1 ? 1 : undefined);
+  }
+  return claseHTML;
+}
+
+function MostrarTipos(opt) {
   const result = [];
   const map = new Map();
   let tipoHTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.TIPO)) {
-          map.set(item.TIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_3,
-            DESCRIPCION: item.TIPO,
-          });
-        }
-        tipoHTML = mostrarFiltroEnBodega(result, "txtTipo", 3);
-        break;
-      default:
-        if (!map.has(item.TIPO)) {
-          map.set(item.TIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.TIPO,
-            DESCRIPCION: item.TIPO,
-          });
-        }
-        tipoHTML = mostrarFiltroEnBodega(result, "txtTipo");
-        break;
+  for (const item of ArrayData) {
+    if (!map.has(item.TIPO)) {
+      map.set(item.TIPO, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_3 : item.TIPO, DESCRIPCION: item.TIPO });
     }
+    tipoHTML = mostrarFiltro(result, "txtTipo", opt === 1 ? 3 : undefined);
   }
   return tipoHTML;
 }
-//--------------------------------Mostrar SubTipos-------------------------------------
-function MostrarSubTiposEnBodega(opt) {
+
+function MostrarSubTipos(opt) {
   const result = [];
   const map = new Map();
   let subtipoHTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.SUBTIPO)) {
-          map.set(item.SUBTIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_4,
-            DESCRIPCION: item.SUBTIPO,
-          });
-        }
-        subtipoHTML = mostrarFiltroEnBodega(result, "txtSubTipo", 4);
-        break;
-      default:
-        if (!map.has(item.SUBTIPO)) {
-          map.set(item.SUBTIPO, true); // set any value to Map
-          result.push({
-            VALOR: item.SUBTIPO,
-            DESCRIPCION: item.SUBTIPO,
-          });
-        }
-        subtipoHTML = mostrarFiltroEnBodega(result, "txtSubTipo");
-        break;
+  for (const item of ArrayData) {
+    if (!map.has(item.SUBTIPO)) {
+      map.set(item.SUBTIPO, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_4 : item.SUBTIPO, DESCRIPCION: item.SUBTIPO });
     }
+    subtipoHTML = mostrarFiltro(result, "txtSubTipo", opt === 1 ? 4 : undefined);
   }
   return subtipoHTML;
 }
-//--------------------------------Mostrar SubTipos2------------------------------------
-function MostrarSubTipos2EnBodega(opt) {
+
+function MostrarSubTipos2(opt) {
   const result = [];
   const map = new Map();
   let subtipo2HTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.SUBTIPO2)) {
-          map.set(item.SUBTIPO2, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_5,
-            DESCRIPCION: item.SUBTIPO2,
-          });
-        }
-        subtipo2HTML = mostrarFiltroEnBodega(result, "txtSubTipo2", 5);
-        break;
-      default:
-        if (!map.has(item.SUBTIPO2)) {
-          map.set(item.SUBTIPO2, true); // set any value to Map
-          result.push({
-            VALOR: item.SUBTIPO2,
-            DESCRIPCION: item.SUBTIPO2,
-          });
-        }
-        subtipo2HTML = mostrarFiltroEnBodega(result, "txtSubTipo2");
-        break;
+  for (const item of ArrayData) {
+    if (!map.has(item.SUBTIPO2)) {
+      map.set(item.SUBTIPO2, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_5 : item.SUBTIPO2, DESCRIPCION: item.SUBTIPO2 });
     }
+    subtipo2HTML = mostrarFiltro(result, "txtSubTipo2", opt === 1 ? 5 : undefined);
   }
   return subtipo2HTML;
 }
-//--------------------------------Mostrar Envases--------------------------------------
-function MostrarEnvasesEnBodega(opt) {
+
+function MostrarEnvases(opt) {
   const result = [];
   const map = new Map();
   let envaseHTML = "";
-  for (const item of articulosConExistencia) {
-    switch (opt) {
-      case 1:
-        if (!map.has(item.ENVASE)) {
-          map.set(item.ENVASE, true); // set any value to Map
-          result.push({
-            VALOR: item.CLASIFICACION_6,
-            DESCRIPCION: item.ENVASE,
-          });
-        }
-        envaseHTML = mostrarFiltroEnBodega(result, "txtEnvase", 6);
-        break;
-      default:
-        if (!map.has(item.ENVASE)) {
-          map.set(item.ENVASE, true); // set any value to Map
-          result.push({
-            VALOR: item.ENVASE,
-            DESCRIPCION: item.ENVASE,
-          });
-        }
-        envaseHTML = mostrarFiltroEnBodega(result, "txtEnvase");
-        break;
+  for (const item of ArrayData) {
+    if (!map.has(item.ENVASE)) {
+      map.set(item.ENVASE, true); 
+      result.push({ VALOR: opt === 1 ? item.CLASIFICACION_6 : item.ENVASE, DESCRIPCION: item.ENVASE });
     }
+    envaseHTML = mostrarFiltro(result, "txtEnvase", opt === 1 ? 6 : undefined);
   }
   return envaseHTML;
 }
-function mostrarFiltroEnBodega(data, id, opt) {
+
+function ordenarDescripcion(data) {
+  return data.sort(function (a, b) {
+    if (a.DESCRIPCION > b.DESCRIPCION) return 1;
+    if (a.DESCRIPCION < b.DESCRIPCION) return -1;
+    return 0;
+  });
+}
+
+function mostrarFiltro(data, id, opt) {
   data = ordenarDescripcion(data);
-  let claseSelect, marcaSelect, tipoSelect, subtipoSelect, subtipo2Select;
-  claseSelect = localStorage.getItem("claseSelect");
-  var htm = "";
-  var i = parseInt(1);
+  let claseSelect = localStorage.getItem("claseSelect");
+  let marcaSelect = localStorage.getItem("marcaSelect");
+  let tipoSelect = localStorage.getItem("tipoSelect");
+  let subtipoSelect = localStorage.getItem("subtipoSelect");
+
+  let htm = "";
+  let i = parseInt(1);
   if (data.length > 0) {
     data.forEach(function (key) {
       if (key.VALOR != null && key.DESCRIPCION != null) {
+        let action = "";
         switch (opt) {
-          //Clase
-          case 1:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${id + i}"  onchange="getFiltros('${
-                    key.VALOR
-                  }');">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //Marca
-          case 2:
-            claseSelect = localStorage.getItem("claseSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${key.VALOR});">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //Tipo
-          case 3:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          //SubTipo
-          case 4:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            tipoSelect = localStorage.getItem("tipoSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          case 5:
-            claseSelect = localStorage.getItem("claseSelect");
-            marcaSelect = localStorage.getItem("marcaSelect");
-            tipoSelect = localStorage.getItem("tipoSelect");
-            subtipoSelect = localStorage.getItem("subtipoSelect");
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltros(${claseSelect},${marcaSelect},${tipoSelect},${subtipoSelect},${
-                    key.VALOR
-                  });">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          case 6:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="guardarEnvaseSelect(${key.VALOR});">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
-          default:
-            htm += `<label>
-                  <input type="checkbox" value="${
-                    key.VALOR
-                  }" name="${id}[]" id="${
-                    id + i
-                  }"  onchange="getFiltro('${id}','${id + i}');">
-                  <span>${key.DESCRIPCION}</span>
-                </label>
-                <br>`;
-            break;
+          case 1: action = `getFiltros('${key.VALOR}')`; break;
+          case 2: action = `getFiltros('${claseSelect}','${key.VALOR}')`; break;
+          case 3: action = `getFiltros('${claseSelect}','${marcaSelect}','${key.VALOR}')`; break;
+          case 4: action = `getFiltros('${claseSelect}','${marcaSelect}','${tipoSelect}','${key.VALOR}')`; break;
+          case 5: action = `getFiltros('${claseSelect}','${marcaSelect}','${tipoSelect}','${subtipoSelect}','${key.VALOR}')`; break;
+          case 6: action = `guardarEnvaseSelect('${key.VALOR}')`; break;
+          default: action = `getFiltro('${id}','${id + i}')`; break;
         }
-        i = i + 1;
+        
+        htm += `<label style="display:block; margin-bottom: 5px;">
+                  <input type="checkbox" value="${key.VALOR}" name="${id}[]" id="${id + i}" onchange="${action}">
+                  <span style="font-size: 13px;">${key.DESCRIPCION}</span>
+                </label>`;
+        i++;
       }
     });
     return htm;
-  } else return "<label >Filtro no existe</label>";
+  } else return "<label>Filtro no existe</label>";
 }
-(function () {
-  const originalAddEventListener = EventTarget.prototype.addEventListener;
-  EventTarget.prototype.addEventListener = function (type, listener, options) {
-    if (type === "touchmove" && options !== false) {
-      if (typeof options === "object") {
-        options.passive = true;
-      } else {
-        options = { passive: true };
+
+function guardarEnvaseSelect(envaseSelect) {
+  localStorage.setItem("envaseSelect", envaseSelect);
+}
+
+// Variables Globales Barcode
+function impCodBar(p_Articulo, p_Descripcion) {
+  localStorage.setItem("impCodeBar", p_Articulo);
+  localStorage.setItem("descripcionImpCode", p_Descripcion);
+  mostrarModalGeneradorCodigoBarras();
+}
+
+function mostrarModalGeneradorCodigoBarras() {
+  const esPantallaPequena = window.matchMedia("(max-width: 600px)").matches;
+
+  Swal.fire({
+    title: "Generador de Códigos de Barras",
+    width: esPantallaPequena ? "100%" : "60%",
+    padding: "2em",
+    showConfirmButton: false,
+    showCloseButton: true,
+    html: `
+      <style>
+        .container-barcode {
+          text-align: center;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .container-barcode select, .container-barcode input {
+          width: 100%;
+          max-width: 300px;
+          margin-bottom: 15px;
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid #cbd5e1;
+        }
+        #barcode { margin-top: 20px; display: flex; justify-content: center; }
+      </style>            
+      <div class="container-barcode">
+        <label style="font-weight: bold; margin-bottom: 5px; display:block;">Simbología:</label>
+        <select id="symbology" class="browser-default">
+          <option value="CODE128">Código 128</option>
+          <option value="QR">Código QR</option>
+        </select>
+
+        <input type="text" id="data" style="display:none;">
+
+        <label style="font-weight: bold; margin-bottom: 5px; display:block;">Tamaño:</label>
+        <select id="size" class="browser-default">
+          <option value="0.75" selected>75%</option>
+          <option value="1">100%</option>
+          <option value="2">200%</option>
+        </select>
+
+        <div id="barcode"></div>
+        <button id="printBarcode" class="btn-buscar-gradient" style="margin-top: 15px; width: auto; border-radius: 6px;">
+          <i class="material-icons left">print</i>Imprimir Código
+        </button>
+      </div>
+    `,
+    didOpen: () => {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      script.onload = () => inicializarGenerador(); 
+      document.body.appendChild(script);
+    },
+  });
+}
+
+function inicializarGenerador() {
+  const codigo = localStorage.getItem("impCodeBar");
+  const inputData = document.getElementById("data");
+
+  if (codigo && inputData) {
+    inputData.value = codigo;
+    generateBarcode();
+  }
+
+  document.getElementById("symbology").addEventListener("change", generateBarcode);
+  document.getElementById("size").addEventListener("change", generateBarcode);
+  document.getElementById("printBarcode").addEventListener("click", imprimeCodigo);
+}
+
+function generateBarcode() {
+  const symbology = document.getElementById("symbology").value;
+  const data = document.getElementById("data").value;
+  const size = parseFloat(document.getElementById("size").value);
+  const descripcion = localStorage.getItem("descripcionImpCode"); 
+
+  const barcodeContainer = document.getElementById("barcode");
+  barcodeContainer.innerHTML = "";
+
+  if (data.trim() === "") return;
+
+  const wrapper = document.createElement("div");
+  wrapper.style.textAlign = "center";
+
+  if (symbology === "QR") {
+    const qrContainer = document.createElement("div");
+    new QRCode(qrContainer, { text: data, width: 150 * size, height: 150 * size });
+    wrapper.appendChild(qrContainer);
+  } else if (symbology === "CODE128") {
+    const canvas = document.createElement("canvas");
+    JsBarcode(canvas, data, { format: symbology, width: 2 * size, height: 100 * size, displayValue: true });
+    wrapper.appendChild(canvas);
+  }
+
+  if (descripcion) {
+    const descElement = document.createElement("p");
+    descElement.textContent = descripcion;
+    descElement.style.marginTop = "10px";
+    descElement.style.fontSize = "14px";
+    descElement.style.fontWeight = "bold";
+    wrapper.appendChild(descElement);
+  }
+
+  barcodeContainer.appendChild(wrapper);
+}
+
+function imprimeCodigo() {
+  const data = document.getElementById("data").value;
+  const symbology = document.getElementById("symbology").value;
+  const size = parseFloat(document.getElementById("size").value);
+  const descripcion = localStorage.getItem("descripcionImpCode");
+
+  if (!data.trim()) return;
+
+  const hoy = new Date();
+  const fechaSistema = hoy.getFullYear() + "-" + 
+    String(hoy.getMonth() + 1).padStart(2, '0') + "-" + 
+    String(hoy.getDate()).padStart(2, '0') + " " +
+    String(hoy.getHours()).padStart(2, '0') + ":" +
+    String(hoy.getMinutes()).padStart(2, '0') + ":" +
+    String(hoy.getSeconds()).padStart(2, '0');
+
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(`
+        <html>
+        <head>
+            <title>Imprimir Código</title>
+            <style>
+                @page { size: auto; margin: 0mm; }
+                body { display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif; padding: 10px; }
+                canvas, img { max-width: 100% !important; height: auto !important; margin: 0 auto; }
+                .fecha { font-size: 11px; font-weight: bold; margin-bottom: 5px; }
+                .descripcion { font-size: 13px; margin-top: 5px; text-align: center; }
+            </style>
+        </head>
+        <body>
+            <div id="printBarcode" style="text-align: center;"></div>
+            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+            <script>
+                function generatePrint() {
+                    const printContainer = document.getElementById('printBarcode');
+                    const wrapper = document.createElement('div');
+                    
+                    const fechaElement = document.createElement('p');
+                    fechaElement.className = 'fecha';
+                    fechaElement.textContent = "Fecha: ${fechaSistema}";
+                    wrapper.appendChild(fechaElement);
+                    
+                    if ("${symbology}" === 'QR') {
+                        const qrContainer = document.createElement('div');
+                        new QRCode(qrContainer, { text: "${data}", width: 150 * ${size}, height: 150 * ${size} });
+                        wrapper.appendChild(qrContainer);
+                    } else {
+                        const canvas = document.createElement('canvas');
+                        JsBarcode(canvas, "${data}", { format: "${symbology}", width: 2 * ${size}, height: 100 * ${size}, displayValue: true });
+                        wrapper.appendChild(canvas);
+                    }
+
+                    if ("${descripcion || ""}") {
+                        const descElement = document.createElement('p');
+                        descElement.className = 'descripcion';
+                        descElement.textContent = "${descripcion || ""}";
+                        wrapper.appendChild(descElement);
+                    }
+                    printContainer.appendChild(wrapper);
+                }
+                generatePrint();
+                window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; };
+            </script>
+        </body>
+        </html>
+    `);
+  printWindow.document.close();
+}
+
+
+function information(codeArticulo, descripcion) {
+  let pUsuario = document.getElementById("hUsuario")?.value || "";
+  const params = "?pUsuario=" + pUsuario + "&pCodigo=" + codeArticulo;
+
+  fetch(env.API_URL + "detallearticulo" + params, myInit)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log("==== RESPUESTA DEL API (Información Artículo) ====", result);
+      if (result.msg === "SUCCESS" && result.resultado.length !== 0) {
+        Swal.fire({
+          title: "Artículo: " + codeArticulo,
+          html: `
+            <div style="text-align: left; font-size: 13.5px; line-height: 1.5;">
+              <strong>Descripción:</strong> ${descripcion}<br><br>
+              El color <span style="color:#ef4444; font-weight:bold;">rojo</span> indica existencias por debajo del punto de reorden.<br>
+              El color <span style="color:#0284c7; font-weight:bold;">azul</span> indica que las existencias del artículo están bien.<br>
+              El color <span style="color:#16a34a; font-weight:bold;">verde</span> indica que el punto de reorden es estable.<br><br>
+              <h5 style="font-size: 14px; font-weight: bold; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">DETALLE TÉCNICO</h5>
+              <p style="text-align: justify; background: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">${result.resultado[0].NOTAS}</p>
+            </div>
+          `,
+          confirmButtonText: "Cerrar",
+          confirmButtonColor: "#28a745",
+        });
       }
+    });
+}
+
+// =============================================================================
+// NAVEGACIÓN: VOLVER ATRÁS (PROTECCIÓN DE DATOS Y LIMPIEZA DE STORAGE)
+// =============================================================================
+
+// 1. Forzar el cierre del menú lateral si el navegador restaura la página desde el historial (BFCache)
+window.addEventListener('pageshow', function (event) {
+  if (typeof M !== "undefined") {
+    const elems = document.querySelectorAll('.sidenav');
+    elems.forEach(elem => {
+      const instance = M.Sidenav.getInstance(elem);
+      if (instance && instance.isOpen) {
+        instance.close();
+      }
+    });
+  }
+});
+
+// 2. Unificamos volverAtras y confirmaRegresar para que todos los botones funcionen igual
+window.volverAtras = window.confirmaRegresar = window.regresar = function (event) {
+  // Prevenir propagación de clics fantasmas
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // Cerrar el menú lateral en la vista actual antes de navegar hacia atrás
+  if (typeof M !== "undefined") {
+    const elems = document.querySelectorAll('.sidenav');
+    elems.forEach(elem => {
+      const instance = M.Sidenav.getInstance(elem);
+      if (instance && instance.isOpen) {
+        instance.close();
+      }
+    });
+  }
+
+  // Verifica si hay datos sin guardar en el grid operativo
+  const datosPendientes = JSON.parse(localStorage.getItem("dataArray")) || [];
+
+  if (datosPendientes.length > 0 && typeof Swal !== "undefined") {
+    Swal.fire({
+      title: '¿Está seguro de salir?',
+      text: "Verifique sí tiene lecturas en memoria que no han sido guardadas. Si sale, perderá el progreso de esta pantalla.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, descartar y salir',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        limpiarStorageOperativo();
+        // Le damos un respiro de 50ms al DOM para que ejecute la animación de cierre del menú antes de ir hacia atrás
+        setTimeout(() => window.history.back(), 50);
+      }
+    });
+  } else {
+    limpiarStorageOperativo();
+    setTimeout(() => window.history.back(), 50);
+  }
+};
+
+// Función auxiliar para limpiar el localStorage manteniendo datos de sesión
+function limpiarStorageOperativo() {
+  const keysConservar = ["username", "password", "checkbox", "wms_app_version"];
+  Object.keys(localStorage).forEach(function (key) {
+    if (!keysConservar.includes(key)) {
+      localStorage.removeItem(key);
     }
-    return originalAddEventListener.call(this, type, listener, options);
-  };
-})();
+  });
+}
+
+function _generarFilasTablaBodega(desde, hasta) {
+  const data = window.ArticulosBodegaFiltrados || [];
+  let rows = "";
+
+  for (let i = desde; i < hasta; i++) {
+    if (data[i]) {
+      const disponible = Math.floor(parseFloat(data[i].TOTAL_CANTIDAD_BODEGA) || 0);
+      const remitida = parseFloat(data[i].REMITIDA) || 0;
+      const reservada = parseFloat(data[i].RESERVADA) || 0;
+
+      rows += `<tr>
+        <td style="text-align: left;">
+          <div class="cell-articulo-box">
+            <span class="cell-articulo-code" style="color: var(--articulo-orange);">${data[i].ARTICULO}</span>
+            <span class="cell-articulo-desc">${data[i].DESCRIPCION}</span>
+          </div>
+        </td>
+        <td class="cell-center">${data[i].CODIGO_BARRAS_INVT || ""}</td>
+        <td class="cell-number" style="font-weight: bold;">${disponible}</td>
+        <td class="cell-number">${remitida}</td>
+        <td class="cell-number">${reservada}</td>
+        <td class="cell-center" style="white-space: nowrap;">
+          <i class="material-symbols-outlined" style="cursor: pointer; color: #64748b; margin: 0 4px; vertical-align: middle;" onclick="mostrarImagen('${encodeURIComponent(data[i].ARTICULO)}', '${data[i].DESCRIPCION}')">visibility</i>
+          <img src="./img/icon/forklift-1-svgrepo-com.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="mostrarExistencias('${encodeURIComponent(data[i].ARTICULO)}')">
+          <img src="./img/icon/bar-code.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="impCodBar('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+          <img src="./img/icon/information.svg" width="22" height="22" style="cursor: pointer; margin: 0 4px; vertical-align: middle;" onclick="information('${data[i].ARTICULO}','${data[i].DESCRIPCION}')">
+        </td>
+      </tr>`;
+    }
+  }
+  return rows;
+}
+
+
+// ============================================================================
+// IMPRESIÓN DEL REPORTE DE EXISTENCIAS (FORMATO EXACTO)
+// ============================================================================
+window.imprimirReporteExistencias = function() {
+    if (!window.ArticulosBodegaFiltrados || window.ArticulosBodegaFiltrados.length === 0) {
+        Swal.fire("Atención", "No hay datos con existencias para imprimir.", "warning");
+        return;
+    }
+    
+    // Inyectar jsPDF si no se ha cargado en esta pantalla
+    if (typeof window.jspdf === "undefined") {
+        Swal.fire({
+            title: 'Cargando módulo de impresión...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        const scriptPDF = document.createElement("script");
+        scriptPDF.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js";
+        document.body.appendChild(scriptPDF);
+
+        scriptPDF.onload = () => {
+            const scriptAutoTable = document.createElement("script");
+            scriptAutoTable.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js";
+            document.body.appendChild(scriptAutoTable);
+            
+            scriptAutoTable.onload = () => {
+                Swal.close();
+                _ejecutarImpresionExistencias();
+            };
+        };
+    } else {
+        _ejecutarImpresionExistencias();
+    }
+};
+
+function _ejecutarImpresionExistencias() {
+    const { jsPDF } = window.jspdf;
+    
+    // Cambiamos a orientación Vertical ("p" = portrait)
+    const doc = new jsPDF("p", "pt", "letter"); 
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height; // Obtenemos el alto de la hoja
+    const marginX = 40;
+    let currentY = 40;
+
+    // Recuperamos datos de sesión (Bodega Activa)
+    const bodegaInfo = JSON.parse(sessionStorage.getItem("bodega"));
+    const bodegaNombre = bodegaInfo ? bodegaInfo[0].NOMBRE : "Todas";
+    const idBodega = bodegaInfo ? bodegaInfo[0].BODEGA : "";
+
+    const fecha = new Date();
+    const fechaStr = fecha.toLocaleDateString("es-PA", { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const horaStr = fecha.toLocaleTimeString("es-PA", { hour12: false });
+
+    // Cabecera Izquierda (Información Empresa)
+    doc.setFont("helvetica", "bold").setFontSize(11);
+    doc.text("CENTRAL DE LUBRICANTES, S.A.", marginX, currentY);
+    
+    doc.setFont("helvetica", "normal").setFontSize(9);
+    currentY += 12;
+    doc.text("VIA FERNANDEZ DE CORDOBA", marginX, currentY);
+    currentY += 12;
+    doc.text("CIUDAD DE PANAMA", marginX, currentY);
+    currentY += 12;
+    doc.text("(507) 261-4021/4022", marginX, currentY);
+
+    // Cabecera Derecha (Fecha y Hora solamente)
+    doc.text(`Fecha : ${fechaStr}`, pageWidth - marginX, 40, { align: "right" });
+    doc.text(`Hora : ${horaStr}`, pageWidth - marginX, 52, { align: "right" });
+
+    // Título y Subtítulos Centrales
+    currentY += 20;
+    doc.setFont("helvetica", "bold").setFontSize(12);
+    doc.text("Reporte de Existencias en Inventario", pageWidth / 2, currentY, { align: "center" });
+
+    currentY += 15;
+    doc.setFont("helvetica", "normal").setFontSize(10);
+    doc.text(`Por fecha de Documento. Corte: ${fechaStr}`, pageWidth / 2, currentY, { align: "center" });
+    
+    currentY += 15;
+    doc.text(`Bodega: ${idBodega ? idBodega + '-' : ''}${bodegaNombre}.`, pageWidth / 2, currentY, { align: "center" });
+
+    // Preparar Data dinámica para la exportación PDF
+    const rows = window.ArticulosBodegaFiltrados.map(item => {
+        const disponible = parseFloat(item.TOTAL_CANTIDAD_BODEGA) || 0;
+        
+        let remitida = 0;
+        let reservada = 0;
+        Object.keys(item).forEach(k => {
+          if (k.toUpperCase().includes("REMITIDA")) remitida = parseFloat(item[k]) || 0;
+          if (k.toUpperCase().includes("RESERVADA")) reservada = parseFloat(item[k]) || 0;
+        });
+
+        const codBarra = item.CODIGO_BARRAS_INVT || "";
+
+        // Fusionar Artículo y Descripción (usando \n para que el código quede arriba y la descripción abajo)
+        const articuloYDescripcion = `${item.ARTICULO}\n${item.DESCRIPCION}`;
+
+        return [
+            articuloYDescripcion,
+            codBarra,
+            "__________", // Conteo físico (más guiones para llenar el nuevo ancho)
+            "_______", // Total
+            disponible.toFixed(2),
+            remitida.toFixed(2),
+            reservada.toFixed(2),
+            "_______"  // Diferencia
+        ];
+    });
+
+    // Inyección de Tabla
+    doc.autoTable({
+        startY: currentY + 20,
+        head: [["Artículo / Descripción", "Cód Barra", "Conteo", "Total", "Disponible", "Remitida", "Reservada", "Diferencia"]],
+        body: rows,
+        theme: 'plain', 
+        styles: { 
+            fontSize: 8, 
+            cellPadding: 3, 
+            textColor: [0, 0, 0] 
+        },
+        headStyles: { 
+            fontStyle: 'bold', 
+            fillColor: [255, 255, 255], 
+            textColor: [0, 0, 0],       
+            lineWidth: { bottom: 1, top: 1 }, 
+            lineColor: [0, 0, 0] 
+        },
+        // Ajuste de anchos de columnas para hoja en Vertical
+        columnStyles: {
+            0: { cellWidth: 170 }, // Artículo + Descripción
+            1: { cellWidth: 75 },  // Cód Barra
+            2: { cellWidth: 65, halign: 'center' }, // Conteo (Se le da más ancho)
+            3: { cellWidth: 42, halign: 'center' }, // Total
+            4: { cellWidth: 49, halign: 'right' },  // Disponible
+            5: { cellWidth: 45, halign: 'right' },  // Remitida
+            6: { cellWidth: 49, halign: 'right' },  // Reservada
+            7: { cellWidth: 45, halign: 'center' }  // Diferencia
+        },
+        didDrawPage: function (data) {
+            // Paginador pie de página (esquina inferior derecha) en TODAS las páginas
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            // pageHeight - 30 nos ubica cerca del borde inferior
+            doc.text(`Página : ${data.pageNumber}`, pageWidth - marginX, pageHeight - 30, { align: "right" });
+        }
+    });
+
+    // Pie de tabla con los totales
+    const finalY = doc.lastAutoTable.finalY + 30;
+    doc.setFont("helvetica", "bold").setFontSize(10);
+    doc.text(`Total de Registros:`, marginX, finalY);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${rows.length}`, marginX + 110, finalY);
+
+    // Descargar el PDF
+    doc.save(`Reporte_Existencias_${fechaStr.replace(/\//g, "-")}.pdf`);
+}
