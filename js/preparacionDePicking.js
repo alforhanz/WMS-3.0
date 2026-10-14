@@ -708,12 +708,6 @@ function devolverArticulo(articulo) {
     }
   });
 }
-
-function confirmaRegresar() {
-  localStorage.setItem("autoSearchPedidos", "true");
-  localStorage.removeItem("mensajes");
-  window.location.href = "verificacionDePicking.html";
-}
 //---------------------------------------------------------------------------
 // VALIDAR ESTADOS Y HABILITACIÓN DE BOTONES (GUARDAR Y PREPARAR)
 //---------------------------------------------------------------------------

@@ -160636,7 +160636,6 @@ var dataTransacciones = [
         "TIPO_TRANSACCION": "Pedidos"
     }
 ]
-
 Chart.defaults.color = '#8b949e'; // Color de texto
 Chart.defaults.borderColor = '#30363d'; // Color de líneas de división
 document.addEventListener("DOMContentLoaded", function () {
@@ -160650,7 +160649,6 @@ document.addEventListener("DOMContentLoaded", function () {
     renderizarGraficoPrecision(dataTransacciones);
     renderizarTablaTotales(dataTransacciones);
 });
-
 /**
  * @function actualizarKpisTransacciones
  * @description Procesa dataTransacciones para actualizar los KPIs en pantalla.
@@ -160704,11 +160702,9 @@ function actualizarKpisTransacciones(data) {
     if(document.getElementById('kpi_salidas')) document.getElementById('kpi_salidas').innerText = salidas;
     if(document.getElementById('kpi_verificados')) document.getElementById('kpi_verificados').innerText = porcVerificado + "%";
 }
-
 /**
  * 1. Gráfico de "Productividad por Hora" (Line Chart)
  */
-
 function renderizarGraficoProductividad(data) {
     const horas = [...Array(24).keys()].map(h => `${h.toString().padStart(2, '0')}:00`);
     let conteoPorHora = new Array(24).fill(0);
@@ -160770,7 +160766,6 @@ function renderizarTopArticulos(data) {
  * 3. Gráfico de "Precisión de Conteo" (Doughnut)
  */
 let myChartPrecision = null;
-
 function renderizarGraficoPrecision(data) {
     const canvas = document.getElementById('chartPrecision');
     if (!canvas) return;
@@ -160858,9 +160853,6 @@ function renderizarGraficoPrecision(data) {
         }]
     });
 }
-
-
-
 function renderizarTablaTotales(data) {
     let totales = {
         contadas: 0,

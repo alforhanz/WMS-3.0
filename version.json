@@ -1,4 +1,4 @@
 {
-  "version": "4.4",
-  "descripcion": "Estandarización UI, optimización móvil y unificación de pestaña única"
+  "version": "4.6",
+  "descripcion": "Resolución dinámica de API por dominio e IP, y robustez en autenticación"
 }

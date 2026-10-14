@@ -10,7 +10,7 @@ $data = [
 ];
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'http://192.168.3.8:8091/index.php/auth/login');
+curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:8106/index.php/auth/login');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -20,10 +20,11 @@ $response = curl_exec($ch);
 curl_close($ch);
 
 $result = json_decode($response, true);
-//print_r($result);
 
-// Puedes hacer algo con $result aquí
-if ($result['msg'] == 'SUCCESS') {
+if (isset($result['msg']) && $result['msg'] == 'SUCCESS') {
+    if (session_status() == PHP_SESSION_NONE) {
+        @session_start();
+    }
     $_SESSION['token_app2'] = $result['access_token'];
     $_SESSION['user_app2'] = $result['username'];
  
@@ -34,8 +35,7 @@ if ($result['msg'] == 'SUCCESS') {
     $bodegaString = implode(", ", $bodegaValues);
     $_SESSION["bodega"] = $bodegaString; 
 
-  
-    // datos necesarios    
+    // Guardar credenciales en storage del navegador y navegar al dashboard
     echo "<script>
     localStorage.setItem('username', '" . $_SESSION['user_app2'] . "');
     localStorage.setItem('checkbox', '');
@@ -48,10 +48,9 @@ if ($result['msg'] == 'SUCCESS') {
     sessionStorage.setItem('bodega', '" . json_encode($result['bodega']) . "');
     sessionStorage.setItem('_priv', '" . json_encode($result['priv']) . "');    
 
-   window.location.href = 'http://200.124.12.146:8107/dash1.html';
-   </script>";
-
-}else{
-    echo "Fail";
+    window.location.href = 'dash1.html';
+    </script>";
+} else {
+    echo "<script>alert('Error de autenticación desde la Suite.'); window.location.href = 'index.html';</script>";
 }
 ?>

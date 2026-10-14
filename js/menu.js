@@ -129,7 +129,7 @@ var builddata = function () {
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 var buildUL = function (items) {
-  let url_dalbos = "http://200.124.12.146:8108/home.php";
+  let url_dalbos = "http://10.246.28.5:8105/home.php";
   let htm = "",
     icono = "",
     icono2 = "",

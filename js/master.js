@@ -28,24 +28,6 @@ if (localStorage.checkbox && localStorage.checkbox !== "") {
   emailInput.value = "";
 }
 
-// window.onload = function () {
-//   Object.keys(localStorage).forEach(function (key) {
-//     localStorage.removeItem(key);
-//   });
-// };
-// window.onload = function () {
-//     // Solo borramos si NO queremos recordar al usuario
-//     // O mejor aún, borramos solo los datos operativos, no los de acceso.
-//     const keysParaConservar = ["username", "password", "checkbox"];
-    
-//     Object.keys(localStorage).forEach(function (key) {
-//         if (!keysParaConservar.includes(key)) {
-//             localStorage.removeItem(key);
-//         }
-//     });
-// };
-
-///////////acciona el login con el boton enter
 document.addEventListener("DOMContentLoaded", function () {
   const bodyMaster = document.getElementById("login");
   const passwordInput = document.getElementById("password");
@@ -168,9 +150,17 @@ function login() {
             text: "Por favor comuníquese con nuestro equipo de soporte.",
             confirmButtonColor: "#28a745",
           });
-          document.querySelector("#username").va("");
-          document.querySelector("#password").val("");
+          document.querySelector("#password").value = "";
         }
+      })
+      .catch((error) => {
+        console.error("Error en la conexión con la API:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "No se pudo conectar con el servidor de autenticación (" + env.API_URL + ").",
+          confirmButtonColor: "#28a745",
+        });
       });
   }
 }
